@@ -1,0 +1,60 @@
+﻿@inject IResourceHandler resourceHandler
+
+<Row Background="Background.White" Padding="Padding.Is2" Border="Border.Is1.Rounded" Shadow="Shadow.Small" Margin="MarginParam" TextOverflow="TextOverflow.Wrap">
+    <Column ColumnSize="ColumnSize.IsFull" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Background="Background.White" Padding="Padding.Is2" Border="Border.Is1.Rounded" Shadow="Shadow.Small">
+        <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
+            <Text TextWeight="TextWeight.Bold" Class="text-center">
+                @DisplayName
+            </Text>
+        </Div>
+        <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" TextColor="TextColor.Primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
+    </Column>
+
+    @if (!isSectionCollapsed)
+    {
+        <Column ColumnSize="ColumnSize.Is6" Margin="Margin.Is2.FromTop">
+            <Text>
+                @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIConstants.Key}"))
+            </Text>
+        </Column>
+
+        <Column ColumnSize="ColumnSize.Is6" Margin="Margin.Is2.FromTop">
+            <Text>
+                @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIConstants.Value}"))
+            </Text>
+        </Column>
+
+        <Divider Class="divider-subsection" Background="Background.Primary" Shadow="Shadow.Small" />
+
+        @foreach (var param in Dictionary)
+        {
+            <Column ColumnSize="ColumnSize.Is6">
+                <Text>
+                    @param.Key:
+                </Text>
+            </Column>
+
+            <Column ColumnSize="ColumnSize.Is6">
+                <Text TextWeight="TextWeight.Bold">
+                    @param.Value
+                </Text>
+            </Column>
+        }
+    }
+
+</Row>
+
+@code {
+    [Parameter]
+    public IList<TaskKeyValueItemDto> Dictionary { get; set; } = [];
+
+    [Parameter]
+    public IFluentSpacing MarginParam { get; set; } = null!;
+
+    [Parameter]
+    public string DisplayName { get; set; } = string.Empty;
+
+    private bool isSectionCollapsed = true;
+
+    private void ChangeCollapseState() => isSectionCollapsed = !isSectionCollapsed;
+}

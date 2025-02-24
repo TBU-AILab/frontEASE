@@ -1,0 +1,168 @@
+﻿@inject ITaskManipulationService taskManipulationService
+@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+
+<Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded.Primary" Shadow="Shadow.Small">
+    <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Background="Background.White" Padding="Padding.Is2" Border="Border.Is1.Rounded" Shadow="Shadow.Small">
+        <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
+            <Text TextWeight="TextWeight.Bold" Class="text-center">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.MemberGroups), PropertyDisplayResourceType.FIELD)))
+            </Text>
+        </Div>
+        <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" TextColor="TextColor.Primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
+    </Column>
+
+    @if (!isSectionCollapsed)
+    {
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Container Fluid Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                <Row>
+                    <Column ColumnSize="ColumnSize.Is12">
+                        <Fields>
+
+                            <DataGrid TItem="CompanyDto"
+                                      Data="@AvailableCompanies"
+                                      SelectionMode="DataGridSelectionMode.Multiple"
+                                      SelectedRows="@selectedCompanies"
+                                      SelectedRowsChanged="(obj => SelectionChanged(obj))"
+                                      Filterable="true"
+                                      RowSelectable="@((company) => {return !TaskMetadata.InitializationInProgres;})"
+                                      FilterMode="DataGridFilterMode.Default"
+                                      FilterMethod="DataGridFilterMethod.Contains"
+                                      Responsive>
+
+                                <DataGridColumns>
+
+                                    <DataGridColumn Filterable="false" TItem="CompanyDto" Field="@nameof(CompanyDto.Image)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Image), PropertyDisplayResourceType.FIELD)))" Sortable="false">
+                                        <DisplayTemplate>
+                                            <Image Border="Border.RoundedCircle" Source="@(string.IsNullOrWhiteSpace(GetMemberGroupImageUrl(context.ID!.Value)) ? @"\resources\images\companies\companyLogoMissing.png" : GetMemberGroupImageUrl(context.ID!.Value))" Class="full-max-width datagrid-item-image-small" Loading />
+                                        </DisplayTemplate>
+                                    </DataGridColumn>
+
+                                    <DataGridColumn Field="@nameof(CompanyDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
+                                    <DataGridColumn Field="@nameof(CompanyDto.NameAbbreviation)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.NameAbbreviation), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
+
+                                    <DataGridColumn TItem="CompanyDto" Field="@nameof(CompanyDto.Address)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Address), PropertyDisplayResourceType.FIELD)))" Sortable="false">
+                                        <DisplayTemplate>
+                                            <Container>
+                                                @if (context.Address is not null)
+                                                {
+                                                    <Row Margin="Margin.Is2.FromTop">
+                                                        <Column ColumnSize="ColumnSize.Is10.OnWidescreen" TextAlignment="TextAlignment.Center">
+                                                            <Span TextColor="TextColor.Black50" Class="font-large">
+                                                                @($"{context.Address.Street} {context.Address.DescriptiveNumber}")
+                                                            </Span>
+                                                            @if (!string.IsNullOrEmpty(context.Address.OrientationNumber))
+                                                            {
+                                                                <Span TextColor="TextColor.Black50" Class="font-large">
+                                                                    @($" ({context.Address.OrientationNumber})")
+                                                                </Span>
+                                                            }
+                                                            <Span TextColor="TextColor.Black50" Class="font-large">
+                                                                @($", {context.Address.ZIPCode} {context.Address.City} - {resourceHandler.GetResource(((Country)context.Address.Country).GetEnumResourceValue())}")
+                                                            </Span>
+                                                        </Column>
+                                                    </Row>
+                                                }
+                                            </Container>
+                                        </DisplayTemplate>
+                                    </DataGridColumn>
+
+                                </DataGridColumns>
+
+                            </DataGrid>
+
+                        </Fields>
+                    </Column>
+                </Row>
+            </Container>
+        </Column>
+    }
+</Container>
+
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+
+    [CascadingParameter]
+    public IList<ApplicationUserDto> AvailableUsers { get; set; } = [];
+    [CascadingParameter]
+    public IList<CompanyDto> AvailableCompanies { get; set; } = [];
+
+    private List<CompanyDto> selectedCompanies = [];
+    private bool isSectionCollapsed = false;
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+
+        SetInitialCollapse();
+        SetInitialData();
+
+        await base.OnInitializedAsync();
+    }
+
+    private void SetInitialCollapse()
+    {
+        if (!(Task.MemberGroups?.Count > 0))
+        {
+            ChangeCollapseState();
+        }
+    }
+
+    private void SetInitialData()
+    {
+        var selectedCompanyIDs = Task.MemberGroups.Select(x => x.ID);
+        selectedCompanies.AddRange(AvailableCompanies.Where(x => selectedCompanyIDs.Contains(x.ID)));
+    }
+
+    private void SelectionChanged(IList<CompanyDto> newSelection)
+    {
+        var selectedIDs = Task.MemberGroups.Select(x => x.ID);
+        var newSelectionIDs = newSelection.Select(x => x.ID);
+
+        var added = newSelectionIDs.Except(selectedIDs).ToList();
+        var removed = selectedIDs.Except(newSelectionIDs).ToList();
+
+        if (added.Count > 0)
+        {
+            foreach (var addedGroup in added)
+            {
+                var groupDto = AvailableCompanies.Single(x => x.ID == addedGroup);
+                Task.MemberGroups.Add(groupDto);
+            }
+        }
+
+        if (removed.Count > 0)
+        {
+            foreach (var removedCompany in removed)
+            {
+                var removedFromModel = Task.MemberGroups.Single(x => x.ID == removedCompany);
+                Task.MemberGroups.Remove(removedFromModel);
+            }
+        }
+    }
+
+    private void ChangeCollapseState()
+    {
+        isSectionCollapsed = !isSectionCollapsed;
+
+        if (!isSectionCollapsed)
+        { taskManipulationService.CleanCompaniesInfo(Task); }
+
+        uiService.CallRequestRefresh();
+    }
+
+    private string? GetMemberGroupImageUrl(Guid groupID)
+    {
+        var groupData = AvailableCompanies.SingleOrDefault(x => x.ID == groupID);
+        return groupData?.Image?.ImageUrl;
+    }
+}

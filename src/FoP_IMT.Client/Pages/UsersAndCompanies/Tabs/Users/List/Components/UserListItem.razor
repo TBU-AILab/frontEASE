@@ -1,0 +1,21 @@
+﻿@inject IUIService uiService
+
+<Column ColumnSize="ColumnSize.Is3.OnQuadHD.Is4.OnWidescreen.Is6.OnDesktop" Margin="Margin.Is2.FromBottom.Is2.FromTop">
+    <Card Shadow="Shadow.Small" Margin="Margin.Is2.FromBottom.Is2.FromTop" Border="Border.Is2.Rounded">
+        <Container Fluid Padding="Padding.Is0">
+            <UserListItemHeader />
+            <UserListItemBody />
+        </Container>
+    </Card>
+</Column>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        await base.OnInitializedAsync();
+    }
+
+    private void RefreshView()
+    { StateHasChanged(); }
+}

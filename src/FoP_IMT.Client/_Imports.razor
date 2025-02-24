@@ -1,0 +1,178 @@
+﻿@*-----------------*@
+@*---- General ----*@
+@*-----------------*@
+
+@* System Utils *@
+@using AutoMapper
+@using System.Web
+@using System.IO
+@using System.Linq
+@using System.Threading
+@using System.Net
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Http
+@using System.ComponentModel.DataAnnotations
+
+@* Blazor and Auth *@
+@using Microsoft.JSInterop
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.AspNetCore.Identity
+@using FoP_IMT.Shared.Data.DTOs.Shared.Users.Auth
+@using FoP_IMT.Shared.Infrastructure.Auth
+@using FoP_IMT.Shared.Infrastructure.Constants.Auth
+
+@* GUI and Visualisation *@
+@using Markdig
+@using Blazorise
+@using Blazored.Toast
+@using Blazorise.DataGrid
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using System.Collections.ObjectModel;
+@using FoP_IMT.Client.Shared.Styling.Constants
+@using FoP_IMT.Client.Shared.Styling.Defaults
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+
+@*-----------------------*@
+@*---- Functionality ----*
+@*-----------------------*@
+
+@* Shared *@
+@using FoP_IMT
+@using FoP_IMT.Client
+@using FoP_IMT.Client.Infrastructure.Settings
+@using FoP_IMT.Client.Shared.Components.Forms
+@using FoP_IMT.Client.Shared.Components.Modals
+@using FoP_IMT.Client.Shared.Components.Utility
+@using FoP_IMT.Client.Shared.Components.Views
+@using FoP_IMT.Client.Services.HelperServices.UI.Operations
+@using FoP_IMT.Client.Services.HelperServices.UI.Signals
+@using FoP_IMT.Client.Services.HelperServices.UI.Manage
+@using FoP_IMT.Shared.Data.DTOs.Shared.Images
+@using FoP_IMT.Client.Services.ApiServices.Shared.Resources
+@using FoP_IMT.Shared.Services.Resources
+@using FoP_IMT.Client.Services.HelperServices.Resources.Manage
+@using FoP_IMT.Client.Services.ApiServices.Shared.Files
+@using FoP_IMT.Client.Services.ApiServices.Shared.Typelists
+
+@using FoP_IMT.Shared.Data.Enums.Shared.Files
+@using FoP_IMT.Shared.Data.Enums.Shared.General
+@using FoP_IMT.Shared.Infrastructure.Caching.Shared
+@using FoP_IMT.Shared.Infrastructure.Utils.Extensions
+@using FoP_IMT.Shared.Infrastructure.Constants.UI
+@using FoP_IMT.Shared.Infrastructure.Constants.UI.Generic
+@using FoP_IMT.Shared.Infrastructure.Constants.UI.Specific
+@using FoP_IMT.Shared.Data.DTOs.Shared.Addresses
+@using FoP_IMT.Shared.Data.Enums.Shared.Addresses
+@using FoP_IMT.Client.Infrastructure.Utils
+
+@* Tasks *@
+@using FoP_IMT.Shared.Infrastructure.Utils.Helpers.Tasks
+@using FoP_IMT.Client.Pages.Tasks
+@using FoP_IMT.Client.Pages.Tasks.List
+@using FoP_IMT.Client.Pages.Tasks.List.Components
+@using FoP_IMT.Client.Pages.Tasks.Overview
+@using FoP_IMT.Client.Pages.Tasks.Delete
+@using FoP_IMT.Client.Pages.Tasks.Manipulate
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Items
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Config
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Config.Components
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Access
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Info
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Info.Items
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Info.Items.Solutions
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Messages
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Messages.Items
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Messages.Items.Components
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params
+@using FoP_IMT.Client.Pages.Tasks.Edit.Components.Form.Items
+@using FoP_IMT.Client.Pages.Tasks.Edit.Components.Form.Sections
+@using FoP_IMT.Client.Pages.Tasks.Edit.Components.Form.Sections.Components
+@using FoP_IMT.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules
+@using FoP_IMT.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.RepeatedMessage
+@using FoP_IMT.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params
+@using FoP_IMT.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Specific
+@using FoP_IMT.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Access
+@using FoP_IMT.Client.Pages.Tasks.Overview.Components
+@using FoP_IMT.Client.Services.ApiServices.Tasks
+@using FoP_IMT.Client.Services.ModelManipulationServices.Tasks
+@using FoP_IMT.Shared.Data.DTOs.Tasks
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Solutions
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Messages
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs
+@using FoP_IMT.Shared.Data.DTOs.Tasks.UI
+@using FoP_IMT.Shared.Data.Enums.Tasks
+@using FoP_IMT.Shared.Data.Enums.Tasks.Messages
+@using FoP_IMT.Client.Pages.Tasks.Edit
+@using FoP_IMT.Client.Pages.Tasks.Edit.Components
+@using FoP_IMT.Client.Pages.Tasks.Edit.Components.Form
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs.Modules
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options
+@using FoP_IMT.Shared.Data.Enums.Tasks.Config
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Shared
+@using FoP_IMT.Shared.Data.Enums.Tasks.Config.Modules.RepeatedMessage
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Metadata
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Values
+
+@* Users and Companies *@
+@using FoP_IMT.Shared.Data.DTOs.Companies
+@using FoP_IMT.Client.Services.ApiServices.Companies
+@using FoP_IMT.Shared.Data.Enums.Users.Visualisation
+@using FoP_IMT.Client.Pages.UsersAndCompanies
+@using FoP_IMT.Shared.Data.DTOs.Shared.Users
+@using FoP_IMT.Client.Services.ApiServices.Shared.Users
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Users.Add
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Users.Shared
+@using FoP_IMT.Shared.Data.Enums.Auth
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Users.List
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Users.List.Components
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Users.List.Components.Item
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Companies.List
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Companies.List.Components
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Companies.Add
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Companies.Shared
+@using FoP_IMT.Client.Services.ModelManipulationServices.Companies
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Users
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Users.Delete
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Users.Edit
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Companies.Delete
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Companies.Edit
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Companies
+@using FoP_IMT.Client.Services.ModelManipulationServices.User
+@using FoP_IMT.Client.Pages.UsersAndCompanies.Tabs.Companies.Edit.Components
+@using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters
+@using FoP_IMT.Shared.Data.Enums.Tasks.Config.Modules.Parameters
+
+@* Options Management *@
+@using FoP_IMT.Shared.Data.Enums.Tasks.Visualisation
+@using FoP_IMT.Shared.Data.DTOs.Management
+@using FoP_IMT.Client.Pages.Management.Tabs
+@using FoP_IMT.Client.Pages.Management.Tabs.Tokens.List
+@using FoP_IMT.Client.Pages.Management.Tabs.Tokens.List.Components
+@using FoP_IMT.Client.Pages.Management.Tabs.Tokens.Edit
+@using FoP_IMT.Client.Pages.Management.Tabs.Tokens.Delete
+@using FoP_IMT.Client.Pages.Management.Tabs.Tokens.Add
+@using FoP_IMT.Client.Pages.Management.Tabs.Tokens.Shared
+@using FoP_IMT.Client.Pages.Management.Tabs.General
+@using FoP_IMT.Client.Pages.Management.Tabs.General.Edit
+@using FoP_IMT.Client.Pages.Management.Tabs.General.Shared
+@using FoP_IMT.Client.Services.ApiServices.Management
+@using FoP_IMT.Shared.Data.DTOs.Management.Tokens
+@using FoP_IMT.Client.Services.ModelManipulationServices.Management
+@using FoP_IMT.Shared.Data.Enums.Users.Preferences.GeneralOptions;
+@using FoP_IMT.Shared.Data.DTOs.Management.General;

@@ -1,0 +1,102 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+@inject IDataLoader dataLoader
+
+<Fields>
+    <Validation>
+        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(CompanyDto.Name)))" RequiredIndicator>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <TextEdit ElementId="@(GetElementIdByOperation(nameof(CompanyDto.Name)))"
+                      Role="TextRole.Text"
+                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                      @bind-Text="@CompanyModel.Name">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </TextEdit>
+        </Field>
+    </Validation>
+
+    <Validation>
+        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is2.OnWidescreen)">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(CompanyDto.NameAbbreviation)))">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.NameAbbreviation), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <TextEdit ElementId="@(GetElementIdByOperation(nameof(CompanyDto.NameAbbreviation)))"
+                      Role="TextRole.Text"
+                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.NameAbbreviation), PropertyDisplayResourceType.PLACEHOLDER)))"
+                      @bind-Text="@CompanyModel.NameAbbreviation">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </TextEdit>
+        </Field>
+    </Validation>
+
+    <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : string.IsNullOrEmpty(CompanyModel.Image?.ImageData) ? ColumnSize.Is4.OnWidescreen : ColumnSize.Is3.OnWidescreen)">
+        <FieldLabel For="@(GetElementIdByOperation(nameof(CompanyDto.Image)))">
+            @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Image), PropertyDisplayResourceType.FIELD)))
+        </FieldLabel>
+        @if (imageLoadInProgress)
+        {
+            <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center">
+                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}"))" SmallControlSpinner="true" TextColor="TextColor.Dark" TextSize="TextSize.Small" />
+            </Column>
+        }
+        <Label For="@(GetElementIdByOperation(nameof(CompanyDto.Image)))" Display="@(imageLoadInProgress ? Display.None : Display.Block)" Cursor="@(imageLoadInProgress ? Cursor.Default : Cursor.Pointer)" Border="Border.Is1.Rounded" Background="Background.White" Class="button btn btn-sized btn-custom-file-picker" Overflow="Overflow.Auto" Margin="Margin.Is0.FromBottom">
+            <Text Display="Display.InlineBlock" Overflow="Overflow.Hidden" Width="Width.Is100" TextAlignment="TextAlignment.Start" TextColor="TextColor.Dark" TextWeight="TextWeight.Normal" TextSize="TextSize.Small">
+                @(string.IsNullOrEmpty(CompanyModel.Image?.ImageData) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Image), PropertyDisplayResourceType.PLACEHOLDER)) : CompanyModel.Image.Name)
+            </Text>
+            <FileEdit Display="Display.None"
+                      @ref="@FilePicker"
+                      Filter=".jpg, .jpeg, .jfif, .png, .gif, .bmp, .tiff"
+                      AutoReset="false"
+                      ElementId="@(GetElementIdByOperation(nameof(CompanyDto.Image)))"
+                      MaxFileSize="@DataLoader.MaxImageSize"
+                      Changed="args => ImageLoaded(args, CompanyModel.Image!)"
+                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Image), PropertyDisplayResourceType.PLACEHOLDER)))" />
+        </Label>
+    </Field>
+
+    @if (!string.IsNullOrEmpty(CompanyModel.Image?.ImageUrl) && !FullWidthFields)
+    {
+        <Column ColumnSize="ColumnSize.Is1.OnWidescreen" TextAlignment="TextAlignment.Center">
+            <Image Border="Border.RoundedCircle" Fluid Source=@($"data:{CompanyModel.Image.MimeType};base64,{CompanyModel.Image.ImageData}") Class="thumbnail-item-image" Loading />
+        </Column>
+    }
+
+</Fields>
+
+@code {
+
+    [CascadingParameter]
+    public CompanyDto CompanyModel { get; set; } = new();
+
+    [Parameter]
+    public DataOperation Operation { get; set; }
+
+    [Parameter]
+    public bool FullWidthFields { get; set; }
+
+    public FileEdit FilePicker = new();
+    private bool imageLoadInProgress = false;
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<CompanyDto>(elementBase, Operation, CompanyModel.ID?.ToString());
+
+    public async Task ImageLoaded(FileChangedEventArgs args, ImageDto destination)
+    {
+        imageLoadInProgress = true;
+        try
+        {
+            await dataLoader.LoadImage(args, destination);
+            uiService.CallRequestRefresh();
+        }
+        catch (Exception)
+        {
+            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}")}: {CompanyModel.Image?.Name}";
+        }
+        imageLoadInProgress = false;
+    }
+}

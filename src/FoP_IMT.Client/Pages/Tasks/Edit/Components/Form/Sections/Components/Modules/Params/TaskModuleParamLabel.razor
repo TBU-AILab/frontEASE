@@ -1,0 +1,126 @@
+﻿@inject IResourceHandler resourceHandler
+
+<Field ColumnSize="@(HasDescription ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+    @{
+        var notAvailableResource = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
+        var parameterType = DynamicParamUtils.GetParameterType(ParamOption.Type);
+        var parameterName = !string.IsNullOrWhiteSpace(ParamOption.LongName) ? ParamOption.LongName : !string.IsNullOrWhiteSpace(ParamValue.ShortName) ? ParamValue.ShortName : notAvailableResource;
+    }
+
+    <Span TextSize="TextSize.Small" TextColor="TextColor.Info">
+        @($"[{resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Readonly}")}]")
+    </Span>
+    <Label For="@(GetElementIdByOperation(ParamOption.Key))">
+        @($"{parameterName}")
+    </Label>
+
+    <Div>
+        @if (parameterType is not null)
+        {
+            switch (parameterType)
+            {
+                case ParameterType.STR:
+                    <Label TextWeight="TextWeight.Normal" Class="fst-italic">
+                        @(ParamOption.Default?.StringValue ?? notAvailableResource)
+                    </Label>
+                    break;
+
+                case ParameterType.INT:
+                    <Label TextWeight="TextWeight.Normal" Class="fst-italic">
+                        @(ParamOption.Default?.IntValue?.ToString() ?? notAvailableResource)
+                    </Label>
+                    break;
+
+                case ParameterType.FLOAT:
+                    <Label TextWeight="TextWeight.Normal" Class="fst-italic">
+                        @(ParamOption.Default?.FloatValue?.ToString() ?? notAvailableResource)
+                    </Label>
+                    break;
+
+                case ParameterType.BOOL:
+                    <Label TextWeight="TextWeight.Normal" Class="fst-italic">
+                        @(ParamOption.Default?.BoolValue?.ToString() ?? notAvailableResource)
+                    </Label>
+                    break;
+
+                case ParameterType.ENUM:
+                    @if (ParamOption.EnumOptions?.Any() == true)
+                    {
+                        <UnorderedList>
+                            @foreach (var (enumOption, index) in ParamOption.EnumOptions.Select((option, idx) => (option, idx)))
+                            {
+                                var displayName = ParamOption.EnumLongNames?.ElementAtOrDefault(index) ?? enumOption.StringValue;
+                                var description = ParamOption.EnumDescriptions?.ElementAtOrDefault(index);
+
+                                <UnorderedListItem>
+                                    <Label TextWeight="TextWeight.Normal" Class="fst-italic">
+                                        @($"{displayName}{(string.IsNullOrEmpty(description) ? string.Empty : $" ({description})")}")
+                                    </Label>
+                                </UnorderedListItem>
+                            }
+                        </UnorderedList>
+                    }
+                    else
+                    {
+                        <Label TextWeight="TextWeight.Normal" Class="fst-italic">
+                            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NoValue}"))
+                        </Label>
+                    }
+
+                    @if (ParamOption.Default?.EnumValue is not null)
+                    {
+                        <Label TextWeight="TextWeight.Normal">
+                            @(ParamOption.Default?.EnumValue?.StringValue ?? notAvailableResource)
+                        </Label>
+                    }
+                    break;
+
+                default:
+                    <Label TextWeight="TextWeight.Normal">
+                        @notAvailableResource
+                    </Label>
+                    break;
+
+            }
+
+        }
+    </Div>
+</Field>
+
+@if (HasDescription)
+{
+    <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+        <FieldLabel>
+            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Info}"))
+        </FieldLabel>
+        <Div>
+            <Tooltip Multiline="true" Text="@(ParamOption.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+            </Tooltip>
+        </Div>
+    </Field>
+}
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+
+    [CascadingParameter]
+    public DataOperation Operation { get; set; }
+
+    [CascadingParameter]
+    public TaskModuleDto Module { get; set; } = null!;
+
+    [CascadingParameter]
+    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskModuleParameterDto ParamValue { get; set; } = new();
+
+    private bool HasDescription => !string.IsNullOrWhiteSpace(ParamOption.Description);
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, Task.ID.ToString());
+}

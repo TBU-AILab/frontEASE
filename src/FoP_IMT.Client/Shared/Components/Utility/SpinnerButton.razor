@@ -1,0 +1,21 @@
+﻿<Span Class="@(SmallControlSpinner == true ? "spinner-border spinner-border-sm" : "spinner-border")" role="status" aria-hidden="true" TextColor="@(TextColor ?? TextColor.White)"></Span>
+@if (!string.IsNullOrWhiteSpace(DisplayText))
+{
+    <Span TextSize="@(TextSize ?? Blazorise.TextSize.Heading3)" TextColor="@(TextColor ?? TextColor.White)" Margin="Margin.Is2.FromStart">@DisplayText ...</Span>
+}
+
+
+
+@code {
+    [Parameter]
+    public string DisplayText { get; set; } = string.Empty;
+
+    [Parameter]
+    public TextColor? TextColor { get; set; }
+
+    [Parameter]
+    public IFluentTextSize? TextSize { get; set; }
+
+    [Parameter]
+    public bool? SmallControlSpinner { get; set; }
+}

@@ -1,0 +1,9 @@
+services:
+  dotnet-server:
+    build:
+      dockerfile: dev.Dockerfile
+
+  backend-core:
+    build:
+      context: ./src/FoP_IMT.Core
+      dockerfile: dev.Dockerfile

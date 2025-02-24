@@ -1,0 +1,139 @@
+﻿@inject IResourceHandler resourceHandler
+
+
+<Row>
+
+    <Container Fluid>
+        <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Config), PropertyDisplayResourceType.FIELD)))" />
+    </Container>
+
+    <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
+
+    <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
+
+        <Fields>
+            <Validation>
+                <Field ColumnSize="ColumnSize.IsFull">
+                    <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.Name)))" RequiredIndicator>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.FIELD)))
+                    </FieldLabel>
+                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.Name)))"
+                              Disabled="@(TaskMetadata.InitializationInProgres)"
+                              Role="TextRole.Text"
+                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                              @bind-Text="@Task.Config.Name">
+                        <Feedback>
+                            <ValidationError Multiline="true" />
+                        </Feedback>
+                    </TextEdit>
+                </Field>
+            </Validation>
+
+            <Validation>
+                <Field ColumnSize="ColumnSize.Is6.OnWidescreen">
+                    <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.SystemMessage)))" RequiredIndicator>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.FIELD)))
+                    </FieldLabel>
+                    <MemoEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.SystemMessage)))"
+                              Disabled="@(TaskMetadata.InitializationInProgres)"
+                              AutoSize="false" Rows="5"
+                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                              @bind-Text="@Task.Config.SystemMessage">
+                        <Feedback>
+                            <ValidationError Multiline="true" />
+                        </Feedback>
+                    </MemoEdit>
+                </Field>
+            </Validation>
+
+            <Validation>
+                <Field ColumnSize="ColumnSize.Is6.OnWidescreen">
+                    <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.InitMessage)))" RequiredIndicator>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.FIELD)))
+                    </FieldLabel>
+                    <MemoEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.InitMessage)))"
+                              Disabled="@(TaskMetadata.InitializationInProgres)"
+                              AutoSize="false" Rows="5"
+                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
+                              @bind-Text="@Task.Config.InitMessage">
+                        <Feedback>
+                            <ValidationError Multiline="true" />
+                        </Feedback>
+                    </MemoEdit>
+                </Field>
+            </Validation>
+        </Fields>
+
+
+        <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
+            <Container Fluid>
+                <Fields>
+                    <TaskConfigRepeatedMessageDataFormSection />
+                </Fields>
+            </Container>
+        </Column>
+
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Container Fluid>
+                <Row>
+                    <Fields>
+                        <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.MaxContextSize)))" RequiredIndicator>
+                            @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD))}: {Task.Config.MaxContextSize}")
+                        </FieldLabel>
+
+                        <Validation>
+                            <Field Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.Is2.OnWidescreen">
+
+                                <NumericEdit Disabled="@(TaskMetadata.InitializationInProgres)"
+                                             @bind-Value="@Task.Config.MaxContextSize"
+                                             Step="1" Min="-1" Max="1000">
+                                    <Feedback>
+                                        <ValidationError Multiline="true" />
+                                    </Feedback>
+                                </NumericEdit>
+                            </Field>
+                        </Validation>
+
+                        <Validation>
+                            <Field ColumnSize="ColumnSize.Is10.OnWidescreen">
+                                <Slider ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.MaxContextSize)))"
+                                        Disabled="@(TaskMetadata.InitializationInProgres)"
+                                        @bind-Value="@Task.Config.MaxContextSize"
+                                        Step="1" Min="-1" Max="1000">
+                                    <Feedback>
+                                        <ValidationError Multiline="true" />
+                                    </Feedback>
+                                </Slider>
+                            </Field>
+                        </Validation>
+
+                    </Fields>
+                </Row>
+            </Container>
+        </Column>
+
+        <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromBottom">
+            <Field Horizontal Display="Display.InlineFlex">
+                <FieldBody Display="Display.InlineFlex" Style="align-items: center;">
+                    <Check Disabled="@(TaskMetadata.InitializationInProgres)" TValue="bool" @bind-Checked="@Task.Config.FeedbackFromSolution" Class="checkbox-medium" ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.FeedbackFromSolution)))" Display="Display.InlineFlex" Margin="Margin.Is2.FromEnd">
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.FeedbackFromSolution), PropertyDisplayResourceType.FIELD)))
+                    </Check>
+                </FieldBody>
+            </Field>
+        </Column>
+
+    </Column>
+</Row>
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+
+    [CascadingParameter]
+    public DataOperation DataOperation { get; set; }
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskConfigDto>(elementBase, DataOperation, Task.ID.ToString());
+}

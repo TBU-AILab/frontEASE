@@ -1,0 +1,21 @@
+﻿<Container Fluid>
+    <Row>
+        <Column ColumnSize="ColumnSize.Is8.OnWidescreen.Is4.WithOffset.OnWidescreen.Is10.OnMobile.Is2.WithOffset.OnMobile" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
+            <Card Border="Border.Is0">
+                <MessageViewHeader />
+
+                <CardBody Background="Background.Light" Class="throws-shadow" Border="Border.Is1.RoundedBottom.Primary">
+                    @Message.Content
+                </CardBody>
+
+                <MessageViewFooter />
+            </Card>
+        </Column>
+    </Row>
+
+</Container>
+
+@code {
+    [CascadingParameter]
+    public TaskMessageDto Message { get; set; } = new();
+}

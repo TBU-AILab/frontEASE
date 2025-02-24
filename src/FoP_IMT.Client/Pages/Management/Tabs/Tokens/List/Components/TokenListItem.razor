@@ -1,0 +1,60 @@
+﻿@inject IResourceHandler resourceHandler
+
+<Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is2.FromStart.Is2.FromEnd" Margin="Margin.Is2.FromTop.Is2.FromBottom">
+    <Container Fluid Padding="Padding.Is2" Shadow="Shadow.Small" Border="Border.Is2.Rounded">
+        <Row>
+            <Column ColumnSize="ColumnSize.IsFull">
+                <Container Fluid>
+                    <Row Margin="Margin.Is2.FromTop" Class="justify-content-center text-break">
+                        <Column ColumnSize="ColumnSize.Is8.OnWidescreen.Is2.WithOffset.OnWidescreen" TextAlignment="TextAlignment.Center" Class="align-self-center">
+                            <Heading Size="HeadingSize.Is5" TextColor="TextColor.Primary" TextWeight="TextWeight.Bold" Margin="Margin.Is0">
+                                @($"{Token.Name} ({GetTokenLongName() ?? Token.ConnectorType})")
+                            </Heading>
+                        </Column>
+                        <Column Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.Is2.OnWidescreen" TextAlignment="TextAlignment.End" Class="align-self-center">
+                            <Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowEditModal())" />
+                            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowDeleteModal())" />
+                        </Column>
+                        <Column Display="Display.None.OnWidescreen" ColumnSize="ColumnSize.Is2.OnWidescreen" TextAlignment="TextAlignment.Center" Class="align-self-center">
+                            <Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowEditModal())" />
+                            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowDeleteModal())" />
+                        </Column>
+                    </Row>
+                    @if (!string.IsNullOrWhiteSpace(Token.Description))
+                    {
+                        <Row Margin="Margin.Is2.FromTop" Class="text-break">
+                            <Column ColumnSize="ColumnSize.Is8.OnWidescreen.Is2.WithOffset.OnWidescreen" TextAlignment="TextAlignment.Center">
+                                <Span TextColor="TextColor.Black50" Class="font-large" TextOverflow="TextOverflow.Wrap">
+                                    @Token.Description
+                                </Span>
+                            </Column>
+                        </Row>
+                    }
+                </Container>
+            </Column>
+        </Row>
+    </Container>
+</Column>
+
+<TokenEditModal @ref="@editModal"></TokenEditModal>
+<TokenDeleteModal @ref="@deleteModal"></TokenDeleteModal>
+
+@code {
+    [CascadingParameter]
+    public UserPreferenceTokenOptionDto Token { get; set; } = new();
+
+    [CascadingParameter]
+    public IList<TaskModuleNoValidationDto> ConnectorTypes { get; set; } = [];
+
+    private TokenEditModal editModal = new();
+    private TokenDeleteModal deleteModal = new();
+
+    private Task ShowEditModal() => editModal.ShowModal();
+    private Task ShowDeleteModal() => deleteModal.ShowModal();
+
+    private string? GetTokenLongName()
+    {
+        var matchingModule = ConnectorTypes.FirstOrDefault(x => x.ShortName == Token.ConnectorType);
+        return matchingModule?.LongName;
+    }
+}

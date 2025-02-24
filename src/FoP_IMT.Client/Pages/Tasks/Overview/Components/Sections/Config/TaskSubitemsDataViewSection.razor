@@ -1,0 +1,56 @@
+﻿@inject IResourceHandler resourceHandler
+
+@{
+    var connectorOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.LLM_CONNECTOR).ToList();
+    var evaluatorOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.EVALUATOR).ToList();
+    var solutionOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.SOLUTION).ToList();
+
+    var stoppingConditionOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.STOPPING_CONDITION).ToList();
+    var testsOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.TEST).ToList();
+    var analysesOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.ANALYSIS).ToList();
+    var statOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.STATISTIC).ToList();
+}
+
+
+<TaskConfigDataViewSection />
+
+<TaskModuleDataViewSection Module="@Task.Config.Solution"
+                           ModuleOptions="@solutionOptions"
+                           ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Solution), PropertyDisplayResourceType.FIELD)))" />
+
+<TaskModuleDataViewSection Module="@Task.Config.Connector"
+                           ModuleOptions="@connectorOptions"
+                           ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Connector), PropertyDisplayResourceType.FIELD)))" />
+
+<TaskModuleDataViewSection Module="@Task.Config.Evaluator"
+                           ModuleOptions="@evaluatorOptions"
+                           ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Evaluator), PropertyDisplayResourceType.FIELD)))" />
+
+
+<TaskModuleDataItemViewSection Modules="@Task.Config.StoppingConditions"
+                               ModuleOptions="@stoppingConditionOptions"
+                               CollectionName="@(nameof(TaskConfigDto.StoppingConditions))"
+                               ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.StoppingConditions), PropertyDisplayResourceType.FIELD)))" />
+
+<TaskModuleDataItemViewSection Modules="@Task.Config.Tests"
+                               ModuleOptions="@testsOptions"
+                               CollectionName="@(nameof(TaskConfigDto.Tests))"
+                               ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Tests), PropertyDisplayResourceType.FIELD)))" />
+
+<TaskModuleDataItemViewSection Modules="@Task.Config.Analyses"
+                               ModuleOptions="@analysesOptions"
+                               CollectionName="@(nameof(TaskConfigDto.Analyses))"
+                               ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Analyses), PropertyDisplayResourceType.FIELD)))" />
+
+<TaskModuleDataItemViewSection Modules="@Task.Config.Stats"
+                               ModuleOptions="@statOptions"
+                               CollectionName="@(nameof(TaskConfigDto.Stats))"
+                               ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Stats), PropertyDisplayResourceType.FIELD)))" />
+
+<TaskDataUserAccessViewSection />
+<TaskDataCompanyAccessViewSection />
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+}

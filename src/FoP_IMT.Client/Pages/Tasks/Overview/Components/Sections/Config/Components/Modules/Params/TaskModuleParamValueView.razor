@@ -1,0 +1,157 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+@inject IMapper mapper
+
+@{
+    var parameterType = DynamicParamUtils.GetParameterType(ParamValue.Type);
+    IsDescriptionPresent = (!string.IsNullOrWhiteSpace(ParamOption?.Description) || (ParamOption?.EnumDescriptions?.Count > 0 && !string.IsNullOrWhiteSpace(ParamValue.Value!.EnumValue?.StringValue))) && ParamOption.Readonly != true;
+    (IsDefaultPresent, var defaultValue) = ExtractDefaultValue(ParamOption);
+
+    var parameterName = ParamOption?.LongName ?? ParamValue.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
+    var skipLabel = parameterType == ParameterType.ENUM && ParamOption?.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
+}
+
+
+@if (parameterType is not null)
+{
+    <Field ColumnSize="@(DisplayActions ? ColumnSize.Is10.OnWidescreen : ColumnSize.IsFull)" Padding="Padding.Is1.FromTop">
+        @if (!skipLabel)
+        {
+            <Text>
+                @($"{parameterName}: ")
+            </Text>
+        }
+
+        @switch (parameterType)
+        {
+            case ParameterType.STR:
+                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                    @($" {ParamValue.Value!.StringValue}")
+                </Span>
+                break;
+
+            case ParameterType.INT:
+                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                    @($" {ParamValue.Value!.IntValue}")
+                </Span>
+                break;
+
+            case ParameterType.FLOAT:
+                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                    @($" {Math.Round((decimal)ParamValue.Value!.FloatValue!, 4)}")
+                </Span>
+                break;
+
+            case ParameterType.ENUM:
+                @if (!string.IsNullOrWhiteSpace(ParamValue.Value!.EnumValue?.StringValue))
+                {
+                    var longName = (string?)null;
+                    var longNameIndex = ParamOption?.EnumOptions?.Select(x => x.StringValue).ToList().FindIndex(x => x == ParamValue!.Value!.EnumValue!.StringValue);
+                    @if (ParamOption?.EnumLongNames?.Count > 0 && longNameIndex >= 0)
+                    {
+                        longName = ParamOption.EnumLongNames?.ElementAtOrDefault(longNameIndex.Value);
+                    }
+
+                    <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                        @(longName ?? ParamValue.Value!.EnumValue!.StringValue)
+                    </Span>
+                }
+                else if (ParamValue.Value!.EnumValue?.ModuleValue is not null)
+                {
+                    var moduleType = ParamValue.Value!.EnumValue?.ModuleValue.PackageType;
+                    var moduleOptions = ParamOption?.EnumOptions?.Select(x => x.ModuleValue).ToList();
+
+                    <TaskModuleDataViewSection ModuleOptions="@moduleOptions" Module="@ParamValue.Value!.EnumValue!.ModuleValue" ModuleName="@parameterName" />
+                }
+                break;
+
+            case ParameterType.BOOL:
+                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                    @if (ParamValue.Value!.BoolValue is null)
+                    {
+                        @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
+                    }
+                    else
+                    {
+                        @(ParamValue.Value!.BoolValue!.Value ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))
+                    }
+                </Span>
+                break;
+        }
+    </Field>
+}
+
+@if (DisplayActions)
+{
+    <Field ColumnSize="ColumnSize.Is2.OnWidescreen" TextAlignment="TextAlignment.End" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+        <Div>
+            @if (IsDescriptionPresent)
+            {
+                var internalDescription = string.Empty;
+                if (!string.IsNullOrWhiteSpace(ParamValue.Value?.EnumValue?.StringValue))
+                {
+                    var indexOfSelected = ParamOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == ParamValue?.Value?.EnumValue?.StringValue);
+                    if (indexOfSelected >= 0)
+                    {
+                        internalDescription = ParamOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+                    }
+                }
+                <Tooltip Multiline="true" Text="@(ParamOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                    <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                </Tooltip>
+            }
+            @if (IsDefaultPresent)
+            {
+                <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Default}.{UIConstants.Value}")} : {defaultValue}")" Display="Display.InlineBlock">
+                    <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                </Tooltip>
+            }
+        </Div>
+    </Field>
+}
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskModuleDto Module { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskModuleParameterNoValidationDto? ParamOption { get; set; } = null;
+
+    [CascadingParameter]
+    public TaskModuleParameterDto ParamValue { get; set; } = new();
+
+    private bool IsDescriptionPresent { get; set; }
+    private bool IsDefaultPresent { get; set; }
+
+    private bool DisplayActions => IsDescriptionPresent || IsDefaultPresent;
+
+    public static (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto? parameter)
+    {
+        if (parameter is null)
+        {
+            return (false, null);
+        }
+
+        var defaultValuePresent = parameter.Default is not null && parameter.Readonly != true &&
+                                  (!string.IsNullOrWhiteSpace(parameter.Default?.StringValue) ||
+                                   parameter.Default?.FloatValue is not null ||
+                                   parameter.Default?.IntValue is not null ||
+                                   parameter.Default?.BoolValue is not null ||
+                                   !string.IsNullOrWhiteSpace(parameter.Default?.EnumValue?.StringValue));
+
+        var defaultValue = parameter.Default switch
+        {
+            { StringValue: { Length: > 0 } } => parameter.Default.StringValue,
+            { FloatValue: not null } => parameter.Default.FloatValue?.ToString(),
+            { IntValue: not null } => parameter.Default.IntValue?.ToString(),
+            { BoolValue: not null } => parameter.Default.BoolValue?.ToString(),
+            { EnumValue.StringValue: { Length: > 0 } } => parameter.Default.EnumValue.StringValue,
+            _ => null
+        };
+
+        return (defaultValuePresent, defaultValue);
+    }
+}

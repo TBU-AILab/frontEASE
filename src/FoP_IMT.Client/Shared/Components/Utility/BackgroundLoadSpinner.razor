@@ -1,0 +1,11 @@
+﻿<Div Class="background-load-spinner-overlay" TextAlignment="TextAlignment.End" TextColor="@(TextColor ?? TextColor.White)">
+    <Span Class="spinner-border" role="status" aria-hidden="true"></Span>
+</Div>
+
+@code {
+    [Parameter]
+    public TextColor? TextColor { get; set; }
+
+    [Parameter]
+    public IFluentTextSize? TextSize { get; set; }
+}

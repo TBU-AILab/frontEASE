@@ -1,0 +1,13 @@
+﻿namespace FoP_IMT.Shared.Data.Enums.Shared.Resources
+{
+    /// <summary>
+    /// Language code
+    /// </summary>
+    public enum LanguageCode
+    {
+        /// <summary>
+        /// English (EN)
+        /// </summary>
+        EN = 1
+    }
+}

@@ -1,0 +1,92 @@
+﻿@inject IResourceHandler resourceHandler
+@inject ITypelistApiService typelistApiService
+@inject IManagementApiService managementApiService
+@inject IUIService uiService
+@inject IMapper mapper
+
+<FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<UserPreferenceTokenOptionDto>()))" />
+<Divider Class="divider-main" Background="Background.Primary" Shadow="Shadow.Small" />
+
+@if (!isInitialized)
+{
+    <ContentLoadSpinner />
+}
+<Row Margin="Margin.Is2.FromTop">
+    @if (Options.TokenOptions.Any())
+    {
+        @foreach (var Token in Options.TokenOptions.OrderBy(x => x.Priority))
+        {
+            <CascadingValue Value="Token">
+                <TokenListItem />
+            </CascadingValue>
+        }
+    }
+    else
+    {
+        <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+            <Heading Size="HeadingSize.Is4" TextColor="TextColor.Dark" TextWeight="TextWeight.Bold">
+                @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(UserPreferenceTokenOptionDto)}.{UIElementConstants.Collection}"))
+            </Heading>
+        </Column>
+    }
+</Row>
+
+@code {
+    [CascadingParameter]
+    public UserPreferencesDto Options { get; set; } = new();
+
+    [CascadingParameter]
+    public IList<TaskModuleNoValidationDto> ConnectorTypes { get; set; } = [];
+
+    private bool isTypelistsLoading = false;
+    private bool isPreferencesLoading = false;
+    private bool isInitialized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        if (!isInitialized)
+        {
+            var loadTypelistsTask = Task.CompletedTask;
+            var loadPreferencesTask = Task.CompletedTask;
+
+            if (!(ConnectorTypes?.Any() == true)){
+                isTypelistsLoading = true;
+                loadTypelistsTask = LoadTypelists();
+            }
+
+            isPreferencesLoading = true;
+            loadPreferencesTask = LoadPreferences();
+
+            await Task.WhenAll(loadTypelistsTask, loadPreferencesTask);
+            isTypelistsLoading = isPreferencesLoading = false;
+        }
+        await base.OnInitializedAsync();
+        isInitialized = true;
+    }
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    private async Task LoadPreferences()
+    {
+        var preferences = await managementApiService.LoadPreferences();
+        if (preferences is not null)
+        {
+            mapper.Map(preferences, Options);
+        }
+    }
+
+    private async Task LoadTypelists()
+    {
+        var connectorTypes = await typelistApiService.LoadTaskModuleOptions();
+        ConnectorTypes.Clear();
+        foreach (var type in connectorTypes)
+        {
+            if (type.PackageType == ModuleType.LLM_CONNECTOR)
+            {
+                ConnectorTypes.Add(type);
+            }
+        }
+    }
+}

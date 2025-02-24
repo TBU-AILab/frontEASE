@@ -1,0 +1,71 @@
+﻿@inject IResourceHandler resourceHandler
+
+<Row>
+
+    <Container Fluid>
+        <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Config), PropertyDisplayResourceType.FIELD)))" />
+    </Container>
+
+    <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
+
+    <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
+
+        <Container Fluid>
+            <Row>
+
+                @if (!string.IsNullOrEmpty(Task.Config.SystemMessage))
+                {
+                    <Column ColumnSize="ColumnSize.Is12.OnWidescreen">
+                        <Text>
+                            @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.FIELD))):
+                        </Text>
+                        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                            @($" \"{Task.Config.SystemMessage}\"")
+                        </Span>
+                    </Column>
+                }
+
+                @if (!string.IsNullOrEmpty(Task.Config.InitMessage))
+                {
+                    <Column ColumnSize="ColumnSize.IsFull">
+                        <Text>
+                            @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.FIELD))):
+                        </Text>
+                        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                            @($" \"{Task.Config.InitMessage}\"")
+                        </Span>
+                    </Column>
+                }
+
+            </Row>
+
+            <TaskConfigRepeatedMessageViewSection />
+
+            <Row>
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD))):
+                    </Text>
+                    <Span TextWeight="TextWeight.Bold">
+                        @($" {Task.Config.MaxContextSize}")
+                    </Span>
+                </Column>
+
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.FeedbackFromSolution), PropertyDisplayResourceType.FIELD))):
+                    </Text>
+                    <Span TextWeight="TextWeight.Bold">
+                        @($" {(Task.Config.FeedbackFromSolution ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))}")
+                    </Span>
+                </Column>
+
+            </Row>
+        </Container>
+    </Column>
+</Row>
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+}

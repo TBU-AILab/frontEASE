@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: root
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - fop-imt-network
+
+  dotnet-server:
+    build:
+      context: .
+      dockerfile: prod.Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    networks:
+      - fop-imt-network
+    environment:
+      - SEED_DB=false
+
+  backend-core:
+    build:
+      context: ./src/FoP_IMT.Core
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/FoP_IMT.Core:/app
+    ports:
+      - "8086:8086"
+    networks:
+      - fop-imt-network
+
+volumes:
+  postgres_data:
+
+networks:
+  fop-imt-network:
+    driver: bridge
