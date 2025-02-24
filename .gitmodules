@@ -1,0 +1,3 @@
+[submodule "src/FoP_IMT.Core"]
+	path = src/FoP_IMT.Core
+	url = https://github.com/TBU-AILab/EASE.git
