@@ -22,7 +22,7 @@ services:
     networks:
       - fop-imt-network
     environment:
-      - SEED_DB=false
+      - SEED_DB=true
 
   backend-core:
     build:
