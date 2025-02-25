@@ -33,6 +33,11 @@
         /// <summary>
         /// Enum
         /// </summary>
-        ENUM
+        ENUM,
+
+        /// <summary>
+        /// Markdown
+        /// </summary>
+        MARKDOWN
     }
 }

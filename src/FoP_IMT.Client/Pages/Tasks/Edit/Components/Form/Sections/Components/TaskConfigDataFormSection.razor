@@ -28,42 +28,72 @@
                     </TextEdit>
                 </Field>
             </Validation>
-
-            <Validation>
-                <Field ColumnSize="ColumnSize.Is6.OnWidescreen">
-                    <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.SystemMessage)))" RequiredIndicator>
-                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.FIELD)))
-                    </FieldLabel>
-                    <MemoEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.SystemMessage)))"
-                              Disabled="@(TaskMetadata.InitializationInProgres)"
-                              AutoSize="false" Rows="5"
-                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
-                              @bind-Text="@Task.Config.SystemMessage">
-                        <Feedback>
-                            <ValidationError Multiline="true" />
-                        </Feedback>
-                    </MemoEdit>
-                </Field>
-            </Validation>
-
-            <Validation>
-                <Field ColumnSize="ColumnSize.Is6.OnWidescreen">
-                    <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.InitMessage)))" RequiredIndicator>
-                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.FIELD)))
-                    </FieldLabel>
-                    <MemoEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.InitMessage)))"
-                              Disabled="@(TaskMetadata.InitializationInProgres)"
-                              AutoSize="false" Rows="5"
-                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
-                              @bind-Text="@Task.Config.InitMessage">
-                        <Feedback>
-                            <ValidationError Multiline="true" />
-                        </Feedback>
-                    </MemoEdit>
-                </Field>
-            </Validation>
         </Fields>
 
+        <Container Fluid Border="Border.Is1.Rounded" Shadow="Shadow.Small" Margin="Margin.Is3.FromTop.Is2.FromBottom" Padding="Padding.Is2.FromBottom.Is3.FromTop">
+            <Row>
+                <Column ColumnSize="ColumnSize.Is6.OnWidescreen">
+                    <Fields>
+                        <Field ColumnSize="ColumnSize.IsFull">
+                            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.SystemMessage)))" RequiredIndicator>
+                                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.FIELD)))
+                            </FieldLabel>
+
+                            @if (!TaskMetadata.InitializationInProgres)
+                            {
+                                <Markdown Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                          UploadImage="false"
+                                          @bind-Value="@Task.Config.SystemMessage" />
+                            }
+                        </Field>
+
+                        <Validation>
+                            <Field ColumnSize="ColumnSize.IsFull" Class="input-validation-only">
+                                <MemoEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.SystemMessage)))"
+                                          ReadOnly="true"
+                                          Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                          @bind-Text="@Task.Config.SystemMessage">
+                                    <Feedback>
+                                        <ValidationError Multiline="true" />
+                                    </Feedback>
+                                </MemoEdit>
+                            </Field>
+                        </Validation>
+
+
+                    </Fields>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is6.OnWidescreen">
+                    <Fields>
+                        <Field ColumnSize="ColumnSize.IsFull">
+                            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.InitMessage)))" RequiredIndicator>
+                                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.FIELD)))
+                            </FieldLabel>
+
+                            @if (!TaskMetadata.InitializationInProgres)
+                            {
+                                <Markdown Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                          UploadImage="false"
+                                          @bind-Value="@Task.Config.InitMessage" />
+                            }
+                        </Field>
+
+                        <Validation>
+                            <Field ColumnSize="ColumnSize.IsFull" Class="input-validation-only">
+                                <MemoEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.InitMessage)))"
+                                          ReadOnly="true"
+                                          Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                          @bind-Text="@Task.Config.InitMessage">
+                                    <Feedback>
+                                        <ValidationError Multiline="true" />
+                                    </Feedback>
+                                </MemoEdit>
+                            </Field>
+                        </Validation>
+                    </Fields>
+                </Column>
+            </Row>
+        </Container>
 
         <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
             <Container Fluid>

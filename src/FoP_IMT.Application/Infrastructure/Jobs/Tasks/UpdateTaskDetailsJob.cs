@@ -42,47 +42,50 @@ namespace FoP_IMT.Application.Infrastructure.Jobs.Tasks
             try
             {
                 var newTaskData = await _taskCoreService.GetTaskRunData(lastExecution);
-                context.WriteLine($"Checking messages, runs, solutions for: {newTaskData.Count} items.");
-
-                var taskIDs = newTaskData.Select(x => x.Key);
-
-                var query = new TasksQuery()
+                if (newTaskData.Any())
                 {
-                    LoadSolutions = true,
-                    LoadMessages = true
-                };
+                    context.WriteLine($"Checking messages, runs, solutions for: {newTaskData.Count} items.");
 
-                var tasks = await _taskRepository.LoadAllWhere(x => !x.IsDeleted && taskIDs.Contains(x.ID), query);
+                    var taskIDs = newTaskData.Select(x => x.Key);
 
-                foreach (var newTaskInfo in newTaskData)
-                {
-                    var matchingTask = tasks.SingleOrDefault(x => x.ID == newTaskInfo.Key);
-                    if (matchingTask is not null)
+                    var query = new TasksQuery()
                     {
-                        var messages = _mapper.Map<IList<TaskMessage>>(newTaskInfo.Value.Messages);
-                        var solutions = _mapper.Map<IList<TaskSolution>>(newTaskInfo.Value.Solutions);
+                        LoadSolutions = true,
+                        LoadMessages = true
+                    };
 
-                        context.WriteLine($"Task {matchingTask.ID} - Messages: {messages.Count} | Solutions: {solutions.Count}.");
-                        foreach (var message in messages)
+                    var tasks = await _taskRepository.LoadAllWhere(x => !x.IsDeleted && taskIDs.Contains(x.ID), query);
+
+                    foreach (var newTaskInfo in newTaskData)
+                    {
+                        var matchingTask = tasks.SingleOrDefault(x => x.ID == newTaskInfo.Key);
+                        if (matchingTask is not null)
                         {
-                            var messageIDs = matchingTask.Messages.Select(x => x.ID);
-                            if (!messageIDs.Contains(message.ID))
+                            var messages = _mapper.Map<IList<TaskMessage>>(newTaskInfo.Value.Messages);
+                            var solutions = _mapper.Map<IList<TaskSolution>>(newTaskInfo.Value.Solutions);
+
+                            context.WriteLine($"Task {matchingTask.ID} - Messages: {messages.Count} | Solutions: {solutions.Count}.");
+                            foreach (var message in messages)
                             {
-                                matchingTask.Messages.Add(message);
+                                var messageIDs = matchingTask.Messages.Select(x => x.ID);
+                                if (!messageIDs.Contains(message.ID))
+                                {
+                                    matchingTask.Messages.Add(message);
+                                }
                             }
-                        }
-                        foreach (var solution in solutions)
-                        {
-                            var solutionIDs = matchingTask.Solutions.Select(x => x.ID);
-                            if (!solutionIDs.Contains(solution.ID))
+                            foreach (var solution in solutions)
                             {
-                                matchingTask.Solutions.Add(solution);
+                                var solutionIDs = matchingTask.Solutions.Select(x => x.ID);
+                                if (!solutionIDs.Contains(solution.ID))
+                                {
+                                    matchingTask.Solutions.Add(solution);
+                                }
                             }
                         }
                     }
+                    await _taskRepository.SaveChangesAsync();
                 }
-                await _taskRepository.SaveChangesAsync();
-
+                
                 context.WriteLine($"{nameof(UpdateTaskDetailsJob)} SUCCESS.");
                 SentrySdk.CaptureCheckIn(_jobName, CheckInStatus.Ok, checkID);
             }

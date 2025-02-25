@@ -458,6 +458,10 @@ a, .btn-link {
     display: inline-block;
 }
 
+.input-validation-only > :not(.invalid-feedback) {
+    display: none;
+}
+
 /* NAVIGATION */
 .navbar-brand {
     display: flex;
@@ -466,7 +470,6 @@ a, .btn-link {
     height: 100%;
     padding: 0;
 }
-
 
 .navbar-logo-image {
     height: 4rem;
