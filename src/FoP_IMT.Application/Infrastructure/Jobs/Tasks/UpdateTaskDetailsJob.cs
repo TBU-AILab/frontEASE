@@ -63,21 +63,23 @@ namespace FoP_IMT.Application.Infrastructure.Jobs.Tasks
                         {
                             var messages = _mapper.Map<IList<TaskMessage>>(newTaskInfo.Value.Messages);
                             var solutions = _mapper.Map<IList<TaskSolution>>(newTaskInfo.Value.Solutions);
-
                             context.WriteLine($"Task {matchingTask.ID} - Messages: {messages.Count} | Solutions: {solutions.Count}.");
+
                             foreach (var message in messages)
                             {
-                                var messageIDs = matchingTask.Messages.Select(x => x.ID);
-                                if (!messageIDs.Contains(message.ID))
+                                if (!matchingTask.Messages.Any(x => x.ID == message.ID))
                                 {
+                                    message.TaskID = matchingTask.ID;
+                                    message.Task = matchingTask;
                                     matchingTask.Messages.Add(message);
                                 }
                             }
                             foreach (var solution in solutions)
                             {
-                                var solutionIDs = matchingTask.Solutions.Select(x => x.ID);
-                                if (!solutionIDs.Contains(solution.ID))
+                                if (!matchingTask.Solutions.Any(x => x.ID == solution.ID))
                                 {
+                                    solution.TaskID = matchingTask.ID;
+                                    solution.Task = matchingTask;
                                     matchingTask.Solutions.Add(solution);
                                 }
                             }

@@ -4,9 +4,14 @@
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
 
-<Modal @ref="@Modal" @bind-Visible="@isModalVisible" Class="modal-dialog-extrawide" Border="Border.Rounded">
+<Modal @ref="@Modal" @bind-Visible="@isModalVisible" Closing="OnModalClosing" Class="modal-dialog-extrawide" Border="Border.Rounded">
     @if (isModalVisible)
     {
+        @if (TaskMetadata.ReloadInProgress)
+        {
+            <BackgroundLoadSpinner TextColor="TextColor.White" TextSize="TextSize.Large" />
+        }
+
         <ModalContent Centered Shadow="Shadow.Small">
             @if (isTaskLoading)
             {
@@ -15,29 +20,31 @@
             else
             {
                 <CascadingValue Value="Task">
-                    <CascadingValue Value="Modal">
+                    <CascadingValue Value="TaskMetadata">
+                        <CascadingValue Value="Modal">
 
-                        <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}")} - {Task.Config.Name}")" />
+                            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}")} - {Task.Config.Name}")" />
 
-                        <ModalBody Padding="Padding.Is0">
-                            <Container Fluid Height="Height.Is100">
-                                <Row Height="Height.Is100">
-                                    <Column ColumnSize="ColumnSize.Is3.OnWidescreen" TextAlignment="TextAlignment.Start" Class="overview-dialog-column" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnEnd">
-                                        <TaskSubitemsDataViewSection />
-                                    </Column>
-                                    <Column ColumnSize="ColumnSize.Is6.OnWidescreen" Class="overview-dialog-column" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnStart.Is1.OnEnd">
-                                        <TaskMessagesViewSection />
-                                    </Column>
-                                    <Column ColumnSize="ColumnSize.Is3.OnWidescreen" TextAlignment="TextAlignment.Start" Class="overview-dialog-column" Height="Height.Is100" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnStart">
-                                        <TaskInfoDataViewSection />
-                                    </Column>
-                                </Row>
+                            <ModalBody Padding="Padding.Is0">
+                                <Container Fluid Height="Height.Is100">
+                                    <Row Height="Height.Is100">
+                                        <Column ColumnSize="ColumnSize.Is3.OnWidescreen" TextAlignment="TextAlignment.Start" Class="overview-dialog-column" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnEnd">
+                                            <TaskSubitemsDataViewSection />
+                                        </Column>
+                                        <Column ColumnSize="ColumnSize.Is6.OnWidescreen" Class="overview-dialog-column" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnStart.Is1.OnEnd">
+                                            <TaskMessagesViewSection />
+                                        </Column>
+                                        <Column ColumnSize="ColumnSize.Is3.OnWidescreen" TextAlignment="TextAlignment.Start" Class="overview-dialog-column" Height="Height.Is100" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnStart">
+                                            <TaskInfoDataViewSection />
+                                        </Column>
+                                    </Row>
 
-                            </Container>
-                        </ModalBody>
+                                </Container>
+                            </ModalBody>
 
-                        <TaskOverviewModalFooter />
+                            <TaskOverviewModalFooter />
 
+                        </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
             }
@@ -55,9 +62,28 @@
 
     private bool isTaskLoading = false;
     private bool isModalVisible = false;
+    private CancellationTokenSource? cancellationTokenSource;
 
-    private TaskDto Task = new();
-    private Modal Modal = new();
+    private TaskDto Task;
+    private Modal Modal;
+    private TaskViewMetadataDto TaskMetadata;
+
+    public TaskOverviewModal()
+    {
+        Task = new();
+        TaskMetadata = new(Task);
+
+        Modal = new Modal();
+    }
+
+    private async Task OnModalClosing(ModalClosingEventArgs e)
+    {
+        if (cancellationTokenSource is not null)
+        {
+            await cancellationTokenSource!.CancelAsync();
+        }
+        cancellationTokenSource = new CancellationTokenSource();
+    }
 
     private async Task ModalShow()
     {
@@ -76,25 +102,34 @@
             mapper.Map(opened, Task);
         }
 
-        _ = StartPeriodicTaskInfoRefreshCall();
+        cancellationTokenSource = new CancellationTokenSource();
+        _ = StartPeriodicTaskInfoRefreshCall(cancellationTokenSource.Token);
         isTaskLoading = false;
     }
 
-    private async Task StartPeriodicTaskInfoRefreshCall()
+    private async Task StartPeriodicTaskInfoRefreshCall(CancellationToken cancellationToken)
     {
-        await System.Threading.Tasks.Task.Run(async () =>
+        try
         {
-            while (true)
+            while (!cancellationToken.IsCancellationRequested)
             {
+                TaskMetadata.ReloadInProgress = true;
+                uiService.CallRequestRefresh();
+
                 var taskInfoNew = await taskApiService.LoadTask(TaskInfo.ID);
                 if (taskInfoNew is not null)
                 {
                     mapper.Map(taskInfoNew, Task);
-                    uiService.CallRequestRefresh();
                 }
 
-                await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5));
+                TaskMetadata.ReloadInProgress = false;
+                uiService.CallRequestRefresh();
+                await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
             }
-        });
+        }
+        catch (TaskCanceledException ex)
+        {
+            await Console.Out.WriteLineAsync(ex.Message);
+        }
     }
 }

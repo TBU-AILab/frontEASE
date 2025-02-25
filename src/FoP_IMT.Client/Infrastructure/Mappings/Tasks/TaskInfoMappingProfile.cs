@@ -19,7 +19,7 @@ namespace FoP_IMT.Client.Infrastructure.Mappings.Tasks
             CreateMap<TaskDto, TaskInfoDto>()
                 .ForMember(x => x.Name, cd => cd.MapFrom(map => map.Config.Name))
                 .ForMember(x => x.Author, cd => cd.MapFrom(map => map.Author))
-                .ForMember(x => x.Model, cd => cd.MapFrom(map => map.Config.Connector.ShortName))
+                .ForMember(x => x.ConnectorType, cd => cd.MapFrom(map => map.Config.Connector.ShortName))
                 .ForMember(x => x.SolutionType, cd => cd.MapFrom(map => map.Config.Solution.ShortName));
 
         }

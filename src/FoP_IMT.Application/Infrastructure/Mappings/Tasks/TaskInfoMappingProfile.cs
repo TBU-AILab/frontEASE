@@ -15,7 +15,7 @@ namespace FoP_IMT.Application.Infrastructure.Mappings.Tasks
         {
             CreateMap<Domain.Entities.Tasks.Task, TaskInfoDto>()
                 .ForMember(x => x.Name, cd => cd.MapFrom(map => map.Config.Name))
-                .ForMember(x => x.Model, cd => cd.MapFrom(map =>
+                .ForMember(x => x.ConnectorType, cd => cd.MapFrom(map =>
                     map.Config.Modules != null && map.Config.Modules.Any(m => m.PackageType == ModuleType.LLM_CONNECTOR) ?
                     map.Config.Modules.First(m => m.PackageType == ModuleType.LLM_CONNECTOR).ShortName : string.Empty))
                 .ForMember(x => x.SolutionType, cd => cd.MapFrom(map =>

@@ -12,7 +12,7 @@ namespace FoP_IMT.Shared.Data.DTOs.Tasks
         public TaskInfoDto()
         {
             Name = string.Empty;
-            Model = string.Empty;
+            ConnectorType = string.Empty;
             SolutionType = string.Empty;
 
             Author = null!;
@@ -62,8 +62,8 @@ namespace FoP_IMT.Shared.Data.DTOs.Tasks
         /// <summary>
         /// Gets the large language model currently set for this task
         /// </summary>
-        [Resource($"{nameof(TaskInfoDto)}.{nameof(Model)}")]
-        public string Model { get; set; }
+        [Resource($"{nameof(TaskInfoDto)}.{nameof(ConnectorType)}")]
+        public string ConnectorType { get; set; }
 
         /// <summary>
         /// Expected solution format
