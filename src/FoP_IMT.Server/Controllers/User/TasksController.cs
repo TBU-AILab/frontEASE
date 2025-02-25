@@ -1,6 +1,5 @@
 ﻿using FoP_IMT.Application.AppServices.Shared.Resources;
 using FoP_IMT.Application.AppServices.Tasks;
-using FoP_IMT.Domain.Infrastructure.Exceptions;
 using FoP_IMT.Domain.Infrastructure.Settings.App;
 using FoP_IMT.Shared.Data.DTOs.Shared.Exceptions.Statuses;
 using FoP_IMT.Shared.Data.DTOs.Tasks;

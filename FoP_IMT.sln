@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoP_IMT.Domain", "src\FoP_I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoP_IMT.Infrastructure", "src\FoP_IMT.Infrastructure\FoP_IMT.Infrastructure.csproj", "{BBB6D837-F3EA-451C-9DD7-6A48D6EEB45E}"
 EndProject
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "FoP_IMT.Core", "src\FoP_IMT.Core\FoP_IMT.Core.pyproj", "{71C5A09C-24AE-40B0-8D9C-AB00336F2C72}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoP_IMT.DataContracts", "src\FoP_IMT.DataContracts\FoP_IMT.DataContracts.csproj", "{07E4D8CC-5BCC-460C-B95E-1CE40BCE59A0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A21E968E-B60F-4199-869F-55A73B3C4AA6}"

@@ -7,7 +7,7 @@
                 <CardBody Background="Background.Light" Class="throws-shadow" Border="Border.Is1.RoundedBottom.Primary">
                     @if (!string.IsNullOrWhiteSpace(Message.Content))
                     {
-                        @((MarkupString)Markdown.ToHtml(Message.Content))
+                        @((MarkupString)Markdig.Markdown.ToHtml(Message.Content))
                     }
                 </CardBody>
 

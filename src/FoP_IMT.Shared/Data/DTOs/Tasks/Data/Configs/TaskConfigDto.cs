@@ -126,16 +126,15 @@ namespace FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs
         /// Preset - system message (if available)
         /// </summary>
         [Resource($"{nameof(TaskConfigDto)}.{nameof(SystemMessage)}")]
-        [RequiredValidation<TaskConfigDto>]
-        [StringLengthValidation(16, 8192)]
-        public string SystemMessage { get; set; }
+        [StringLengthValidation(0, 8192)]
+        public string? SystemMessage { get; set; }
 
         /// <summary>
         /// Preset - initial user message
         /// </summary>
         [Resource($"{nameof(TaskConfigDto)}.{nameof(InitMessage)}")]
         [RequiredValidation<TaskConfigDto>]
-        [StringLengthValidation(16, 8192)]
+        [StringLengthValidation(4, 8192)]
         public string InitMessage { get; set; }
 
         #endregion
