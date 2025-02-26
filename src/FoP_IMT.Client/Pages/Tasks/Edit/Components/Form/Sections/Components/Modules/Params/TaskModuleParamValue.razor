@@ -38,7 +38,7 @@
                     {
                         <Markdown ElementId="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))"
                                   UploadImage="false"
-                                  @bind-Text="@ParamValue.Value!.StringValue"
+                                  @bind-Value="@ParamValue.Value!.StringValue"
                                   Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)" />
                     }
                 </Field>

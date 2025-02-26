@@ -72,7 +72,7 @@
 
                             @if (!TaskMetadata.InitializationInProgres)
                             {
-                                <Markdown Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                <Markdown Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
                                           UploadImage="false"
                                           @bind-Value="@Task.Config.InitMessage" />
                             }

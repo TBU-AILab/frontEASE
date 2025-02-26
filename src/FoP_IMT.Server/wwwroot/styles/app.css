@@ -49,9 +49,11 @@ h1:focus {
     margin-top: 0.5rem;
 }
 
+.EasyMDEContainer{
+    text-align: left;
+}
+
 /* TEMPLATE OPTIONS */
-
-
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
