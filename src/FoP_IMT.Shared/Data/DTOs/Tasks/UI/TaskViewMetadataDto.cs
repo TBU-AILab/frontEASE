@@ -59,6 +59,7 @@ namespace FoP_IMT.Shared.Data.DTOs.Tasks.UI
         public TaskDto TaskReference { get; set; }
         public TaskStateInfoDto TaskState { get; set; }
         public bool InitializationInProgres { get; set; }
+        public bool ReloadInProgress { get; set; }
 
         public TaskViewMetadataDto(TaskDto taskReference)
         {

@@ -43,6 +43,12 @@
                     </Label>
                     break;
 
+                case ParameterType.MARKDOWN:
+                    <Label TextWeight="TextWeight.Normal" Class="fst-italic">
+                        @((MarkupString)Markdig.Markdown.ToHtml(ParamOption.Default?.StringValue?.ToString() ?? notAvailableResource))
+                    </Label>
+                    break;
+
                 case ParameterType.ENUM:
                     @if (ParamOption.EnumOptions?.Any() == true)
                     {

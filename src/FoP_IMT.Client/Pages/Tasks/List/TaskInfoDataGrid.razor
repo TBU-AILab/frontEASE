@@ -39,9 +39,9 @@
                 </DisplayTemplate>
             </DataGridColumn>
 
-            <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.Model)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Model), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+            <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.ConnectorType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FIELD)))" Sortable="true">
                 <DisplayTemplate>
-                    @(GetModuleLongName(context.Model, ModuleType.LLM_CONNECTOR) ?? context.Model)
+                    @(GetModuleLongName(context.ConnectorType, ModuleType.LLM_CONNECTOR) ?? context.ConnectorType)
                 </DisplayTemplate>
             </DataGridColumn>
 

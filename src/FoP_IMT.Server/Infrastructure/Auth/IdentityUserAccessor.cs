@@ -21,7 +21,7 @@ namespace FoP_IMT.Server.Infrastructure.Auth
             }
             catch(Exception ex)
             {
-                Console.WriteLine(ex);
+                await Console.Out.WriteLineAsync(ex.Message);
             }
             return null!;
         }

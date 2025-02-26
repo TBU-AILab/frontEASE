@@ -30,6 +30,12 @@
                 </Span>
                 break;
 
+            case ParameterType.MARKDOWN:
+                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                    @($" {(MarkupString)Markdig.Markdown.ToHtml(ParamValue.Value!.StringValue ?? string.Empty)}")
+                </Span>
+                break;
+
             case ParameterType.INT:
                 <Span TextWeight="TextWeight.Bold" Class="fst-italic">
                     @($" {ParamValue.Value!.IntValue}")
