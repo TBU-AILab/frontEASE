@@ -19,6 +19,11 @@ namespace FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters
         public string Name { get; set; }
 
         /// <summary>
+        /// Is parameter required
+        /// </summary>
+        public bool Required { get; set; }
+
+        /// <summary>
         /// Parameter is readonly
         /// </summary>
         public bool Readonly { get; set; }

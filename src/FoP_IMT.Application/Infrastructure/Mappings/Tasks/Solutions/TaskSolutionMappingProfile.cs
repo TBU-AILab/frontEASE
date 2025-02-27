@@ -22,6 +22,7 @@ namespace FoP_IMT.Application.Infrastructure.Mappings.Tasks.Solutions
             CreateMap<TaskSolution, TaskSolution>()
                 .ForMember(x => x.ID, opt => opt.Ignore())
                 .ForMember(x => x.TaskID, opt => opt.Ignore())
+                .ForMember(x => x.TaskMessageID, opt => opt.Ignore())
 
                 .ForMember(x => x.Task, opt => opt.Ignore())
                 .ForMember(x => x.TaskMessage, opt => opt.Ignore())

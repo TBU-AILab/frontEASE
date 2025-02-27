@@ -13,6 +13,15 @@ namespace FoP_IMT.Shared.Data.DTOs.Tasks.Data.Messages
             Content = string.Empty;
         }
 
+        #region Navigation
+
+        /// <summary>
+        /// Message identifier
+        /// </summary>
+        public Guid ID { get; set; }
+
+        #endregion
+
         #region Data
 
         /// <summary>

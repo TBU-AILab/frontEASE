@@ -36,7 +36,7 @@ namespace FoP_IMT.Shared.Services.Resources
         public string GetValidationResource(string key, IEnumerable<string>? arguments)
         {
             var message = GetResource(key);
-            if (arguments != null && arguments.Any())
+            if (arguments is not null && arguments.Any())
             {
                 message = string.Format(CultureInfo.InvariantCulture, message, arguments.ToArray());
             }

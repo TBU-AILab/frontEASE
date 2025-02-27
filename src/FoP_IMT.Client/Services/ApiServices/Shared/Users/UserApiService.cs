@@ -2,6 +2,7 @@
 using FoP_IMT.Client.Services.HelperServices.ErrorHandling;
 using FoP_IMT.Client.Services.ModelManipulationServices.User;
 using FoP_IMT.Shared.Data.DTOs.Shared.Users;
+using FoP_IMT.Shared.Data.DTOs.Tasks;
 using FoP_IMT.Shared.Infrastructure.Constants.Controllers;
 using FoP_IMT.Shared.Infrastructure.Constants.Controllers.Specific;
 using System.Net;
@@ -27,12 +28,15 @@ namespace FoP_IMT.Client.Services.ApiServices.Shared.Users
         {
             var url = $"{UsersControllerConstants.BaseUrl}/{ControllerConstants.All}";
             var response = await _client.GetAsync(url);
-            if (response.StatusCode != HttpStatusCode.OK)
+            var expectedCodes = new List<HttpStatusCode>() { HttpStatusCode.OK, HttpStatusCode.NotFound };
+
+            if (!expectedCodes.Contains(response.StatusCode))
             {
                 await _errorHandlingService.HandleErrorResponse(response);
                 return [];
             }
-            return (await response.Content.ReadFromJsonAsync<IList<ApplicationUserDto>>())!;
+
+            return response.StatusCode == HttpStatusCode.NotFound ? [] : (await response.Content.ReadFromJsonAsync<IList<ApplicationUserDto>>())!;
         }
 
         public async Task<ApplicationUserDto?> AddUser(ApplicationUserDto addUserDto)

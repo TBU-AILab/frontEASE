@@ -46,5 +46,8 @@ namespace FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Options.V
 
         [JsonPropertyName("readonly")]
         public bool? Readonly { get; set; }
+
+        [JsonPropertyName("required")]
+        public bool? Required { get; set; }
     }
 }

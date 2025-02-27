@@ -27,12 +27,14 @@ namespace FoP_IMT.Client.Services.ApiServices.Companies
         {
             var url = $"{CompaniesControllerConstants.BaseUrl}/{ControllerConstants.All}";
             var response = await _client.GetAsync(url);
-            if (response.StatusCode != HttpStatusCode.OK)
+            var expectedCodes = new List<HttpStatusCode>() { HttpStatusCode.OK, HttpStatusCode.NotFound };
+
+            if (!expectedCodes.Contains(response.StatusCode))
             {
                 await _errorHandlingService.HandleErrorResponse(response);
                 return [];
             }
-            return (await response.Content.ReadFromJsonAsync<IList<CompanyDto>>())!;
+            return response.StatusCode == HttpStatusCode.NotFound ? [] : (await response.Content.ReadFromJsonAsync<IList<CompanyDto>>())!;
         }
 
         public async Task<CompanyDto?> AddCompany(CompanyDto addCompanyDto)

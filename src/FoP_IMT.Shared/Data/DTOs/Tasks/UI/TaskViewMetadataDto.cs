@@ -60,11 +60,12 @@ namespace FoP_IMT.Shared.Data.DTOs.Tasks.UI
         public TaskStateInfoDto TaskState { get; set; }
         public bool InitializationInProgres { get; set; }
         public bool ReloadInProgress { get; set; }
+        public Guid? SelectedMessageID { get; set; }
 
         public TaskViewMetadataDto(TaskDto taskReference)
         {
-            TaskState = new TaskStateInfoDto();
             TaskReference = taskReference;
+            TaskState = new();
         }
 
         public TaskStateInfoDto ComposeSelectedOptions()

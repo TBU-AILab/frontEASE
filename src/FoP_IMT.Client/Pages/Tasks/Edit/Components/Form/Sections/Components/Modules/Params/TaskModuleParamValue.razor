@@ -14,7 +14,7 @@
 
 @if (parameterType is not null)
 {
-    @if (Module.PackageType == ModuleType.LLM_CONNECTOR && ParamOption.ShortName?.Contains("token") == true)
+    @if (Module.PackageType == ModuleType.LLM_CONNECTOR && ParamOption.ShortName?.Contains(TaskMetadataConstants.Token) == true)
     {
         IsSpecialCaseParam = true;
         <TaskModuleParamValueTokenSelector ParameterName="@parameterName" />
@@ -29,7 +29,7 @@
                 <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
                     @if (!skipLabel)
                     {
-                        <FieldLabel For="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))" RequiredIndicator>
+                        <FieldLabel For="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))" RequiredIndicator="@(ParamOption.Required == true)">
                             @parameterName
                         </FieldLabel>
                     }
@@ -42,20 +42,6 @@
                                   Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)" />
                     }
                 </Field>
-
-                <Validation>
-                    <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)" Class="input-validation-only">
-
-                        <MemoEdit ElementId="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(MemoEdit)}"))"
-                                  Disabled="@(TaskMetadata.InitializationInProgres)"
-                                  @bind-Text="@ParamValue.Value!.StringValue"
-                                  Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)">
-                            <Feedback>
-                                <ValidationError Multiline="true" />
-                            </Feedback>
-                        </MemoEdit>
-                    </Field>
-                </Validation>
                 break;
 
 
@@ -64,7 +50,7 @@
                     <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
                         @if (!skipLabel)
                         {
-                            <FieldLabel For="@(GetElementIdByOperation(ParamValue.Key))" RequiredIndicator>
+                            <FieldLabel For="@(GetElementIdByOperation(ParamValue.Key))" RequiredIndicator="@(ParamOption.Required == true)">
                                 @parameterName
                             </FieldLabel>
                         }
@@ -87,7 +73,7 @@
                     <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
                         @if (!skipLabel)
                         {
-                            <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator>
+                            <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
                                 @parameterName
                             </FieldLabel>
                         }
@@ -112,7 +98,7 @@
                     <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
                         @if (!skipLabel)
                         {
-                            <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator>
+                            <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
                                 @parameterName
                             </FieldLabel>
                         }
@@ -139,7 +125,7 @@
                         <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
                             @if (!skipLabel)
                             {
-                                <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator>
+                                <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
                                     @parameterName
                                 </FieldLabel>
                             }
@@ -191,7 +177,7 @@
                     <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
                         @if (!skipLabel)
                         {
-                            <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator>
+                            <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
                                 @parameterName
                             </FieldLabel>
                         }
@@ -241,6 +227,23 @@
             }
         </Div>
     </Field>
+}
+
+@if (parameterType == ParameterType.MARKDOWN)
+{
+    <Validation>
+        <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)" Class="input-validation-only">
+
+            <MemoEdit ElementId="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(MemoEdit)}"))"
+                      Disabled="@(TaskMetadata.InitializationInProgres)"
+                      @bind-Text="@ParamValue.Value!.StringValue"
+                      Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </MemoEdit>
+        </Field>
+    </Validation>
 }
 
 @code {

@@ -20,6 +20,11 @@ namespace FoP_IMT.Shared.Data.DTOs.Tasks.Data.Solutions
         /// </summary>
         public Guid ID { get; set; }
 
+        /// <summary>
+        /// Bound message identifier
+        /// </summary>
+        public Guid TaskMessageID { get; set; }
+
         #endregion
 
         #region Data

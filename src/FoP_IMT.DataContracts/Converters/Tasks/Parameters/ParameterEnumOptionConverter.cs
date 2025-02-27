@@ -42,7 +42,7 @@ namespace FoP_IMT.DataContracts.Converters.Tasks.Parameters
             {
                 writer.WriteStringValue(value.StringValue);
             }
-            else if (value.ModuleValue != null)
+            else if (value.ModuleValue is not null)
             {
                 JsonSerializer.Serialize(writer, value.ModuleValue, options);
             }

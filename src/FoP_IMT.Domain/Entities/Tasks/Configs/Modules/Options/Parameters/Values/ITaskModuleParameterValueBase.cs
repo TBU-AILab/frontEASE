@@ -1,6 +1,4 @@
-﻿using FoP_IMT.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options;
-
-namespace FoP_IMT.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values
+﻿namespace FoP_IMT.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values
 {
     public interface ITaskModuleParameterValueBase
     {
