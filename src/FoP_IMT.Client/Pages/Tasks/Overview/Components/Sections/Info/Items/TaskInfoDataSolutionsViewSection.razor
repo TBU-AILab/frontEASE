@@ -1,4 +1,5 @@
-﻿@inject IResourceHandler resourceHandler
+﻿@inject IUIService uiService
+@inject IResourceHandler resourceHandler
 @inject IFileApiService fileApiService
 @inject Blazored.Toast.Services.IToastService toastService
 
@@ -17,15 +18,18 @@
             <Container Fluid>
                 <Row>
                     @{
-                        var messageIDs = Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
-                        var solutionsOrdered = Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
-                    }
-                    @foreach (var solution in solutionsOrdered)
-                    {
-                        <Container Fluid
-                                   Border="@(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? Border.Is2.Rounded.Secondary : Border.Is1.Rounded)"
+                    var messageIDs = Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
+                    var solutionsOrdered = Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
+                }
+                @foreach (var solution in solutionsOrdered)
+                {
+                    <Container 
+                Fluid
+                 Border="@(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? Border.Is2.Rounded.Secondary : Border.Is1.Rounded)"
                                    Background="Background.Light"
+                                   @onclick="(() => SelectMessageSolution(solution))"
                                    Shadow="Shadow.Small"
+                                   Class="cursor-pointer"
                                    Margin="Margin.Is2.FromTop">
                             <Row>
 
@@ -104,5 +108,13 @@
         }
 
         solutionDownloadsOngoing.Remove(solution.ID);
+    }
+
+    private void SelectMessageSolution(TaskSolutionDto solution)
+    {
+        TaskMetadata.SelectedMessageID =
+        TaskMetadata.SelectedMessageID == solution.TaskMessageID ? null : solution.TaskMessageID;
+
+        uiService.CallRequestRefresh();
     }
 }
