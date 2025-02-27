@@ -1,4 +1,6 @@
-﻿@inject ITypelistApiService typelistApiService
+﻿@implements IAsyncDisposable
+
+@inject ITypelistApiService typelistApiService
 @inject ITaskApiService taskApiService
 @inject IUserApiService userApiService
 @inject ICompanyApiService companyApiService
@@ -58,6 +60,12 @@
     private bool isCompaniesLoading = false;
     private bool isPreferencesLoading = false;
     private bool isTaskOptionsLoading = false;
+    private CancellationTokenSource cancellationTokenSource;
+
+    public TaskList()
+    {
+        cancellationTokenSource = new();
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -89,22 +97,33 @@
 
         companyManipulationService.SortUsersToCompanies(AvailableUsers!, AvailableCompanies!);
 
-        _ = StartPeriodicTasksStatusCall();
+        _ = StartPeriodicTasksStatusCall(cancellationTokenSource!.Token);
         await base.OnInitializedAsync();
     }
 
-    private async Task StartPeriodicTasksStatusCall()
+    private async Task StartPeriodicTasksStatusCall(CancellationToken cancellationToken)
     {
-        await Task.Run(async () =>
+        try
         {
-            while (true)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 var taskStatuses = await taskApiService.LoadTaskStatuses();
-                taskManipulationService.UpdateTaskStatuses(Tasks, taskStatuses);
+                await InvokeAsync(() =>
+                {
+                    var updateNecessary = taskManipulationService.UpdateTaskStatuses(Tasks, taskStatuses);
+                    if (updateNecessary)
+                    {
+                        uiService.CallRequestRefresh();
+                    }
+                });
 
-                await Task.Delay(TimeSpan.FromSeconds(5));
+                await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken);
             }
-        });
+        }
+        catch (Exception ex)
+        {
+            await Console.Out.WriteLineAsync(ex.Message);
+        }
     }
 
     private async Task LoadTasks()
@@ -158,4 +177,10 @@
 
     private void RefreshView()
     { StateHasChanged(); }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        await cancellationTokenSource.CancelAsync();
+        cancellationTokenSource?.Dispose();
+    }
 }

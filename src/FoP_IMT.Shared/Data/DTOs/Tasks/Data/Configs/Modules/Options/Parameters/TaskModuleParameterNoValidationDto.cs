@@ -24,5 +24,6 @@ namespace FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters
         public IList<TaskModuleParameterEnumOptionNoValidationDto>? EnumOptions { get; set; }
         public TaskModuleParameterValueNoValidationDto? Default { get; set; }
         public bool? Readonly { get; set; }
+        public bool? Required { get; set; }
     }
 }

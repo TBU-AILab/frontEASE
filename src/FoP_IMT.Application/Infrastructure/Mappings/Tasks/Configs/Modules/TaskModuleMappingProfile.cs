@@ -80,7 +80,8 @@ namespace FoP_IMT.Application.Infrastructure.Mappings.Tasks.Configs.Modules
                             EnumLongNames = kvp.Value.EnumLongNames,
                             EnumOptions = kvp.Value.EnumOptions?.Select(opt => context.Mapper.Map<TaskModuleParameterEnumOption>(opt))?.ToList() ?? [],
                             Default = kvp.Value.Default is not null ? context.Mapper.Map<TaskModuleParameterValue>(kvp.Value.Default) : null,
-                            Readonly = kvp.Value.Readonly
+                            Readonly = kvp.Value.Readonly,
+                            Required = kvp.Value.Required
                         }).ToList())
                 );
 
@@ -139,7 +140,7 @@ namespace FoP_IMT.Application.Infrastructure.Mappings.Tasks.Configs.Modules
 
             if (value.EnumValue is not null)
             {
-                if (value.EnumValue.ModuleValue != null)
+                if (value.EnumValue.ModuleValue is not null)
                 { return context.Mapper.Map<TaskModuleInputCoreDto>(value.EnumValue.ModuleValue); }
 
                 if (!string.IsNullOrEmpty(value.EnumValue.StringValue))
@@ -156,7 +157,7 @@ namespace FoP_IMT.Application.Infrastructure.Mappings.Tasks.Configs.Modules
 
             if (value.EnumValue is not null)
             {
-                if (value.EnumValue.ModuleValue != null)
+                if (value.EnumValue.ModuleValue is not null)
                 { return context.Mapper.Map<TaskModuleInputCoreDto>(value.EnumValue.ModuleValue); }
 
                 if (!string.IsNullOrEmpty(value.EnumValue.StringValue))

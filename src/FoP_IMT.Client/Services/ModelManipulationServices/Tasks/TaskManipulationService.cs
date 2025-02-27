@@ -55,16 +55,20 @@ namespace FoP_IMT.Client.Services.ModelManipulationServices.Tasks
             }
         }
 
-        public void UpdateTaskStatuses(IList<TaskInfoDto> tasks, IList<TaskStatusDto> taskStatuses)
+        public bool UpdateTaskStatuses(IList<TaskInfoDto> tasks, IList<TaskStatusDto> taskStatuses)
         {
+            bool updated = false;
             foreach (var task in tasks)
             {
                 var matchingStatus = taskStatuses.FirstOrDefault(status => status.ID == task.ID);
-                if (matchingStatus is not null)
+                if (matchingStatus is not null && task.State != matchingStatus.State)
                 {
                     task.State = matchingStatus.State;
+                    updated = true;
                 }
             }
+
+            return updated;
         }
 
         public void CleanUsersInfo(TaskDto task)

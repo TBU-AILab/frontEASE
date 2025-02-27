@@ -4,7 +4,7 @@
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
 
-<Modal @ref="@Modal" @bind-Visible="@isModalVisible" Closing="OnModalClosing" Class="modal-dialog-extrawide" Border="Border.Rounded">
+<Modal @ref="@Modal" Closing="@OnModalClosing" @bind-Visible="@isModalVisible" Class="modal-dialog-extrawide" Border="Border.Rounded">
     @if (isModalVisible)
     {
         @if (TaskMetadata.ReloadInProgress)
@@ -60,9 +60,9 @@
     [CascadingParameter]
     public TaskInfoDto TaskInfo { get; set; } = new();
 
-    private bool isTaskLoading = false;
-    private bool isModalVisible = false;
-    private CancellationTokenSource? cancellationTokenSource;
+    private bool isTaskLoading;
+    private bool isModalVisible;
+    private CancellationTokenSource cancellationTokenSource;
 
     private TaskDto Task;
     private Modal Modal;
@@ -74,20 +74,22 @@
         TaskMetadata = new(Task);
 
         Modal = new Modal();
+        cancellationTokenSource = new();
     }
 
     private async Task OnModalClosing(ModalClosingEventArgs e)
     {
-        if (cancellationTokenSource is not null)
-        {
-            await cancellationTokenSource!.CancelAsync();
-        }
-        cancellationTokenSource = new CancellationTokenSource();
+        await cancellationTokenSource.CancelAsync();
+        cancellationTokenSource?.Dispose();
+
+        TaskMetadata.SelectedMessageID = null;
+        isModalVisible = false;
     }
 
     private async Task ModalShow()
     {
         isModalVisible = true;
+        cancellationTokenSource = new();
         await Modal.Show();
     }
 
@@ -102,7 +104,6 @@
             mapper.Map(opened, Task);
         }
 
-        cancellationTokenSource = new CancellationTokenSource();
         _ = StartPeriodicTaskInfoRefreshCall(cancellationTokenSource.Token);
         isTaskLoading = false;
     }
@@ -113,21 +114,24 @@
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                TaskMetadata.ReloadInProgress = true;
-                uiService.CallRequestRefresh();
-
-                var taskInfoNew = await taskApiService.LoadTask(TaskInfo.ID);
-                if (taskInfoNew is not null)
+                if (Task.State == TaskState.RUN)
                 {
-                    mapper.Map(taskInfoNew, Task);
-                }
+                    TaskMetadata.ReloadInProgress = true;
+                    uiService.CallRequestRefresh();
 
-                TaskMetadata.ReloadInProgress = false;
-                uiService.CallRequestRefresh();
-                await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+                    var taskInfoNew = await taskApiService.LoadTask(TaskInfo.ID);
+                    if (taskInfoNew is not null)
+                    {
+                        mapper.Map(taskInfoNew, Task);
+                    }
+
+                    TaskMetadata.ReloadInProgress = false;
+                    uiService.CallRequestRefresh();
+                }
+                await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
             }
         }
-        catch (TaskCanceledException ex)
+        catch (Exception ex)
         {
             await Console.Out.WriteLineAsync(ex.Message);
         }

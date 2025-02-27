@@ -35,7 +35,7 @@
                 <Column ColumnSize="ColumnSize.Is6.OnWidescreen">
                     <Fields>
                         <Field ColumnSize="ColumnSize.IsFull">
-                            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.SystemMessage)))" RequiredIndicator>
+                            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.SystemMessage)))">
                                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.FIELD)))
                             </FieldLabel>
 

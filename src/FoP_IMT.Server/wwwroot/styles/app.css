@@ -655,21 +655,3 @@ a, .btn-link {
         box-shadow: 0 0 6px var(--b-theme-warning), 0 0 10px var(--b-theme-warning);
     }
 }
-
-
-.field-radius-red {
-    border: 1px solid var(--b-theme-danger);
-    padding: 2px;
-    position: relative;
-    animation: subtleGlowPulseRed 2s infinite alternate;
-}
-
-@keyframes subtleGlowPulseRed {
-    0% {
-        box-shadow: 0 0 3px var(--b-theme-danger), 0 0 6px var(--b-theme-danger);
-    }
-
-    100% {
-        box-shadow: 0 0 6px var(--b-theme-danger), 0 0 10px var(--b-theme-danger);
-    }
-}

@@ -16,7 +16,7 @@ namespace FoP_IMT.Client.Services.ModelManipulationServices.Tasks
         void RemoveModule(IList<TaskModuleDto> modules, TaskModuleDto item);
         void SwapSelectedModule(TaskModuleNoValidationDto? source, TaskModuleDto destination);
 
-        void UpdateTaskStatuses(IList<TaskInfoDto> tasks, IList<TaskStatusDto> taskStatuses);
+        bool UpdateTaskStatuses(IList<TaskInfoDto> tasks, IList<TaskStatusDto> taskStatuses);
 
         void CleanUsersInfo(TaskDto task);
         void CleanCompaniesInfo(TaskDto task);

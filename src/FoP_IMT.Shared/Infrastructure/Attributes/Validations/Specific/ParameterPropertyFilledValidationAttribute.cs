@@ -15,7 +15,7 @@ namespace FoP_IMT.Shared.Infrastructure.Attributes.Validations.Specific
                 return new ValidationResult("Invalid object type for validation.");
             }
 
-            if (dto.Metadata?.Readonly == true)
+            if (dto.Metadata?.Readonly == true || dto.Metadata?.Required != true)
             { return ValidationResult.Success!; }
 
             var properties = new Dictionary<string, object?>

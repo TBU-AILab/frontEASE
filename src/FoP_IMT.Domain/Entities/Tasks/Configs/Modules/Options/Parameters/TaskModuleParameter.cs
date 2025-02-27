@@ -34,6 +34,7 @@ namespace FoP_IMT.Domain.Entities.Tasks.Configs.Modules.Options.Parameters
         public IList<string>? EnumDescriptions { get; set; }
         public IList<string>? EnumLongNames { get; set; }
         public bool? Readonly { get; set; }
+        public bool? Required { get; set; }
 
         #endregion
     }

@@ -1,6 +1,6 @@
 ﻿@inject IResourceHandler resourceHandler
 
-<CardHeader Border="Border.Is0" Background="Background.Primary" TextColor="TextColor.White">
+<CardHeader Border="Border.Is0" Background="@(TaskMetadata.SelectedMessageID == Message.ID ? Background.Secondary : Background.Primary)" TextColor="TextColor.White">
     <Container Fluid>
         <Row>
             <Column Padding="Padding.Is0" ColumnSize="ColumnSize.Is6.OnTablet" TextAlignment="TextAlignment.Start">
@@ -33,4 +33,7 @@
 @code {
     [CascadingParameter]
     public TaskMessageDto Message { get; set; } = null!;
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
 }

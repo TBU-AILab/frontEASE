@@ -30,10 +30,10 @@
                                     <Row>
                                         <Column ColumnSize="ColumnSize.IsFull">
                                             <Validations @ref="Validations"
-                                                         Mode="ValidationMode.Auto"
-                                                         ValidateOnLoad="false"
-                                                         EditContext="EditContext"
-                                                         HandlerType="ValidationHandlerType.DataAnnotation">
+                                            Mode="ValidationMode.Auto"
+                                            ValidateOnLoad="false"
+                                            EditContext="EditContext"
+                                            HandlerType="ValidationHandlerType.DataAnnotation">
                                                 <CascadingValue Value="Validations">
                                                     <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
                                                         <TaskSubitemsDataFormSection />
@@ -70,7 +70,7 @@
 
     private bool isTaskLoading = false;
     private bool isModalVisible = false;
-    private CancellationTokenSource? cancellationTokenSource;
+    private CancellationTokenSource cancellationTokenSource;
 
     private TaskDto Task;
     private TaskViewMetadataDto TaskMetadata;
@@ -85,17 +85,20 @@
         TaskMetadata = new(Task);
 
         Modal = new Modal();
+        cancellationTokenSource = new();
         Validations = new Validations();
     }
 
-    private Task OnModalClosing(ModalClosingEventArgs e)
+    private async Task OnModalClosing(ModalClosingEventArgs e)
     {
         e.Cancel = e.CloseReason != CloseReason.UserClosing;
         if (!e.Cancel)
         {
             isModalVisible = false;
         }
-        return System.Threading.Tasks.Task.CompletedTask;
+
+        await cancellationTokenSource.CancelAsync();
+        cancellationTokenSource?.Dispose();
     }
 
     protected override async Task OnInitializedAsync()
@@ -148,6 +151,7 @@
     private Task ModalShow()
     {
         isModalVisible = true;
+        cancellationTokenSource = new();
         return Modal.Show();
     }
 

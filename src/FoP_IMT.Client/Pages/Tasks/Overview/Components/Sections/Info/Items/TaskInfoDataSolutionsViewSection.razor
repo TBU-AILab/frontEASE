@@ -16,9 +16,17 @@
 
             <Container Fluid>
                 <Row>
-                    @foreach (var solution in Task.Solutions)
+                    @{
+                        var messageIDs = Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
+                        var solutionsOrdered = Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
+                    }
+                    @foreach (var solution in solutionsOrdered)
                     {
-                        <Container Fluid Border="Border.Is1.Rounded" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop">
+                        <Container Fluid
+                                   Border="@(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? Border.Is2.Rounded.Secondary : Border.Is1.Rounded)"
+                                   Background="Background.Light"
+                                   Shadow="Shadow.Small"
+                                   Margin="Margin.Is2.FromTop">
                             <Row>
 
                                 <Column ColumnSize="ColumnSize.IsFull">
@@ -77,6 +85,9 @@
 @code {
     [CascadingParameter]
     public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
 
     private IList<Guid> solutionDownloadsOngoing = [];
 
