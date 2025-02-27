@@ -49,15 +49,15 @@ namespace FoP_IMT.Application.Infrastructure.Jobs.Tasks
                     var stateResults = await _taskCoreService.GetTaskStates();
                     foreach (var taskStateInfo in stateResults)
                     {
-                        var matchingTask = tasks.SingleOrDefault(x => x.ID == taskStateInfo.Key);
+                        var matchingTask = tasks.SingleOrDefault(x => x.ID == taskStateInfo.ID);
                         if (matchingTask is not null)
                         {
                             context.WriteLine($"Mapping state for task: {matchingTask.ID}.");
-                            _mapper.Map(taskStateInfo.Value, matchingTask);
+                            _mapper.Map(taskStateInfo, matchingTask);
 
-                            if (matchingTask.State != taskStateInfo.Value.State)
+                            if (matchingTask.State != taskStateInfo.State)
                             {
-                                context.WriteLine($"Task {matchingTask.ID} - Change state: {matchingTask.State} --> {taskStateInfo.Value}.");
+                                context.WriteLine($"Task {matchingTask.ID} - Change state: {matchingTask.State} --> {taskStateInfo.State}.");
                             }
                         }
                     }

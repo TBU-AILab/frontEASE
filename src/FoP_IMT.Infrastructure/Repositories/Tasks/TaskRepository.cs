@@ -69,6 +69,8 @@ namespace FoP_IMT.Infrastructure.Repositories.Tasks
             return await taskQuery.SingleOrDefaultAsync(x => x.ID == id);
         }
 
+        public async Task<int> LoadTaskCount() => await _context.Tasks.CountAsync();
+
         public async Task<TaskMessage?> LoadLastMessage()
         {
             var lastMessage = await _context.TaskMessages
@@ -143,6 +145,15 @@ namespace FoP_IMT.Infrastructure.Repositories.Tasks
             task.IsDeleted = true;
             _context.Tasks.Update(task);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task HardDeleteRange(IList<Domain.Entities.Tasks.Task> tasks, bool performSave)
+        {
+            _context.Tasks.RemoveRange(tasks);
+            if (performSave)
+            {
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken);

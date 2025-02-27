@@ -200,15 +200,32 @@ namespace FoP_IMT.Domain.Services.Tasks.Core
             }
         }
 
-        public async Task<IDictionary<Guid, TaskInfoCoreDto>> GetTaskStates()
+        public async Task<IList<TaskInfoCoreDto>> GetTaskInfos()
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/all/info");
+            var response = await _httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var infos = await response.Content.ReadFromJsonAsync<IList<TaskInfoCoreDto>>(_serializerOptions);
+                return infos ?? [];
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(GetTaskInfos)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+        public async Task<IList<TaskInfoCoreDto>> GetTaskStates()
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/status");
             var response = await _httpClient.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {
-                var states = await response.Content.ReadFromJsonAsync<IDictionary<Guid, TaskInfoCoreDto>>(_serializerOptions);
-                return states ?? new Dictionary<Guid, TaskInfoCoreDto>();
+                var states = await response.Content.ReadFromJsonAsync<IList<TaskInfoCoreDto>>(_serializerOptions);
+                return states ?? [];
             }
             else
             {
@@ -217,7 +234,7 @@ namespace FoP_IMT.Domain.Services.Tasks.Core
             }
         }
 
-        public async Task<IDictionary<Guid, TaskDynamicInfoCoreDto>> GetTaskRunData(DateTime? dateFrom)
+        public async Task<IList<TaskDynamicInfoCoreDto>> GetTaskRunData(DateTime? dateFrom)
         {
             var urlBase = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/data");
             var urlParam = dateFrom.HasValue ? $"?{nameof(dateFrom)}={Uri.EscapeDataString(dateFrom.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"))}" : string.Empty;
@@ -226,8 +243,8 @@ namespace FoP_IMT.Domain.Services.Tasks.Core
             var response = await _httpClient.GetAsync(fullUrl);
             if (response.IsSuccessStatusCode)
             {
-                var runData = await response.Content.ReadFromJsonAsync<IDictionary<Guid, TaskDynamicInfoCoreDto>>(_serializerOptions);
-                return runData ?? new Dictionary<Guid, TaskDynamicInfoCoreDto>();
+                var runData = await response.Content.ReadFromJsonAsync<IList<TaskDynamicInfoCoreDto>>(_serializerOptions);
+                return runData ?? [];
             }
             else
             {

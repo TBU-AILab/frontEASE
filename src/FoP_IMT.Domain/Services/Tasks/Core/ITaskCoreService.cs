@@ -17,8 +17,9 @@ namespace FoP_IMT.Domain.Services.Tasks.Core
         Task<FileStreamResult> DownloadTaskFull(Guid taskID);
         Task<FileStreamResult> DownloadTaskSolution(Guid taskID, Guid messageID);
 
-        Task<IDictionary<Guid, TaskInfoCoreDto>> GetTaskStates();
-        Task<IDictionary<Guid, TaskDynamicInfoCoreDto>> GetTaskRunData(DateTime? dateFrom);
+        Task<IList<TaskInfoCoreDto>> GetTaskInfos();
+        Task<IList<TaskInfoCoreDto>> GetTaskStates();
+        Task<IList<TaskDynamicInfoCoreDto>> GetTaskRunData(DateTime? dateFrom);
 
         Task<IList<TaskModuleCoreDto>> GetModuleTypes();
     }

@@ -191,6 +191,7 @@ void ConfigureJobs()
         app.UseHangfireDashboard("/Hangfire", options);
         GlobalJobFilters.Filters.Add(new ProlongExpirationTimeAttribute());
         GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute() { Attempts = 3 });
+
         JobFactory.ScheduleJobs(settings!, app.Services);
     }
 }

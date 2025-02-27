@@ -4,5 +4,6 @@
     {
         public HangfireJobConfig? UpdateTaskStatusesJob { get; set; }
         public HangfireJobConfig? UpdateTaskDetailsJob { get; set; }
+        public HangfireJobConfig? InitialTaskSyncJob { get; set; }
     }
 }
