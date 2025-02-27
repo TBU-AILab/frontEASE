@@ -41,28 +41,33 @@ namespace FoP_IMT.Client.Services.ApiServices.Tasks
         {
             var url = $"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}";
             var response = await _client.GetAsync(url);
-            if (response.StatusCode != HttpStatusCode.OK)
+            var expectedCodes = new List<HttpStatusCode>() { HttpStatusCode.OK, HttpStatusCode.NotFound };
+
+            if (!expectedCodes.Contains(response.StatusCode))
             {
                 await _errorHandlingService.HandleErrorResponse(response);
                 return [];
             }
-            return (await response.Content.ReadFromJsonAsync<IList<TaskInfoDto>>())!;
+
+            return response.StatusCode == HttpStatusCode.NotFound ? [] : (await response.Content.ReadFromJsonAsync<IList<TaskInfoDto>>())!;
         }
 
         public async Task<IList<TaskStatusDto>> LoadTaskStatuses()
         {
             var url = $"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}/{TasksControllerConstants.StateParam}";
             var response = await _client.GetAsync(url);
-            if (response.StatusCode != HttpStatusCode.OK)
+            var expectedCodes = new List<HttpStatusCode>() { HttpStatusCode.OK, HttpStatusCode.NotFound };
+
+            if (!expectedCodes.Contains(response.StatusCode))
             {
                 await _errorHandlingService.HandleErrorResponse(response);
                 return [];
             }
-            return (await response.Content.ReadFromJsonAsync<IList<TaskStatusDto>>())!;
+            return response.StatusCode == HttpStatusCode.NotFound ? [] : (await response.Content.ReadFromJsonAsync<IList<TaskStatusDto>>())!;
         }
 
         public async Task<TaskDto?> InsertTask()
-        { 
+        {
             var response = await _client.PostAsJsonAsync<TaskDto?>(TasksControllerConstants.BaseUrl, null);
             if (response.StatusCode != HttpStatusCode.Created)
             {
