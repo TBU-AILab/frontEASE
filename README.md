@@ -1,6 +1,6 @@
 
 <div align="center">
-    <img src="src/FoP_IMT.Core/static/logo.png" alt="frontEASE Logo" width="300">
+    <img src="static/logo.png" alt="frontEASE Logo" width="300">
 
 ```
 ███████╗██████╗  ██████╗ ███╗   ██╗████████╗███████╗ █████╗ ███████╗███████╗
