@@ -6,6 +6,7 @@ namespace FoP_IMT.Domain.Repositories.Tasks
 {
     public interface ITaskRepository : IRepository
     {
+        Task<int> LoadTaskCount();
         Task<TaskMessage?> LoadLastMessage();
         Task<Entities.Tasks.Task?> Load(Guid id, TasksQuery query);
         Task<IList<Entities.Tasks.Task>> LoadInfo(Guid? userID = null);
@@ -14,5 +15,6 @@ namespace FoP_IMT.Domain.Repositories.Tasks
         Task<Entities.Tasks.Task> Insert(Entities.Tasks.Task task);
         Task<Entities.Tasks.Task> Update(Entities.Tasks.Task task);
         Task Delete(Entities.Tasks.Task task);
+        Task HardDeleteRange(IList<Entities.Tasks.Task> task, bool performSave);
     }
 }

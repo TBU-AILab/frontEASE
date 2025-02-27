@@ -14,6 +14,10 @@ a, .btn-link {
     padding-top: 1.1rem;
 }
 
+.wrap-overflow-text{
+    overflow-wrap: break-word;
+}
+
 h1:focus {
     outline: none;
 }

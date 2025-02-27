@@ -12,6 +12,9 @@ namespace FoP_IMT.DataContracts.Models.Core.Tasks.Info
             Solutions = [];
         }
 
+        [JsonPropertyName("id")]
+        public Guid ID { get; set; }
+
         [JsonPropertyName("messages")]
         public IList<TaskMessageCoreDto> Messages { get; set; }
 

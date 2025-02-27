@@ -45,8 +45,7 @@ namespace FoP_IMT.Application.Infrastructure.Jobs.Tasks
                 if (newTaskData.Any())
                 {
                     context.WriteLine($"Checking messages, runs, solutions for: {newTaskData.Count} items.");
-
-                    var taskIDs = newTaskData.Select(x => x.Key);
+                    var taskIDs = newTaskData.Select(x => x.ID);
 
                     var query = new TasksQuery()
                     {
@@ -58,11 +57,11 @@ namespace FoP_IMT.Application.Infrastructure.Jobs.Tasks
 
                     foreach (var newTaskInfo in newTaskData)
                     {
-                        var matchingTask = tasks.SingleOrDefault(x => x.ID == newTaskInfo.Key);
+                        var matchingTask = tasks.SingleOrDefault(x => x.ID == newTaskInfo.ID);
                         if (matchingTask is not null)
                         {
-                            var messages = _mapper.Map<IList<TaskMessage>>(newTaskInfo.Value.Messages);
-                            var solutions = _mapper.Map<IList<TaskSolution>>(newTaskInfo.Value.Solutions);
+                            var messages = _mapper.Map<IList<TaskMessage>>(newTaskInfo.Messages);
+                            var solutions = _mapper.Map<IList<TaskSolution>>(newTaskInfo.Solutions);
                             context.WriteLine($"Task {matchingTask.ID} - Messages: {messages.Count} | Solutions: {solutions.Count}.");
 
                             foreach (var message in messages)
