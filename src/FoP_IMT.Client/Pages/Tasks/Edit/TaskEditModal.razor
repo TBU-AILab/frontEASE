@@ -70,7 +70,7 @@
 
     private bool isTaskLoading = false;
     private bool isModalVisible = false;
-    private CancellationTokenSource cancellationTokenSource;
+    private CancellationTokenSource? cancellationTokenSource;
 
     private TaskDto Task;
     private TaskViewMetadataDto TaskMetadata;
@@ -85,8 +85,17 @@
         TaskMetadata = new(Task);
 
         Modal = new Modal();
-        cancellationTokenSource = new();
         Validations = new Validations();
+    }
+
+    private async Task ResetCancellationToken()
+    {
+        if (cancellationTokenSource is not null)
+        {
+            await cancellationTokenSource.CancelAsync();
+            cancellationTokenSource.Dispose();
+        }
+        cancellationTokenSource = new();
     }
 
     private async Task OnModalClosing(ModalClosingEventArgs e)
@@ -95,10 +104,8 @@
         if (!e.Cancel)
         {
             isModalVisible = false;
+            await ResetCancellationToken();
         }
-
-        await cancellationTokenSource.CancelAsync();
-        cancellationTokenSource?.Dispose();
     }
 
     protected override async Task OnInitializedAsync()
@@ -114,11 +121,7 @@
         if (evaluationNeeded)
         {
             TaskMetadata.InitializationInProgres = true;
-            if (cancellationTokenSource is not null)
-            {
-                await cancellationTokenSource!.CancelAsync();
-            }
-            cancellationTokenSource = new CancellationTokenSource();
+            await ResetCancellationToken();
 
             try
             {
@@ -151,13 +154,13 @@
     private Task ModalShow()
     {
         isModalVisible = true;
-        cancellationTokenSource = new();
         return Modal.Show();
     }
 
     public async Task Show()
     {
         isTaskLoading = true;
+        await ResetCancellationToken();
         await ModalShow();
 
         if (Operation == DataOperation.INSERT)

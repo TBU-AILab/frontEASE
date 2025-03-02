@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FoP_IMT.Domain.Infrastructure.Settings.App;
 using FoP_IMT.Domain.Services.Tasks;
 using FoP_IMT.Domain.Services.Users;
 using FoP_IMT.Shared.Data.DTOs.Tasks;
@@ -13,17 +14,20 @@ namespace FoP_IMT.Application.AppServices.Tasks
 {
     public class TaskAppService : ITaskAppService
     {
+        private readonly AppSettings _appSettings;
         private readonly IUserService _userService;
         private readonly ITaskService _taskService;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
 
         public TaskAppService(
+            AppSettings appSettings,
             ITaskService taskService,
             IUserService userService,
             IMapper mapper,
             IHttpContextAccessor contextAccessor)
         {
+            _appSettings = appSettings;
             _userService = userService;
             _taskService = taskService;
             _mapper = mapper;
@@ -55,7 +59,10 @@ namespace FoP_IMT.Application.AppServices.Tasks
             var userMail = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
             var user = await _userService.Load(userMail);
 
-            var taskEntities = await _taskService.LoadAll(Guid.Parse(user!.Id));
+            var taskEntities = (user is not null && user.UserRole?.RoleId == _appSettings.AuthSettings?.Defaults?.Roles?.SuperadminGuid?.ToString()) ?
+                await _taskService.LoadAll(null) :
+                await _taskService.LoadAll(Guid.Parse(user!.Id));
+
             var taskInfoDtos = _mapper.Map<IList<TaskInfoDto>>(taskEntities);
             return taskInfoDtos;
         }

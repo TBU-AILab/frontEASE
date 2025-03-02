@@ -57,10 +57,14 @@ namespace FoP_IMT.Infrastructure.Repositories.Tasks
         }
 
 
-        public async Task<IList<Domain.Entities.Tasks.Task>> LoadAllWhere(Expression<Func<Domain.Entities.Tasks.Task, bool>> predicate, TasksQuery query)
+        public async Task<IList<Domain.Entities.Tasks.Task>> LoadAllWhere(Expression<Func<Domain.Entities.Tasks.Task, bool>>? predicate, TasksQuery query)
         {
             var tasksQuery = ComposeQuery(query);
-            return await tasksQuery.Where(predicate).ToListAsync() ?? [];
+            if (predicate is not null)
+            {
+                tasksQuery = tasksQuery.Where(predicate);
+            }
+            return await tasksQuery.ToListAsync() ?? [];
         }
 
         public async Task<Domain.Entities.Tasks.Task?> Load(Guid id, TasksQuery query)
@@ -133,6 +137,17 @@ namespace FoP_IMT.Infrastructure.Repositories.Tasks
             return task;
         }
 
+        public async Task<IList<Domain.Entities.Tasks.Task>> InsertRange(IList<Domain.Entities.Tasks.Task> tasks, bool saveChanges)
+        {
+            await _context.Tasks.AddRangeAsync(tasks);
+
+            if (saveChanges)
+            {
+                await _context.SaveChangesAsync();
+            }
+            return tasks;
+        }
+
         public async Task<Domain.Entities.Tasks.Task> Update(Domain.Entities.Tasks.Task task)
         {
             _context.Tasks.Update(task);
@@ -147,10 +162,22 @@ namespace FoP_IMT.Infrastructure.Repositories.Tasks
             await _context.SaveChangesAsync();
         }
 
-        public async Task HardDeleteRange(IList<Domain.Entities.Tasks.Task> tasks, bool performSave)
+        public async Task DeleteRange(IList<Domain.Entities.Tasks.Task> tasks, bool hardDelete, bool saveChanges)
         {
-            _context.Tasks.RemoveRange(tasks);
-            if (performSave)
+            if (hardDelete)
+            {
+                _context.Tasks.RemoveRange(tasks);
+            }
+            else
+            {
+                foreach (var task in tasks)
+                {
+                    task.IsDeleted = true;
+                    _context.Tasks.Update(task);
+                }
+            }
+
+            if (saveChanges)
             {
                 await _context.SaveChangesAsync();
             }

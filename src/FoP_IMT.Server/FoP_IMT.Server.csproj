@@ -34,8 +34,8 @@
     <ProjectReference Include="..\FoP_IMT.Infrastructure\FoP_IMT.Infrastructure.csproj" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Blazored.Toast" Version="4.2.1" />
-    <PackageReference Include="Blazorise.Bootstrap5" Version="1.7.4" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.7.4" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.7.5" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.7.5" />
     <PackageReference Include="Hangfire" Version="1.8.18" />
     <PackageReference Include="Hangfire.Console" Version="1.4.3" />
     <PackageReference Include="Hangfire.Dashboard.BasicAuthorization" Version="1.0.2" />
@@ -61,8 +61,8 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
     <PackageReference Include="Sentry" Version="5.2.0" />
     <PackageReference Include="Sentry.AspNetCore" Version="5.2.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.1" />
     <PackageReference Include="Unchase.Swashbuckle.AspNetCore.Extensions" Version="2.7.2" />
   </ItemGroup>
 

@@ -44,7 +44,7 @@ namespace FoP_IMT.Application.Infrastructure.Jobs.Tasks
 
                 context.WriteLine($"Checking statuses for: {tasks.Count} items.");
 
-                if (tasks.Any())
+                if (tasks.Count > 0)
                 {
                     var stateResults = await _taskCoreService.GetTaskStates();
                     foreach (var taskStateInfo in stateResults)

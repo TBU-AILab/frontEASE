@@ -1,5 +1,7 @@
-﻿using FoP_IMT.Shared.Infrastructure.Attributes;
+﻿using FoP_IMT.Shared.Data.DTOs.Management.Tokens.Connectors;
+using FoP_IMT.Shared.Infrastructure.Attributes;
 using FoP_IMT.Shared.Infrastructure.Attributes.Validations.Generic;
+using System.Text.Json.Serialization;
 
 namespace FoP_IMT.Shared.Data.DTOs.Management.Tokens
 {
@@ -10,10 +12,22 @@ namespace FoP_IMT.Shared.Data.DTOs.Management.Tokens
     {
         public UserPreferenceTokenOptionDto()
         {
-            this.Token = string.Empty;
-            this.ConnectorType = string.Empty;
-            this.Name = string.Empty;
+            Token = string.Empty;
+            Name = string.Empty;
+
+            ConnectorTypes = [];
+            SelectedTokenConnectorTypes = [];
         }
+
+        #region Navigation
+
+        /// <summary>
+        /// Connector types using this token.
+        /// </summary>
+        [Resource($"{nameof(UserPreferenceTokenOptionDto)}.{nameof(ConnectorTypes)}")]
+        public IList<UserPreferenceTokenOptionConnectorTypeDto> ConnectorTypes { get; set; }
+
+        #endregion
 
         #region Data
 
@@ -44,19 +58,22 @@ namespace FoP_IMT.Shared.Data.DTOs.Management.Tokens
         public string Token { get; set; }
 
         /// <summary>
-        /// Enum signalising what type of connector has been selected of this task.
-        /// </summary>
-        [Resource($"{nameof(UserPreferenceTokenOptionDto)}.{nameof(ConnectorType)}")]
-        [RequiredValidation<UserPreferenceTokenOptionDto>]
-        [StringLengthValidation(4, 128)]
-        public string ConnectorType { get; set; }
-
-        /// <summary>
         /// Optional description of this token.
         /// </summary>
         [Resource($"{nameof(UserPreferenceTokenOptionDto)}.{nameof(Description)}")]
         [StringLengthValidation(0, 512)]
         public string? Description { get; set; }
+
+        #endregion
+
+        #region Visualization
+
+        /// <summary>
+        /// UI only - connector types selected for this token.
+        /// </summary>
+        [JsonIgnore]
+        [CollectionNotEmptyValidation]
+        public IReadOnlyList<string> SelectedTokenConnectorTypes { get; set; }
 
         #endregion
     }

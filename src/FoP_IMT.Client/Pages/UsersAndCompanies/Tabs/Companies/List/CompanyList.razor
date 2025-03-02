@@ -12,7 +12,7 @@
     <ContentLoadSpinner />
 }
 <Row Margin="Margin.Is2.FromTop">
-    @if (Companies.Any())
+    @if (Companies.Count > 0)
     {
         @foreach (var Company in Companies)
         {
@@ -53,13 +53,13 @@
             var loadUsersTask = Task.CompletedTask;
             var loadCompaniesTask = Task.CompletedTask;
 
-            if (!(Users?.Any() == true))
+            if (!(Users?.Count > 0 == true))
             {
                 isUsersLoading = true;
                 loadUsersTask = LoadUsers();
             }
 
-            if (!(Companies?.Any() == true))
+            if (!(Companies?.Count > 0 == true))
             {
                 isCompaniesLoading = true;
                 loadCompaniesTask = LoadCompanies();
@@ -77,7 +77,7 @@
     private async Task LoadCompanies()
     {
         var companies = await companyApiService.LoadCompanies();
-        if (companies?.Any() == true)
+        if (companies?.Count > 0 == true)
         {
             Companies.Clear();
             foreach (var company in companies) { Companies.Add(company); }
@@ -87,7 +87,7 @@
     private async Task LoadUsers()
     {
         var users = await userApiService.LoadUsers();
-        if (users?.Any() == true)
+        if (users?.Count > 0 == true)
         {
             Users.Clear();
             foreach (var user in users) { Users.Add(user); }

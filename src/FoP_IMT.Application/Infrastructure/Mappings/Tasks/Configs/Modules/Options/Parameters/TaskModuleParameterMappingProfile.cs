@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Options.Values.Parameters;
+using FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.Parameters;
 using FoP_IMT.Domain.Entities.Tasks.Configs.Modules.Options.Parameters;
 using FoP_IMT.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters;
 

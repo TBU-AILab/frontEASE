@@ -7,8 +7,8 @@ namespace FoP_IMT.Domain.Services.Tasks
     {
         Task<Entities.Tasks.Task> Load(Guid id);
         Task<IList<TaskModule>> RefreshOptions(Entities.Tasks.Task task);
-        Task<IList<Entities.Tasks.Task>> LoadAll(Guid userID);
-        Task<IList<Entities.Tasks.Task>> LoadAllBase(Guid userID);
+        Task<IList<Entities.Tasks.Task>> LoadAll(Guid? userID);
+        Task<IList<Entities.Tasks.Task>> LoadAllBase(Guid? userID);
         Task<Entities.Tasks.Task> Create(Entities.Tasks.Task task);
         Task<Entities.Tasks.Task> Update(Entities.Tasks.Task task);
         Task<Entities.Tasks.Task> Duplicate(Entities.Tasks.Task task);
