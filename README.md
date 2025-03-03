@@ -1,6 +1,7 @@
 
 <div align="center">
-    <img src="static/logo.png" alt="frontEASE Logo" width="300">
+
+[//]: # (    <img src="static/logo.png" alt="frontEASE Logo" width="300">)
 
 ```
 ███████╗██████╗  ██████╗ ███╗   ██╗████████╗███████╗ █████╗ ███████╗███████╗
@@ -15,6 +16,11 @@
 # 🎯 frontEASE - Frontend for Effortless Algorithmic Solution Evolution
 
 🚀 **frontEASE** is the frontend component of the [EASE framework](https://github.com/TBU-AILab/EASE), providing a user-friendly interface to interact with the backend services. It is built using C# and integrates seamlessly with the backend to offer a cohesive user experience.
+
+### Disclaimer
+
+This is an open beta version of the framework.
+
 <!--
 ## Features
 
