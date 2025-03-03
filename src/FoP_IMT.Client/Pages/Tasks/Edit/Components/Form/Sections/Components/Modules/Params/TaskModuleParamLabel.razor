@@ -1,4 +1,5 @@
-﻿@inject IResourceHandler resourceHandler
+﻿@inject IUIService uiService
+@inject IResourceHandler resourceHandler
 
 <Field ColumnSize="@(HasDescription ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
     @{
@@ -50,7 +51,7 @@
                     break;
 
                 case ParameterType.ENUM:
-                    @if (ParamOption.EnumOptions?.Any() == true)
+                    @if (ParamOption.EnumOptions?.Count > 0 == true)
                     {
                         <UnorderedList>
                             @foreach (var (enumOption, index) in ParamOption.EnumOptions.Select((option, idx) => (option, idx)))
@@ -93,16 +94,28 @@
     </Div>
 </Field>
 
-@if (HasDescription)
+@{
+    var isParamSpecialCase = IsSpecialCase();
+}
+@if (HasDescription || isParamSpecialCase)
 {
     <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
         <FieldLabel>
-            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Info}"))
+            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{(isParamSpecialCase ? UIValueConstants.Actions : UIValueConstants.Info)}"))
         </FieldLabel>
         <Div>
             <Tooltip Multiline="true" Text="@(ParamOption.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
                 <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
             </Tooltip>
+            @if (isParamSpecialCase)
+            {
+                @if (ParamOption.ShortName == TaskMetadataConstants.InitMessageTemplate && !string.IsNullOrEmpty(ParamOption.Default?.StringValue))
+                {
+                    <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : {ParamOption.Default?.StringValue}")" Display="Display.InlineBlock">
+                        <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => FillInitMessageValue())" />
+                    </Tooltip>
+                }
+            }
         </Div>
     </Field>
 }
@@ -127,6 +140,17 @@
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
     private bool HasDescription => !string.IsNullOrWhiteSpace(ParamOption.Description);
+    private bool IsSpecialCase()
+    {
+        var isSpecial = ParamOption.ShortName == TaskMetadataConstants.InitMessageTemplate;
+        return isSpecial;
+    }
+
+    private void FillInitMessageValue()
+    {
+        Task.Config.InitMessage = ParamOption.Default?.StringValue ?? string.Empty;
+        uiService.CallRequestRefresh();
+    }
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, Task.ID.ToString());
 }

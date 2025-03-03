@@ -5,6 +5,7 @@ namespace FoP_IMT.Shared.Infrastructure.Constants.Validations
     public static class ValidationKeyConstants
     {
         /* Generic */
+        public const string CollectionNotEmptyValidationKey = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.CollectionNotEmpty}";
         public const string RequiredValidationKey = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.Required}";
         public const string EmailValidationKey = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.Email}";
         public const string EnumValidationKey = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.InvalidValue}";

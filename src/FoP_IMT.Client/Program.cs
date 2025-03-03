@@ -7,6 +7,7 @@ using FoP_IMT.Client.Infrastructure.Mappings.Companies;
 using FoP_IMT.Client.Infrastructure.Mappings.Management;
 using FoP_IMT.Client.Infrastructure.Mappings.Management.General;
 using FoP_IMT.Client.Infrastructure.Mappings.Management.Tokens;
+using FoP_IMT.Client.Infrastructure.Mappings.Management.Tokens.Connectors;
 using FoP_IMT.Client.Infrastructure.Mappings.Shared.Addresses;
 using FoP_IMT.Client.Infrastructure.Mappings.Shared.Images;
 using FoP_IMT.Client.Infrastructure.Mappings.Tasks;
@@ -106,6 +107,7 @@ void SetupClientMappings()
 
         mc.AddProfile(new UserPreferencesMappingProfile());
         mc.AddProfile(new UserPreferenceTokenOptionMappingProfile());
+        mc.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
         mc.AddProfile(new UserPreferenceGeneralOptionsMappingProfile());
 
         mc.AddProfile(new TaskMappingProfile());

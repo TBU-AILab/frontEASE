@@ -1,4 +1,5 @@
 ﻿using FoP_IMT.Domain.Entities.Base.Tracked;
+using FoP_IMT.Domain.Entities.Management.Tokens.Connectors;
 
 namespace FoP_IMT.Domain.Entities.Management.Tokens
 {
@@ -6,17 +7,18 @@ namespace FoP_IMT.Domain.Entities.Management.Tokens
     {
         public UserPreferenceTokenOption()
         {
-            this.Token = string.Empty;
-            this.ConnectorType = string.Empty;
-            this.Name = string.Empty;
+            Token = string.Empty;
+            Name = string.Empty;
 
             UserPreferences = null!;
+            ConnectorTypes = [];
         }
 
         #region Navigation
 
         public Guid UserPreferencesID { get; set; }
         public UserPreferences UserPreferences { get; set; }
+        public IList<UserPreferenceTokenOptionConnectorType> ConnectorTypes { get; set; }
 
         #endregion
 
@@ -25,7 +27,6 @@ namespace FoP_IMT.Domain.Entities.Management.Tokens
         public int Priority { get; set; }
         public string Name { get; set; }
         public string Token { get; set; }
-        public string ConnectorType { get; set; }
         public string? Description { get; set; }
 
         #endregion

@@ -3,7 +3,7 @@
 @inject IFileApiService fileApiService
 @inject Blazored.Toast.Services.IToastService toastService
 
-@if (Task.Solutions.Any())
+@if (Task.Solutions.Count > 0)
 {
     <Row>
 
@@ -74,7 +74,7 @@
                                 </Column>
                             </Row>
 
-                            @if (solution.Metadata.Any())
+                            @if (solution.Metadata.Count > 0)
                             {
                                 <DictionaryExpander Dictionary="@solution.Metadata" DisplayName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Metadata), PropertyDisplayResourceType.FIELD)))" MarginParam="Margin.Is2.FromTop.Is2.FromBottom.Is1.FromStart.Is1.FromEnd" />
                             }

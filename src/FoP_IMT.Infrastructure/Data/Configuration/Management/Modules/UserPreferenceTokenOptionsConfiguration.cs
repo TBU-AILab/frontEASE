@@ -10,12 +10,15 @@ namespace FoP_IMT.Infrastructure.Data.Configuration.Management.Modules
     {
         public void Configure(EntityTypeBuilder<UserPreferenceTokenOption> builder)
         {
-            new EntityBaseConfiguration<UserPreferenceTokenOption>().Configure(builder);
+            new EntityTrackedBaseConfiguration<UserPreferenceTokenOption>().Configure(builder);
             builder.ToTable(TableConstants.UserPreferenceTokens, SchemaConstants.Data);
 
             builder.HasOne(e => e.UserPreferences)
                 .WithMany(e => e.TokenOptions)
                 .HasForeignKey(e => e.UserPreferencesID);
+
+            builder.HasMany(e => e.ConnectorTypes)
+                .WithOne(e => e.TokenOption);
         }
     }
 }

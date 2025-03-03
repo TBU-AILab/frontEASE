@@ -1,4 +1,4 @@
-﻿using FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Options.Values.Parameters;
+﻿using FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.Parameters;
 using FoP_IMT.Shared.Data.Enums.Tasks.Config;
 using System.Text.Json.Serialization;
 

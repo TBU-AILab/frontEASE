@@ -19,6 +19,7 @@ namespace FoP_IMT.Infrastructure.Repositories.Users
         public async Task<IList<ApplicationUser>> LoadWhere(Expression<Func<ApplicationUser, bool>> predicate)
         {
             var users = await _context.Users
+                .Include(x => x.UserRole)
                 .Where(predicate)
                 .ToListAsync() ?? [];
 

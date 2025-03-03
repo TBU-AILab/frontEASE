@@ -11,10 +11,11 @@ namespace FoP_IMT.Domain.Repositories.Tasks
         Task<Entities.Tasks.Task?> Load(Guid id, TasksQuery query);
         Task<IList<Entities.Tasks.Task>> LoadInfo(Guid? userID = null);
         Task<IList<Entities.Tasks.Task>> LoadInfoBase(Guid? userID = null);
-        Task<IList<Entities.Tasks.Task>> LoadAllWhere(Expression<Func<Entities.Tasks.Task, bool>> predicate, TasksQuery query);
+        Task<IList<Entities.Tasks.Task>> LoadAllWhere(Expression<Func<Entities.Tasks.Task, bool>>? predicate, TasksQuery query);
         Task<Entities.Tasks.Task> Insert(Entities.Tasks.Task task);
+        Task<IList<Entities.Tasks.Task>> InsertRange(IList<Entities.Tasks.Task> tasks, bool saveChanges);
         Task<Entities.Tasks.Task> Update(Entities.Tasks.Task task);
         Task Delete(Entities.Tasks.Task task);
-        Task HardDeleteRange(IList<Entities.Tasks.Task> task, bool performSave);
+        Task DeleteRange(IList<Entities.Tasks.Task> task, bool hardDelete, bool saveChanges);
     }
 }

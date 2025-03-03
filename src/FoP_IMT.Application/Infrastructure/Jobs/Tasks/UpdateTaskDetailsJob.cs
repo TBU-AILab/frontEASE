@@ -42,7 +42,7 @@ namespace FoP_IMT.Application.Infrastructure.Jobs.Tasks
             try
             {
                 var newTaskData = await _taskCoreService.GetTaskRunData(lastExecution);
-                if (newTaskData.Any())
+                if (newTaskData.Count > 0)
                 {
                     context.WriteLine($"Checking messages, runs, solutions for: {newTaskData.Count} items.");
                     var taskIDs = newTaskData.Select(x => x.ID);

@@ -20,6 +20,7 @@ namespace FoP_IMT.Infrastructure.Repositories.Management
             var query = await _context.Users
                 .Include(x => x.UserPreferences)
                     .ThenInclude(x => x.TokenOptions)
+                        .ThenInclude(x => x.ConnectorTypes)
                 .Include(x => x.UserPreferences)
                     .ThenInclude(x => x.GeneralOptions)
                 .AsSplitQuery()

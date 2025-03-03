@@ -2,7 +2,6 @@
 using FoP_IMT.Client.Services.HelperServices.ErrorHandling;
 using FoP_IMT.Client.Services.ModelManipulationServices.Management;
 using FoP_IMT.Shared.Data.DTOs.Management;
-using FoP_IMT.Shared.Data.DTOs.Shared.Users;
 using FoP_IMT.Shared.Infrastructure.Constants.Controllers.Specific;
 using System.Net;
 using System.Net.Http.Json;
@@ -40,6 +39,7 @@ namespace FoP_IMT.Client.Services.ApiServices.Management
         public async Task<UserPreferencesDto?> UpdatePreferences(UserPreferencesDto editedPreferencesDto)
         {
             _managementManipulationService.SetItemPriorities(editedPreferencesDto);
+            _managementManipulationService.SortTokenConnectorModels(editedPreferencesDto);
 
             var response = await _client.PutAsJsonAsync(ManagementControllerConstants.BaseUrl, editedPreferencesDto);
             if (response.StatusCode != HttpStatusCode.OK)

@@ -3,6 +3,7 @@ using FoP_IMT.Domain.Infrastructure.Settings.App;
 using FoP_IMT.Infrastructure.Data;
 using FoP_IMT.Infrastructure.Data.Configuration.Shared.Users.Defaults;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoP_IMT.DataGenerator.Services.Generators.Resources
 {
@@ -26,25 +27,50 @@ namespace FoP_IMT.DataGenerator.Services.Generators.Resources
             var roleGuidsExpected = roles.Select(x => x.Id);
             var roleGuidsReal = _dataContext.Roles.Select(x => x.Id);
             var rolesMissing = roleGuidsExpected.Except(roleGuidsReal);
-
-            foreach(var role in rolesMissing)
+            foreach (var role in rolesMissing)
             {
                 await _dataContext.Roles.AddAsync(roles.Single(x => x.Id == role));
             }
 
-            await _dataContext.Users.AddRangeAsync(users);
+            var superadminRoleId = _settings.AuthSettings!.Defaults!.Roles!.SuperadminGuid!.ToString()!;
+            bool superadminAlreadyExists = await _dataContext.UserRoles.AnyAsync(ur => ur.RoleId == superadminRoleId);
 
-            var superadminMail = _settings.AuthSettings!.Defaults!.Superadmin!.Email!.ToString();
-            var superadmin = users.SingleOrDefault(x => x.Email == superadminMail);
-            if (superadmin is not null)
+            if (!superadminAlreadyExists)
             {
-                var superadminRole = new IdentityUserRole<string>()
+                var superadminDefaultUser = users.SingleOrDefault(u => u.Email == _settings.AuthSettings!.Defaults!.Superadmin!.Email);
+                if (superadminDefaultUser is not null)
                 {
-                    RoleId = _settings.AuthSettings!.Defaults!.Roles!.SuperadminGuid!.ToString()!,
-                    UserId = superadmin.Id
-                };
-                await _dataContext.UserRoles.AddAsync(superadminRole);
+                    var existingSuperadmin = await _dataContext.Users.FirstOrDefaultAsync(u => u.Email == superadminDefaultUser.Email);
+                    if (existingSuperadmin is null)
+                    {
+                        await _dataContext.Users.AddAsync(superadminDefaultUser);
+                        existingSuperadmin = superadminDefaultUser;
+                    }
+
+                    if (!await _dataContext.UserRoles.AnyAsync(ur => ur.UserId == existingSuperadmin.Id && ur.RoleId == superadminRoleId))
+                    {
+                        var superadminUserRole = new IdentityUserRole<string>()
+                        {
+                            RoleId = superadminRoleId,
+                            UserId = existingSuperadmin.Id
+                        };
+                        await _dataContext.UserRoles.AddAsync(superadminUserRole);
+                    }
+                }
             }
+
+            foreach (var user in users)
+            {
+                if (user.Email != _settings.AuthSettings!.Defaults!.Superadmin!.Email)
+                {
+                    bool userExists = await _dataContext.Users.AnyAsync(u => u.Email == user.Email);
+                    if (!userExists)
+                    {
+                        await _dataContext.Users.AddAsync(user);
+                    }
+                }
+            }
+
             await _dataContext.SaveChangesAsync();
         }
     }

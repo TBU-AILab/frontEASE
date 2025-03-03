@@ -62,7 +62,7 @@
 
     private bool isTaskLoading;
     private bool isModalVisible;
-    private CancellationTokenSource cancellationTokenSource;
+    private CancellationTokenSource? cancellationTokenSource;
 
     private TaskDto Task;
     private Modal Modal;
@@ -74,13 +74,21 @@
         TaskMetadata = new(Task);
 
         Modal = new Modal();
+    }
+
+    private async Task ResetCancellationToken()
+    {
+        if (cancellationTokenSource is not null)
+        {
+            await cancellationTokenSource.CancelAsync();
+            cancellationTokenSource.Dispose();
+        }
         cancellationTokenSource = new();
     }
 
     private async Task OnModalClosing(ModalClosingEventArgs e)
     {
-        await cancellationTokenSource.CancelAsync();
-        cancellationTokenSource?.Dispose();
+        await ResetCancellationToken();
 
         TaskMetadata.SelectedMessageID = null;
         isModalVisible = false;
@@ -89,13 +97,13 @@
     private async Task ModalShow()
     {
         isModalVisible = true;
-        cancellationTokenSource = new();
         await Modal.Show();
     }
 
     public async Task Show()
     {
         isTaskLoading = true;
+        await ResetCancellationToken();
         await ModalShow();
 
         var opened = await taskApiService.LoadTask(TaskInfo.ID);
@@ -104,9 +112,10 @@
             mapper.Map(opened, Task);
         }
 
-        _ = StartPeriodicTaskInfoRefreshCall(cancellationTokenSource.Token);
+        _ = StartPeriodicTaskInfoRefreshCall(cancellationTokenSource!.Token);
         isTaskLoading = false;
     }
+
 
     private async Task StartPeriodicTaskInfoRefreshCall(CancellationToken cancellationToken)
     {

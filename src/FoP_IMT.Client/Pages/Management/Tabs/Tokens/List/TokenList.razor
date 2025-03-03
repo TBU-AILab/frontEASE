@@ -12,7 +12,7 @@
     <ContentLoadSpinner />
 }
 <Row Margin="Margin.Is2.FromTop">
-    @if (Options.TokenOptions.Any())
+    @if (Options.TokenOptions.Count > 0)
     {
         @foreach (var Token in Options.TokenOptions.OrderBy(x => x.Priority))
         {
@@ -50,7 +50,7 @@
             var loadTypelistsTask = Task.CompletedTask;
             var loadPreferencesTask = Task.CompletedTask;
 
-            if (!(ConnectorTypes?.Any() == true)){
+            if (!(ConnectorTypes?.Count > 0 == true)){
                 isTypelistsLoading = true;
                 loadTypelistsTask = LoadTypelists();
             }

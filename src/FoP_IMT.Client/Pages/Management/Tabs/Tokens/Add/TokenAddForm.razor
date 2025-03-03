@@ -61,7 +61,7 @@
             if (updated is not null)
             {
                 mapper.Map(updated, Options);
-                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}: {TokenModel.ConnectorType} ({new string(TokenModel.Token.Take(3).ToArray())} ... {new string(TokenModel.Token.TakeLast(3).ToArray())}";
+                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}: {string.Join(", ", TokenModel.ConnectorTypes.Select(x => x.ConnectorType))} ({new string(TokenModel.Token.Take(3).ToArray())} ... {new string(TokenModel.Token.TakeLast(3).ToArray())}";
                 toastService.ShowSuccess(message);
 
                 managementManipulationService.ReinitializeTokenModel(TokenModel);

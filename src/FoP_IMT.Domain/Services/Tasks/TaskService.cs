@@ -53,9 +53,9 @@ namespace FoP_IMT.Domain.Services.Tasks
             return task;
         }
 
-        public async Task<IList<Entities.Tasks.Task>> LoadAll(Guid userID) => await _taskRepository.LoadInfo(userID);
+        public async Task<IList<Entities.Tasks.Task>> LoadAll(Guid? userID) => await _taskRepository.LoadInfo(userID);
 
-        public async Task<IList<Entities.Tasks.Task>> LoadAllBase(Guid userID) => await _taskRepository.LoadInfoBase(userID);
+        public async Task<IList<Entities.Tasks.Task>> LoadAllBase(Guid? userID) => await _taskRepository.LoadInfoBase(userID);
 
         public async Task<Entities.Tasks.Task> Create(Entities.Tasks.Task task)
         {

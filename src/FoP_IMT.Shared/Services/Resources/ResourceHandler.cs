@@ -38,7 +38,7 @@ namespace FoP_IMT.Shared.Services.Resources
             var message = GetResource(key);
             if (arguments is not null && arguments.Any())
             {
-                message = string.Format(CultureInfo.InvariantCulture, message, arguments.ToArray());
+                message = string.Format(CultureInfo.InvariantCulture, message, [.. arguments]);
             }
             return message;
         }

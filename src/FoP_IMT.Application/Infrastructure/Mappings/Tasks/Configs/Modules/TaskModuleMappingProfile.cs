@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
-using FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Options.Values.Parameters;
+using FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.Parameters;
 using FoP_IMT.Domain.Entities.Tasks.Configs.Modules.Options;
 using FoP_IMT.Domain.Entities.Tasks.Configs.Modules.Options.Parameters;
 using FoP_IMT.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options;
@@ -84,6 +84,18 @@ namespace FoP_IMT.Application.Infrastructure.Mappings.Tasks.Configs.Modules
                             Required = kvp.Value.Required
                         }).ToList())
                 );
+
+            CreateMap<TaskModuleCoreDto, TaskModuleEntity>()
+            .ForMember(
+                entity => entity.Parameters,
+                opt => opt.MapFrom((src, dest, destMember, context) =>
+                    src.Parameters.Select(kvp => new TaskModuleParameterEntity
+                    {
+                        Key = kvp.Key,
+                        ShortName = kvp.Value.ShortName,
+                        Type = kvp.Value.Type,
+                    }).ToList())
+            );
 
             CreateMap<TaskModule, TaskModuleInputCoreDto>()
                 .ForMember(

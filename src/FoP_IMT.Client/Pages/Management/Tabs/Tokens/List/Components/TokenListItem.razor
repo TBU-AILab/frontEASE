@@ -8,7 +8,7 @@
                     <Row Margin="Margin.Is2.FromTop" Class="justify-content-center text-break">
                         <Column ColumnSize="ColumnSize.Is8.OnWidescreen.Is2.WithOffset.OnWidescreen" TextAlignment="TextAlignment.Center" Class="align-self-center">
                             <Heading Size="HeadingSize.Is5" TextColor="TextColor.Primary" TextWeight="TextWeight.Bold" Margin="Margin.Is0">
-                                @($"{Token.Name} ({GetTokenLongName() ?? Token.ConnectorType})")
+                                @($"{Token.Name} ({GetTokenLongName() ?? string.Join(", ", Token.ConnectorTypes.Select(x => x.ConnectorType))})")
                             </Heading>
                         </Column>
                         <Column Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.Is2.OnWidescreen" TextAlignment="TextAlignment.End" Class="align-self-center">
@@ -54,7 +54,9 @@
 
     private string? GetTokenLongName()
     {
-        var matchingModule = ConnectorTypes.FirstOrDefault(x => x.ShortName == Token.ConnectorType);
-        return matchingModule?.LongName;
+        var tokenConnectorTypes = Token.ConnectorTypes.Select(x => x.ConnectorType);
+        var matchingModules = ConnectorTypes.Where(x => tokenConnectorTypes.Contains(x.ShortName));
+
+        return matchingModules.Any() ? string.Join(", ", matchingModules.Select(x => x.LongName)) : null;
     }
 }

@@ -87,7 +87,7 @@ namespace FoP_IMT.Domain.Services.Tasks.Core
         public async Task HandleTaskInit(Entities.Tasks.Task task)
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/{task.ID}");
-            var mappedInputTask = _mapper.Map<TaskConfigInputCoreDto>(task);
+            var mappedInputTask = _mapper.Map<TaskConfigFullCoreDto>(task);
             var jsonString = JsonSerializer.Serialize(mappedInputTask);
 
             var response = await _httpClient.PutAsJsonAsync(url, mappedInputTask);
@@ -118,7 +118,7 @@ namespace FoP_IMT.Domain.Services.Tasks.Core
         public async Task RefreshTaskOptions(Entities.Tasks.Task task)
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/{task.ID}/options");
-            var mappedInputTask = _mapper.Map<TaskConfigInputCoreDto>(task);
+            var mappedInputTask = _mapper.Map<TaskConfigFullCoreDto>(task);
 
             var request = new HttpRequestMessage(HttpMethod.Get, url)
             { Content = new StringContent(JsonSerializer.Serialize(mappedInputTask), Encoding.UTF8, "application/json") };
@@ -214,6 +214,23 @@ namespace FoP_IMT.Domain.Services.Tasks.Core
             {
                 var failResult = await response.Content.ReadAsStringAsync();
                 throw new ApplicationException($"{nameof(GetTaskInfos)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+        public async Task<IList<TaskFullCoreDto>> GetTasksFullData()
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/all/full");
+            var response = await _httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var infos = await response.Content.ReadFromJsonAsync<IList<TaskFullCoreDto>>(_serializerOptions);
+                return infos ?? [];
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(GetTasksFullData)} - Call FAILED - Exception: {failResult}");
             }
         }
 

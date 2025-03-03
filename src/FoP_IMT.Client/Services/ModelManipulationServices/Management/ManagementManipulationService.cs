@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FoP_IMT.Shared.Data.DTOs.Management;
 using FoP_IMT.Shared.Data.DTOs.Management.Tokens;
+using FoP_IMT.Shared.Data.DTOs.Management.Tokens.Connectors;
 
 namespace FoP_IMT.Client.Services.ModelManipulationServices.Management
 {
@@ -11,6 +12,20 @@ namespace FoP_IMT.Client.Services.ModelManipulationServices.Management
         public ManagementManipulationService(IMapper mapper)
         {
             _mapper = mapper;
+        }
+
+        public void SortTokenConnectorModels(UserPreferencesDto preferences)
+        {
+            foreach (var token in preferences.TokenOptions)
+            {
+                var connectorTypes = token.SelectedTokenConnectorTypes.Select(x => { return new UserPreferenceTokenOptionConnectorTypeDto() { ConnectorType = x }; });
+                token.ConnectorTypes.Clear();
+                
+                foreach(var addedToken in connectorTypes)
+                {
+                    token.ConnectorTypes.Add(addedToken);
+                }
+            }
         }
 
         public void SetItemPriorities(UserPreferencesDto preferences)

@@ -60,7 +60,7 @@ namespace FoP_IMT.Application.Infrastructure.Mappings.Tasks
                 .ForMember(x => x.Modules, cd => cd.MapFrom(map => map.Config.Modules))
                 .ForMember(x => x.Author, cd => cd.MapFrom(map => map.Members.Single(x => x.Id == map.AuthorID.ToString()).Email));
 
-            CreateMap<Domain.Entities.Tasks.Task, TaskConfigInputCoreDto>()
+            CreateMap<Domain.Entities.Tasks.Task, TaskConfigFullCoreDto>()
                 .ForMember(x => x.Name, cd => cd.MapFrom(map => map.Config.Name))
                 .ForMember(x => x.FeedbackFromSolution, cd => cd.MapFrom(map => map.Config.FeedbackFromSolution))
                 .ForMember(x => x.MaxContextSize, cd => cd.MapFrom(map => map.Config.MaxContextSize))
