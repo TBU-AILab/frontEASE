@@ -1,5 +1,6 @@
 ﻿@inject IManagementApiService managementApiService
 @inject IUIService uiService
+@inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
 @inject Blazored.Toast.Services.IToastService toastService
@@ -7,9 +8,9 @@
 <Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded">
     @if (EditModal.Visible)
     {
-        <ModalContent Centered Shadow="Shadow.Small">
+        <ModalContent Centered Shadow="Shadow.Small" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary}")">
 
-            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")} - {Token.Name}")" />
+            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")} - {Token.Name}")"/>
 
             <ModalBody Border="Border.Rounded">
                 <Row Margin="Margin.Is3" Padding="Margin.Is3.FromStart.Is3.FromEnd" Border="Border.Rounded" Class="user-modal-form">
@@ -20,7 +21,7 @@
                                     <TokenDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="true" />
                                     <Fields>
                                         <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
-                                            <Button Color="Color.Info" Clicked="@EditToken" Class="btn button btn-sized full-width" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
+                                            <Button style="@($"background-color: {uiManager.Theme.ColorOptions.Info}; color: {uiManager.Theme.TextColorOptions.Primary};")" Clicked="@EditToken" Class="btn button btn-sized full-width" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
                                                 @if (updateInProgress)
                                                 {
                                                     <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />

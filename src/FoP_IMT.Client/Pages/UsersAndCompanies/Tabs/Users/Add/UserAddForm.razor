@@ -1,11 +1,12 @@
 ﻿@inject IUserApiService userApiService
 @inject IUIService uiService
 @inject IMapper mapper
+@inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
 @inject IUserManipulationService userManipulationService
 @inject Blazored.Toast.Services.IToastService toastService
 
-<Row Background="@(isFormCollapsed ? Background.White : Background.Light)" Shadow="@(isFormCollapsed ? Shadow.None : Shadow.Small)" Class="rounded">
+<Row Background="@uiManager.Theme.BackgroundOptions.Primary" Class="rounded">
     <Column ColumnSize="ColumnSize.Is12" Margin="Margin.Is2.FromBottom" Padding="Padding.Is0">
         <Icon Name="@(isFormCollapsed ? IconName.PlusCircle : IconName.MinusCircle)" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@ChangeCollapseState" Class="float-right main-action-icon main-action-icon-primary" />
     </Column>

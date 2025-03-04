@@ -1,4 +1,5 @@
 ﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
 
 
 <Row>
@@ -7,7 +8,7 @@
         <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Config), PropertyDisplayResourceType.FIELD)))" />
     </Container>
 
-    <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
+    <Divider Class="divider-section" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop" />
 
     <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
 
@@ -98,6 +99,7 @@
                             <Field ColumnSize="ColumnSize.Is10.OnWidescreen">
                                 <Slider ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.MaxContextSize)))"
                                         Disabled="@(TaskMetadata.InitializationInProgres)"
+                                        Background="Background.Transparent"
                                         @bind-Value="@Task.Config.MaxContextSize"
                                         Step="1" Min="-1" Max="1000">
                                     <Feedback>

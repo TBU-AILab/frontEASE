@@ -1,5 +1,7 @@
-﻿<ModalHeader Class="margin-background-offset-top-1" Background="Background.Light">
-    <Heading Size="HeadingSize.Is3" TextWeight="TextWeight.Bold" TextColor="TextColor.Dark" Margin="Margin.Is0">
+﻿@inject IUIManager uiManager
+
+<ModalHeader Class="margin-background-offset-top-1" style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary}")">
+    <Heading Size="HeadingSize.Is3" TextWeight="TextWeight.Bold" TextColor="@uiManager.Theme.TextColorOptions.Primary" Margin="Margin.Is0">
         @(DisplayText ?? string.Empty)
     </Heading>
 </ModalHeader>

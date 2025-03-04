@@ -1,7 +1,8 @@
 ﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
 
-<Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is2.FromStart.Is2.FromEnd" Margin="Margin.Is2.FromTop.Is2.FromBottom">
-    <Container Fluid Padding="Padding.Is2" Shadow="Shadow.Small" Border="Border.Is2.Rounded">
+<Column ColumnSize="ColumnSize.Is12" Margin="Margin.Is3.FromBottom">
+    <Container Fluid Padding="Padding.Is2" Shadow="Shadow.Small" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary};")" Border="Border.Rounded">
         <Row>
             <Column ColumnSize="ColumnSize.Is1.OnWidescreen.Is2.OnTablet" TextAlignment="TextAlignment.Center" Class="align-self-center">
                 <Image Border="Border.RoundedCircle" Source="@(string.IsNullOrWhiteSpace(Company.Image?.ImageUrl) ? @"\resources\images\companies\companyLogoMissing.png" : Company.Image.ImageUrl)" Class="full-max-width datagrid-item-image" Loading />
@@ -10,7 +11,7 @@
                 <Container Fluid>
                     <Row Margin="Margin.Is2.FromTop" Class="justify-content-center">
                         <Column ColumnSize="ColumnSize.Is10.OnWidescreen" TextAlignment="TextAlignment.Center" Class="align-self-center">
-                            <Heading Size="HeadingSize.Is5" TextColor="TextColor.Primary" TextWeight="TextWeight.Bold" Margin="Margin.Is0">
+                            <Heading Size="HeadingSize.Is5" TextWeight="TextWeight.Bold" Margin="Margin.Is0">
                                 @(!string.IsNullOrWhiteSpace(Company.NameAbbreviation) ? $"{Company.NameAbbreviation} - {Company.Name}" : Company.Name)
                             </Heading>
                         </Column>
@@ -27,16 +28,16 @@
                     {
                         <Row Margin="Margin.Is2.FromTop">
                             <Column ColumnSize="ColumnSize.Is10.OnWidescreen" TextAlignment="TextAlignment.Center">
-                                <Span TextColor="TextColor.Black50" Class="font-large">
+                                <Span Class="font-large">
                                     @($"{Company.Address.Street} {Company.Address.DescriptiveNumber}")
                                 </Span>
                                 @if (!string.IsNullOrEmpty(Company.Address.OrientationNumber))
                                 {
-                                    <Span TextColor="TextColor.Black50" Class="font-large">
+                                    <Span Class="font-large">
                                         @($" ({Company.Address.OrientationNumber})")
                                     </Span>
                                 }
-                                <Span TextColor="TextColor.Black50" Class="font-large">
+                                <Span Class="font-large">
                                     @($", {Company.Address.ZIPCode} {Company.Address.City} - {resourceHandler.GetResource(((Country)Company.Address.Country).GetEnumResourceValue())}")
                                 </Span>
                             </Column>

@@ -7,7 +7,7 @@
 
 
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.GeneralOptions), PropertyDisplayResourceType.FIELD)))" />
-<Divider Class="divider-main" Background="Background.Primary" Shadow="Shadow.Small" />
+<Divider Class="divider-main" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop" />
 
 <Row Margin="Margin.Is2.FromTop.Is2.Is3.FromBottom">
     <Form>
@@ -16,7 +16,7 @@
                 <GeneralPreferencesDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="true" />
                 <Fields>
                     <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
-                        <Button Color="Color.Info" Clicked="@EditSettings" Class="btn button btn-sized full-width" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
+                        <Button style="@($"background-color: {uiManager.Theme.ColorOptions.Info}; color: {uiManager.Theme.TextColorOptions.Primary};")" Clicked="@EditSettings" Class="btn button btn-sized full-width" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
                             @if (updateInProgress)
                             {
                                 <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />

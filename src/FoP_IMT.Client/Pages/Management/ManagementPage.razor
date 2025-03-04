@@ -17,7 +17,7 @@
         }
         else
         {
-            <Container Fluid Class="content-main" Padding="Padding.Is5.FromStart.Is5.FromEnd">
+            <Container Fluid Class="content-main" Padding="Padding.Is5.FromStart.Is5.FromEnd" Margin="Margin.Is5.FromBottom">
                 <Row>
                     <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
                         <Tabs RenderMode="TabsRenderMode.LazyReload"
@@ -28,7 +28,7 @@
                             <Items>
                                 @foreach (var managementType in Enum.GetValues(typeof(UserPreferencesManagementType)))
                                 {
-                                    <Tab Name="@(managementType.ToString())">
+                                    <Tab Name="@(managementType.ToString())" style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary}")">
                                         @(resourceHandler.GetResource(((UserPreferencesManagementType)managementType).GetEnumResourceValue()))
                                     </Tab>
                                 }

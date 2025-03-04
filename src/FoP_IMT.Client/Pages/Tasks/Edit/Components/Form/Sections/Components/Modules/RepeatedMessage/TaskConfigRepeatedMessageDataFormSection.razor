@@ -1,7 +1,8 @@
 ﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
 
-<Row Background="Background.White" Padding="Padding.Is3.FromBottom" Border="Border.Is1.Rounded" Shadow="Shadow.Small" Margin="Margin.Is3.FromTop.Is3.FromBottom" TextOverflow="TextOverflow.Wrap" NoGutters>
-    <Column ColumnSize="ColumnSize.IsFull" Display="Display.Flex" Class="justify-content-between align-items-center" Background="Background.White" Padding="Padding.Is2" Border="Border.Is1.Rounded" Shadow="Shadow.Small">
+<Row Padding="Padding.Is3.FromBottom" Border="Border.Is1.Rounded" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" Margin="Margin.Is3.FromTop.Is3.FromBottom" TextOverflow="TextOverflow.Wrap" NoGutters>
+    <Column ColumnSize="ColumnSize.IsFull" Display="Display.Flex" Class="justify-content-between align-items-center" Padding="Padding.Is2" Shadow="Shadow.Small">
         <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
             <Text TextWeight="TextWeight.Bold" Class="text-center">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.RepeatedMessage), PropertyDisplayResourceType.FIELD)))

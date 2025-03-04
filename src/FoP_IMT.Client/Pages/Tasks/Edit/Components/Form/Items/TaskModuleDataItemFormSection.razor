@@ -1,5 +1,6 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject ITaskManipulationService taskManipulationService
+@inject IUIManager uiManager
 
 <Row>
     <Container Fluid>
@@ -21,7 +22,7 @@
         </Row>
     </Container>
 
-    <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
+    <Divider Class="divider-section" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop" />
 
     <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
         <Container Fluid>

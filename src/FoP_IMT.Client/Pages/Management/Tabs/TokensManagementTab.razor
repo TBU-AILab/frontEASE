@@ -1,5 +1,7 @@
-﻿<CascadingValue Value="ConnectorTypes">
-    <Container Fluid Border="Border.Is1.RoundedBottom.Primary" Shadow="Shadow.Small" Class="rounded-top-right-1">
+﻿@inject IUIManager uiManager
+
+<CascadingValue Value="ConnectorTypes">
+    <Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small" Class="rounded-top-right-1">
         <TokenAddForm />
         <TokenList />
     </Container>

@@ -31,25 +31,25 @@ namespace FoP_IMT.Client.Shared.Styling.Defaults
                 },
                 TextColorOptions = new ThemeTextColorOptions()
                 {
-                    Primary = selectedTheme.Primary,
+                    Primary = selectedTheme.TextPrimary,
                     Secondary = selectedTheme.Secondary,
                     Danger = selectedTheme.Danger,
                     Success = selectedTheme.Success,
                     Info = selectedTheme.Info,
                     Warning = selectedTheme.Warning,
-                    Dark = selectedTheme.Dark,
+                    Dark = selectedTheme.TextDark,
                     Light = selectedTheme.Light
                 },
                 BackgroundOptions = new ThemeBackgroundOptions()
                 {
-                    Primary = selectedTheme.Primary,
-                    Secondary = selectedTheme.Secondary,
+                    Primary = selectedTheme.BackgroundPrimary,
+                    Secondary = selectedTheme.BackgroundSecondary,
                     Danger = selectedTheme.Danger,
                     Success = selectedTheme.Success,
                     Info = selectedTheme.Info,
                     Warning = selectedTheme.Warning,
                     Dark = selectedTheme.Dark,
-                    Light = selectedTheme.Light
+                    Light = selectedTheme.BackgroundLight
                 },
                 DropdownOptions = new ThemeDropdownOptions()
                 {
