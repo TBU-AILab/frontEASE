@@ -1,5 +1,6 @@
 ﻿@inject IMapper mapper
 @inject IUIService uiService
+@inject IUIManager uiManager
 @inject ITaskManipulationService taskManipulationService
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
@@ -19,7 +20,7 @@
 
                         <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}")} - {Task.Config.Name}")" />
 
-                        <ModalBody Padding="Padding.Is0">
+                        <ModalBody Padding="Padding.Is0" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary}; color: {uiManager.Theme.TextColorOptions.Primary};")">
                             <Container Fluid Height="Height.Is100">
                                 <Row Height="Height.Is100">
                                     <Column ColumnSize="ColumnSize.Is3.OnWidescreen" TextAlignment="TextAlignment.Start" Class="overview-dialog-column" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnEnd">

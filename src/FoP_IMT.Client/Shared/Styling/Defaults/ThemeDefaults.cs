@@ -35,7 +35,7 @@ namespace FoP_IMT.Client.Shared.Styling.Defaults
                     Secondary = selectedTheme.Secondary,
                     Danger = selectedTheme.Danger,
                     Success = selectedTheme.Success,
-                    Info = selectedTheme.Info,
+                    Info = selectedTheme.TextInfo,
                     Warning = selectedTheme.Warning,
                     Dark = selectedTheme.TextDark,
                     Light = selectedTheme.Light
@@ -46,7 +46,7 @@ namespace FoP_IMT.Client.Shared.Styling.Defaults
                     Secondary = selectedTheme.BackgroundSecondary,
                     Danger = selectedTheme.Danger,
                     Success = selectedTheme.Success,
-                    Info = selectedTheme.Info,
+                    Info = selectedTheme.BackgroundInfo,
                     Warning = selectedTheme.Warning,
                     Dark = selectedTheme.Dark,
                     Light = selectedTheme.BackgroundLight

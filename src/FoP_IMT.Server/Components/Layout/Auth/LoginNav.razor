@@ -9,8 +9,8 @@
                  Class="nav-link-logout"
                  Match="Match.All">
             <Div Display="Display.Flex">
-                <Div Flex="Flex.Row" Class="align-items-center" TextColor="TextColor.Dark">
-                    <Text Class="navbar-profile-stamp" Flex="Flex.InlineFlex" TextWeight=TextWeight.Bold TextColor="TextColor.White" Background="Background.Primary" Border="Border.RoundedCircle" Padding="Padding.Is1">@(GetInitials(context.User.Identity?.Name))</Text>
+                <Div Flex="Flex.Row" Class="align-items-center">
+                    <Text Class="navbar-profile-stamp" Flex="Flex.InlineFlex" TextWeight=TextWeight.Bold Border="Border.RoundedCircle" Padding="Padding.Is1">@(GetInitials(context.User.Identity?.Name))</Text>
                     <Text TextWeight=TextWeight.Bold Flex="Flex.InlineFlex" Margin="Margin.Is2.FromStart">@context.User.Identity?.Name</Text>
                 </Div>
             </Div>

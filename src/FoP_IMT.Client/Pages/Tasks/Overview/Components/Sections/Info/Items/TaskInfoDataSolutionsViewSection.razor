@@ -1,6 +1,7 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject IFileApiService fileApiService
 @inject Blazored.Toast.Services.IToastService toastService
+@inject IUIManager uiManager
 
 @if (Task.Solutions.Any())
 {
@@ -10,7 +11,7 @@
             <TaskSolutionsViewSectionHeader />
         </Container>
 
-        <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
+        <Divider Class="divider-section" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" />
 
         <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is1.FromTop">
 
@@ -18,7 +19,7 @@
                 <Row>
                     @foreach (var solution in Task.Solutions)
                     {
-                        <Container Fluid Border="Border.Is1.Rounded" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop">
+                        <Container Fluid Border="Border.Is1.Rounded" Padding="Padding.Is2.FromBottom.Is2.FromTop" style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop">
                             <Row>
 
                                 <Column ColumnSize="ColumnSize.IsFull">
@@ -43,7 +44,7 @@
                                 }
 
                                 <Column ColumnSize="ColumnSize.IsFull">
-                                    <Text>
+                                    <Text Margin="Margin.Is2.FromEnd">
                                         @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}"))
                                     </Text>
                                     @if (solutionDownloadsOngoing.Contains(solution.ID))

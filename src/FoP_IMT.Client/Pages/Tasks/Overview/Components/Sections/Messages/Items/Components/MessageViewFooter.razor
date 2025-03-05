@@ -1,10 +1,11 @@
 ﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
 
-<CardFooter Border="Border.Is0" Background="Background.White">
+<CardFooter Border="Border.Is0" style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary};")">
     <Container Fluid>
         <Row>
 
-            <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.End" TextColor="TextColor.Black50">
+            <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.End" Style="@($"color: {uiManager.Theme.TextColorOptions.Muted};")">
                 <Text>
                     @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskMessageDto>(nameof(TaskMessageDto.DateCreated), PropertyDisplayResourceType.FIELD))}: ")
                 </Text>

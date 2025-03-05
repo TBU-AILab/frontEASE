@@ -1,6 +1,8 @@
 ﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
 
-<CardHeader Border="Border.Is0" Background="Background.Primary" TextColor="TextColor.White">
+
+<CardHeader Border="Border.Is0" style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary};")" Overflow="Overflow.Hidden">
     <Container Fluid>
         <Row>
             <Column Padding="Padding.Is0" ColumnSize="ColumnSize.Is6.OnTablet" TextAlignment="TextAlignment.Start">

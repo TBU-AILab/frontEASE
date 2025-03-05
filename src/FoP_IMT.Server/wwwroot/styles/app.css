@@ -33,6 +33,10 @@ input[type="range"]::-moz-range-thumb {
     cursor: pointer;
 }
 
+nav.navbar {
+    background-color: var(--b-theme-background-secondary) !important;
+    border-bottom: 1px solid var(--b-theme-background-light) !important;
+}
 
 a, .btn-link {
     color: #006bb7;
@@ -512,6 +516,7 @@ a, .btn-link {
 
 .nav-brand-text-primary {
     font-size: 1.75rem;
+    color: var(--b-theme-text-primary);
 }
 
 .nav-brand-text-secondary {
@@ -533,8 +538,8 @@ a, .btn-link {
 }
 
     .navbar-backgrounded .navbar-nav .nav-link:hover {
-        background-color: white;
-        color: var(--b-theme-primary) !important;
+        background-color: var(--b-theme-secondary);
+        color: white !important;
         border: 1px solid var(--b-theme-primary);
         border-radius: 5px !important;
     }
@@ -555,30 +560,33 @@ a, .btn-link {
 }
 
 .navbar-backgrounded .navbar-nav .nav-link-logout {
-    background-color: var(--b-theme-light);
-    color: white;
+    background-color: var(--b-theme-background-light);
+    color: var(--b-theme-color-primary);
     border-radius: 5px !important;
-    border: 1px solid var(--b-theme-light);
+    border: 0;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
 }
 
     .navbar-backgrounded .navbar-nav .nav-link-logout:hover {
-        background-color: var(--b-theme-white);
-        color: var(--b-theme-primary) !important;
-        border: 1px solid var(--b-theme-primary);
+        background-color: var(--b-theme-primary);
+        color: white !important;
+        border: 0;
         border-radius: 5px !important;
+    }
+
+    .nav-link-logout:hover .navbar-profile-stamp {
+        background-color: var(--b-theme-secondary);
     }
 
     .navbar-backgrounded .navbar-nav .nav-link-logout:active,
     .navbar-backgrounded .navbar-nav .nav-link-logout.active,
     .navbar-backgrounded .navbar-nav .show > .nav-link-logout {
-        background-color: var(--b-theme-secondary);
-        color: white !important;
-        border: 1px solid var(--b-theme-primary);
+        background-color: var(--b-theme-background-primary);
+        color: var(--b-theme-text-primary) !important;
+        border: 0;
         border-radius: 5px !important;
     }
-
 
 
 .navbar-profile-stamp {
@@ -586,7 +594,9 @@ a, .btn-link {
     justify-content: center;
     width: 35px;
     height: 35px;
-    border-radius: 50%
+    border-radius: 50%;
+    background-color: var(--b-theme-background-secondary);
+    transition: ease all 0.2s;
 }
 
 /* User + Company management */

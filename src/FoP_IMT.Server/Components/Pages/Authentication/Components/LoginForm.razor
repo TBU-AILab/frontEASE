@@ -12,28 +12,28 @@
 
     <Row>
         <Column ColumnSize="ColumnSize.IsFull">
-            <Div Class="form-floating mb-3">
+            <Div Class="mb-3">
+                <Label For="username" Class="form-label red-asterisk-required" Margin="Margin.Is1.FromBottom">
+                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Username), PropertyDisplayResourceType.FIELD)))
+                </Label>
                 <InputText id="username"
                            @bind-Value="LoginModel.Username"
                            class="form-control"
                            placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Username), PropertyDisplayResourceType.PLACEHOLDER)))" />
-                <Label For="username" Class="form-label red-asterisk-required">
-                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Username), PropertyDisplayResourceType.FIELD)))
-                </Label>
                 <ValidationMessage For="() => LoginModel.Username" class="text-danger" />
             </Div>
         </Column>
 
         <Column ColumnSize="ColumnSize.IsFull">
-            <Div Class="form-floating mb-3">
+            <Div Class="mb-3">
+                <Label For="password" Class="form-label red-asterisk-required" Margin="Margin.Is1.FromBottom">
+                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Password), PropertyDisplayResourceType.FIELD)))
+                </Label>
                 <InputText id="password"
                            type="password"
                            @bind-Value="LoginModel.Password"
                            class="form-control"
                            placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Password), PropertyDisplayResourceType.PLACEHOLDER)))" />
-                <Label For="password" Class="form-label red-asterisk-required">
-                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Password), PropertyDisplayResourceType.FIELD)))
-                </Label>
                 <ValidationMessage For="() => LoginModel.Password" class="text-danger" />
             </Div>
         </Column>

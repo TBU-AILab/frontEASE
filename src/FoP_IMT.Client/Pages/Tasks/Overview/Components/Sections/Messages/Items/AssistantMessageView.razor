@@ -1,10 +1,12 @@
-﻿<Container Fluid>
+﻿@inject IUIManager uiManager
+
+<Container Fluid>
     <Row>
         <Column ColumnSize="ColumnSize.Is8.OnWidescreen.Is10.OnMobile" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
-            <Card Border="Border.Is0">
+            <Card Border="Border.Rounded" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light};")">
                 <MessageViewHeader />
 
-                <CardBody Background="Background.Light" Class="throws-shadow" Border="Border.Is1.RoundedBottom.Primary">
+                <CardBody Class="throws-shadow" Border="Border.Is0" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")">
                     @if (!string.IsNullOrWhiteSpace(Message.Content))
                     {
                         @((MarkupString)Markdown.ToHtml(Message.Content))

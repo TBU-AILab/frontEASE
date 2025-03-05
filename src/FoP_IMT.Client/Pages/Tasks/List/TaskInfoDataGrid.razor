@@ -10,7 +10,7 @@
     Filterable="true"
     FilterMode="DataGridFilterMode.Default"
     FilterMethod="DataGridFilterMethod.Contains"
-    Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important")"
+    Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important; border-color: {uiManager.Theme.BackgroundOptions.Light};")"
     Responsive>
         <DataGridColumns>
             <DataGridColumn Field="@nameof(TaskInfoDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true" />

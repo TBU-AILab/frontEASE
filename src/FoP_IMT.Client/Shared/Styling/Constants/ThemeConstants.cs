@@ -17,7 +17,9 @@
             BackgroundPrimary = "#ffffff",
             BackgroundSecondary = "#f0f0f0",
             BackgroundLight = "#d3d3d3",
+            BackgroundInfo = "#371F76",
             TextPrimary = "#000000",
+            TextInfo = "#FFFFFF",
             TextMuted = "#8b8b8b"
         };
 
@@ -25,7 +27,7 @@
         {
             Primary = "#6d4ba9",
             Secondary = "#3e1a90",
-            Success = "#67D7A7",
+            Success = "#008B38",
             Danger = "#EF6461",
             Info = "#6d4ba9",
             Warning = "#FFC074",
@@ -35,9 +37,11 @@
             White = "#ffffff",
             BackgroundPrimary = "#121212",
             BackgroundSecondary = "#282828",
+            BackgroundInfo = "#6d4ba9",
             BackgroundLight = "#575757",
             TextPrimary = "#ffffff",
             TextDark = "#121212",
+            TextInfo = "#ffffff",
             TextMuted = "#8b8b8b"
         };
     }

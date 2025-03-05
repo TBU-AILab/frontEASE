@@ -2,12 +2,12 @@
 @inject ITaskManipulationService taskManipulationService
 @inject IUIManager uiManager
 
-<Row>
+<Row Margin="Margin.Is4.FromBottom">
     <Container Fluid>
         <FormSectionHeader DisplayText="@ModuleName" />
     </Container>
 
-    <Divider Class="divider-section" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop" />
+    <Divider Class="divider-section" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop.Is1.FromBottom" />
     @{
         var TaskModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == Module.ShortName);
     }

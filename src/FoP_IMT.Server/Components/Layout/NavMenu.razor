@@ -1,19 +1,19 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject IWebHostEnvironment webHostEnvironment
 
-<Bar Breakpoint="Breakpoint.Desktop" Mode="BarMode.Horizontal" Background="Background.Light" Class="navbar-backgrounded"
+<Bar Breakpoint="Breakpoint.Desktop" Mode="BarMode.Horizontal" Class="navbar-backgrounded"
      ThemeContrast="ThemeContrast.Dark"
      Padding="Padding.Is0" Position="Position.Fixed.Top"
      Shadow="Shadow.Small">
     <BarBrand Padding="Padding.Is0.FromTop">
-        <Image Source="\resources\logos\logo.svg" Class="navbar-logo-image" Display="Display.InlineBlock" />
+        <Image Source="\resources\logos\logo.svg" Class="navbar-logo-image" Display="Display.InlineBlock" Padding="Padding.Is1.FromTop.Is1.FromBottom"/>
         <Container Fluid Display="Display.InlineBlock">
             <Row>
                 <Column ColumnSize="ColumnSize.Is12">
-                    <Text Display="Display.None.InlineBlock.OnFullHD" Class="nav-brand-text-primary" Background="Background.Primary" Border="Border.Rounded" Padding="Padding.Is1">
+                    <Text Display="Display.None.InlineBlock.OnFullHD" Class="nav-brand-text-primary" Border="Border.Rounded" Padding="Padding.Is1">
                         @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIStateConstants.AppName}"))
                     </Text>
-                    <Text Display="Display.None.OnFullHD" Class="nav-brand-text-primary" Background="Background.Primary" Border="Border.Rounded" Padding="Padding.Is1">
+                    <Text Display="Display.None.OnFullHD" Class="nav-brand-text-primary" Border="Border.Rounded" Padding="Padding.Is1">
                         @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIStateConstants.AppNameShort}"))
                     </Text>
                 </Column>
