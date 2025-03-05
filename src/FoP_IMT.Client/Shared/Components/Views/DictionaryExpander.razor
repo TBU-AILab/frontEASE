@@ -1,4 +1,5 @@
-﻿@inject IResourceHandler resourceHandler
+﻿@inject AppSettings appSettings
+@inject IResourceHandler resourceHandler
 
 <Row Background="Background.White" Padding="Padding.Is2" Border="Border.Is1.Rounded" Shadow="Shadow.Small" Margin="MarginParam" TextOverflow="TextOverflow.Wrap">
     <Column ColumnSize="ColumnSize.IsFull" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Background="Background.White" Padding="Padding.Is2" Border="Border.Is1.Rounded" Shadow="Shadow.Small">
@@ -44,7 +45,7 @@
             {
                 <Column ColumnSize="ColumnSize.IsFull">
                     <Text TextWeight="TextWeight.Bold">
-                        <Image Fluid Source=@(param.Value) Text="@param.Value" Loading />
+                        <Image Fluid Source=@($"{appSettings!.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/{param.Value}") Text="@param.Value" Loading />
                     </Text>
                 </Column>
             }

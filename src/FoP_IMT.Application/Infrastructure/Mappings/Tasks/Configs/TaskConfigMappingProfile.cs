@@ -58,7 +58,7 @@ namespace FoP_IMT.Application.Infrastructure.Mappings.Tasks.Configs
                 .ForMember(dto => dto.Modules, opt => opt.MapFrom(src => src.Modules))
                 .ReverseMap();
 
-            CreateMap<TaskConfig, TaskConfigInputCoreDto>()
+            CreateMap<TaskConfig, TaskConfigFullCoreDto>()
                .ForMember(dto => dto.Modules, opt => opt.MapFrom(src => src.Modules))
                .ReverseMap()
                .ForMember(entity => entity.Modules, opt => opt.MapFrom(src => src.Modules));

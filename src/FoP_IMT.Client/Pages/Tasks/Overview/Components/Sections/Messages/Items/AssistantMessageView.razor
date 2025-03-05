@@ -1,4 +1,5 @@
-﻿@inject IResourceHandler resourceHandler
+﻿@inject AppSettings appSettings
+@inject IResourceHandler resourceHandler
 @inject IUIService uiService
 
 <Container Fluid>
@@ -22,7 +23,7 @@
                         @if (urlMetadata is not null)
                         {
                             <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
-                            <Image Fluid Source=@(urlMetadata.Value) Text="@urlMetadata.Value" Loading />
+                            <Image Fluid Source=@($"{appSettings!.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/{urlMetadata.Value}") Text="@urlMetadata.Value" Loading />
                         }
                     }
 

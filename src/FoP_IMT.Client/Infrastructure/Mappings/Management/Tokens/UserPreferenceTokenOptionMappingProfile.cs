@@ -12,7 +12,8 @@ namespace FoP_IMT.Client.Infrastructure.Mappings.Management.Tokens
 
         private void CreateMaps()
         {
-            CreateMap<UserPreferenceTokenOptionDto, UserPreferenceTokenOptionDto>();
+            CreateMap<UserPreferenceTokenOptionDto, UserPreferenceTokenOptionDto>()
+                .ForMember(x => x.ConnectorTypes, cd => cd.MapFrom(map => map.ConnectorTypes));
         }
     }
 }

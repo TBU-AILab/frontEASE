@@ -12,7 +12,7 @@
 else
 {
     <Row Margin="Margin.Is2.FromTop">
-        @if (Users.Any())
+        @if (Users.Count > 0)
         {
             @foreach (var User in Users)
             {
@@ -45,7 +45,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         uiService.RefreshRequested += RefreshView;
-        if (!isInitialized && !(Users?.Any() == true))
+        if (!isInitialized && !(Users?.Count > 0 == true))
         {
             isUsersLoading = true;
             await LoadUsers();
@@ -58,7 +58,7 @@ else
     private async Task LoadUsers()
     {
         var users = await userApiService.LoadUsers();
-        if (users?.Any() == true)
+        if (users?.Count > 0 == true)
         {
             Users.Clear();
             foreach (var user in users) { Users.Add(user); }

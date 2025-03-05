@@ -11,6 +11,7 @@
         public const string Email = "Email";
         public const string Base64String = "Base64String";
         public const string NumericRange = "NumericRange";
+        public const string CollectionNotEmpty = "CollectionNotEmpty";
 
         /* Specific */
         public const string ParameterOneOfRequired = "ParameterOneOfRequired";

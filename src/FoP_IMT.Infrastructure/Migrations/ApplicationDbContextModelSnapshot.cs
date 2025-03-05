@@ -126,7 +126,7 @@ namespace FoP_IMT.Infrastructure.Migrations
                     b.ToTable("UserPreferenceGeneralOptions", "Data");
                 });
 
-            modelBuilder.Entity("FoP_IMT.Domain.Entities.Management.Tokens.UserPreferenceTokenOption", b =>
+            modelBuilder.Entity("FoP_IMT.Domain.Entities.Management.Tokens.Connectors.UserPreferenceTokenOptionConnectorType", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
@@ -137,8 +137,27 @@ namespace FoP_IMT.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("TokenOptionID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("TokenOptionID");
+
+                    b.ToTable("UserPreferenceTokenConnectorTypes", "Data");
+                });
+
+            modelBuilder.Entity("FoP_IMT.Domain.Entities.Management.Tokens.UserPreferenceTokenOption", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid ()");
+
                     b.Property<DateTime>("DateCreated")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Description")
                         .HasColumnType("text");
@@ -856,6 +875,17 @@ namespace FoP_IMT.Infrastructure.Migrations
                     b.Navigation("Image");
                 });
 
+            modelBuilder.Entity("FoP_IMT.Domain.Entities.Management.Tokens.Connectors.UserPreferenceTokenOptionConnectorType", b =>
+                {
+                    b.HasOne("FoP_IMT.Domain.Entities.Management.Tokens.UserPreferenceTokenOption", "TokenOption")
+                        .WithMany("ConnectorTypes")
+                        .HasForeignKey("TokenOptionID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TokenOption");
+                });
+
             modelBuilder.Entity("FoP_IMT.Domain.Entities.Management.Tokens.UserPreferenceTokenOption", b =>
                 {
                     b.HasOne("FoP_IMT.Domain.Entities.Management.UserPreferences", "UserPreferences")
@@ -1070,6 +1100,11 @@ namespace FoP_IMT.Infrastructure.Migrations
                 {
                     b.Navigation("UserPreferences")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FoP_IMT.Domain.Entities.Management.Tokens.UserPreferenceTokenOption", b =>
+                {
+                    b.Navigation("ConnectorTypes");
                 });
 
             modelBuilder.Entity("FoP_IMT.Domain.Entities.Management.UserPreferences", b =>

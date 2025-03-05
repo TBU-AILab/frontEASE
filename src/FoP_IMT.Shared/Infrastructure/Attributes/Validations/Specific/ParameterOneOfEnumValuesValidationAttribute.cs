@@ -21,7 +21,7 @@ namespace FoP_IMT.Shared.Infrastructure.Attributes.Validations.Specific
             { return ValidationResult.Success!; }
 
             var enumOptions = metadata.EnumOptions;
-            if (enumOptions is null || !enumOptions.Any())
+            if (enumOptions is null || !(enumOptions.Count > 0))
             { return ValidationResult.Success!; }
 
             var validStringValues = enumOptions

@@ -14,6 +14,7 @@ namespace FoP_IMT.Application.Infrastructure.Mappings.Management.Tokens
         private void CreateMaps()
         {
             CreateMap<UserPreferenceTokenOption, UserPreferenceTokenOptionDto>()
+                .ForMember(x => x.ConnectorTypes, cd => cd.MapFrom(map => map.ConnectorTypes))
                 .ReverseMap();
 
             CreateMap<UserPreferenceTokenOption, UserPreferenceTokenOption>()
@@ -21,7 +22,9 @@ namespace FoP_IMT.Application.Infrastructure.Mappings.Management.Tokens
                 .ForMember(x => x.UserPreferencesID, opt => opt.Ignore())
                 .ForMember(x => x.UserPreferences, opt => opt.Ignore())
 
-                .ForMember(x => x.DateCreated, opt => opt.Ignore());
+                .ForMember(x => x.DateCreated, opt => opt.Ignore())
+
+                .ForMember(x => x.ConnectorTypes, cd => cd.MapFrom(map => map.ConnectorTypes));
         }
     }
 }

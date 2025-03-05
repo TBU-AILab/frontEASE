@@ -1,9 +1,8 @@
 ﻿using FoP_IMT.DataContracts.Converters.Tasks.Parameters;
-using FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values;
 using FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.Parameters.Options;
 using System.Text.Json.Serialization;
 
-namespace FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Options.Values.Parameters
+namespace FoP_IMT.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.Parameters
 {
     public class TaskModuleParameterCoreDto : ITaskCoreDto
     {

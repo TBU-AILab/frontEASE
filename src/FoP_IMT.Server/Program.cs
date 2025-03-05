@@ -16,6 +16,7 @@ using FoP_IMT.Application.Infrastructure.Mappings.Companies;
 using FoP_IMT.Application.Infrastructure.Mappings.Management;
 using FoP_IMT.Application.Infrastructure.Mappings.Management.General;
 using FoP_IMT.Application.Infrastructure.Mappings.Management.Tokens;
+using FoP_IMT.Application.Infrastructure.Mappings.Management.Tokens.Connectors;
 using FoP_IMT.Application.Infrastructure.Mappings.Shared.Addresses;
 using FoP_IMT.Application.Infrastructure.Mappings.Shared.Images;
 using FoP_IMT.Application.Infrastructure.Mappings.Shared.Resources;
@@ -184,7 +185,7 @@ void ConfigureJobs()
     {
         var options = new DashboardOptions
         {
-            Authorization = new[] { new HangfireIdentityAuthorizationFilter(app.Services.GetRequiredService<IHttpContextAccessor>()) },
+            Authorization = [new HangfireIdentityAuthorizationFilter(app.Services.GetRequiredService<IHttpContextAccessor>())],
             DashboardTitle = "FoP_IMT - Jobs",
         };
 
@@ -456,6 +457,7 @@ void SetupServerMappings()
         mc.AddProfile(new UserPreferencesMappingProfile());
         mc.AddProfile(new UserPreferencesTokenOptionMappingProfile());
         mc.AddProfile(new UserPreferencesGeneralOptionsMappingProfile());
+        mc.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
 
         mc.AddProfile(new TaskInfoMappingProfile());
         mc.AddProfile(new TaskStatusMappingProfile());
@@ -525,6 +527,7 @@ void SetupServerJobServices()
 {
     builder!.Services.AddTransient<UpdateTaskStatusesJob>();
     builder!.Services.AddTransient<UpdateTaskDetailsJob>();
+    builder!.Services.AddTransient<InitialTaskSyncJob>();
 }
 
 namespace FoP_IMT.Server

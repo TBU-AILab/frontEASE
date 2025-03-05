@@ -22,7 +22,7 @@
     else
     {
         <Row Margin="Margin.Is2.FromTop">
-            @if (Tasks.Any())
+            @if (Tasks.Count > 0)
             {
                 <TaskInfoDataGrid />
             }
@@ -129,7 +129,7 @@
     private async Task LoadTasks()
     {
         var tasks = await taskApiService.LoadTaskInfos();
-        if (tasks.Any())
+        if (tasks.Count > 0)
         {
             Tasks.Clear();
             foreach (var task in tasks) { Tasks.Add(task); }
@@ -139,7 +139,7 @@
     private async Task LoadTaskModuleOptions()
     {
         var moduleOptions = await typelistApiService.LoadTaskModuleOptions();
-        if (moduleOptions.Any())
+        if (moduleOptions.Count > 0)
         {
             TaskModuleOptions.Clear();
             foreach (var option in moduleOptions) { TaskModuleOptions.Add(option); }
@@ -149,7 +149,7 @@
     private async Task LoadUsers()
     {
         var users = await userApiService.LoadUsers();
-        if (users?.Any() == true)
+        if (users?.Count > 0 == true)
         {
             AvailableUsers.Clear();
             foreach (var user in users) { AvailableUsers.Add(user); }
@@ -159,7 +159,7 @@
     private async Task LoadCompanies()
     {
         var companies = await companyApiService.LoadCompanies();
-        if (companies?.Any() == true)
+        if (companies?.Count > 0 == true)
         {
             AvailableCompanies.Clear();
             foreach (var company in companies) { AvailableCompanies.Add(company); }

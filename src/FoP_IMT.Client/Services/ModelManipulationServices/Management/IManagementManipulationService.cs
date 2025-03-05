@@ -6,6 +6,7 @@ namespace FoP_IMT.Client.Services.ModelManipulationServices.Management
     public interface IManagementManipulationService
     {
         void SetItemPriorities(UserPreferencesDto preferences);
+        void SortTokenConnectorModels(UserPreferencesDto preferences);
         void ReinitializeTokenModel(UserPreferenceTokenOptionDto token);
     }
 }

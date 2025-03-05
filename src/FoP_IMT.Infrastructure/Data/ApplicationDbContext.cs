@@ -20,6 +20,7 @@ using FoP_IMT.Domain.Entities.Tasks.Solutions;
 using FoP_IMT.Infrastructure.Data.Configuration.Companies;
 using FoP_IMT.Infrastructure.Data.Configuration.Management;
 using FoP_IMT.Infrastructure.Data.Configuration.Management.Modules;
+using FoP_IMT.Infrastructure.Data.Configuration.Management.Modules.Connectors;
 using FoP_IMT.Infrastructure.Data.Configuration.Shared.Addresses;
 using FoP_IMT.Infrastructure.Data.Configuration.Shared.CountryCodes;
 using FoP_IMT.Infrastructure.Data.Configuration.Shared.Images;
@@ -90,6 +91,7 @@ namespace FoP_IMT.Infrastructure.Data
             builder.ApplyConfiguration(new UserPreferencesConfiguration());
             builder.ApplyConfiguration(new UserPreferenceTokenOptionsConfiguration());
             builder.ApplyConfiguration(new UserPreferenceGeneralOptionsConfiguration());
+            builder.ApplyConfiguration(new UserPreferenceTokenOptionConnectorTypeConfiguration());
 
             builder.ApplyConfiguration(new TaskConfiguration());
             builder.ApplyConfiguration(new TaskSolutionConfiguration());

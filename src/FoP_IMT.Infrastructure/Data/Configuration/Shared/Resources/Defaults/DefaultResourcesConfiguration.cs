@@ -3,6 +3,7 @@ using FoP_IMT.Shared.Data.DTOs.Companies;
 using FoP_IMT.Shared.Data.DTOs.Management;
 using FoP_IMT.Shared.Data.DTOs.Management.General;
 using FoP_IMT.Shared.Data.DTOs.Management.Tokens;
+using FoP_IMT.Shared.Data.DTOs.Management.Tokens.Connectors;
 using FoP_IMT.Shared.Data.DTOs.Shared.Addresses;
 using FoP_IMT.Shared.Data.DTOs.Shared.Images;
 using FoP_IMT.Shared.Data.DTOs.Shared.Resources;
@@ -93,6 +94,7 @@ namespace FoP_IMT.Infrastructure.Data.Configuration.Shared.Resources.Defaults
         {
             return
             [
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.CollectionNotEmpty}", Value="Collection must contain at least one item." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.Required}", Value="Field \"{0}\" is required." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.TextLengthBetween}", Value="Text length must be in range {0} - {1}." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.InvalidValue}", Value="Invalid value: \"{0}\" is not a permitted enumeration value." },
@@ -360,9 +362,12 @@ namespace FoP_IMT.Infrastructure.Data.Configuration.Shared.Resources.Defaults
 
                 /* UserPreferenceTokenOptionDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.FIELD), Value = "Token" },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.ConnectorType), PropertyDisplayResourceType.FIELD), Value = "Connector type" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Description), PropertyDisplayResourceType.FIELD), Value = "Description" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.FIELD), Value = "Token name" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.ConnectorTypes), PropertyDisplayResourceType.FIELD), Value = "Connector types" },
+
+                /* UserPreferenceTokenOptionConnectorTypeDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionConnectorTypeDto>(nameof(UserPreferenceTokenOptionConnectorTypeDto.ConnectorType), PropertyDisplayResourceType.FIELD), Value = "Connector type" },
 
                 /* TaskSolutionDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Feedback), PropertyDisplayResourceType.FIELD), Value = "Feedback" },

@@ -11,7 +11,7 @@
 
     <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
         <Row>
-            @if (Task.Messages.Any())
+            @if (Task.Messages.Count > 0)
             {
                 @foreach (var Message in Task.Messages.OrderBy(x => x.DateCreated))
                 {

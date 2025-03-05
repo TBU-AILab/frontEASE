@@ -54,7 +54,7 @@ namespace FoP_IMT.Application.AppServices.Users
         {
             var userEntity = _mapper.Map<ApplicationUser>(user);
             var duplicities = await _userService.LoadDuplicities(userEntity);
-            if (duplicities.Any())
+            if (duplicities.Count > 0)
             {
                 throw new BadRequestException()
                 {
@@ -76,7 +76,7 @@ namespace FoP_IMT.Application.AppServices.Users
             var userEntity = _mapper.Map<ApplicationUser>(user);
 
             var newDuplicities = await _userService.LoadDuplicities(userEntity);
-            if (newDuplicities.Any())
+            if (newDuplicities.Count > 0)
             {
                 var isDuplicityOnlyWithSelf = newDuplicities.Count == 1 && newDuplicities.First().Id == userEntity.Id;
                 if (!isDuplicityOnlyWithSelf)

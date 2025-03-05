@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FoP_IMT.Domain\FoP_IMT.Domain.csproj" />
     <ProjectReference Include="..\FoP_IMT.Infrastructure\FoP_IMT.Infrastructure.csproj" />
     <ProjectReference Include="..\FoP_IMT.Server\FoP_IMT.Server.csproj" />
   </ItemGroup>

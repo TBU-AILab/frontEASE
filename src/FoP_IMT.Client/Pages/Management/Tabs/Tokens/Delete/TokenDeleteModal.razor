@@ -65,7 +65,7 @@
         if (editedPreferences is not null)
         {
             mapper.Map(editedPreferences, Options);
-            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {Token.Token} ({Token.ConnectorType})";
+            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {Token.Token} ({string.Join(", ", Token.ConnectorTypes.Select(x => x.ConnectorType))})";
             toastService.ShowSuccess(message);
 
             uiService.CallRequestRefresh();
