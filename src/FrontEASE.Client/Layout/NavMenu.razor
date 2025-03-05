@@ -1,0 +1,73 @@
+﻿@inject IResourceHandler resourceHandler
+@inject AppSettings appSettings
+
+<Bar Breakpoint="Breakpoint.Desktop" Mode="BarMode.Horizontal" Background="Background.Light" Class="navbar-backgrounded"
+ThemeContrast="ThemeContrast.Dark"
+Padding="Padding.Is0" Position="Position.Fixed.Top"
+Shadow="Shadow.Small">
+    <BarBrand Padding="Padding.Is0.FromTop">
+        <Image Source="\resources\logos\logo.svg" Class="navbar-logo-image" Display="Display.InlineBlock" />
+        <Container Fluid Display="Display.InlineBlock">
+            <Row>
+                <Column ColumnSize="ColumnSize.Is12">
+                    <Text Display="Display.None.InlineBlock.OnFullHD" Class="nav-brand-text-primary" Background="Background.Primary" Border="Border.Rounded" Padding="Padding.Is1">
+                        @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIStateConstants.AppName}"))
+                    </Text>
+                    <Text Display="Display.None.OnFullHD" Class="nav-brand-text-primary" Background="Background.Primary" Border="Border.Rounded" Padding="Padding.Is1">
+                        @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIStateConstants.AppNameShort}"))
+                    </Text>
+                </Column>
+            </Row>
+        </Container>
+    </BarBrand>
+
+    <BarToggler TextColor="TextColor.White" Background="Background.Primary" Margin="Margin.Is2.FromEnd" />
+    <BarMenu Margin="Margin.Is4.FromStart">
+        <BarStart>
+            <Divider />
+
+            <AuthorizeView>
+                <BarLink To="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.BaseRoute}"))" Class="nav-link" Match="Match.All" Margin="Margin.Is3.FromEnd">
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.TasksRoute}"))
+                </BarLink>
+                <Divider />
+            </AuthorizeView>
+
+            <AuthorizeView Roles="@($"{UserRoleNames.AdminRoleName}, {UserRoleNames.SuperadminRoleName}")">
+                <BarLink To="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.BaseRoute}")}{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.UsersRoute}")}")" Class="nav-link" Match="Match.All" Margin="Margin.Is3.FromEnd">
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.UsersRoute}"))
+                </BarLink>
+                <Divider />
+            </AuthorizeView>
+
+            <AuthorizeView>
+                <BarLink To="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.BaseRoute}")}{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.ManagementRoute}")}")" Class="nav-link" Match="Match.All" Margin="Margin.Is3.FromEnd">
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.ManagementRoute}"))
+                </BarLink>
+                <Divider />
+            </AuthorizeView>
+
+            <AuthorizeView Roles="@($"{UserRoleNames.SuperadminRoleName}")">
+                <BarLink To="@($"{appSettings.ApiSettings!.BaseUrl}{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.BaseRoute}")}{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.HangfireRoute}")}")" Class="nav-link-dev" Match="Match.All" Margin="Margin.Is3.FromEnd">
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.HangfireRoute}"))
+                </BarLink>
+                <Divider />
+                <BarLink To="@($"{appSettings.ApiSettings!.BaseUrl}{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.BaseRoute}")}{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.SwaggerRoute}")}/index.html")" Class="nav-link-dev" Match="Match.All" Margin="Margin.Is3.FromEnd">
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.SwaggerRoute}"))
+                </BarLink>
+                <Divider />
+            </AuthorizeView>
+        </BarStart>
+        <BarEnd Padding="Padding.Is3.FromEnd">
+            <LoginNav />
+        </BarEnd>
+    </BarMenu>
+</Bar>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu() => collapseNavMenu = !collapseNavMenu;
+}

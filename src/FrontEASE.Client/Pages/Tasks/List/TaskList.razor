@@ -1,0 +1,181 @@
+﻿@implements IAsyncDisposable
+
+@inject ITypelistApiService typelistApiService
+@inject ITaskApiService taskApiService
+@inject IUserApiService userApiService
+@inject ICompanyApiService companyApiService
+@inject IResourceHandler resourceHandler
+@inject ICompanyManipulationService companyManipulationService
+@inject ITaskManipulationService taskManipulationService
+@inject IManagementApiService managementApiService
+@inject IUIService uiService
+@inject IMapper mapper
+
+
+<Container Fluid>
+    <TaskListHeader />
+
+    @if (isTasksLoading || isUsersLoading || isCompaniesLoading || isTaskOptionsLoading)
+    {
+        <ContentLoadSpinner />
+    }
+    else
+    {
+        <Row Margin="Margin.Is2.FromTop">
+            @if (Tasks.Count > 0)
+            {
+                <TaskInfoDataGrid />
+            }
+            else
+            {
+                <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                    <Heading Size="HeadingSize.Is4" TextColor="TextColor.Dark" TextWeight="TextWeight.Bold">
+                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(TaskDto)}.{UIElementConstants.Collection}"))
+                    </Heading>
+                </Column>
+            }
+        </Row>
+    }
+</Container>
+
+
+@code {
+    [CascadingParameter]
+    public UserPreferencesDto Options { get; set; } = new();
+
+    [CascadingParameter]
+    public ObservableCollection<TaskInfoDto> Tasks { get; set; } = [];
+
+    [CascadingParameter]
+    public IList<TaskModuleNoValidationDto> TaskModuleOptions { get; set; } = [];
+
+    [CascadingParameter]
+    public IList<ApplicationUserDto> AvailableUsers { get; set; } = [];
+
+    [CascadingParameter]
+    public IList<CompanyDto> AvailableCompanies { get; set; } = [];
+
+    private bool isTasksLoading = false;
+    private bool isUsersLoading = false;
+    private bool isCompaniesLoading = false;
+    private bool isTaskOptionsLoading = false;
+    private CancellationTokenSource cancellationTokenSource;
+
+    public TaskList()
+    {
+        cancellationTokenSource = new();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+
+        var loadTasksTask = Task.CompletedTask;
+        var loadUsersTask = Task.CompletedTask;
+        var loadCompaniesTask = Task.CompletedTask;
+        var loadTaskOptionsTask = Task.CompletedTask;
+
+        isTasksLoading = true;
+        loadTasksTask = LoadTasks();
+
+        isUsersLoading = true;
+        loadUsersTask = LoadUsers();
+
+        isCompaniesLoading = true;
+        loadCompaniesTask = LoadCompanies();
+
+        isTaskOptionsLoading = true;
+        loadTaskOptionsTask = LoadTaskModuleOptions();
+
+        await Task.WhenAll(loadTasksTask, loadUsersTask, loadCompaniesTask, loadTaskOptionsTask);
+        isTasksLoading = isUsersLoading = isCompaniesLoading = isTaskOptionsLoading = false;
+
+        companyManipulationService.SortUsersToCompanies(AvailableUsers!, AvailableCompanies!);
+
+        _ = StartPeriodicTasksStatusCall(cancellationTokenSource!.Token);
+        await base.OnInitializedAsync();
+    }
+
+    private async Task StartPeriodicTasksStatusCall(CancellationToken cancellationToken)
+    {
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var taskStatuses = await taskApiService.LoadTaskStatuses();
+                await InvokeAsync(() =>
+                {
+                    var updateNecessary = taskManipulationService.UpdateTaskStatuses(Tasks, taskStatuses);
+                    if (updateNecessary)
+                    {
+                        uiService.CallRequestRefresh();
+                    }
+                });
+
+                await Task.Delay(TimeSpan.FromSeconds(15), cancellationToken);
+            }
+        }
+        catch (Exception ex)
+        {
+            await Console.Out.WriteLineAsync(ex.Message);
+        }
+    }
+
+    private async Task LoadTasks()
+    {
+        var tasks = await taskApiService.LoadTaskInfos();
+        if (tasks?.Count > 0 == true)
+        {
+            Tasks.Clear();
+            foreach (var task in tasks) { Tasks.Add(task); }
+        }
+    }
+
+    private async Task LoadTaskModuleOptions()
+    {
+        var moduleOptions = await typelistApiService.LoadTaskModuleOptions();
+        if (moduleOptions?.Count > 0 == true)
+        {
+            TaskModuleOptions.Clear();
+            foreach (var option in moduleOptions) { TaskModuleOptions.Add(option); }
+        }
+    }
+
+    private async Task LoadUsers()
+    {
+        var users = await userApiService.LoadUsers();
+        if (users?.Count > 0 == true)
+        {
+            AvailableUsers.Clear();
+            foreach (var user in users) { AvailableUsers.Add(user); }
+        }
+    }
+
+    private async Task LoadCompanies()
+    {
+        var companies = await companyApiService.LoadCompanies();
+        if (companies?.Count > 0 == true)
+        {
+            AvailableCompanies.Clear();
+            foreach (var company in companies) { AvailableCompanies.Add(company); }
+        }
+    }
+
+    private async Task LoadPreferences()
+    {
+        var preferences = await managementApiService.LoadPreferences();
+        if (preferences is not null)
+        {
+            mapper.Map(preferences, Options);
+        }
+    }
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        await cancellationTokenSource.CancelAsync();
+        cancellationTokenSource?.Dispose();
+    }
+}

@@ -1,0 +1,75 @@
+﻿@inject IResourcesManager resourcesManager
+@inject IUIManager uiManager
+@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+
+@attribute [Authorize(Roles = $"{UserRoleNames.AdminRoleName}, {UserRoleNames.SuperadminRoleName}")]
+@page "/Users"
+
+<PageTitle>
+    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.UsersAndCompanies}"))
+</PageTitle>
+
+<Container Fluid Class="content-main" Padding="Padding.Is5.FromStart.Is5.FromEnd">
+    <Row>
+        <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
+            <Tabs RenderMode="TabsRenderMode.LazyReload"
+                  SelectedTab="@managementTypeSelected.ToString()"
+                  SelectedTabChanged="@OnSelectedTabChanged"
+                  Class="tab-control"
+                  Border="Border.Is0">
+                <Items>
+                    @foreach (var managementType in Enum.GetValues(typeof(UserCompanyManagementType)))
+                    {
+                        <Tab Name="@(managementType.ToString())">
+                            @(resourceHandler.GetResource(((UserCompanyManagementType)managementType).GetEnumResourceValue()))
+                        </Tab>
+                    }
+                </Items>
+                <Content>
+                    @foreach (var personType in Enum.GetValues(typeof(UserCompanyManagementType)))
+                    {
+                        <CascadingValue Value="Companies">
+                            <CascadingValue Value="Users">
+                                <TabPanel TextAlignment="TextAlignment.Start" Name="@(personType.ToString())">
+                                    @switch (managementTypeSelected)
+                                    {
+                                        case UserCompanyManagementType.USERS:
+                                            <UserManagementTab />
+                                            break;
+                                        case UserCompanyManagementType.COMPANIES:
+                                            <CompanyManagementTab />
+                                            break;
+                                    }
+                                </TabPanel>
+                            </CascadingValue>
+                        </CascadingValue>
+                    }
+                </Content>
+            </Tabs>
+
+        </Column>
+    </Row>
+</Container>
+
+@code {
+    private IList<CompanyDto> Companies = [];
+    private IList<ApplicationUserDto> Users = [];
+
+    private UserCompanyManagementType managementTypeSelected = UserCompanyManagementType.USERS;
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        await base.OnInitializedAsync();
+    }
+
+    private Task OnSelectedTabChanged(string name)
+    {
+        managementTypeSelected = (UserCompanyManagementType)Enum.Parse(typeof(UserCompanyManagementType), name);
+        return Task.CompletedTask;
+    }
+}

@@ -1,0 +1,103 @@
+﻿@inject IResourcesManager resourcesManager
+@inject IUIManager uiManager
+@inject IUIService uiService
+@inject IResourceHandler resourceHandler
+@inject NavigationManager navigation
+@inject AuthenticationStateProvider authStateProvider
+
+@attribute [AllowAnonymous]
+@page "/Error/{StatusCode?}"
+
+<PageTitle>
+    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Error}"))
+</PageTitle>
+
+<Container Padding="Padding.Is5.FromTop">
+    <Row Margin="Margin.Is5.FromTop">
+        <Column ColumnSize="ColumnSize.Is6.OnWidescreen.Is3.WithOffset.OnWidescreen" Padding="Padding.Is5.FromTop" Margin="Margin.Is5.FromTop.Is3.FromBottom" TextAlignment="TextAlignment.Center" TextColor="TextColor.Dark">
+            <Heading Size="HeadingSize.Is1">
+                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIConstants.Error}.{UIStateConstants.Text}"))
+            </Heading>
+        </Column>
+
+        <Card Shadow="Shadow.Small" Padding="Padding.Is0">
+            <CardHeader TextColor="TextColor.White" Class="margin-background-offset-top-1" Background="Background.Primary">
+                <Heading Size="HeadingSize.Is3" TextWeight="TextWeight.Bold" Margin="Margin.Is0">
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIConstants.Error}")) - @((int)_statusCode)
+                </Heading>
+            </CardHeader>
+            <CardBody Background="Background.Light">
+                <Container Fluid Margin="Margin.Is3.FromTop">
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Margin="Margin.Is5.FromTop">
+                            <Text Class="font-large">
+                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIConstants.Error}.{UIStateConstants.Explanation}"))
+                            </Text>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is5.FromBottom">
+                            <Text TextWeight="TextWeight.Bold" Class="font-large">
+                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Error}.{_statusCode}.{UIStateConstants.Text}"))
+                            </Text>
+                        </Column>
+                    </Row>
+                    <Row Margin="Margin.Is4.FromTop">
+                        <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center">
+                            <Button TextWeight="TextWeight.Bold" Color="Color.Primary" Clicked="@NavigateHome" Class="btn button btn-primary btn-sized">
+                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.BackToHomepage}"))
+                            </Button>
+                        </Column>
+                    </Row>
+                </Container>
+            </CardBody>
+        </Card>
+    </Row>
+</Container>
+
+
+@code {
+    [Parameter]
+    public string? StatusCode { get; set; }
+
+    private HttpStatusCode _statusCode;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ParseCode(StatusCode!);
+        await base.OnInitializedAsync();
+    }
+
+    public void ParseCode(string statusCode)
+    {
+        if (int.TryParse(statusCode, out int codeNum))
+        {
+            if (codeNum == 0)
+            {
+                if (!Enum.TryParse<HttpStatusCode>(statusCode, out _statusCode))
+                {
+                    _statusCode = HttpStatusCode.InternalServerError;
+                }
+            }
+            else
+            {
+                _statusCode = Enum.IsDefined(typeof(HttpStatusCode), codeNum) ?
+                              (HttpStatusCode)codeNum : HttpStatusCode.InternalServerError;
+            }
+        }
+        else
+        {
+            if (!Enum.TryParse<HttpStatusCode>(statusCode, true, out _statusCode))
+            {
+                _statusCode = HttpStatusCode.InternalServerError;
+            }
+        }
+    }
+
+    private async Task NavigateHome()
+    {
+        var authstate = await authStateProvider.GetAuthenticationStateAsync();
+
+        navigation.NavigateTo(authstate.User?.Identity?.IsAuthenticated == true ?
+            resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.BaseRoute}") :
+            resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}"));
+    }
+}
