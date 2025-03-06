@@ -1,0 +1,67 @@
+﻿@inject IResourceHandler resourceHandler
+@inject AppSettings appSettings
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is5.OnWidescreen" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is3.FromTop.Is3.FromBottom">
+        <Image Padding="Padding.Is0" Source="@(string.IsNullOrWhiteSpace(User.Image?.ImageUrl) ? @"\resources\images\users\profilePictureMissing.png" : $"{appSettings.ApiSettings!.BaseUrl}/{User.Image.ImageUrl}")" Border="Border.RoundedCircle" Class="full-max-width user-card-image" Loading />
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is7.OnWidescreen" Padding="Padding.Is0" TextAlignment="TextAlignment.Center">
+        <CardBody>
+            <Container Fluid Padding="Padding.Is0">
+                <Row Padding="Padding.Is3.FromTop">
+                    <Column ColumnSize="ColumnSize.Is12">
+                        <Heading Size="HeadingSize.Is5" TextColor="TextColor.Primary" TextWeight="TextWeight.Bold">
+                            @User.UserName
+                        </Heading>
+                    </Column>
+                </Row>
+                @if (!string.IsNullOrWhiteSpace(User.Email))
+                {
+                    <Row Padding="Padding.Is3.FromTop">
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Text TextColor="TextColor.Black50">
+                                @User.Email
+                            </Text>
+                        </Column>
+                    </Row>
+                }
+                <Row Padding="Padding.Is3.FromTop">
+                    <Column ColumnSize="ColumnSize.Is12">
+                        <Text TextColor="GetUserRoleTextColor(User.Role)" TextWeight="TextWeight.Bold" Background="GetUserRoleBackgroundColor(User.Role)" Border="Border.Is1.RoundedPill" Padding="Padding.Is2">
+                            @(resourceHandler.GetResource(User.Role.GetEnumResourceValue()))
+                        </Text>
+                    </Column>
+                </Row>
+            </Container>
+        </CardBody>
+    </Column>
+</Row>
+
+
+@code {
+    [CascadingParameter]
+    public ApplicationUserDto User { get; set; } = new();
+
+    private Background GetUserRoleBackgroundColor(UserRole role)
+    {
+        return role switch
+        {
+            UserRole.USER => Background.Primary,
+            UserRole.ADMIN => Background.Secondary,
+            UserRole.OWNER => Background.Warning,
+            _ => Background.Dark,
+        };
+    }
+
+    private TextColor GetUserRoleTextColor(UserRole role)
+    {
+        return role switch
+        {
+            UserRole.USER => TextColor.White,
+            UserRole.ADMIN => TextColor.White,
+            UserRole.OWNER => TextColor.Dark,
+            _ => TextColor.White,
+        };
+    }
+}

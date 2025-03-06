@@ -1,0 +1,165 @@
+﻿@inject ITaskManipulationService taskManipulationService
+@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+@inject AppSettings appSettings
+
+<Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded.Primary" Shadow="Shadow.Small">
+    <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Background="Background.White" Padding="Padding.Is2" Border="Border.Is1.Rounded" Shadow="Shadow.Small">
+        <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
+            <Text TextWeight="TextWeight.Bold" Class="text-center">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Members), PropertyDisplayResourceType.FIELD)))
+            </Text>
+        </Div>
+        <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" TextColor="TextColor.Primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
+    </Column>
+
+    @if (!isSectionCollapsed)
+    {
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Container Fluid Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                <Row>
+                    <Column ColumnSize="ColumnSize.Is12">
+                        <Fields>
+
+                            <DataGrid TItem="ApplicationUserDto"
+                                      Data="@AvailableUsers"
+                                      SelectionMode="DataGridSelectionMode.Multiple"
+                                      SelectedRows="@selectedUsers"
+                                      SelectedRowsChanged="(obj => SelectionChanged(obj))"
+                                      Filterable="true"
+                                      FilterMode="DataGridFilterMode.Default"
+                                      FilterMethod="DataGridFilterMethod.Contains"
+                                      RowStyling="@StyleRow"
+                                      SelectedRowStyling="@StyleRow"
+                                      RowSelectable="@((user) => {return (user.Item.Id != Task?.Author?.Id) && !TaskMetadata.InitializationInProgres;})"
+                                      Class="member-selection-grid"
+                                      Responsive>
+
+                                <DataGridColumns>
+                                    <DataGridColumn Filterable="false" TItem="ApplicationUserDto" Field="@nameof(ApplicationUserDto.Image)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.FIELD)))" Sortable="false">
+                                        <DisplayTemplate>
+                                            <Image Border="Border.RoundedCircle"
+                                                   Source="@(GetUserImageUrl(context.Id!.Value))"
+                                                   Class="full-max-width datagrid-item-image-small" Loading />
+                                        </DisplayTemplate>
+                                    </DataGridColumn>
+
+                                    <DataGridColumn Field="@nameof(ApplicationUserDto.UserName)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
+                                    <DataGridColumn Field="@nameof(ApplicationUserDto.Email)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FIELD)))" Sortable="true"/>
+
+                                    <DataGridColumn TItem="ApplicationUserDto" Field="@nameof(ApplicationUserDto.Role)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Role), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+                                        <DisplayTemplate>
+                                            @(resourceHandler.GetResource(((UserRole)context.Role).GetEnumResourceValue()))
+                                        </DisplayTemplate>
+                                    </DataGridColumn>
+
+                                </DataGridColumns>
+
+                            </DataGrid>
+
+                        </Fields>
+                    </Column>
+                </Row>
+            </Container>
+        </Column>
+    }
+</Container>
+
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+
+    [CascadingParameter]
+    public IList<ApplicationUserDto> AvailableUsers { get; set; } = [];
+    [CascadingParameter]
+    public IList<CompanyDto> AvailableCompanies { get; set; } = [];
+
+    private List<ApplicationUserDto> selectedUsers = [];
+    private bool isSectionCollapsed = false;
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+
+        SetInitialCollapse();
+        SetInitialData();
+
+        await base.OnInitializedAsync();
+    }
+
+
+
+    private void StyleRow(ApplicationUserDto userDto, DataGridRowStyling styling)
+    {
+        if(userDto.Id == Task.Author.Id)
+        {
+            styling.Class = "datagrid-row-author";
+        }
+    }
+
+    private void SetInitialCollapse()
+    {
+        if (!(Task.Members?.Count > 0))
+        {
+            ChangeCollapseState();
+        }
+    }
+
+    private void SetInitialData()
+    {
+        var selectedUserIDs = Task.Members.Select(x => x.Id);
+        selectedUsers.AddRange(AvailableUsers.Where(x => selectedUserIDs.Contains(x.Id)));
+    }
+
+    private void SelectionChanged(IList<ApplicationUserDto> newSelection)
+    {
+        var selectedIDs = Task.Members.Select(x => x.Id);
+        var newSelectionIDs = newSelection.Select(x => x.Id);
+
+        var added = newSelectionIDs.Except(selectedIDs).ToList();
+        var removed = selectedIDs.Except(newSelectionIDs).ToList();
+
+        if (added.Count > 0)
+        {
+            foreach (var addedUser in added)
+            {
+                var userDto = AvailableUsers.Single(x => x.Id == addedUser);
+                Task.Members.Add(userDto);
+            }
+        }
+
+        if (removed.Count > 0)
+        {
+            foreach (var removedUser in removed)
+            {
+                var removedFromModel = Task.Members.Single(x => x.Id == removedUser);
+                Task.Members.Remove(removedFromModel);
+            }
+        }
+    }
+
+    private void ChangeCollapseState()
+    {
+        isSectionCollapsed = !isSectionCollapsed;
+
+        if (!isSectionCollapsed)
+        { taskManipulationService.CleanUsersInfo(Task); }
+
+        uiService.CallRequestRefresh();
+    }
+
+    private string? GetUserImageUrl(Guid userID)
+    {
+        var userData = AvailableUsers.SingleOrDefault(x => x.Id == userID);
+        return string.IsNullOrWhiteSpace(userData?.Image?.ImageUrl) ?
+            @"\resources\images\users\profilePictureMissing.png" :
+            $"{appSettings.ApiSettings!.BaseUrl}/{userData?.Image?.ImageUrl}";
+    }
+}

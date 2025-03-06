@@ -1,0 +1,189 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.JSInterop
+@using FrontEASE.Client
+@using FrontEASE.Client.Layout
+@using Microsoft.AspNetCore.Components.Authorization
+
+@* GUI and Visualisation *@
+@using Markdig
+@using Blazorise
+@using Blazored.Toast
+@using Blazorise.DataGrid
+@using Blazorise.Markdown
+@using Blazorise.Components
+@using Blazored.Toast.Services
+@using Blazored.Toast.Configuration
+@using System.Collections.ObjectModel;
+@using FrontEASE.Client.Services.HelperServices
+@using FrontEASE.Shared.Infrastructure.Constants.Auth
+@using FrontEASE.Shared.Infrastructure.Constants.Controllers
+@using FrontEASE.Shared.Infrastructure.Constants.UI.Generic
+@using FrontEASE.Shared.Infrastructure.Constants.UI.Specific
+@using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Tasks
+@using FrontEASE.Shared.Infrastructure.Constants.Validations
+@using FrontEASE.Client.Layout.Auth
+@using FrontEASE.Shared.Services.Resources
+@using FrontEASE.Client.Shared.Styling.Constants
+@using FrontEASE.Client.Shared.Styling.Defaults
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+
+
+@*-----------------*@
+@*---- General ----*@
+@*-----------------*@
+
+@* System Utils *@
+@using AutoMapper
+@using System.Web
+@using System.IO
+@using System.Linq
+@using System.Threading
+@using System.Net
+@using System.ComponentModel.DataAnnotations
+
+@* Blazor and Auth *@
+@using Microsoft.AspNetCore.Authorization
+@using FrontEASE.Shared.Data.DTOs.Shared.Users.Auth
+@using FrontEASE.Client.Infrastructure.Settings.AppSettings
+
+@* GUI and Visualisation *@
+
+
+@*-----------------------*@
+@*---- Functionality ----*
+@*-----------------------*@
+
+@* Shared *@
+@using FrontEASE
+@using FrontEASE.Client.Infrastructure.Settings
+@using FrontEASE.Client.Shared.Components.Forms
+@using FrontEASE.Client.Shared.Components.Modals
+@using FrontEASE.Client.Shared.Components.Utility
+@using FrontEASE.Client.Shared.Components.Views
+@using FrontEASE.Client.Services.HelperServices.UI.Operations
+@using FrontEASE.Client.Services.HelperServices.UI.Signals
+@using FrontEASE.Client.Services.HelperServices.UI.Manage
+@using FrontEASE.Shared.Data.DTOs.Shared.Images
+@using FrontEASE.Client.Services.ApiServices.Shared.Resources
+@using FrontEASE.Client.Services.HelperServices.Resources.Manage
+@using FrontEASE.Client.Services.ApiServices.Shared.Files
+@using FrontEASE.Client.Services.ApiServices.Shared.Typelists
+
+@using FrontEASE.Shared.Data.Enums.Shared.Files
+@using FrontEASE.Shared.Data.Enums.Shared.General
+@using FrontEASE.Shared.Infrastructure.Caching.Shared
+@using FrontEASE.Shared.Infrastructure.Utils.Extensions
+@using FrontEASE.Shared.Infrastructure.Constants.UI
+@using FrontEASE.Shared.Data.DTOs.Shared.Addresses
+@using FrontEASE.Shared.Data.Enums.Shared.Addresses
+@using FrontEASE.Client.Infrastructure.Utils
+
+@* Tasks *@
+@using FrontEASE.Shared.Infrastructure.Utils.Helpers.Tasks
+@using FrontEASE.Client.Pages.Tasks
+@using FrontEASE.Client.Pages.Tasks.List
+@using FrontEASE.Client.Pages.Tasks.List.Components
+@using FrontEASE.Client.Pages.Tasks.Overview
+@using FrontEASE.Client.Pages.Tasks.Delete
+@using FrontEASE.Client.Pages.Tasks.Manipulate
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Items
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Access
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Info
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Info.Items
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Info.Items.Solutions
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Messages
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Messages.Items
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Messages.Items.Components
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Items
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.RepeatedMessage
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Specific
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Access
+@using FrontEASE.Client.Pages.Tasks.Overview.Components
+@using FrontEASE.Client.Services.ApiServices.Tasks
+@using FrontEASE.Client.Services.ModelManipulationServices.Tasks
+@using FrontEASE.Shared.Data.DTOs.Tasks
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Solutions
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Messages
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs
+@using FrontEASE.Shared.Data.DTOs.Tasks.UI
+@using FrontEASE.Shared.Data.Enums.Tasks
+@using FrontEASE.Shared.Data.Enums.Tasks.Messages
+@using FrontEASE.Client.Pages.Tasks.Edit
+@using FrontEASE.Client.Pages.Tasks.Edit.Components
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options
+@using FrontEASE.Shared.Data.Enums.Tasks.Config
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Shared
+@using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.RepeatedMessage
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Metadata
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Values
+
+@* Users and Companies *@
+@using FrontEASE.Shared.Data.DTOs.Companies
+@using FrontEASE.Client.Services.ApiServices.Companies
+@using FrontEASE.Shared.Data.Enums.Users.Visualisation
+@using FrontEASE.Client.Pages.UsersAndCompanies
+@using FrontEASE.Shared.Data.DTOs.Shared.Users
+@using FrontEASE.Client.Services.ApiServices.Shared.Users
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Users.Add
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Users.Shared
+@using FrontEASE.Shared.Data.Enums.Auth
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Users.List
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Users.List.Components
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Users.List.Components.Item
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Companies.List
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Companies.List.Components
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Companies.Add
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Companies.Shared
+@using FrontEASE.Client.Services.ModelManipulationServices.Companies
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Users
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Users.Delete
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Users.Edit
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Companies.Delete
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Companies.Edit
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Companies
+@using FrontEASE.Client.Services.ModelManipulationServices.User
+@using FrontEASE.Client.Pages.UsersAndCompanies.Tabs.Companies.Edit.Components
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters
+@using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.Parameters
+@using FrontEASE.Client.Pages.Auth.Components
+
+@* Options Management *@
+@using FrontEASE.Shared.Data.Enums.Tasks.Visualisation
+@using FrontEASE.Shared.Data.DTOs.Management
+@using FrontEASE.Client.Pages.Management.Tabs
+@using FrontEASE.Client.Pages.Management.Tabs.Tokens.List
+@using FrontEASE.Client.Pages.Management.Tabs.Tokens.List.Components
+@using FrontEASE.Client.Pages.Management.Tabs.Tokens.Edit
+@using FrontEASE.Client.Pages.Management.Tabs.Tokens.Delete
+@using FrontEASE.Client.Pages.Management.Tabs.Tokens.Add
+@using FrontEASE.Client.Pages.Management.Tabs.Tokens.Shared
+@using FrontEASE.Client.Pages.Management.Tabs.General
+@using FrontEASE.Client.Pages.Management.Tabs.General.Edit
+@using FrontEASE.Client.Pages.Management.Tabs.General.Shared
+@using FrontEASE.Client.Services.ApiServices.Management
+@using FrontEASE.Shared.Data.DTOs.Management.Tokens
+@using FrontEASE.Shared.Data.DTOs.Management.General
+@using FrontEASE.Client.Services.ModelManipulationServices.Management
+@using FrontEASE.Shared.Data.Enums.Users.Preferences.GeneralOptions
+@using FrontEASE.Shared.Data.DTOs.Management.Tokens.Connectors

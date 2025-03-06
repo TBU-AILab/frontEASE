@@ -1,0 +1,86 @@
+﻿@inject IResourceHandler resourceHandler
+@inject AppSettings appSettings
+
+
+@if (Task.MemberGroups.Count > 0)
+{
+    <Row>
+
+        <Container Fluid>
+            <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.MemberGroups), PropertyDisplayResourceType.FIELD)))" />
+        </Container>
+
+        <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
+
+        <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop" TextAlignment="TextAlignment.Center">
+
+            <Container Fluid>
+                <Row>
+                    @foreach (var memberGroup in Task.MemberGroups)
+                    {
+                        <Column ColumnSize="ColumnSize.IsFull">
+                            <Image Border="Border.RoundedCircle"
+                                   Source="@(GetMemberGroupImageUrl(memberGroup.ID!.Value))"
+                                   Class="full-max-width datagrid-item-image-small"
+                                   Loading />
+                        </Column>
+
+                        @if (!string.IsNullOrEmpty(memberGroup.Name))
+                        {
+                            <Column ColumnSize="ColumnSize.IsFull.OnWidescreen">
+                                <Text>
+                                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.FIELD))):
+                                </Text>
+                                <Span TextWeight="TextWeight.Bold">
+                                    @($" {memberGroup.Name}")
+                                </Span>
+                                @if (!string.IsNullOrEmpty(memberGroup.NameAbbreviation))
+                                {
+                                    <Span TextColor="TextColor.Black50">
+                                        @($" ({memberGroup.NameAbbreviation})")
+                                    </Span>
+                                }
+                            </Column>
+                        }
+
+                        @if (memberGroup.Address is not null)
+                        {
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Column ColumnSize="ColumnSize.Is10.OnWidescreen" TextAlignment="TextAlignment.Center">
+                                    <Span TextColor="TextColor.Black50" Class="font-large">
+                                        @($"{memberGroup.Address.Street} {memberGroup.Address.DescriptiveNumber}")
+                                    </Span>
+                                    @if (!string.IsNullOrEmpty(memberGroup.Address.OrientationNumber))
+                                    {
+                                        <Span TextColor="TextColor.Black50" Class="font-large">
+                                            @($" ({memberGroup.Address.OrientationNumber})")
+                                        </Span>
+                                    }
+                                    <Span TextColor="TextColor.Black50" Class="font-large">
+                                        @($", {memberGroup.Address.ZIPCode} {memberGroup.Address.City} - {resourceHandler.GetResource(((Country)memberGroup.Address.Country).GetEnumResourceValue())}")
+                                    </Span>
+                                </Column>
+                            </Column>
+                        }
+                    }
+                </Row>
+            </Container>
+        </Column>
+    </Row>
+}
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public IList<CompanyDto> AvailableCompanies { get; set; } = [];
+
+    private string? GetMemberGroupImageUrl(Guid groupID)
+    {
+        var groupData = AvailableCompanies.SingleOrDefault(x => x.ID == groupID);
+        return string.IsNullOrWhiteSpace(groupData?.Image?.ImageUrl) ?
+            @"\resources\images\users\companyLogoMissing.png" :
+            $"{appSettings.ApiSettings!.BaseUrl}/{groupData?.Image?.ImageUrl}";
+    }
+}

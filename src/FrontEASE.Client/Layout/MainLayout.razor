@@ -1,0 +1,32 @@
+﻿@inherits LayoutComponentBase
+
+<Div Class="page">
+
+    <main>
+        <Div Class="auth">
+            <NavMenu />
+        </Div>
+
+        <article class="content px-4 no-padding" id="main-content">
+            @Body
+        </article>
+
+    </main>
+</Div>
+
+<BlazoredToasts Position="ToastPosition.TopRight"
+                Timeout="10"
+                ShowProgressBar="true"
+                ShowCloseButton="true"
+                RemoveToastsOnNavigation="true"
+                IconType="IconType.FontAwesome"
+                ErrorIcon="fas fa-exclamation-circle"
+                InfoIcon="fas fa-info-circle"
+                SuccessIcon="fas fa-check"
+                WarningIcon="fas fa-exclamation"
+                ErrorClass="custom-toast-error"
+                InfoClass="custom-toast-info"
+                SuccessClass="custom-toast-success"
+                WarningClass="custom-toast-warning">
+</BlazoredToasts>
+

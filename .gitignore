@@ -38,8 +38,8 @@ src/FoP_IMT.Core/out_task/*
 !src/FoP_IMT.Core/out_task/.gitkeep
 
 # Ignore server dynamic resources
-src/FoP_IMT.Server/wwwroot/resources/images/users/profiles/*
-src/FoP_IMT.Server/wwwroot/resources/images/companies/profiles/*
+src/FrontEASE.Server/wwwroot/resources/images/users/profiles/*
+src/FrontEASE.Server/wwwroot/resources/images/companies/profiles/*
 
 # IntelliJ
 out/

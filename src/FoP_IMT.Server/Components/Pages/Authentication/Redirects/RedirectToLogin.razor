@@ -1,8 +1,0 @@
-﻿@inject IdentityRedirectManager redirectManager
-
-@code {
-    protected override void OnInitialized()
-    {
-        redirectManager.RedirectTo($"/Account/Login?returnUrl={Uri.EscapeDataString(string.Empty)}");
-    }
-}
