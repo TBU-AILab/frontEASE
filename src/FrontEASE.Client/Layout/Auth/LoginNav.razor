@@ -14,9 +14,11 @@
             <BarLink Clicked="Logout"
                      Class="nav-link-logout"
                      Match="Match.All">
+
                 <Container Class="d-flex align-items-center justify-content-center">
+                    
                     <Row Display="Display.Flex" Class="align-items-center justify-content-center">
-                        <Column ColumnSize="ColumnSize.Is4.OnWidescreen" Display="Display.Flex" Class="align-items-center justify-content-center">
+                        <Column ColumnSize="ColumnSize.Is2.OnWidescreen" Padding="Padding.Is0" Display="Display.Flex" Class="align-items-center justify-content-center">
                             <Image Border="Border.Is1.RoundedCircle"
                                    Source="@(string.IsNullOrWhiteSpace(LoggedUser.Image?.ImageUrl) ? @"\resources\images\users\profilePictureMissing.png" : $"{appSettings.ApiSettings!.BaseUrl}/{LoggedUser.Image?.ImageUrl}")"
                                    Class="full-max-width datagrid-item-image-extrasmall" Loading />

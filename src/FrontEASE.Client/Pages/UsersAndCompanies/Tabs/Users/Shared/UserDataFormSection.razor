@@ -2,6 +2,7 @@
 @inject IResourceHandler resourceHandler
 @inject IDataLoader dataLoader
 @inject IUIService uiService
+@inject IUIManager uiManager
 
 <Fields>
 
@@ -52,8 +53,8 @@
                 <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}"))" SmallControlSpinner="true" TextColor="TextColor.Dark" TextSize="TextSize.Small" />
             </Column>
         }
-        <Label For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Image)))" Display="@(imageLoadInProgress ? Display.None : Display.Block)" Cursor="@(imageLoadInProgress ? Cursor.Default : Cursor.Pointer)" Border="Border.Is1.Rounded" Background="Background.White" Class="button btn btn-sized btn-custom-file-picker" Overflow="Overflow.Auto" Margin="Margin.Is0.FromBottom">
-            <Text Display="Display.InlineBlock" Overflow="Overflow.Hidden" Width="Width.Is100" TextAlignment="TextAlignment.Start" TextColor="TextColor.Dark" TextWeight="TextWeight.Normal" TextSize="TextSize.Small">
+        <Label For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Image)))" Display="@(imageLoadInProgress ? Display.None : Display.Block)" Cursor="@(imageLoadInProgress ? Cursor.Default : Cursor.Pointer)" Border="Border.Is1.Rounded" Class="button btn btn-sized btn-custom-file-picker" Overflow="Overflow.Auto" Margin="Margin.Is0.FromBottom">
+            <Text Display="Display.InlineBlock" Overflow="Overflow.Hidden" Width="Width.Is100" TextAlignment="TextAlignment.Start" TextWeight="TextWeight.Normal" TextSize="TextSize.Small" Style="@($"color: {(string.IsNullOrEmpty(UserModel.Image?.ImageData) ? uiManager.Theme.TextColorOptions.Muted : uiManager.Theme.TextColorOptions.Primary)}")">
                 @(string.IsNullOrEmpty(UserModel.Image?.ImageData) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.PLACEHOLDER)) : UserModel.Image.Name)
             </Text>
             <FileEdit Display="Display.None"

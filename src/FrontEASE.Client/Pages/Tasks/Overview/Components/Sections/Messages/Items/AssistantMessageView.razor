@@ -1,14 +1,15 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject IUIService uiService
 @inject AppSettings appSettings
+@inject IUIManager uiManager
 
 <Container Fluid>
     <Row>
         <Column ColumnSize="ColumnSize.Is8.OnWidescreen.Is10.OnMobile" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
-            <Card Border="Border.Is0" Class="cursor-pointer" @onclick="SelectMessageSolution">
+            <Card Border="Border.Rounded" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light};")" Class="cursor-pointer" @onclick="SelectMessageSolution">
                 <MessageViewHeader />
 
-                <CardBody Background="Background.Light" Class="throws-shadow" Border="@(Border.Is1.RoundedBottom.Primary)">
+                <CardBody Border="Border.Is0" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")" Class="throws-shadow">
                     @if (!string.IsNullOrWhiteSpace(Message.Content))
                     {
                         @((MarkupString)Markdig.Markdown.ToHtml(Message.Content))

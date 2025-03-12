@@ -73,7 +73,7 @@ namespace FrontEASE.Shared.Data.DTOs.Management.Tokens
         /// <summary>
         /// UI only - connector types selected for this token.
         /// </summary>
-        [JsonIgnore]
+        //[JsonIgnore]
         [CollectionNotEmptyValidation]
         public IReadOnlyList<string> SelectedTokenConnectorTypes { get; set; }
 

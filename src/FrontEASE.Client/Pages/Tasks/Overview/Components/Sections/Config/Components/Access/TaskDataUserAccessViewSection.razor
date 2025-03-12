@@ -1,4 +1,5 @@
 ﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
 @inject AppSettings appSettings
 
 @if (Task.Members.Count > 0)
@@ -9,7 +10,7 @@
             <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Members), PropertyDisplayResourceType.FIELD)))" />
         </Container>
 
-        <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
+        <Divider Class="divider-section" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" />
 
         <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop" TextAlignment="TextAlignment.Center">
 
@@ -17,7 +18,7 @@
                 <Row>
                     @foreach (var member in Task.Members)
                     {
-                        <Column ColumnSize="ColumnSize.IsFull">
+                        <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is1.FromBottom">
                             <Image Border="Border.RoundedCircle"
                                    Source="@(GetUserImageUrl(member.Id!.Value))"
                                    Class="@($"full-max-width datagrid-item-image-small {(member.Id == Task?.Author?.Id ? "overview-background-author" : string.Empty)}")" Loading />
@@ -25,13 +26,13 @@
 
                         @if (!string.IsNullOrEmpty(member.UserName))
                         {
-                            <Column ColumnSize="ColumnSize.IsFull">
+                            <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is4.FromBottom">
                                 <Text TextWeight="TextWeight.Bold">
                                     @member.UserName
                                 </Text>
                                 @if (!string.IsNullOrEmpty(member.Email))
                                 {
-                                    <Span TextColor="TextColor.Black50">
+                                    <Span style="@($"color: {uiManager.Theme.TextColorOptions.Muted}")">
                                         @($" ({member.Email})")
                                     </Span>
                                 }

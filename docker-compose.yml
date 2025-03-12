@@ -14,15 +14,24 @@ services:
   dotnet-server:
     build:
       context: .
-      dockerfile: prod.Dockerfile
+      dockerfile: prod.server.Dockerfile
     ports:
-      - "5000:5000"
+      - "4000:4000"
     depends_on:
       - postgres
     networks:
       - fop-imt-network
     environment:
       - SEED_DB=true
+  
+  dotnet-client:
+    build:
+      context: .
+      dockerfile: prod.client.Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - fop-imt-network
 
   backend-core:
     build:

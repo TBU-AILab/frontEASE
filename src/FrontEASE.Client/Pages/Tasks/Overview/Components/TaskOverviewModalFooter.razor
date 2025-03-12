@@ -1,7 +1,8 @@
 ﻿@inject IMapper mapper
 @inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
 
-<ModalFooter Background="Background.Light">
+<ModalFooter Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary}; border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")">
     <Container Fluid Padding="Padding.Is0">
         <Row Margin="Margin.Is0">
             <Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is5.OnMobile">

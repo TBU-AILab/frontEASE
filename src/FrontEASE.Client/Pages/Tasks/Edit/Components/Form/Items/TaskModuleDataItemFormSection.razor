@@ -1,12 +1,13 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject ITaskManipulationService taskManipulationService
+@inject IUIManager uiManager
 
-<Row>
+<Row Margin="Margin.Is4.FromBottom">
     <Container Fluid>
         <Row>
             <Column ColumnSize="ColumnSize.IsFull">
                 <Div Display="Display.Flex">
-                    <Column ColumnSize="ColumnSize.Is8.Is2.WithOffset" TextAlignment="TextAlignment.Center" Class="align-self-center">
+                    <Column ColumnSize="ColumnSize.Is10" TextAlignment="TextAlignment.Center" Class="align-self-center">
                         <FormSectionHeader DisplayText="@ModuleName" />
                     </Column>
 
@@ -21,7 +22,7 @@
         </Row>
     </Container>
 
-    <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
+    <Divider Class="divider-section" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop.Is1.FromBottom" />
 
     <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
         <Container Fluid>

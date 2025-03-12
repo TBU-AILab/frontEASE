@@ -6,7 +6,7 @@
     <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is1.FromTop.Is1.FromBottom" Margin="Margin.Is4.FromTop">
         <Div Display="Display.Flex" Class="justify-content-between align-items-center">
             <Div Flex="Flex.Grow" TextAlignment="TextAlignment.Center">
-                <Heading Size="HeadingSize.Is3" TextColor="TextColor.Dark">
+                <Heading Size="HeadingSize.Is3">
                     @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Solutions), PropertyDisplayResourceType.FIELD)))
                 </Heading>
             </Div>

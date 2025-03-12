@@ -1,16 +1,17 @@
 ﻿@inject ITaskManipulationService taskManipulationService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
+@inject IUIManager uiManager
 @inject AppSettings appSettings
 
-<Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded.Primary" Shadow="Shadow.Small">
-    <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Background="Background.White" Padding="Padding.Is2" Border="Border.Is1.Rounded" Shadow="Shadow.Small">
+<Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small">
+    <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Padding="Padding.Is2">
         <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
             <Text TextWeight="TextWeight.Bold" Class="text-center">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Members), PropertyDisplayResourceType.FIELD)))
             </Text>
         </Div>
-        <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" TextColor="TextColor.Primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
+        <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary};")" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
     </Column>
 
     @if (!isSectionCollapsed)
@@ -33,6 +34,7 @@
                                       SelectedRowStyling="@StyleRow"
                                       RowSelectable="@((user) => {return (user.Item.Id != Task?.Author?.Id) && !TaskMetadata.InitializationInProgres;})"
                                       Class="member-selection-grid"
+                                      Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important; border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")"
                                       Responsive>
 
                                 <DataGridColumns>

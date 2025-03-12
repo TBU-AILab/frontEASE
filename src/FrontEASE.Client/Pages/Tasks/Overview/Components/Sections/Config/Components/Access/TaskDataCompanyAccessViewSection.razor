@@ -1,4 +1,5 @@
 ﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
 @inject AppSettings appSettings
 
 
@@ -10,60 +11,60 @@
             <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.MemberGroups), PropertyDisplayResourceType.FIELD)))" />
         </Container>
 
-        <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
+        <Divider Class="divider-section" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" />
 
         <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop" TextAlignment="TextAlignment.Center">
 
             <Container Fluid>
-                <Row>
                     @foreach (var memberGroup in Task.MemberGroups)
                     {
-                        <Column ColumnSize="ColumnSize.IsFull">
-                            <Image Border="Border.RoundedCircle"
-                                   Source="@(GetMemberGroupImageUrl(memberGroup.ID!.Value))"
-                                   Class="full-max-width datagrid-item-image-small"
-                                   Loading />
-                        </Column>
-
-                        @if (!string.IsNullOrEmpty(memberGroup.Name))
-                        {
-                            <Column ColumnSize="ColumnSize.IsFull.OnWidescreen">
-                                <Text>
-                                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.FIELD))):
-                                </Text>
-                                <Span TextWeight="TextWeight.Bold">
-                                    @($" {memberGroup.Name}")
-                                </Span>
-                                @if (!string.IsNullOrEmpty(memberGroup.NameAbbreviation))
-                                {
-                                    <Span TextColor="TextColor.Black50">
-                                        @($" ({memberGroup.NameAbbreviation})")
-                                    </Span>
-                                }
-                            </Column>
-                        }
-
-                        @if (memberGroup.Address is not null)
-                        {
+                        <Row Margin="Margin.Is4.FromBottom">
                             <Column ColumnSize="ColumnSize.IsFull">
-                                <Column ColumnSize="ColumnSize.Is10.OnWidescreen" TextAlignment="TextAlignment.Center">
-                                    <Span TextColor="TextColor.Black50" Class="font-large">
-                                        @($"{memberGroup.Address.Street} {memberGroup.Address.DescriptiveNumber}")
+                                <Image Border="Border.RoundedCircle"
+                                       Source="@(GetMemberGroupImageUrl(memberGroup.ID!.Value))"
+                                       Class="full-max-width datagrid-item-image-small"
+                                       Loading />
+                            </Column>
+
+                            @if (!string.IsNullOrEmpty(memberGroup.Name))
+                            {
+                                <Column ColumnSize="ColumnSize.IsFull.OnWidescreen">
+                                    <Text>
+                                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.FIELD))):
+                                    </Text>
+                                    <Span TextWeight="TextWeight.Bold">
+                                        @($" {memberGroup.Name}")
                                     </Span>
-                                    @if (!string.IsNullOrEmpty(memberGroup.Address.OrientationNumber))
+                                    @if (!string.IsNullOrEmpty(memberGroup.NameAbbreviation))
                                     {
-                                        <Span TextColor="TextColor.Black50" Class="font-large">
-                                            @($" ({memberGroup.Address.OrientationNumber})")
+                                    <Span style="@($"color: {uiManager.Theme.TextColorOptions.Muted}")">
+                                            @($" ({memberGroup.NameAbbreviation})")
                                         </Span>
                                     }
-                                    <Span TextColor="TextColor.Black50" Class="font-large">
-                                        @($", {memberGroup.Address.ZIPCode} {memberGroup.Address.City} - {resourceHandler.GetResource(((Country)memberGroup.Address.Country).GetEnumResourceValue())}")
-                                    </Span>
                                 </Column>
-                            </Column>
-                        }
+                            }
+
+                            @if (memberGroup.Address is not null)
+                            {
+                                <Column ColumnSize="ColumnSize.IsFull">
+                                    <Column ColumnSize="ColumnSize.Is10.OnWidescreen" TextAlignment="TextAlignment.Center">
+                                        <Span style="@($"color: {uiManager.Theme.TextColorOptions.Muted}")" Class="font-large">
+                                            @($"{memberGroup.Address.Street} {memberGroup.Address.DescriptiveNumber}")
+                                        </Span>
+                                        @if (!string.IsNullOrEmpty(memberGroup.Address.OrientationNumber))
+                                        {
+                                            <Span style="@($"color: {uiManager.Theme.TextColorOptions.Muted}")" Class="font-large">
+                                                @($" ({memberGroup.Address.OrientationNumber})")
+                                            </Span>
+                                        }
+                                        <Span style="@($"color: {uiManager.Theme.TextColorOptions.Muted}")" Class="font-large">
+                                            @($", {memberGroup.Address.ZIPCode} {memberGroup.Address.City} - {resourceHandler.GetResource(((Country)memberGroup.Address.Country).GetEnumResourceValue())}")
+                                        </Span>
+                                    </Column>
+                                </Column>
+                            }
+                        </Row>
                     }
-                </Row>
             </Container>
         </Column>
     </Row>
