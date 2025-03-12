@@ -2,6 +2,7 @@
 @inject IResourceHandler resourceHandler
 @inject IFileApiService fileApiService
 @inject Blazored.Toast.Services.IToastService toastService
+@inject IUIManager uiManager
 
 @if (Task.Solutions.Count > 0)
 {
@@ -11,22 +12,21 @@
             <TaskSolutionsViewSectionHeader />
         </Container>
 
-        <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
+        <Divider Class="divider-section" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" />
 
         <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is1.FromTop">
 
             <Container Fluid>
                 <Row>
                     @{
-                    var messageIDs = Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
-                    var solutionsOrdered = Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
-                }
-                @foreach (var solution in solutionsOrdered)
-                {
-                    <Container 
-                Fluid
-                 Border="@(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? Border.Is2.Rounded.Secondary : Border.Is1.Rounded)"
-                                   Background="Background.Light"
+                        var messageIDs = Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
+                        var solutionsOrdered = Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
+                    }
+                    @foreach (var solution in solutionsOrdered)
+                    {
+                        <Container Fluid
+                                   style="@($"border-color: {(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? uiManager.Theme.ColorOptions.Primary : uiManager.Theme.BackgroundOptions.Light)} !important;")"
+                                   Border="@(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? Border.Is2.Rounded : Border.Is1.Rounded)"
                                    @onclick="(() => SelectMessageSolution(solution))"
                                    Shadow="Shadow.Small"
                                    Class="cursor-pointer"

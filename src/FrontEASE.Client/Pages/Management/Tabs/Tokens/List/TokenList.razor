@@ -3,9 +3,10 @@
 @inject IManagementApiService managementApiService
 @inject IUIService uiService
 @inject IMapper mapper
+@inject IUIManager uiManager
 
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<UserPreferenceTokenOptionDto>()))" />
-<Divider Class="divider-main" Background="Background.Primary" Shadow="Shadow.Small" />
+<Divider Class="divider-main" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop" />
 
 @if (!isInitialized)
 {

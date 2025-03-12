@@ -1,7 +1,11 @@
 services:
   dotnet-server:
     build:
-      dockerfile: dev.Dockerfile
+      dockerfile: dev.server.Dockerfile
+
+  dotnet-client:
+    build:
+      dockerfile: dev.client.Dockerfile
 
   backend-core:
     build:
