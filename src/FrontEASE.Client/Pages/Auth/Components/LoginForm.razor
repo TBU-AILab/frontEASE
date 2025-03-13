@@ -114,7 +114,7 @@
                 mapper.Map(loggedInUser, LoggedUser);
             }
 
-            await uiService.AssureResourcesInitialized();
+            await uiService.AssureResourcesInitialized(true);
 
             var options = await managementApiService.LoadPreferences();
             if (options is not null)

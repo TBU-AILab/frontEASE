@@ -1,8 +1,6 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Management.Tokens.Connectors;
 using FrontEASE.Shared.Infrastructure.Attributes;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
-using FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
-using FrontEASE.Shared.Infrastructure.Attributes;
 using System.Text.Json.Serialization;
 
 namespace FrontEASE.Shared.Data.DTOs.Management.Tokens
@@ -18,7 +16,6 @@ namespace FrontEASE.Shared.Data.DTOs.Management.Tokens
             Name = string.Empty;
 
             ConnectorTypes = [];
-            SelectedTokenConnectorTypes = [];
         }
 
         #region Navigation
@@ -73,9 +70,9 @@ namespace FrontEASE.Shared.Data.DTOs.Management.Tokens
         /// <summary>
         /// UI only - connector types selected for this token.
         /// </summary>
-        //[JsonIgnore]
+        [JsonIgnore]
         [CollectionNotEmptyValidation]
-        public IReadOnlyList<string> SelectedTokenConnectorTypes { get; set; }
+        public IReadOnlyList<string>? SelectedTokenConnectorTypes { get; set; }
 
         #endregion
     }

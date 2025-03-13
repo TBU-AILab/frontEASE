@@ -2,9 +2,6 @@
 using FrontEASE.Shared.Data.DTOs.Management;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens.Connectors;
-using FrontEASE.Client.Services.ModelManipulationServices.Management;
-using FrontEASE.Shared.Data.DTOs.Management.Tokens;
-using FrontEASE.Shared.Data.DTOs.Management;
 
 namespace FrontEASE.Client.Services.ModelManipulationServices.Management
 {
@@ -17,24 +14,25 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Management
             _mapper = mapper;
         }
 
-        public void SortTokenConnectorModels(UserPreferencesDto preferences)
-        {
-            foreach (var token in preferences.TokenOptions)
-            {
-                var connectorTypes = token.SelectedTokenConnectorTypes.Select(x => { return new UserPreferenceTokenOptionConnectorTypeDto() { ConnectorType = x }; });
-                token.ConnectorTypes.Clear();
-
-                foreach (var addedToken in connectorTypes)
-                {
-                    token.ConnectorTypes.Add(addedToken);
-                }
-            }
-        }
-
         public void SetItemPriorities(UserPreferencesDto preferences)
         {
             foreach (var item in preferences.TokenOptions.Select((value, i) => new { i, value }))
             { item.value.Priority = item.i; }
+        }
+
+        public void SetItemConnectorTypes(UserPreferencesDto preferences)
+        {
+            foreach (var item in preferences.TokenOptions)
+            {
+                if (item.SelectedTokenConnectorTypes?.Count > 0)
+                {
+                    item.ConnectorTypes.Clear();
+                    foreach (var newType in item.SelectedTokenConnectorTypes)
+                    {
+                        item.ConnectorTypes.Add(new UserPreferenceTokenOptionConnectorTypeDto { ConnectorType = newType });
+                    }
+                }
+            }
         }
 
         public void ReinitializeTokenModel(UserPreferenceTokenOptionDto token)

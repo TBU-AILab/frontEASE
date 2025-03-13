@@ -10,7 +10,7 @@
         #endregion
 
         #region Preferences
-        Task AssureResourcesInitialized();
+        Task AssureResourcesInitialized(bool forceRefresh = false);
 
         #endregion
     }

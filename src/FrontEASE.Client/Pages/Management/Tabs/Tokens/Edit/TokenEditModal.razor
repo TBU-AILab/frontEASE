@@ -16,7 +16,7 @@
                 <Row Margin="Margin.Is3" Padding="Margin.Is3.FromStart.Is3.FromEnd" Border="Border.Rounded" Class="user-modal-form">
                     <Column ColumnSize="ColumnSize.IsFull">
                         <Form>
-                            <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@TokenModel">
+                            <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@TokenModel" ValidateOnLoad="false">
                                 <CascadingValue Value="TokenModel">
                                     <TokenDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="true" />
                                     <Fields>

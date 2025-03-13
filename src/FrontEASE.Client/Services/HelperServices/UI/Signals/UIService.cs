@@ -23,9 +23,9 @@ namespace FrontEASE.Client.Services.HelperServices.UI.Signals
 
         #region Preferences
 
-        public async Task AssureResourcesInitialized()
+        public async Task AssureResourcesInitialized(bool forceRefresh = false)
         {
-            if (!_uiManager.CheckPreferencesInitialized())
+            if (!_uiManager.CheckPreferencesInitialized() || forceRefresh)
             {
                 var preferences = await _managementApiService.LoadPreferences();
                 if (preferences is not null)

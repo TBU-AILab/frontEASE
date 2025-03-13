@@ -1,8 +1,6 @@
 ﻿using FrontEASE.Domain.Entities.Management.Tokens;
 using FrontEASE.Infrastructure.Constants;
 using FrontEASE.Infrastructure.Data.Configuration.Shared.Base.Tracked;
-using FrontEASE.Infrastructure.Constants;
-using FrontEASE.Infrastructure.Data.Configuration.Shared.Base.Tracked;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -6,7 +6,7 @@
     <Validation>
         <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.IsFull)">
             <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))" RequiredIndicator>
-                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceGeneralOptionsDto.ColorScheme), PropertyDisplayResourceType.FIELD)))
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.ColorScheme), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
             <Select @bind-SelectedValue="@GeneralPreferencesModel.ColorScheme" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))">
                 <ChildContent>

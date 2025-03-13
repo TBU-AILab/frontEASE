@@ -28,8 +28,8 @@
                             <NotAuthorized>
                                 <LayoutView Layout="@typeof(MainLayout)">
                                     @{
-                                        var unauthorizedPage = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Error}")}/{HttpStatusCode.Unauthorized}";
-                                        navigation.NavigateTo(unauthorizedPage);
+                                        var loginPage = resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}");
+                                        navigation.NavigateTo(loginPage);
                                     }
                                 </LayoutView>
                             </NotAuthorized>
@@ -87,7 +87,6 @@ else
             }
 
             await uiService.AssureResourcesInitialized();
-
             var options = await managementApiService.LoadPreferences();
             if (options is not null)
             {

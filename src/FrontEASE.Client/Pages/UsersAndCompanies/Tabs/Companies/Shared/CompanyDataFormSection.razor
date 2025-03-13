@@ -61,7 +61,7 @@
         </Label>
     </Field>
 
-    @if (!string.IsNullOrEmpty(CompanyModel.Image?.ImageUrl) && !FullWidthFields)
+    @if (!string.IsNullOrEmpty(CompanyModel.Image?.ImageData) && !FullWidthFields)
     {
         <Column ColumnSize="ColumnSize.Is1.OnWidescreen" TextAlignment="TextAlignment.Center">
             <Image Border="Border.RoundedCircle" Fluid Source=@($"data:{CompanyModel.Image.MimeType};base64,{CompanyModel.Image.ImageData}") Class="thumbnail-item-image" Loading />

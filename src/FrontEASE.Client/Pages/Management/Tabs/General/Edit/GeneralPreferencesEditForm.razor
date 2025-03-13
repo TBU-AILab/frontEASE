@@ -11,7 +11,7 @@
 
 <Row Margin="Margin.Is2.FromTop.Is2.Is3.FromBottom">
     <Form>
-        <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@Options.GeneralOptions">
+        <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@Options.GeneralOptions" ValidateOnLoad="false">
             <CascadingValue Value="Options.GeneralOptions">
                 <GeneralPreferencesDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="true" />
                 <Fields>

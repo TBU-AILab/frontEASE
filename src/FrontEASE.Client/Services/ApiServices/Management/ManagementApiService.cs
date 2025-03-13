@@ -39,7 +39,7 @@ namespace FrontEASE.Client.Services.ApiServices.Management
         public async Task<UserPreferencesDto?> UpdatePreferences(UserPreferencesDto editedPreferencesDto)
         {
             _managementManipulationService.SetItemPriorities(editedPreferencesDto);
-            _managementManipulationService.SortTokenConnectorModels(editedPreferencesDto);
+            _managementManipulationService.SetItemConnectorTypes(editedPreferencesDto);
 
             var response = await _client.PutAsJsonAsync(ManagementControllerConstants.BaseUrl, editedPreferencesDto);
             if (response.StatusCode != HttpStatusCode.OK)

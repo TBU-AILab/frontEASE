@@ -28,7 +28,7 @@
                 <Row Margin="Margin.Is3" Padding="Margin.Is3.FromStart.Is3.FromEnd" Border="Border.Rounded" Class="user-modal-form">
                     <Column ColumnSize="ColumnSize.IsFull">
                         <Form>
-                            <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@CompanyModel">
+                            <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@CompanyModel" ValidateOnLoad="false">
                                 <CascadingValue Value="CompanyModel">
 
                                     <CompanyDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="true" />

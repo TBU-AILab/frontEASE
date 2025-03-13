@@ -4,39 +4,38 @@
 
 <Fields>
     <Validation>
+        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Name)))" RequiredIndicator>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <TextEdit ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Name)))"
+                      Role="TextRole.Text"
+                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                      @bind-Text="@TokenModel.Name">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </TextEdit>
+        </Field>
+    </Validation>
 
-        <Validation>
-            <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
-                <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Name)))" RequiredIndicator>
-                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.FIELD)))
-                </FieldLabel>
-                <TextEdit ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Name)))"
-                          Role="TextRole.Text"
-                          Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
-                          @bind-Text="@TokenModel.Name">
-                    <Feedback>
-                        <ValidationError Multiline="true" />
-                    </Feedback>
-                </TextEdit>
-            </Field>
-        </Validation>
+    <Validation>
+        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Token)))" RequiredIndicator>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <TextEdit ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Token)))"
+                      Role="TextRole.Text"
+                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.PLACEHOLDER)))"
+                      @bind-Text="@TokenModel.Token">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </TextEdit>
+        </Field>
+    </Validation>
 
-        <Validation>
-            <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
-                <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Token)))" RequiredIndicator>
-                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.FIELD)))
-                </FieldLabel>
-                <TextEdit ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Token)))"
-                          Role="TextRole.Text"
-                          Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.PLACEHOLDER)))"
-                          @bind-Text="@TokenModel.Token">
-                    <Feedback>
-                        <ValidationError Multiline="true" />
-                    </Feedback>
-                </TextEdit>
-            </Field>
-        </Validation>
-
+    <Validation>
         <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
             <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.ConnectorTypes)))" RequiredIndicator>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.ConnectorTypes), PropertyDisplayResourceType.FIELD)))

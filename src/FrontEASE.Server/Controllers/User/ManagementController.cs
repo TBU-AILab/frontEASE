@@ -1,6 +1,5 @@
 ﻿using FrontEASE.Application.AppServices.Management;
 using FrontEASE.Application.AppServices.Shared.Resources;
-using FrontEASE.Domain.Infrastructure.Exceptions;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Shared.Data.DTOs.Management;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;

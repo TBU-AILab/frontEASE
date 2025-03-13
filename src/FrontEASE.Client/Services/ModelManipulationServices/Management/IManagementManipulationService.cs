@@ -5,8 +5,8 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Management
 {
     public interface IManagementManipulationService
     {
+        void SetItemConnectorTypes(UserPreferencesDto preferences);
         void SetItemPriorities(UserPreferencesDto preferences);
-        void SortTokenConnectorModels(UserPreferencesDto preferences);
         void ReinitializeTokenModel(UserPreferenceTokenOptionDto token);
     }
 }

@@ -19,15 +19,14 @@ namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic
                 ErrorMessage = formattedErrorMessage;
             }
 
-            if (value is null)
+            if (value is ICollection collection && collection.Count == 0)
             {
                 return new ValidationResult(ErrorMessage);
             }
-            else if (value is ICollection collection && collection.Count == 0)
+            else if (value is null)
             {
-                return new ValidationResult(ErrorMessage);
+                return ValidationResult.Success!;
             }
-
             return ValidationResult.Success!;
         }
     }

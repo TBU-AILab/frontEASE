@@ -68,7 +68,7 @@
         </Label>
     </Field>
 
-    @if (!string.IsNullOrEmpty(UserModel.Image?.ImageUrl) && !FullWidthFields)
+    @if (!string.IsNullOrEmpty(UserModel.Image?.ImageData) && !FullWidthFields)
     {
         <Column ColumnSize="ColumnSize.Is1.OnWidescreen" TextAlignment="TextAlignment.Center">
             <Image Border="Border.RoundedCircle" Fluid Source=@($"data:{UserModel.Image.MimeType};base64,{UserModel.Image.ImageData}") Class="thumbnail-item-image" Loading />
@@ -113,6 +113,9 @@
 
 
 @code {
+    [CascadingParameter]
+    public ApplicationUserDto LoggedUser { get; set; } = new();
+
     [CascadingParameter]
     public ApplicationUserDto UserModel { get; set; } = new();
 

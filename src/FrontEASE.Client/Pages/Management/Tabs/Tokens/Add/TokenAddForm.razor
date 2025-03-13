@@ -56,13 +56,13 @@
 
         if (await Validations.ValidateAll())
         {
-            Options!.TokenOptions.Insert(0, TokenModel);
+            Options!.TokenOptions.Insert(0, mapper.Map<UserPreferenceTokenOptionDto>(TokenModel));
             var updated = await managementApiService.UpdatePreferences(Options);
 
             if (updated is not null)
             {
                 mapper.Map(updated, Options);
-                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}: {string.Join(", ", TokenModel.ConnectorTypes.Select(x => x.ConnectorType))} ({new string(TokenModel.Token.Take(3).ToArray())} ... {new string(TokenModel.Token.TakeLast(3).ToArray())}";
+                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}: {string.Join(", ", TokenModel.ConnectorTypes.Select(x => x.ConnectorType))} ({new string(TokenModel.Token.Take(3).ToArray())} ... {new string(TokenModel.Token.TakeLast(3).ToArray())})";
                 toastService.ShowSuccess(message);
 
                 managementManipulationService.ReinitializeTokenModel(TokenModel);
