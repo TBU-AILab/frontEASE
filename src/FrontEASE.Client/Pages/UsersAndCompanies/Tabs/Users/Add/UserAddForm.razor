@@ -1,0 +1,76 @@
+﻿@inject IUserApiService userApiService
+@inject IUIService uiService
+@inject IMapper mapper
+@inject IUIManager uiManager
+@inject IResourceHandler resourceHandler
+@inject IUserManipulationService userManipulationService
+@inject Blazored.Toast.Services.IToastService toastService
+
+<Row Background="@uiManager.Theme.BackgroundOptions.Primary" Class="rounded">
+    <Column ColumnSize="ColumnSize.Is12" Margin="Margin.Is2.FromBottom" Padding="Padding.Is0">
+        <Icon Name="@(isFormCollapsed ? IconName.PlusCircle : IconName.MinusCircle)" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@ChangeCollapseState" Class="float-right main-action-icon main-action-icon-primary" />
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12" Display="@(isFormCollapsed ? Display.None : Display.Block)" Margin="Margin.Is2.FromTop.Is4.FromBottom">
+        <Form Margin="Margin.Is4.FromTop" Class="text-form-size">
+            <Validations @ref="Validations" Mode="ValidationMode.Manual" Model="UserModel">
+
+                <CascadingValue Value="UserModel">
+
+                    <UserDataFormSection FullWidthFields="false" Operation="DataOperation.INSERT" />
+
+                    <Fields>
+                        <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                            <Button Color="Color.Success" Clicked="@InsertUser" Class="btn button btn-sized full-width" Disabled="@savingInProgress" TextWeight="TextWeight.Bold">
+                                @if (savingInProgress)
+                                {
+                                    <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                                }
+                                else
+                                {
+                                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
+                                }
+                            </Button>
+                        </Field>
+                    </Fields>
+                </CascadingValue>
+
+            </Validations>
+        </Form>
+    </Column>
+</Row>
+
+@code {
+
+    [CascadingParameter]
+    public IList<ApplicationUserDto> Users { get; set; } = [];
+
+    private ApplicationUserDto UserModel = new();
+    private Validations Validations = new();
+
+    private bool isFormCollapsed = true;
+    private bool savingInProgress = false;
+
+    public async Task InsertUser()
+    {
+        savingInProgress = true;
+
+        if (await Validations.ValidateAll())
+        {
+            var user = await userApiService.AddUser(UserModel);
+            if (user is not null)
+            {
+                Users.Insert(0, user);
+                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}: {UserModel.Role} ({UserModel.Email})";
+                toastService.ShowSuccess(message);
+
+                userManipulationService.ReinitializeModel(UserModel);
+            }
+        }
+
+        savingInProgress = false;
+        uiService.CallRequestRefresh();
+    }
+
+    private void ChangeCollapseState() => isFormCollapsed = !isFormCollapsed;
+}

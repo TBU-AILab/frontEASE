@@ -1,0 +1,71 @@
+﻿@inject IManagementApiService managementApiService
+@inject IResourcesManager resourcesManager
+@inject IUIManager uiManager
+@inject IResourceHandler resourceHandler
+@inject IMapper mapper
+@inject IUIService uiService
+
+@attribute [Authorize]
+@page "/Management"
+
+<PageTitle>
+    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Management}"))
+</PageTitle>
+
+
+<Container Fluid Class="content-main" Padding="Padding.Is5.FromStart.Is5.FromEnd">
+    <Row>
+        <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
+            <Tabs RenderMode="TabsRenderMode.LazyReload"
+                  SelectedTab="@managementTypeSelected.ToString()"
+                  SelectedTabChanged="@OnSelectedTabChanged"
+                  Class="tab-control"
+                  Border="Border.Is0">
+                <Items>
+                    @foreach (var managementType in Enum.GetValues(typeof(UserPreferencesManagementType)))
+                    {
+                        <Tab Name="@(managementType.ToString())">
+                            @(resourceHandler.GetResource(((UserPreferencesManagementType)managementType).GetEnumResourceValue()))
+                        </Tab>
+                    }
+                </Items>
+                <Content>
+                    @foreach (var personType in Enum.GetValues(typeof(UserPreferencesManagementType)))
+                    {
+                        <TabPanel TextAlignment="TextAlignment.Start" Name="@(personType.ToString())">
+                            @switch (managementTypeSelected)
+                            {
+                                case UserPreferencesManagementType.TOKENS:
+                                    <TokensManagementTab />
+                                    break;
+                                case UserPreferencesManagementType.GENERAL:
+                                    <GeneralSettingsManagementTab />
+                                    break;
+                            }
+                        </TabPanel>
+                    }
+                </Content>
+            </Tabs>
+
+        </Column>
+    </Row>
+</Container>
+
+@code {
+    private UserPreferencesManagementType managementTypeSelected = UserPreferencesManagementType.TOKENS;
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        await base.OnInitializedAsync();
+    }
+
+    private Task OnSelectedTabChanged(string name)
+    {
+        managementTypeSelected = (UserPreferencesManagementType)Enum.Parse(typeof(UserPreferencesManagementType), name);
+        return Task.CompletedTask;
+    }
+}

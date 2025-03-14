@@ -1,0 +1,123 @@
+﻿@inject IMapper mapper
+@inject IUIService uiService
+@inject IUIManager uiManager
+@inject ITaskApiService taskApiService
+@inject IResourceHandler resourceHandler
+@inject Blazored.Toast.Services.IToastService toastService
+
+<ModalFooter Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary} !important; border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")">
+    <Container Fluid Padding="Padding.Is0">
+        <Row Margin="Margin.Is0">
+            <Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is5.OnMobile">
+                <Button Clicked="@HideModal" Color="Color.Danger" Class="btn button btn-sized full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
+                    @if (deletingInProgress)
+                    {
+                        <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(DataOperation == DataOperation.READ ? UIActionConstants.Close : UIActionConstants.Discard)}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                    }
+                    else
+                    {
+                        @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(DataOperation == DataOperation.READ ? UIActionConstants.Close : UIActionConstants.Discard)}"))
+                    }
+                </Button>
+            </Column>
+            <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile.Is3.OnFullHD.Is6.WithOffset.OnFullHD">
+                @if (DataOperation != DataOperation.READ)
+                {
+                    <Button
+                        Clicked="@SaveTask"
+                        Style="@($"background-color: {(DataOperation == DataOperation.INSERT ? uiManager.Theme.ColorOptions.Success : uiManager.Theme.BackgroundOptions.Info)}; color: {(DataOperation == DataOperation.INSERT ? uiManager.Theme.White : uiManager.Theme.TextColorOptions.Info)};")"
+                        Class="btn button btn-sized full-width"
+                        Disabled="@savingInProgress"
+                        TextWeight="TextWeight.Bold">
+                        @if (savingInProgress)
+                        {
+                            <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                        }
+                        else
+                        {
+                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(DataOperation == DataOperation.INSERT ? UIActionConstants.Save : UIActionConstants.Update)}"))
+                        }
+                    </Button>
+                }
+            </Column>
+        </Row>
+    </Container>
+</ModalFooter>
+
+@code {
+    [CascadingParameter]
+    public ObservableCollection<TaskInfoDto> Tasks { get; set; } = null!;
+
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = null!;
+
+    [CascadingParameter]
+    public Modal Modal { get; set; } = null!;
+
+    [CascadingParameter]
+    public TaskInfoDto TaskInfo { get; set; } = null!;
+
+    [CascadingParameter]
+    public DataOperation DataOperation { get; set; }
+
+    [Parameter]
+    public Validations Validations { get; set; } = null!;
+
+    private bool savingInProgress = false;
+    private bool deletingInProgress = false;
+
+    private async Task HideModal()
+    {
+        if (DataOperation == DataOperation.INSERT)
+        {
+            await DeleteTask();
+        }
+
+        var cleanModel = new TaskDto();
+        mapper.Map(cleanModel, Task);
+
+        await Modal.Hide();
+    }
+
+    private async Task SaveTask()
+    {
+        savingInProgress = true;
+        var message = string.Empty;
+
+        if (await Validations.ValidateAll())
+        {
+            var updated = await taskApiService.UpdateTask(Task);
+            if (updated is not null)
+            {
+                mapper.Map(updated, Task);
+
+                if (DataOperation == DataOperation.INSERT)
+                { TaskInfo = new(); }
+
+                mapper.Map(updated, TaskInfo);
+
+                if (DataOperation == DataOperation.INSERT)
+                { Tasks.Insert(0, TaskInfo); }
+
+                var cleanModel = new TaskDto();
+                mapper.Map(cleanModel, Task);    
+
+                message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(DataOperation == DataOperation.INSERT ? UIActionConstants.Save : UIActionConstants.Update)}")}: {TaskInfo.Name}";
+                if (!string.IsNullOrWhiteSpace(message))
+                { toastService.ShowSuccess(message); }
+
+                await Modal.Hide();
+                uiService.CallRequestRefresh();
+            }
+        }
+
+        savingInProgress = false;
+    }
+
+    private async Task DeleteTask()
+    {
+        deletingInProgress = true;
+        var deleted = await taskApiService.DeleteTask(Task.ID);
+        deletingInProgress = false;
+    }
+}

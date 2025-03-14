@@ -1,0 +1,47 @@
+﻿@inject IManagementApiService managementApiService
+@inject IResourcesManager resourcesManager
+@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+@inject IMapper mapper
+
+@attribute [Authorize]
+@page "/"
+@page "/Tasks"
+
+<PageTitle>
+    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Tasks}"))
+</PageTitle>
+
+
+<Container Fluid Class="content-main" Padding="Padding.Is5.FromStart.Is5.FromEnd">
+    <Row>
+        <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
+            <CascadingValue Value="Tasks">
+                <CascadingValue Value="AvailableCompanies">
+                    <CascadingValue Value="AvailableUsers">
+                        <CascadingValue Value="TaskModuleOptions">
+                            <TaskList />
+                        </CascadingValue>
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        </Column>
+    </Row>
+</Container>
+
+
+@code {
+    private ObservableCollection<TaskInfoDto> Tasks = [];
+    private IList<TaskModuleNoValidationDto> TaskModuleOptions = [];
+    private IList<ApplicationUserDto> AvailableUsers = [];
+    private IList<CompanyDto> AvailableCompanies = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        await base.OnInitializedAsync();
+    }
+
+    private void RefreshView()
+    { StateHasChanged(); }
+}

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Hangfire.Console" Version="1.4.3" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.18" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FrontEASE.Domain\FrontEASE.Domain.csproj" />
+    <ProjectReference Include="..\FrontEASE.Shared\FrontEASE.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

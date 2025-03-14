@@ -1,0 +1,146 @@
+﻿@inject IResourceHandler resourceHandler
+@inject ITaskManipulationService taskManipulationService
+@inject IUIManager uiManager
+
+<Row Margin="Margin.Is4.FromBottom">
+    <Container Fluid>
+        <Row>
+            <Column ColumnSize="ColumnSize.IsFull">
+                <Div Display="Display.Flex">
+                    <Column ColumnSize="ColumnSize.Is10" TextAlignment="TextAlignment.Center" Class="align-self-center">
+                        <FormSectionHeader DisplayText="@ModuleName" />
+                    </Column>
+
+                    @if (!TaskMetadata.InitializationInProgres)
+                    {
+                        <Column ColumnSize="ColumnSize.Is2" TextAlignment="TextAlignment.End" Class="align-self-center">
+                            <Icon Class="action-icon-sm action-icon-success" Name="IconName.PlusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@AddNewModule" />
+                        </Column>
+                    }
+                </Div>
+            </Column>
+        </Row>
+    </Container>
+
+    <Divider Class="divider-section" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop.Is1.FromBottom" />
+
+    <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
+        <Container Fluid>
+            @foreach (var module in Modules)
+            {
+                var moduleElemID = Guid.NewGuid();
+                var TaskModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == module.ShortName);
+
+                <Fields Class="form-group">
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.Is10.OnWidescreen.Is11.OnFullHD">
+                            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName), moduleElemID))" RequiredIndicator>
+                                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.ShortName), PropertyDisplayResourceType.FIELD)))
+                            </FieldLabel>
+                            <Select TValue="string"
+                            Disabled="@(TaskMetadata.InitializationInProgres)"
+                            SelectedValue="@module.ShortName"
+                            SelectedValueExpression="@(() => module.ShortName)"
+                            SelectedValueChanged="@((value) => TypeSelectionChanged(value, module))"
+                            ElementId="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName), moduleElemID))">
+                                <ChildContent>
+                                    <SelectItem Value="string.Empty" TextColor="TextColor.Black50">
+                                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
+                                    </SelectItem>
+                                    @foreach (var moduleType in ModuleOptions)
+                                    {
+                                        <SelectItem Value="@(moduleType.ShortName)">
+                                            @(moduleType.LongName)
+                                        </SelectItem>
+                                    }
+                                </ChildContent>
+                                <Feedback>
+                                    <ValidationError Multiline="true" />
+                                </Feedback>
+                            </Select>
+                        </Field>
+                    </Validation>
+
+                    <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+                        <FieldLabel>
+                            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
+                        </FieldLabel>
+                        <Div>
+                            @if (!string.IsNullOrWhiteSpace(TaskModuleData?.Description))
+                            {
+                                <Tooltip Multiline="true" Text="@(TaskModuleData?.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd">
+                                    <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                                </Tooltip>
+                            }
+                            @if (!TaskMetadata.InitializationInProgres)
+                            {
+                                <Icon Class="action-icon-sm action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@((e) => (RemoveModule(e, module)))" />
+                            }
+                        </Div>
+                    </Field>
+                </Fields>
+
+                @if (!string.IsNullOrWhiteSpace(module.ShortName))
+                {
+                    var Module = module;
+                    var moduleOptions = ModuleOptions.Single(x => x.ShortName == module.ShortName);
+
+                    <CascadingValue Value="Module">
+                        <TaskModuleParamsFormSection AvailableParams="@moduleOptions.Parameters" />
+                    </CascadingValue>
+                }
+            }
+        </Container>
+    </Column>
+</Row>
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+
+    [CascadingParameter]
+    public DataOperation Operation { get; set; }
+
+    [Parameter]
+    public IList<TaskModuleNoValidationDto> ModuleOptions { get; set; } = [];
+
+    [Parameter]
+    public IList<TaskModuleDto> Modules { get; set; } = [];
+
+    [Parameter]
+    public string ModuleName { get; set; } = string.Empty;
+
+    private ModuleType? moduleType => ModuleOptions?.FirstOrDefault()?.PackageType;
+
+
+    private void AddNewModule()
+    {
+        if (moduleType is not null)
+        {
+            taskManipulationService.AddModule(Modules, moduleType!.Value);
+        }
+    }
+
+    private Task RemoveModule(object eventArgs, TaskModuleDto module)
+    {
+        if (moduleType is not null)
+        {
+            taskManipulationService.RemoveModule(Modules, module);
+        }
+        return System.Threading.Tasks.Task.CompletedTask;
+    }
+
+    private void TypeSelectionChanged(string value, TaskModuleDto module)
+    {
+        if (moduleType is not null)
+        {
+            var sourceModule = ModuleOptions.First(x => x.ShortName == value);
+            taskManipulationService.SwapSelectedModule(sourceModule, module);
+        }
+    }
+
+    private string GetElementIdByOperation(string elementBase, Guid randomString) => VisualisationHelper.GetElementIdByOperation<TaskModuleDto>(elementBase, Operation, $"{Task.ID.ToString()}{randomString}");
+}

@@ -1,0 +1,52 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
+
+
+<Row>
+
+    <Container Fluid>
+        <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<TaskMessageDto>()))" />
+    </Container>
+
+    <Divider Class="divider-section" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" />
+
+    <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
+        <Row>
+            @if (Task.Messages.Count > 0)
+            {
+                @foreach (var Message in Task.Messages.OrderBy(x => x.DateCreated))
+                {
+                    <CascadingValue Value="Message">
+                        <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromBottom">
+                            @switch (Message.Role)
+                            {
+                                case MessageRole.SYSTEM:
+                                    <SystemMessageView />
+                                    break;
+                                case MessageRole.USER:
+                                    <UserMessageView />
+                                    break;
+                                case MessageRole.AI:
+                                    <AssistantMessageView />
+                                    break;
+                            }
+                        </Column>
+                    </CascadingValue>
+                }
+            }
+            else
+            {
+                <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                    <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold">
+                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(TaskMessageDto)}.{UIElementConstants.Collection}"))
+                    </Heading>
+                </Column>
+            }
+        </Row>
+    </Column>
+</Row>
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+}

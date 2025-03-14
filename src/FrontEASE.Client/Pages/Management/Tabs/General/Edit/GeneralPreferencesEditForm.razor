@@ -1,0 +1,101 @@
+﻿@inject IManagementApiService managementApiService
+@inject IResourceHandler resourceHandler
+@inject IMapper mapper
+@inject IUIService uiService
+@inject IUIManager uiManager
+@inject Blazored.Toast.Services.IToastService toastService
+
+
+<FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.GeneralOptions), PropertyDisplayResourceType.FIELD)))" />
+<Divider Class="divider-main" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop" />
+
+<Row Margin="Margin.Is2.FromTop.Is2.Is3.FromBottom">
+    <Form>
+        <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@Options.GeneralOptions" ValidateOnLoad="false">
+            <CascadingValue Value="Options.GeneralOptions">
+                <GeneralPreferencesDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="true" />
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                        <Button style="@($"background-color: {uiManager.Theme.BackgroundOptions.Info}; color: {uiManager.Theme.TextColorOptions.Info};")" Clicked="@EditSettings" Class="btn button btn-sized full-width" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
+                            @if (updateInProgress)
+                            {
+                                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                            }
+                            else
+                            {
+                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
+                            }
+                        </Button>
+                    </Field>
+                </Fields>
+            </CascadingValue>
+        </Validations>
+    </Form>
+</Row>
+
+
+@code {
+    [CascadingParameter]
+    public UserPreferencesDto Options { get; set; } = new();
+
+    [CascadingParameter]
+    public Theme Theme { get; set; } = new();
+
+    private Validations Validations = new();
+    private bool updateInProgress = false;
+
+    private bool isPreferencesLoading = false;
+    private bool isInitialized = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        if (!isInitialized)
+        {
+            var loadPreferencesTask = Task.CompletedTask;
+
+            isPreferencesLoading = true;
+            loadPreferencesTask = LoadPreferences();
+
+            await Task.WhenAll(loadPreferencesTask);
+            isPreferencesLoading = false;
+        }
+        await base.OnInitializedAsync();
+        isInitialized = true;
+    }
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    private async Task LoadPreferences()
+    {
+        var preferences = await managementApiService.LoadPreferences();
+        if (preferences is not null)
+        {
+            mapper.Map(preferences, Options);
+        }
+    }
+
+    public async Task EditSettings()
+    {
+        updateInProgress = true;
+
+        if (await Validations.ValidateAll())
+        {
+            var editedPreferences = await managementApiService.UpdatePreferences(Options);
+            if (editedPreferences is not null)
+            {
+                mapper.Map(editedPreferences, Options);
+
+                var editActionName = resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.GeneralOptions), PropertyDisplayResourceType.FIELD));
+                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")}: {editActionName}";
+                toastService.ShowSuccess(message);
+
+                uiManager.HandleUIPreferencesStateChange(editedPreferences);
+            }
+        }
+
+        updateInProgress = false;
+        uiService.CallRequestRefresh();
+    }
+}

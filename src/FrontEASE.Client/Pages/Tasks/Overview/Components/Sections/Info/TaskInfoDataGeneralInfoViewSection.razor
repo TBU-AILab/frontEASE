@@ -1,0 +1,73 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
+
+<Row>
+
+    <Container Fluid>
+        <FormSectionHeader DisplayText="@resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Info}")" />
+    </Container>
+
+    <Divider Class="divider-section" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" />
+
+    <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is1.FromTop">
+
+        <Container Fluid>
+            <Row>
+
+                @if (!string.IsNullOrEmpty(Task.Config.Name))
+                {
+                    <Column ColumnSize="ColumnSize.IsFull">
+                        <Text>
+                            @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.FIELD))):
+                        </Text>
+                        <Span TextWeight="TextWeight.Bold">
+                            @($" {Task.Config.Name}")
+                        </Span>
+                    </Column>
+                }
+
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.State), PropertyDisplayResourceType.FIELD))):
+                    </Text>
+                    <Span TextWeight="TextWeight.Bold">
+                        @($" {resourceHandler.GetResource(((TaskState)Task.State).GetEnumResourceValue())}")
+                    </Span>
+                </Column>
+
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.CurrentIteration), PropertyDisplayResourceType.FIELD))):
+                    </Text>
+                    <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Info">
+                        @($" {Task.CurrentIteration}")
+                    </Span>
+                </Column>
+
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsValid), PropertyDisplayResourceType.FIELD))):
+                    </Text>
+                    <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Success">
+                        @($" {Task.IterationsValid}")
+                    </Span>
+                </Column>
+
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsInvalidConsecutive), PropertyDisplayResourceType.FIELD))):
+                    </Text>
+                    <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Danger">
+                        @($" {Task.IterationsInvalidConsecutive}")
+                    </Span>
+                </Column>
+
+            </Row>
+        </Container>
+    </Column>
+</Row>
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+}

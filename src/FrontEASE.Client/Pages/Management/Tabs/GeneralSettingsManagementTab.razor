@@ -1,0 +1,5 @@
+﻿@inject IUIManager uiManager
+
+<Container Fluid Padding="Padding.Is2.FromBottom" Border="Border.Is1.RoundedBottom" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small" Class="rounded-top-right-1">
+    <GeneralPreferencesEditForm />
+</Container>

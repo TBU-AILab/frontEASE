@@ -1,0 +1,57 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+@inject AppSettings appSettings
+@inject IUIManager uiManager
+
+<Container Fluid>
+    <Row>
+        <Column ColumnSize="ColumnSize.Is8.OnWidescreen.Is10.OnMobile" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
+            <Card Border="Border.Rounded" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light};")" Class="cursor-pointer" @onclick="SelectMessageSolution">
+                <MessageViewHeader />
+
+                <CardBody Border="Border.Is0"
+                          style="@($"background-color: {(TaskMetadata.SelectedMessageID == Message.ID ? uiManager.Theme.ColorOptions.Primary : uiManager.Theme.BackgroundOptions.Primary)} !important;")">
+                    @if (!string.IsNullOrWhiteSpace(Message.Content))
+                    {
+                        @((MarkupString)Markdig.Markdown.ToHtml(Message.Content))
+                    }
+
+                    @{
+                        var matchedSolution = Task.Solutions.SingleOrDefault(x => x.TaskMessageID == Message.ID);
+                    }
+                    @if (matchedSolution is not null)
+                    {
+                        var urlMetadata = matchedSolution.Metadata?.SingleOrDefault(x => x.Key == TaskMetadataConstants.Url);
+                        @if (urlMetadata is not null)
+                        {
+                            <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
+                            <Image Fluid Source=@($"{appSettings!.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/{urlMetadata.Value}") Text="@urlMetadata.Value" Loading />
+                        }
+                    }
+
+                </CardBody>
+                <MessageViewFooter />
+            </Card>
+        </Column>
+    </Row>
+
+</Container>
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+
+    [CascadingParameter]
+    public TaskMessageDto Message { get; set; } = new();
+
+    private void SelectMessageSolution()
+    {
+        TaskMetadata.SelectedMessageID =
+        TaskMetadata.SelectedMessageID == Message.ID ? null : Message.ID;
+
+        uiService.CallRequestRefresh();
+    }
+}

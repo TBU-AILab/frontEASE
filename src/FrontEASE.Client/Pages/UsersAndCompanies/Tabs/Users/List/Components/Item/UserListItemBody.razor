@@ -1,0 +1,67 @@
+﻿@inject IResourceHandler resourceHandler
+@inject AppSettings appSettings
+@inject IUIManager uiManager
+
+<Row Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")" Class="gx-0 margin-background-offset-top-1">
+    <CardBody>
+        <Row>
+            <Column ColumnSize="ColumnSize.Is4.OnWidescreen" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is3.FromTop.Is3.FromBottom">
+                <Image Padding="Padding.Is0" Source="@(string.IsNullOrWhiteSpace(User.Image?.ImageUrl) ? @"\resources\images\users\profilePictureMissing.png" : $"{appSettings.ApiSettings!.BaseUrl}/{User.Image.ImageUrl}")" Border="Border.RoundedCircle" Class="full-max-width user-card-image" Loading />
+            </Column>
+            <Column ColumnSize="ColumnSize.IsAuto.OnWidescreen" Class="text-center-desktop">
+                <Row Padding="Padding.Is3.FromTop">
+                    <Column ColumnSize="ColumnSize.Is12">
+                        <Heading Size="HeadingSize.Is5" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary}; margin-bottom: 0;")" TextWeight="TextWeight.Bold">
+                            @User.UserName
+                        </Heading>
+                    </Column>
+                </Row>
+                @if (!string.IsNullOrWhiteSpace(User.Email))
+                {
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Text Style="@($"color: {uiManager.Theme.TextColorOptions.Primary};")">
+                                @User.Email
+                            </Text>
+                        </Column>
+                    </Row>
+                }
+                <Row Padding="Padding.Is4.FromTop">
+                    <Column ColumnSize="ColumnSize.Is12">
+                        <Text Style="@($"background-color: {GetUserRoleBackgroundColor(User.Role)}; color: {GetUserRoleTextColor(User.Role)};")" TextWeight="TextWeight.Bold" Padding="Padding.Is2" Border="Border.Rounded">
+                            @(resourceHandler.GetResource(User.Role.GetEnumResourceValue()))
+                        </Text>
+                    </Column>
+                </Row>
+            </Column>
+        </Row>
+    </CardBody>
+</Row>
+
+
+@code {
+    [CascadingParameter]
+    public ApplicationUserDto User { get; set; } = new();
+
+    private String GetUserRoleBackgroundColor(UserRole role)
+    {
+        return role switch
+        {
+            UserRole.USER => uiManager.Theme.BackgroundOptions.Secondary,
+            UserRole.ADMIN => uiManager.Theme.BackgroundOptions.Light,
+            UserRole.OWNER => uiManager.Theme.ColorOptions.Warning,
+            _ => uiManager.Theme.BackgroundOptions.Secondary,
+        };
+    }
+
+    private String GetUserRoleTextColor(UserRole role)
+    {
+        return role switch
+        {
+            UserRole.USER => uiManager.Theme.TextColorOptions.Primary,
+            UserRole.ADMIN => uiManager.Theme.TextColorOptions.Primary,
+            UserRole.OWNER => uiManager.Theme.TextColorOptions.Dark,
+            _ => uiManager.Theme.TextColorOptions.Primary,
+        };
+    }
+}

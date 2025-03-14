@@ -1,0 +1,139 @@
+﻿@inject ICompanyManipulationService companyManipulationService
+@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+@inject IUIManager uiManager
+@inject AppSettings appSettings
+
+<Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded.Primary" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small">
+    <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Padding="Padding.Is2" Shadow="Shadow.Small">
+        <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
+            <Text TextWeight="TextWeight.Bold" Class="text-center" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important;")">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Users), PropertyDisplayResourceType.FIELD)))
+            </Text>
+        </Div>
+        <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important;")" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
+    </Column>
+
+    @if (!isSectionCollapsed)
+    {
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Container Fluid Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                <Row>
+                    <Column ColumnSize="ColumnSize.Is12">
+                        <Fields>
+
+                            <DataGrid TItem="ApplicationUserDto"
+                                      Data="@Users"
+                                      SelectionMode="DataGridSelectionMode.Multiple"
+                                      SelectedRows="@selectedUsers"
+                                      SelectedRowsChanged="(obj => SelectionChanged(obj))"
+                                      Filterable="true"
+                                      FilterMode="DataGridFilterMode.Default"
+                                      FilterMethod="DataGridFilterMethod.Contains"
+                                      Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important; border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")"
+                                      Responsive>
+
+                                <DataGridColumns>
+
+                                    <DataGridColumn TItem="ApplicationUserDto" Field="@nameof(ApplicationUserDto.Image)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.FIELD)))" Sortable="false" Filterable="false">
+                                        <DisplayTemplate>
+                                            <Image Border="Border.RoundedCircle" Source="@(string.IsNullOrWhiteSpace(context.Image?.ImageUrl) ? @"\resources\images\users\profilePictureMissing.png" : $"{appSettings.ApiSettings!.BaseUrl}/{context.Image.ImageUrl}")" Class="full-max-width datagrid-item-image-small" Loading />
+                                        </DisplayTemplate>
+                                    </DataGridColumn>
+
+                                    <DataGridColumn Field="@nameof(ApplicationUserDto.UserName)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
+                                    <DataGridColumn Field="@nameof(ApplicationUserDto.Email)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
+
+                                    <DataGridColumn TItem="ApplicationUserDto" Field="@nameof(ApplicationUserDto.Role)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Role), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+                                        <DisplayTemplate>
+                                            @(resourceHandler.GetResource(((UserRole)context.Role).GetEnumResourceValue()))
+                                        </DisplayTemplate>
+                                    </DataGridColumn>
+
+                                </DataGridColumns>
+
+                            </DataGrid>
+
+                        </Fields>
+                    </Column>
+                </Row>
+            </Container>
+        </Column>
+    }
+</Container>
+
+
+@code {
+    [CascadingParameter]
+    public CompanyDto CompanyModel { get; set; } = new();
+
+    [CascadingParameter]
+    public IList<ApplicationUserDto> Users { get; set; } = [];
+
+    private List<ApplicationUserDto> selectedUsers = [];
+    private bool isSectionCollapsed = false;
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+
+        SetInitialCollapse();
+        SetInitialData();
+
+        await base.OnInitializedAsync();
+    }
+
+    private void SetInitialCollapse()
+    {
+        if (!(CompanyModel.Users?.Count > 0))
+        {
+            ChangeCollapseState();
+        }
+    }
+
+    private void SetInitialData()
+    {
+        var selectedUserIDs = CompanyModel.Users.Select(x => x.Id);
+        selectedUsers.AddRange(Users.Where(x => selectedUserIDs.Contains(x.Id)));
+    }
+
+    private void SelectionChanged(IList<ApplicationUserDto> newSelection)
+    {
+        var selectedIDs = CompanyModel.Users.Select(x => x.Id);
+        var newSelectionIDs = newSelection.Select(x => x.Id);
+
+        var added = newSelectionIDs.Except(selectedIDs).ToList();
+        var removed = selectedIDs.Except(newSelectionIDs).ToList();
+
+        if (added.Count > 0)
+        {
+            foreach (var addedUser in added)
+            {
+                var userDto = Users.Single(x => x.Id == addedUser);
+                CompanyModel.Users.Add(userDto);
+            }
+        }
+
+        if (removed.Count > 0)
+        {
+            foreach (var removedUser in removed)
+            {
+                var removedFromModel = CompanyModel.Users.Single(x => x.Id == removedUser);
+                CompanyModel.Users.Remove(removedFromModel);
+            }
+        }
+    }
+
+    private void ChangeCollapseState()
+    {
+        isSectionCollapsed = !isSectionCollapsed;
+
+        if (!isSectionCollapsed)
+        { companyManipulationService.CleanUsersInfo(CompanyModel); }
+
+        uiService.CallRequestRefresh();
+    }
+}

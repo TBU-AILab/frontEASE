@@ -1,0 +1,96 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUserApiService userApiService
+@inject IUIService uiService
+@inject ICompanyManipulationService companyManipulationService
+@inject ICompanyApiService companyApiService
+@inject IUIManager uiManager
+
+<FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<CompanyDto>()))" />
+<Divider Class="divider-main" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop" />
+@if (isUsersLoading || isCompaniesLoading)
+{
+    <ContentLoadSpinner />
+}
+<Row Margin="Margin.Is2.FromTop">
+    @if (Companies.Count > 0)
+    {
+        @foreach (var Company in Companies)
+        {
+            <CascadingValue Value="Company">
+                <CompanyListItem />
+            </CascadingValue>
+        }
+    }
+    else
+    {
+        <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+            <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold">
+                @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(CompanyDto)}.{UIElementConstants.Collection}"))
+            </Heading>
+        </Column>
+    }
+</Row>
+
+@code {
+    [CascadingParameter]
+    public IList<CompanyDto> Companies { get; set; } = [];
+
+    [CascadingParameter]
+    public IList<ApplicationUserDto> Users { get; set; } = [];
+
+    private bool isUsersLoading = false;
+    private bool isCompaniesLoading = false;
+    private bool isInitialized = false;
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        if (!isInitialized)
+        {
+            var loadUsersTask = Task.CompletedTask;
+            var loadCompaniesTask = Task.CompletedTask;
+
+            if (!(Users?.Count > 0 == true))
+            {
+                isUsersLoading = true;
+                loadUsersTask = LoadUsers();
+            }
+
+            if (!(Companies?.Count > 0 == true))
+            {
+                isCompaniesLoading = true;
+                loadCompaniesTask = LoadCompanies();
+            }
+
+            await Task.WhenAll(loadUsersTask, loadCompaniesTask);
+            isUsersLoading = isCompaniesLoading = false;
+        }
+
+        companyManipulationService.SortUsersToCompanies(Users!, Companies!);
+        await base.OnInitializedAsync();
+        isInitialized = true;
+    }
+
+    private async Task LoadCompanies()
+    {
+        var companies = await companyApiService.LoadCompanies();
+        if (companies?.Count > 0 == true)
+        {
+            Companies.Clear();
+            foreach (var company in companies) { Companies.Add(company); }
+        }
+    }
+
+    private async Task LoadUsers()
+    {
+        var users = await userApiService.LoadUsers();
+        if (users?.Count > 0 == true)
+        {
+            Users.Clear();
+            foreach (var user in users) { Users.Add(user); }
+        }
+    }
+}

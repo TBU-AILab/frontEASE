@@ -1,0 +1,86 @@
+﻿@inject IUserApiService userApiService
+@inject IUIService uiService
+@inject IResourceHandler resourceHandler
+@inject Blazored.Toast.Services.IToastService toastService
+@inject IUIManager uiManager
+
+<Modal @ref="@DeleteModal">
+    @if (isModalVisible)
+    {
+        <ModalContent Centered Shadow="Shadow.Small" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")">
+
+            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")} - {User.UserName}")" />
+
+            <ModalBody Margin="Margin.Is3.FromTop">
+                <Row>
+                    <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
+                        <Text Class="font-large">
+                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(ApplicationUserDto)}.{UIConstants.Question}")
+                        </Text>
+                    </Column>
+                </Row>
+                <Row Margin="Margin.Is4.FromTop">
+                    <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile">
+                        <Button Clicked="@DeleteUser" Color="Color.Danger" Class="btn btn-sized button full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
+                            @if (deletingInProgress)
+                            {
+                                <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" TextSize="TextSize.Medium" />
+                            }
+                            else
+                            {
+                                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}")
+                            }
+                        </Button>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile">
+                        <Button Clicked="@HideModal" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary};")" Class="btn btn-sized button full-width" TextWeight="TextWeight.Bold" Border="Border.Is1.Rounded">
+                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}")
+                        </Button>
+                    </Column>
+                </Row>
+            </ModalBody>
+        </ModalContent>
+    }
+</Modal>
+
+@code {
+    [CascadingParameter]
+    public ApplicationUserDto User { get; set; } = new();
+
+    [CascadingParameter]
+    public IList<ApplicationUserDto> Users { get; set; } = [];
+
+    private Modal DeleteModal = new();
+    private bool deletingInProgress = false;
+    private bool isModalVisible = false;
+
+    public async Task DeleteUser()
+    {
+        deletingInProgress = true;
+
+        var deleted = await userApiService.DeleteUser(User.Id!.Value);
+        if (deleted)
+        {
+            Users.Remove(User);
+            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {User.Role} ({User.Email})";
+            toastService.ShowSuccess(message);
+            uiService.CallRequestRefresh();
+        }
+
+        await HideModal();
+        deletingInProgress = false;
+    }
+
+
+    private Task HideModal()
+    {
+        isModalVisible = false;
+        return DeleteModal.Hide();
+    }
+
+    public Task ShowModal()
+    {
+        isModalVisible = true;
+        return DeleteModal.Show();
+    }
+}

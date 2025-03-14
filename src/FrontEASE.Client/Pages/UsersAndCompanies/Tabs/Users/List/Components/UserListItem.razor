@@ -1,0 +1,20 @@
+﻿@inject IUIService uiService
+@inject IUIManager uiManager
+
+<Column ColumnSize="ColumnSize.Is3.OnQuadHD.Is4.OnWidescreen.Is6.OnDesktop">
+    <Card Shadow="Shadow.Small" Margin="Margin.Is4.FromBottom" Border="Border.Is2.Rounded" Overflow="Overflow.Hidden" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")">
+        <UserListItemHeader />
+        <UserListItemBody />
+    </Card>
+</Column>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        await base.OnInitializedAsync();
+    }
+
+    private void RefreshView()
+    { StateHasChanged(); }
+}

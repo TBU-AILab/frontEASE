@@ -1,0 +1,56 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
+
+@inject NavigationManager navManager
+@inject AuthenticationStateProvider provider
+@inject AppSettings appSettings
+
+@inherits LayoutComponentBase
+
+<AuthorizeView>
+    <Authorized>
+        @if (LoggedUser.Id is not null)
+        {
+            <BarLink Clicked="Logout"
+                     Class="nav-link-logout"
+                     Match="Match.All">
+
+                <Container Class="d-flex align-items-center justify-content-center">
+                    
+                    <Row Display="Display.Flex" Class="align-items-center justify-content-center">
+                        <Column ColumnSize="ColumnSize.Is2.OnWidescreen" Padding="Padding.Is0" Display="Display.Flex" Class="align-items-center justify-content-center">
+                            <Image Border="Border.Is1.RoundedCircle"
+                                   Source="@(string.IsNullOrWhiteSpace(LoggedUser.Image?.ImageUrl) ? @"\resources\images\users\profilePictureMissing.png" : $"{appSettings.ApiSettings!.BaseUrl}/{LoggedUser.Image?.ImageUrl}")"
+                                   Class="full-max-width datagrid-item-image-extrasmall" Loading />
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is8.OnWidescreen" Display="Display.None.InlineBlock.OnWidescreen" Class="align-items-center justify-content-center">
+                            <Text TextWeight=TextWeight.Bold>@LoggedUser.UserName</Text>
+                            <Text TextSize="TextSize.Small">@LoggedUser.Email</Text>
+                        </Column>
+                    </Row>
+                </Container>
+            </BarLink>
+        }
+    </Authorized>
+
+    <NotAuthorized>
+        <BarLink To="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}"))" Class="nav-link" Match="Match.All">
+            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Login}"))
+        </BarLink>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [CascadingParameter]
+    public ApplicationUserDto LoggedUser { get; set; } = new();
+
+    private void Logout()
+    {
+        var authStateProvider = (CustomAuthenticationStateProvider)provider;
+        authStateProvider.Logout();
+
+        var loginRoute = resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}");
+        uiManager.ChangeTheme(ThemeDefaults.GetThemeDefaults(ColorScheme.LIGHT));
+        navManager.NavigateTo(loginRoute);
+    }
+}

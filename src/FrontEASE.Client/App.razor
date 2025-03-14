@@ -1,0 +1,99 @@
+﻿@inject IManagementApiService managementApiService
+@inject IResourceHandler resourceHandler
+@inject IResourcesManager resourcesManager
+@inject IUserApiService userApiService
+@inject IUIService uiService
+@inject IUIManager uiManager
+@inject IMapper mapper
+
+@inject AuthenticationStateProvider authStateProvider
+@inject NavigationManager navigation
+
+@if (isInitialized)
+{
+    <ThemeProvider Theme="@uiManager.Theme">
+        <CascadingValue Value="LoggedUser">
+            <CascadingValue Value="Options">
+                <Router AppAssembly="@typeof(App).Assembly">
+
+                    <Found Context="routeData">
+                        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
+                            <Authorizing>
+                                <Alert Color="Color.Info" Visible>
+                                    <AlertMessage TextWeight="TextWeight.Bold" Class="font-large">
+                                        @($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Login}")} ...")
+                                    </AlertMessage>
+                                </Alert>
+                            </Authorizing>
+                            <NotAuthorized>
+                                <LayoutView Layout="@typeof(MainLayout)">
+                                    @{
+                                        var loginPage = resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}");
+                                        navigation.NavigateTo(loginPage);
+                                    }
+                                </LayoutView>
+                            </NotAuthorized>
+                        </AuthorizeRouteView>
+
+                        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+                    </Found>
+
+                    <NotFound>
+                        <LayoutView Layout="@typeof(MainLayout)">
+                            @{
+                                var notFoundPage = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Error}")}/{HttpStatusCode.NotFound}";
+                                navigation.NavigateTo(notFoundPage);
+                            }
+                        </LayoutView>
+                    </NotFound>
+
+                </Router>
+            </CascadingValue>
+        </CascadingValue>
+    </ThemeProvider>
+}
+else
+{
+    <PageLoadSpinner />
+}
+
+@code {
+    private bool isInitialized = false;
+    private bool isUserLoaded = false;
+
+    private ApplicationUserDto LoggedUser = new();
+    private UserPreferencesDto Options = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiManager.ChangeTheme(ThemeDefaults.GetThemeDefaults(ColorScheme.LIGHT));
+        await resourcesManager.AssureResourcesInitialized();
+        await base.OnInitializedAsync();
+
+        isInitialized = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var authState = await authStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            var loggedInUser = await userApiService.LoadUser();
+            if (loggedInUser is not null)
+            {
+                mapper.Map(loggedInUser, LoggedUser);
+            }
+
+            await uiService.AssureResourcesInitialized();
+            var options = await managementApiService.LoadPreferences();
+            if (options is not null)
+            {
+                mapper.Map(options, Options);
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
+        }
+    }
+}

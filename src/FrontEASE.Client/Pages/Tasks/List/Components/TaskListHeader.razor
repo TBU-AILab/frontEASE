@@ -1,0 +1,28 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
+
+<Row>
+    <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is1.FromTop.Is1.FromBottom" Margin="Margin.Is4.FromTop" TextAlignment="TextAlignment.Start">
+        <Div Display="Display.InlineBlock">
+            <Heading Size="HeadingSize.Is3">
+                @(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<TaskDto>()))
+            </Heading>
+        </Div>
+
+        <Div Display="Display.InlineBlock" Float="Float.End" Class="full-height">
+            <Icon Name="IconName.PlusCircle" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@ShowAddModal" Class="float-right main-action-icon main-action-icon-primary" />
+        </Div>
+    </Column>
+</Row>
+
+
+<Divider Class="divider-main" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop" />
+
+<TaskEditModal @ref="@AddModal" Operation="DataOperation.INSERT" />
+
+@code {
+    private TaskEditModal AddModal = new();
+
+    private async Task ShowAddModal() => await AddModal.Show();
+
+}

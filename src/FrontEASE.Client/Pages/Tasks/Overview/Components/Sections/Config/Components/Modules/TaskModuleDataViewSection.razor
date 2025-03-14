@@ -1,0 +1,62 @@
+﻿@inject IResourceHandler resourceHandler
+@inject ITaskManipulationService taskManipulationService
+@inject IUIManager uiManager
+
+<Row Margin="Margin.Is2.FromTop">
+    <Container Fluid>
+        <FormSectionHeader DisplayText="@ModuleName" />
+    </Container>
+
+    <Divider Class="divider-section" Shadow="Shadow.Small" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" />
+    @{
+        var TaskModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == Module.ShortName);
+    }
+
+    <Column ColumnSize="ColumnSize.IsFull" Padding="Padding.Is3.FromTop">
+        <Fields>
+
+            <Column ColumnSize="@(string.IsNullOrWhiteSpace(TaskModuleData?.Description) ? ColumnSize.IsFull : ColumnSize.Is10.OnWidescreen)" Margin="Margin.Is2.FromTop.Is2.FromBottom">
+                <Text>
+                    @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.ShortName), PropertyDisplayResourceType.FIELD))}: ")
+                </Text>
+                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                    @($" {TaskModuleData?.LongName ?? Module.ShortName}")
+                </Span>
+            </Column>
+
+            @if (!string.IsNullOrWhiteSpace(TaskModuleData?.Description))
+            {
+                <Field ColumnSize="ColumnSize.Is2.OnWidescreen" TextAlignment="TextAlignment.End" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+                    <Div>
+                        <Tooltip Multiline="true" Text="@(TaskModuleData?.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd">
+                            <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                        </Tooltip>
+                    </Div>
+                </Field>
+            }
+
+        </Fields>
+
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Container Fluid>
+                @if (!string.IsNullOrWhiteSpace(Module.ShortName))
+                {
+                    <CascadingValue Value="Module">
+                        <TaskModuleParamsViewSection AvailableParams="@TaskModuleData?.Parameters" />
+                    </CascadingValue>
+                }
+            </Container>
+        </Column>
+    </Column>
+</Row>
+
+@code {
+    [Parameter]
+    public IList<TaskModuleNoValidationDto> ModuleOptions { get; set; } = [];
+
+    [Parameter]
+    public TaskModuleDto Module { get; set; } = new();
+
+    [Parameter]
+    public string? ModuleName { get; set; }
+}
