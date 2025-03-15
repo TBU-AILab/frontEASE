@@ -25,12 +25,13 @@
                     @foreach (var solution in solutionsOrdered)
                     {
                         <Container Fluid
-                                   style="@($"border-color: {(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? uiManager.Theme.ColorOptions.Primary : uiManager.Theme.BackgroundOptions.Light)} !important;")"
+                                   style="@($"border-color: {(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? uiManager.Theme.ColorOptions.Info : uiManager.Theme.BackgroundOptions.Light)} !important;")"
                                    Border="@(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? Border.Is2.Rounded : Border.Is1.Rounded)"
                                    @onclick="(() => SelectMessageSolution(solution))"
                                    Shadow="Shadow.Small"
                                    Class="cursor-pointer"
-                                   Margin="Margin.Is2.FromTop">
+                                   Margin="Margin.Is2.FromTop"
+                                   Padding="Padding.Is2.FromBottom.Is2.FromTop">
                             <Row>
 
                                 <Column ColumnSize="ColumnSize.IsFull">
@@ -55,7 +56,7 @@
                                 }
 
                                 <Column ColumnSize="ColumnSize.IsFull">
-                                    <Text>
+                                    <Text Margin="Margin.Is2.FromEnd">
                                         @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}"))
                                     </Text>
                                     @if (solutionDownloadsOngoing.Contains(solution.ID))

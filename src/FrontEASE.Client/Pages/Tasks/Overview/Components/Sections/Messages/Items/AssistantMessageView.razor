@@ -10,7 +10,7 @@
                 <MessageViewHeader />
 
                 <CardBody Border="Border.Is0"
-                          style="@($"background-color: {(TaskMetadata.SelectedMessageID == Message.ID ? uiManager.Theme.ColorOptions.Primary : uiManager.Theme.BackgroundOptions.Primary)} !important;")">
+                          style="@($"background-color: {(TaskMetadata.SelectedMessageID == Message.ID ? uiManager.Theme.ColorOptions.Info : uiManager.Theme.BackgroundOptions.Primary)} !important; color: {(TaskMetadata.SelectedMessageID == Message.ID ? uiManager.Theme.TextColorOptions.Info : uiManager.Theme.TextColorOptions.Primary)} !important;")">
                     @if (!string.IsNullOrWhiteSpace(Message.Content))
                     {
                         @((MarkupString)Markdig.Markdown.ToHtml(Message.Content))
