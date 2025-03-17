@@ -24,5 +24,10 @@
         /// Internal Server Error (500)
         /// </summary>
         INTERNAL_SERVER_ERROR,
+
+        /// <summary>
+        /// Unprocessable Entity (422)
+        /// </summary>
+        UNPROCESSABLE_ENTITY
     }
 }

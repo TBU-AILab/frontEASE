@@ -149,6 +149,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.BadRequest}", Value="Bad request" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.InternalServerError}", Value="Internal server error" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.Forbidden}", Value="Forbidden" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.UnprocessableContent}", Value="Unprocessable content" },
 
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIConstants.Error}.{UIActionConstants.Login}", Value="Error - Invalid login request" },
 

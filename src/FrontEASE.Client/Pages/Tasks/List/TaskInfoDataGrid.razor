@@ -15,16 +15,34 @@
               Responsive>
         <DataGridColumns>
             <DataGridColumn Field="@nameof(TaskInfoDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
-            <DataGridColumn Field="@nameof(TaskInfoDto.DateCreated)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FIELD)))" Sortable="true" DisplayFormat="{0:dd.MM.yyyy}" />
 
-            <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.Author)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.FIELD)))" Sortable="false">
+            <DataGridColumn Field="@nameof(TaskInfoDto.DateCreated)"
+                            Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FIELD)))"
+                            Sortable="true"
+                            DisplayFormat="{0:dd.MM.yyyy}"
+                            CustomFilter="@OnDateCreatedCustomFilter">
+                <FilterTemplate>
+                    <TextEdit Text="@selectedDateCreatedFilter"
+                              TextChanged="@( value => { selectedDateCreatedFilter = value; context.TriggerFilterChange(selectedDateCreatedFilter); } )" />
+                </FilterTemplate>
+            </DataGridColumn>
+
+            <DataGridColumn TItem="TaskInfoDto"
+                            Field="@nameof(TaskInfoDto.Author)"
+                            Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.FIELD)))"
+                            Sortable="false"
+                            CustomFilter="@OnAuthorEmailCustomFilter">
+                <FilterTemplate>
+                    <TextEdit Text="@selectedEmailFilter" TextChanged="@( value => {selectedEmailFilter = value;context.TriggerFilterChange(selectedEmailFilter);})" />
+                </FilterTemplate>
                 <DisplayTemplate>
                     <Container Fluid>
                         <Row>
                             <Column ColumnSize="ColumnSize.Is4">
                                 <Image Border="Border.RoundedCircle"
                                        Source="@(GetUserImageUrl(context.Author!.Id!.Value))"
-                                       Class="full-max-width datagrid-item-image-extrasmall" Loading />
+                                       Class="full-max-width datagrid-item-image-extrasmall"
+                                       Loading />
                             </Column>
                             <Column ColumnSize="ColumnSize.Is8">
                                 <Text>
@@ -36,11 +54,28 @@
                 </DisplayTemplate>
             </DataGridColumn>
 
-            <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.State)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.State), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+            <DataGridSelectColumn TItem="TaskInfoDto"
+                                  Field="@nameof(TaskInfoDto.State)"
+                                  Sortable="true"
+                                  Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.State), PropertyDisplayResourceType.FIELD)))"
+                                  TextField="@(state => resourceHandler.GetResource(((TaskState)state).GetEnumResourceValue()))"
+                                  ValueField="@(state => state.ToString())"
+                                  CustomFilter="@OnStateCustomFilter">
+                <FilterTemplate>
+                    <Select TValue="string" SelectedValue="@selectedStateFilter" SelectedValueChanged="@(value => { selectedStateFilter = value; context.TriggerFilterChange(selectedStateFilter); })">
+                        <SelectItem Value="string.Empty">
+                            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
+                        </SelectItem>
+                        @foreach (var state in Enum.GetValues(typeof(TaskState)))
+                        {
+                            <SelectItem Value="@state.ToString()">@resourceHandler.GetResource(((TaskState)state).GetEnumResourceValue())</SelectItem>
+                        }
+                    </Select>
+                </FilterTemplate>
                 <DisplayTemplate>
                     @(resourceHandler.GetResource(((TaskState)context.State).GetEnumResourceValue()))
                 </DisplayTemplate>
-            </DataGridColumn>
+            </DataGridSelectColumn>
 
             <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.ConnectorType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FIELD)))" Sortable="true">
                 <DisplayTemplate>
@@ -137,6 +172,10 @@
     private TaskInfoDto TaskInfo = new();
     private DataGrid<TaskInfoDto> TaskInfoGrid { get; set; } = new();
 
+    private string selectedStateFilter = string.Empty;
+    private string selectedEmailFilter = string.Empty;
+    private string selectedDateCreatedFilter = string.Empty;
+
     private async Task ShowOverviewModal(TaskInfoDto taskInfo)
     {
         TaskInfo = taskInfo;
@@ -165,6 +204,40 @@
     {
         TaskInfo = taskInfo;
         await ChangeStateModal.ShowModal(state);
+    }
+
+    private bool OnStateCustomFilter(object itemValue, object searchValue)
+    {
+        if (searchValue is string filter && !string.IsNullOrEmpty(filter))
+        {
+            return itemValue?.ToString() == filter;
+        }
+        return true;
+    }
+
+    private bool OnAuthorEmailCustomFilter(object itemValue, object searchValue)
+    {
+        if (searchValue is string filter && !string.IsNullOrEmpty(filter))
+        {
+            if (itemValue is ApplicationUserDto user)
+            {
+                return user.Email?.Contains(filter, StringComparison.OrdinalIgnoreCase) ?? false;
+            }
+        }
+        return true;
+    }
+
+    private bool OnDateCreatedCustomFilter(object itemValue, object searchValue)
+    {
+        if (searchValue is string filter && !string.IsNullOrEmpty(filter))
+        {
+            if (itemValue is DateTime date)
+            {
+                string formattedDate = date.ToString("dd.MM.yyyy");
+                return formattedDate.Contains(filter, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+        return true;
     }
 
     private string? GetUserImageUrl(Guid userID)
