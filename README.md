@@ -73,7 +73,8 @@ frontEASE/
 To run frontEASE in development mode with live reloading:
 
 ```sh
-docker-compose -f docker-compose.override.yml up
+docker compose -f docker-compose.override.yml up #windows
+docker-compose -f docker-compose.override.yml up #unix
 ```
 
 This command builds and starts the application using the `dev.Dockerfile` and applies the development-specific configurations.
@@ -83,7 +84,8 @@ This command builds and starts the application using the `dev.Dockerfile` and ap
 To run frontEASE in a production environment:
 
 ```sh
-docker-compose up -d
+docker compose up -d #windows
+docker-compose up -d #unix
 ```
 
 This command uses the `prod.Dockerfile` to build and start the application in detached mode.
