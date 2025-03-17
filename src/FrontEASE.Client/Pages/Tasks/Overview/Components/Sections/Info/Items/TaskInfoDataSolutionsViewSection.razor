@@ -12,7 +12,7 @@
             <TaskSolutionsViewSectionHeader />
         </Container>
 
-        <Divider Class="divider-section" style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" />
+        <Divider Class="divider-section" Style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" />
 
         <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is1.FromTop">
 
@@ -25,7 +25,7 @@
                     @foreach (var solution in solutionsOrdered)
                     {
                         <Container Fluid
-                                   style="@($"border-color: {(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? uiManager.Theme.ColorOptions.Info : uiManager.Theme.BackgroundOptions.Light)} !important;")"
+                                   Style="@($"border-color: {(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? uiManager.Theme.ColorOptions.Info : uiManager.Theme.BackgroundOptions.Light)} !important;")"
                                    Border="@(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? Border.Is2.Rounded : Border.Is1.Rounded)"
                                    @onclick="(() => SelectMessageSolution(solution))"
                                    Shadow="Shadow.Small"

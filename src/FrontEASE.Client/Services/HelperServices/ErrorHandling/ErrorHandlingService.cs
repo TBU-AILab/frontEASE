@@ -21,6 +21,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
 
         public async Task HandleErrorResponse(HttpResponseMessage httpResponse)
         {
+            var messageLevel = ToastLevel.Error;
             var uiMessageBody = string.Empty;
             var uiMessageTitle = string.Empty;
 
@@ -45,6 +46,16 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                         uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                     }
                     break;
+                case HttpStatusCode.UnprocessableContent:
+                    {
+                        var responseString = await httpResponse.Content.ReadAsStringAsync();
+                        var responseMessage = JsonSerializer.Deserialize<UnprocessableResultDto>(responseString);
+
+                        uiMessageBody = $"{msgBody}: {string.Join(", ", responseMessage!.Errors)}";
+                        uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
+                        messageLevel = ToastLevel.Warning;
+                    }
+                    break;
                 case HttpStatusCode.NotFound:
                     {
                         var responseString = await httpResponse.Content.ReadAsStringAsync();
@@ -59,6 +70,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                         var responseMessage = await httpResponse.Content.ReadFromJsonAsync<UnauthorizedResultDto>();
                         uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                         uiMessageBody = msgBody;
+                        messageLevel = ToastLevel.Warning;
                     }
                     break;
                 case HttpStatusCode.InternalServerError:
@@ -72,15 +84,27 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                     break;
             }
 
-            await VisualizeException(uiMessageTitle ?? "N/A", uiMessageBody);
+            await VisualizeException(uiMessageTitle ?? "N/A", uiMessageBody, messageLevel);
         }
 
-        private async Task VisualizeException(string title, string body)
+        private async Task VisualizeException(string title, string body, ToastLevel level)
         {
             await Console.Out.WriteLineAsync(title);
             await Console.Out.WriteLineAsync(body);
 
-            _toastService.ShowError(string.IsNullOrWhiteSpace(title) ? $"{body}" : $"{title.ToUpper()} : {body}");
+            var content = string.IsNullOrWhiteSpace(title) ? $"{body}" : $"{title.ToUpper()} : {body}";
+            switch (level)
+            {
+                case ToastLevel.Error:
+                    _toastService.ShowError(content);
+                    break;
+                case ToastLevel.Warning:
+                    _toastService.ShowWarning(content);
+                    break;
+                default:
+                    _toastService.ShowInfo(content);
+                    break;
+            }
         }
     }
 }

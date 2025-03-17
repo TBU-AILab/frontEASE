@@ -47,13 +47,30 @@
                                     </DataGridColumn>
 
                                     <DataGridColumn Field="@nameof(ApplicationUserDto.UserName)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
-                                    <DataGridColumn Field="@nameof(ApplicationUserDto.Email)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FIELD)))" Sortable="true"/>
+                                    <DataGridColumn Field="@nameof(ApplicationUserDto.Email)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
 
-                                    <DataGridColumn TItem="ApplicationUserDto" Field="@nameof(ApplicationUserDto.Role)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Role), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+                                    <DataGridSelectColumn TItem="ApplicationUserDto"
+                                                          Field="@nameof(ApplicationUserDto.Role)"
+                                                          Sortable="true"
+                                                          Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Role), PropertyDisplayResourceType.FIELD)))"
+                                                          TextField="@(role => resourceHandler.GetResource(((UserRole)role).GetEnumResourceValue()))"
+                                                          ValueField="@(role => role.ToString())"
+                                                          CustomFilter="@OnRoleCustomFilter">
+                                        <FilterTemplate>
+                                            <Select TValue="string" SelectedValue="@selectedRoleFilter" SelectedValueChanged="@(value => { selectedRoleFilter = value; context.TriggerFilterChange(selectedRoleFilter); })">
+                                                <SelectItem Value="string.Empty">
+                                                    @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
+                                                </SelectItem>
+                                                @foreach (var role in Enum.GetValues(typeof(UserRole)))
+                                                {
+                                                    <SelectItem Value="@role.ToString()">@resourceHandler.GetResource(((UserRole)role).GetEnumResourceValue())</SelectItem>
+                                                }
+                                            </Select>
+                                        </FilterTemplate>
                                         <DisplayTemplate>
                                             @(resourceHandler.GetResource(((UserRole)context.Role).GetEnumResourceValue()))
                                         </DisplayTemplate>
-                                    </DataGridColumn>
+                                    </DataGridSelectColumn>
 
                                 </DataGridColumns>
 
@@ -83,6 +100,8 @@
     private List<ApplicationUserDto> selectedUsers = [];
     private bool isSectionCollapsed = false;
 
+    private string selectedRoleFilter = string.Empty;
+
     private void RefreshView()
     { StateHasChanged(); }
 
@@ -97,10 +116,9 @@
     }
 
 
-
     private void StyleRow(ApplicationUserDto userDto, DataGridRowStyling styling)
     {
-        if(userDto.Id == Task.Author.Id)
+        if (userDto.Id == Task.Author.Id)
         {
             styling.Class = "datagrid-row-author";
         }
@@ -112,6 +130,15 @@
         {
             ChangeCollapseState();
         }
+    }
+
+    private bool OnRoleCustomFilter(object itemValue, object searchValue)
+    {
+        if (searchValue is string filter && !string.IsNullOrEmpty(filter))
+        {
+            return itemValue?.ToString() == filter;
+        }
+        return true;
     }
 
     private void SetInitialData()

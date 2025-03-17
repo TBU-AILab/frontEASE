@@ -1,7 +1,4 @@
 ﻿using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
-using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
-using FrontEASE.DataContracts.Models.Core.Tasks.Info;
-using FrontEASE.DataContracts.Models.Core;
 using System.Text.Json.Serialization;
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Info

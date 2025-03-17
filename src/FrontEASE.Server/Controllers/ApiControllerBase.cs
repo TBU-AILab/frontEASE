@@ -83,6 +83,15 @@ namespace FrontEASE.Server.Controllers
                             result = responseDto;
                         }
                         break;
+                    case ApiInternalExceptionCode.UNPROCESSABLE_ENTITY:
+                        {
+                            var responseDto = new UnprocessableResultDto()
+                            {
+                                Message = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.UnprocessableContent}"
+                            };
+                            result = responseDto;
+                        }
+                        break;
                     case ApiInternalExceptionCode.BAD_REQUEST:
                         {
                             var exceptionTyped = ex as BadRequestException;
