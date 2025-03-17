@@ -44,14 +44,14 @@ frontEASE/
 ├── docker-entrypoint.sh        # Production Docker entrypoint script
 └── prod.Dockerfile             # Production Dockerfile
 ```
-
+-->
 ## Prerequisites
 
-- [.NET SDK](https://dotnet.microsoft.com/download) installed on your machine.
+- git
 - [Docker](https://www.docker.com/get-started) installed for containerized deployment.
 
 ## Installation
--->
+
 
 1. **Clone the Repository**:
 
