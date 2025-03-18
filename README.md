@@ -79,6 +79,13 @@ frontEASE/
    ```sh
    http://localhost:5235
    ```
+
+   **Default Login**
+   
+   _username_: BigJoe
+   
+   _password_: root1234
+   
 <!--
 ## Running the Application - Windows
 
