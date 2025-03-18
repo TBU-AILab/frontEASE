@@ -29,7 +29,7 @@ services:
       context: .
       dockerfile: prod.client.Dockerfile
     ports:
-      - "80:80"
+      - "5235:5235"
     networks:
       - fop-imt-network
 
