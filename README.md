@@ -45,28 +45,42 @@ frontEASE/
 └── prod.Dockerfile             # Production Dockerfile
 ```
 -->
-## Prerequisites
 
-- git
+## How to run it - Windows
+
+### Prerequisites
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) installed to clone this repository.
 - [Docker](https://www.docker.com/get-started) installed for containerized deployment.
 
-## Installation
-
+### Installation
 
 1. **Clone the Repository**:
 
+   From the command line at the location where you want to have the project (e.g. _C:\Users\JohnDoe_)
    ```sh
    git clone --recurse-submodules https://github.com/TBU-AILab/frontEASE.git
+   ```
+2. **Go into the project directory**
+   
+   ```sh
    cd frontEASE
    ```
-<!--
-2. **Restore Dependencies**:
+3. **Compose docker containers**
 
+   The docker has to be running for this step.
    ```sh
-   dotnet restore
+   docker compose up -d
    ```
--->
-## Running the Application
+
+4. **Profit**
+
+   Go to:
+   ```sh
+   http://localhost:5235
+   ```
+<!--
+## Running the Application - Windows
 
 ### Development Mode
 
@@ -94,7 +108,7 @@ This command uses the `prod.Dockerfile` to build and start the application in de
 
 frontEASE is designed to work in tandem with the EASE backend. Ensure the backend services are running and accessible. The frontend communicates with the backend via predefined API endpoints.
 
-<!--
+
 ## Contributing
 
 Contributions are welcome! To contribute:
