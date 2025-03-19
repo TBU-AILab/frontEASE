@@ -53,7 +53,7 @@ namespace FrontEASE.Shared.Data.DTOs.Management.Tokens
         /// </summary>
         [Resource($"{nameof(UserPreferenceTokenOptionDto)}.{nameof(Token)}")]
         [RequiredValidation<UserPreferenceTokenOptionDto>]
-        [StringLengthValidation(12, 128)]
+        [StringLengthValidation(1, 512)]
         public string Token { get; set; }
 
         /// <summary>
