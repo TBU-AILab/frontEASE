@@ -71,6 +71,7 @@ else
         await base.OnInitializedAsync();
 
         isInitialized = true;
+        uiService.CallRequestRefresh();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
