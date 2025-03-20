@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using FrontEASE.DataContracts.Models.Core.Errors;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using FrontEASE.DataContracts.Models.Core.Tasks.Info;
+using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Repositories.Shared.Resources;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -56,8 +59,16 @@ namespace FrontEASE.Domain.Services.Tasks.Core
             }
             else
             {
-                var failResult = await response.Content.ReadAsStringAsync();
-                throw new ApplicationException($"{nameof(HandleTaskCreate)} - Call FAILED - Exception: {failResult}");
+                if (response.StatusCode == HttpStatusCode.UnprocessableContent)
+                {
+                    var validationError = await response.Content.ReadFromJsonAsync<CoreValidationError>(_serializerOptions);
+                    throw new UnprocessableException(ParseValidationMessages(validationError!));
+                }
+                else
+                {
+                    var failResult = await response.Content.ReadAsStringAsync();
+                    throw new ApplicationException($"{nameof(HandleTaskCreate)} - Call FAILED - Exception: {failResult}");
+                }
             }
         }
 
@@ -79,8 +90,16 @@ namespace FrontEASE.Domain.Services.Tasks.Core
             }
             else
             {
-                var failResult = await response.Content.ReadAsStringAsync();
-                throw new ApplicationException($"{nameof(HandleTaskCreate)} - Call FAILED - Exception: {failResult}");
+                if (response.StatusCode == HttpStatusCode.UnprocessableContent)
+                {
+                    var validationError = await response.Content.ReadFromJsonAsync<CoreValidationError>(_serializerOptions);
+                    throw new UnprocessableException(ParseValidationMessages(validationError!));
+                }
+                else
+                {
+                    var failResult = await response.Content.ReadAsStringAsync();
+                    throw new ApplicationException($"{nameof(HandleTaskCreate)} - Call FAILED - Exception: {failResult}");
+                }
             }
         }
 
@@ -98,8 +117,16 @@ namespace FrontEASE.Domain.Services.Tasks.Core
             }
             else
             {
-                var failResult = await response.Content.ReadAsStringAsync();
-                throw new ApplicationException($"{nameof(HandleTaskInit)} FAILED - Exception: {failResult}");
+                if (response.StatusCode == HttpStatusCode.UnprocessableContent)
+                {
+                    var validationError = await response.Content.ReadFromJsonAsync<CoreValidationError>(_serializerOptions);
+                    throw new UnprocessableException(ParseValidationMessages(validationError!));
+                }
+                else
+                {
+                    var failResult = await response.Content.ReadAsStringAsync();
+                    throw new ApplicationException($"{nameof(HandleTaskInit)} FAILED - Exception: {failResult}");
+                }
             }
         }
 
@@ -131,8 +158,16 @@ namespace FrontEASE.Domain.Services.Tasks.Core
             }
             else
             {
-                var failResult = await response.Content.ReadAsStringAsync();
-                throw new ApplicationException($"{nameof(RefreshTaskOptions)} - Call FAILED - Exception: {failResult}");
+                if (response.StatusCode == HttpStatusCode.UnprocessableContent)
+                {
+                    var validationError = await response.Content.ReadFromJsonAsync<CoreValidationError>(_serializerOptions);
+                    throw new UnprocessableException(ParseValidationMessages(validationError!));
+                }
+                else
+                {
+                    var failResult = await response.Content.ReadAsStringAsync();
+                    throw new ApplicationException($"{nameof(RefreshTaskOptions)} - Call FAILED - Exception: {failResult}");
+                }
             }
         }
 
@@ -161,8 +196,16 @@ namespace FrontEASE.Domain.Services.Tasks.Core
             }
             else
             {
-                var failResult = await response.Content.ReadAsStringAsync();
-                throw new ApplicationException($"{nameof(ChangeTaskState)} - Call FAILED - Exception: {failResult}");
+                if (response.StatusCode == HttpStatusCode.UnprocessableContent)
+                {
+                    var validationError = await response.Content.ReadFromJsonAsync<CoreValidationError>(_serializerOptions);
+                    throw new UnprocessableException(ParseValidationMessages(validationError!));
+                }
+                else
+                {
+                    var failResult = await response.Content.ReadAsStringAsync();
+                    throw new ApplicationException($"{nameof(ChangeTaskState)} - Call FAILED - Exception: {failResult}");
+                }
             }
         }
 
@@ -307,6 +350,21 @@ namespace FrontEASE.Domain.Services.Tasks.Core
             return uriBuilder.Uri;
         }
 
+        private static IList<string> ParseValidationMessages(CoreValidationError validationError)
+        {
+            var messages = new List<string>();
+
+            if (validationError?.Detail is not null)
+            {
+                foreach (var detail in validationError.Detail)
+                {
+                    string loc = detail.Loc != null && detail.Loc.Count > 0 ? string.Join(" > ", detail.Loc) : string.Empty;
+                    messages.Add(!string.IsNullOrEmpty(loc) ? detail.Msg : $"{loc}: {detail.Msg}");
+                }
+            }
+
+            return messages;
+        }
 
         #endregion
     }

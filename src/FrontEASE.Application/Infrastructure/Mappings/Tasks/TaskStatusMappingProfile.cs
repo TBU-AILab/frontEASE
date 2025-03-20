@@ -15,7 +15,16 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
         {
             CreateMap<Domain.Entities.Tasks.Task, TaskStatusDto>();
 
-            CreateMap<TaskInfoCoreDto, Domain.Entities.Tasks.Task>().ReverseMap();
+            CreateMap<TaskInfoCoreDto, Domain.Entities.Tasks.Task>()
+                .ForMember(x => x.Config, opt => opt.Ignore())
+                .ForMember(x => x.Messages, opt => opt.Ignore())
+                .ForMember(x => x.Solutions, opt => opt.Ignore())
+                .ForMember(x => x.Members, opt => opt.Ignore())
+                .ForMember(x => x.MemberGroups, opt => opt.Ignore())
+
+                .ForMember(x => x.AuthorID, opt => opt.Ignore())
+                .ForMember(x => x.IsDeleted, opt => opt.Ignore())
+                .ReverseMap();
         }
     }
 }

@@ -21,7 +21,7 @@
                                     <TokenDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="true" />
                                     <Fields>
                                         <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
-                                            <Button style="@($"background-color: {uiManager.Theme.BackgroundOptions.Info}; color: {uiManager.Theme.TextColorOptions.Info};")" Clicked="@EditToken" Class="btn button btn-sized full-width" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
+                                            <Button Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Info}; color: {uiManager.Theme.TextColorOptions.Info};")" Clicked="@EditToken" Class="btn button btn-sized full-width" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
                                                 @if (updateInProgress)
                                                 {
                                                     <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />

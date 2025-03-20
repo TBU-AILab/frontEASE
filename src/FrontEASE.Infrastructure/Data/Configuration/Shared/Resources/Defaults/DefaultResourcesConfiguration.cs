@@ -149,6 +149,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.BadRequest}", Value="Bad request" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.InternalServerError}", Value="Internal server error" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.Forbidden}", Value="Forbidden" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.UnprocessableContent}", Value="Unprocessable content" },
 
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIConstants.Error}.{UIActionConstants.Login}", Value="Error - Invalid login request" },
 
@@ -462,8 +463,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* TaskConfigDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "Name" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is system message" },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is initial message" }
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is initial message" },
 
+                /* TaskConfigRepeatedMessageItemDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is repeating message" },
             ];
         }
     }

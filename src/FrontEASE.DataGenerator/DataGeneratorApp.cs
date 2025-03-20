@@ -12,14 +12,13 @@ namespace FrontEASE.DataGenerator
     public class DataGeneratorApp : WebApplicationFactory<Server.Program>
     {
         private readonly string _environment;
-        private readonly Dictionary<string, string>? _additionalSettings;
+        private readonly IDictionary<string, string>? _additionalSettings;
 
-        public DataGeneratorApp(string environment = "Development", Dictionary<string, string>? additionalSettings = null)
+        public DataGeneratorApp(IDictionary<string, string>? additionalSettings = null)
         {
-            _environment = environment;
+            _environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
             _additionalSettings = additionalSettings;
         }
-
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

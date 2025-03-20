@@ -36,7 +36,7 @@
     </Validation>
 
     <Validation>
-        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
+        <Field ColumnSize="ColumnSize.IsFull">
             <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.ConnectorTypes)))" RequiredIndicator>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.ConnectorTypes), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
@@ -48,6 +48,7 @@
                         TextField="@((item) => GetTokenConnectorName(item.ConnectorType))"
                         ValueField="@((item) => item.ConnectorType)"
                         Multiple
+                        Size="Size.Large"
                         @bind-SelectedValues="@TokenModel.SelectedTokenConnectorTypes">
                 <Feedback>
                     <ValidationError Multiline="true" />
@@ -58,7 +59,7 @@
     </Validation>
 
     <Validation>
-        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
+        <Field ColumnSize="ColumnSize.IsFull">
             <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Description)))">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Description), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
