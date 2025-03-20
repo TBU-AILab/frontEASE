@@ -19,7 +19,7 @@
             <DataGridColumn Field="@nameof(TaskInfoDto.DateCreated)"
                             Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FIELD)))"
                             Sortable="true"
-                            DisplayFormat="{0:dd.MM.yyyy}"
+                            DisplayFormat="{0:dd.MM.yyyy HH:mm:ss}"
                             CustomFilter="@OnDateCreatedCustomFilter">
                 <FilterTemplate>
                     <TextEdit Text="@selectedDateCreatedFilter"

@@ -32,6 +32,7 @@ namespace FrontEASE.Client.Services.HelperServices.UI.Signals
                 {
                     _uiManager.HandleUIPreferencesStateChange(preferences);
                     _uiManager.InitPreferences(preferences);
+                    CallRequestRefresh();
                 }
             }
         }

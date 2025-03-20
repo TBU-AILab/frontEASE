@@ -464,8 +464,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "Name" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is system message" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is initial message" },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.RepeatedMessage), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is repeating message" }
 
+                /* TaskConfigRepeatedMessageItemDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is repeating message" },
             ];
         }
     }
