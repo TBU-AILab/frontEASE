@@ -36,6 +36,8 @@ services:
     build:
       context: .
       dockerfile: prod.client.Dockerfile
+    volumes:
+      - images_data:/app/src/FrontEASE.Client/wwwroot/resources/images
     ports:
       - "5235:5235"
     networks:
@@ -56,6 +58,7 @@ services:
 
 volumes:
   postgres_data:
+  images_data:
 
 networks:
   fop-imt-network:
