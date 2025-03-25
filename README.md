@@ -54,7 +54,6 @@ frontEASE/
 - [Docker](https://www.docker.com/get-started) installed for containerized deployment.
 
 ### Installation
-
 1. **Clone the Repository**:
 
    From the command line at the location where you want to have the project (e.g. _C:\Users\JohnDoe_)
@@ -66,11 +65,32 @@ frontEASE/
    ```sh
    cd frontEASE
    ```
+
+1. **Create .env file**
+    In the root folder (where readme file is located), create a file named `.env` - the file must have the following structure:
+    ```sh
+    # If you change the values for user and password, you will need to change
+    # the connection string in appsettings.json and appsettings.Development.json
+    POSTGRES_USER="postgres" # required
+    POSTGRES_PASSWORD="root" # required
+
+    # Options: true | false
+    # If true, the database will be deleted and re-created with the seed data
+    # If false, the database will be used as is
+    SEED_DB="false" # optional, defaults to false
+    ```
+
 3. **Compose docker containers**
 
-   The docker has to be running for this step.
+   >The docker has to be running for this step.
+   
+   - If running locally for development, use:
    ```sh
    docker compose up -d
+   ```
+   - If running in production, use:
+   ```sh
+   docker compose -f .\docker-compose.yml up -d
    ```
 
 4. **Profit**
