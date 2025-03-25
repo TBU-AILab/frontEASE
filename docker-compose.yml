@@ -53,8 +53,6 @@ services:
       - "8086:8086"
     networks:
       - fop-imt-network
-    environment:
-      - PUBLIC_HOST=${PUBLIC_HOST:-http://localhost:8086}
 
 volumes:
   postgres_data:
