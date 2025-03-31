@@ -3,13 +3,20 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      POSTGRES_PASSWORD: root
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: FrontEASE
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
       - fop-imt-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d FrontEASE"]
+      interval: 3s
+      retries: 5
+      timeout: 2s
 
   dotnet-server:
     build:
@@ -18,16 +25,19 @@ services:
     ports:
       - "4000:4000"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - fop-imt-network
     environment:
-      - SEED_DB=true
+      - SEED_DB=${SEED_DB:-false}
   
   dotnet-client:
     build:
       context: .
       dockerfile: prod.client.Dockerfile
+    volumes:
+      - images_data:/app/src/FrontEASE.Client/wwwroot/resources/images
     ports:
       - "5235:5235"
     networks:
@@ -43,11 +53,10 @@ services:
       - "8086:8086"
     networks:
       - fop-imt-network
-    environment:
-      - PUBLIC_HOST=${PUBLIC_HOST:-http://localhost:8086}
 
 volumes:
   postgres_data:
+  images_data:
 
 networks:
   fop-imt-network:
