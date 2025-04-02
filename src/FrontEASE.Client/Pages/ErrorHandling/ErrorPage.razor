@@ -97,7 +97,7 @@
         var authstate = await authStateProvider.GetAuthenticationStateAsync();
 
         navigation.NavigateTo(authstate.User?.Identity?.IsAuthenticated == true ?
-            resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.BaseRoute}") :
+            resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.TasksRoute}") :
             resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}"));
     }
 }

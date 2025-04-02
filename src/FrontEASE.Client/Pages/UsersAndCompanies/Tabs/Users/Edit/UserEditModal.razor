@@ -3,10 +3,11 @@
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
 @inject IUIManager uiManager
+@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 @inject AppSettings appSettings
 
-<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded">
+<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
     @if (EditModal.Visible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary}")">
@@ -17,11 +18,11 @@
                 <Row>
                     <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
                         <Image Border="Border.RoundedCircle"
-                        Source="@(!string.IsNullOrWhiteSpace(UserModel.Image?.ImageData) ?
+                               Source="@(!string.IsNullOrWhiteSpace(UserModel.Image?.ImageData) ?
                                         $"data:{UserModel.Image.MimeType};base64,{UserModel.Image.ImageData}" : !string.IsNullOrWhiteSpace(UserModel.Image?.ImageUrl) ?
-                                        $"{appSettings.ApiSettings!.BaseUrl}/{UserModel.Image.ImageUrl}" : @"\resources\images\users\profilePictureMissing.png")"
-                        Class="full-max-width edit-modal-image"
-                        Loading />
+                                        $"{appSettings.ApiSettings!.BaseUrl}/{UserModel.Image.ImageUrl}" : ImageConstants.UserPicDefault)"
+                               Class="full-max-width edit-modal-image"
+                               Loading />
                     </Column>
                 </Row>
 
@@ -69,6 +70,21 @@
 
     private bool isModalVisible = false;
     private bool updateInProgress = false;
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (shortcutDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+                await EditUser();
+                break;
+            case ShortcutKeys.ESCAPE:
+                await HideModal();
+                break;
+            default:
+                break;
+        }
+    }
 
     public async Task EditUser()
     {

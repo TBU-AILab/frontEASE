@@ -6,7 +6,7 @@
     <CardBody>
         <Row>
             <Column ColumnSize="ColumnSize.Is4.OnWidescreen" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is3.FromTop.Is3.FromBottom">
-                <Image Padding="Padding.Is0" Source="@(string.IsNullOrWhiteSpace(User.Image?.ImageUrl) ? @"\resources\images\users\profilePictureMissing.png" : $"{appSettings.ApiSettings!.BaseUrl}/{User.Image.ImageUrl}")" Border="Border.RoundedCircle" Class="full-max-width user-card-image" Loading />
+                <Image Padding="Padding.Is0" Source="@(string.IsNullOrWhiteSpace(User.Image?.ImageUrl) ? ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{User.Image.ImageUrl}")" Border="Border.RoundedCircle" Class="full-max-width user-card-image" Loading />
             </Column>
             <Column ColumnSize="ColumnSize.IsAuto.OnWidescreen" Class="text-center-desktop">
                 <Row Padding="Padding.Is3.FromTop">

@@ -76,6 +76,13 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             return await taskQuery.SingleOrDefaultAsync(x => x.ID == id);
         }
 
+        public async Task<IList<Domain.Entities.Tasks.Task>> Load(IList<Guid> ids, TasksQuery query)
+        {
+            var taskQuery = ComposeQuery(query);
+            return await taskQuery.Where(x => ids.Contains(x.ID)).ToListAsync();
+        }
+
+
         public async Task<int> LoadTaskCount() => await _context.Tasks.CountAsync();
 
         public async Task<TaskMessage?> LoadLastMessage()

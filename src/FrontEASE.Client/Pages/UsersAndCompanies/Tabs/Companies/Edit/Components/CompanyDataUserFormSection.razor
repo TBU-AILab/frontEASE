@@ -37,7 +37,7 @@
 
                                     <DataGridColumn TItem="ApplicationUserDto" Field="@nameof(ApplicationUserDto.Image)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.FIELD)))" Sortable="false" Filterable="false">
                                         <DisplayTemplate>
-                                            <Image Border="Border.RoundedCircle" Source="@(string.IsNullOrWhiteSpace(context.Image?.ImageUrl) ? @"\resources\images\users\profilePictureMissing.png" : $"{appSettings.ApiSettings!.BaseUrl}/{context.Image.ImageUrl}")" Class="full-max-width datagrid-item-image-small" Loading />
+                                            <Image Border="Border.RoundedCircle" Source="@(string.IsNullOrWhiteSpace(context.Image?.ImageUrl) ? ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{context.Image.ImageUrl}")" Class="full-max-width datagrid-item-image-small" Loading />
                                         </DisplayTemplate>
                                     </DataGridColumn>
 

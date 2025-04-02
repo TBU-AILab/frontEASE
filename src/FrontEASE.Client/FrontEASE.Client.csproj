@@ -29,4 +29,20 @@
     <ProjectReference Include="..\FrontEASE.Shared\FrontEASE.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Infrastructure\Mappings\Tasks\Actions\Results\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\resources\images\companies\companyLogoMissing.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\resources\images\users\profilePictureMissing.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\resources\logos\logo.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

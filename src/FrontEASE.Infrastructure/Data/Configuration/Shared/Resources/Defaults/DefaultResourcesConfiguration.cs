@@ -10,6 +10,7 @@ using FrontEASE.Shared.Data.DTOs.Shared.Resources;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Shared.Users.Auth;
 using FrontEASE.Shared.Data.DTOs.Tasks;
+using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules;
@@ -174,12 +175,11 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
 
                 /* TaskDto */
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(TaskDto)}.{UIElementConstants.Collection}", Value="No tasks have been found." },
-                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(TaskDto)}.{UIConstants.Question}", Value="Do you really wish to permanently delete this task?" },
-                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Clone}.{nameof(TaskDto)}.{UIConstants.Question}", Value="Do you really wish to duplicate this task?" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(TaskDto)}.{UIConstants.Question}", Value="Do you really wish to permanently delete the task(s)?" },
 
-                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.StateChange}.{nameof(TaskDto)}.{TaskState.RUN}.{UIConstants.Question}", Value="Do you really wish to RUN this task?" },
-                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.StateChange}.{nameof(TaskDto)}.{TaskState.STOP}.{UIConstants.Question}", Value="Do you really wish to STOP this task?" },
-                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.StateChange}.{nameof(TaskDto)}.{TaskState.PAUSED}.{UIConstants.Question}", Value="Do you really wish to PAUSE this task?" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.StateChange}.{nameof(TaskDto)}.{TaskState.RUN}.{UIConstants.Question}", Value="Do you really wish to RUN the task(s)?" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.StateChange}.{nameof(TaskDto)}.{TaskState.STOP}.{UIConstants.Question}", Value="Do you really wish to STOP the task(s)?" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.StateChange}.{nameof(TaskDto)}.{TaskState.PAUSED}.{UIConstants.Question}", Value="Do you really wish to PAUSE the task(s)?" },
 
                 /* TaskConfigDto */
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(TaskConfigDto)}.{nameof(TaskConfigDto.Analyses)}.{UIElementConstants.Collection}", Value="No analyses have been found." },
@@ -412,6 +412,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskMessageDto>(nameof(TaskMessageDto.Content), PropertyDisplayResourceType.FIELD), Value = "Content" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskMessageDto>(nameof(TaskMessageDto.DateCreated), PropertyDisplayResourceType.FIELD), Value = "Created" },
 
+                /* TaskDuplicateActionRequestDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.FIELD), Value = "Duplicate name" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Copies), PropertyDisplayResourceType.FIELD), Value = "Number of copies" },
+
                 /* ImageDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<ImageDto>(nameof(ImageDto.ImageUrl), PropertyDisplayResourceType.FIELD), Value = "Image URL" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<ImageDto>(nameof(ImageDto.ImageData), PropertyDisplayResourceType.FIELD), Value = "Base64 data" },
@@ -421,7 +425,6 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* ResourceDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<ResourceDto>(nameof(ResourceDto.Value), PropertyDisplayResourceType.FIELD), Value = "Value" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<ResourceDto>(nameof(ResourceDto.ResourceCode), PropertyDisplayResourceType.FIELD), Value = "Code" },
-
             ];
         }
 
@@ -467,6 +470,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
 
                 /* TaskConfigRepeatedMessageItemDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is repeating message" },
+
+                /* TaskDuplicateActionRequestDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "Name - Copy" },
             ];
         }
     }

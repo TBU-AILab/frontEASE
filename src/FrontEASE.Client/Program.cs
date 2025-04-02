@@ -13,6 +13,7 @@ using FrontEASE.Client.Infrastructure.Mappings.Management.Tokens.Connectors;
 using FrontEASE.Client.Infrastructure.Mappings.Shared.Addresses;
 using FrontEASE.Client.Infrastructure.Mappings.Shared.Images;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks;
+using FrontEASE.Client.Infrastructure.Mappings.Tasks.Actions.Requests;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options.Parameters;
@@ -40,6 +41,7 @@ using FrontEASE.Client.Services.ModelManipulationServices.Companies;
 using FrontEASE.Client.Services.ModelManipulationServices.Management;
 using FrontEASE.Client.Services.ModelManipulationServices.Tasks;
 using FrontEASE.Client.Services.ModelManipulationServices.User;
+using FrontEASE.Client.Shared.Dictionaries.Shortcuts;
 using FrontEASE.Shared.Services.Resources;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -57,6 +59,7 @@ SetupUIEnhancements();
 SetupHelperServices();
 SetupApiServices();
 SetupModelManipulationServices();
+SetupDictionaries();
 SetupUtils();
 SetupMappings();
 SetupUIEnhancements();
@@ -105,6 +108,8 @@ void SetupMappings()
         mc.AddProfile(new TaskModuleParameterValueMappingProfile());
         mc.AddProfile(new TaskModuleParameterEnumOptionMappingProfile());
         mc.AddProfile(new TaskModuleParameterNoValidationMetadataMappingProfile());
+
+        mc.AddProfile(new TaskDuplicateActionRequestMappingProfile());
     });
 
     IMapper mapper = mappingConfig.CreateMapper();
@@ -157,4 +162,9 @@ void SetupModelManipulationServices()
     builder!.Services.AddTransient<IUserManipulationService, UserManipulationService>();
     builder!.Services.AddTransient<ITaskManipulationService, TaskManipulationService>();
     builder!.Services.AddTransient<IManagementManipulationService, ManagementManipulationService>();
+}
+
+void SetupDictionaries()
+{
+    builder!.Services.AddTransient<IShortcutKeyDictionary, ShortcutKeyDictionary>();
 }

@@ -3,9 +3,10 @@
 @inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
+@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 
-<Modal @ref="@CloneModal" @bind-Visible="@isModalVisible">
+<Modal @ref="@CloneModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
     @if (isModalVisible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")">
@@ -14,29 +15,29 @@
 
             <ModalBody Margin="Margin.Is3.FromTop">
                 <Row>
-                    <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
-                        <Text Class="font-large">
-                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Clone}.{nameof(TaskDto)}.{UIConstants.Question}")
-                        </Text>
-                    </Column>
-                </Row>
-                <Row Margin="Margin.Is4.FromTop">
-                    <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile">
-                        <Button Clicked="@ChangeStateTask" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Info}; color: {uiManager.Theme.TextColorOptions.Info};")" Class="btn btn-sized button full-width" Disabled="@cloneInProgress" TextWeight="TextWeight.Bold">
-                            @if (cloneInProgress)
-                            {
-                                <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))" TextSize="TextSize.Medium" />
-                            }
-                            else
-                            {
-                                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}")
-                            }
-                        </Button>
-                    </Column>
-                    <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile">
-                        <Button Clicked="@HideModal" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary};")" Class="btn btn-sized button full-width" TextWeight="TextWeight.Bold" Border="Border.Is1.Rounded">
-                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}")
-                        </Button>
+                    <Column ColumnSize="ColumnSize.IsFull">
+                        <Form Margin="Margin.Is4.FromTop" Class="text-form-size">
+                            <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="CloneModel" ValidateOnLoad="false">
+                                <CascadingValue Value="CloneModel">
+                                    <TaskCloneDataFormSection Operation="DataOperation.INSERT" FullWidthFields="false" />
+
+                                    <Fields>
+                                        <Field ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                                            <Button Clicked="@CloneTask" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Info}; color: {uiManager.Theme.TextColorOptions.Info};")" Class="btn btn-sized button full-width" Disabled="@cloneInProgress" TextWeight="TextWeight.Bold">
+                                                @if (cloneInProgress)
+                                                {
+                                                    <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))" TextSize="TextSize.Medium" />
+                                                }
+                                                else
+                                                {
+                                                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))
+                                                }
+                                            </Button>
+                                        </Field>
+                                    </Fields>
+                                </CascadingValue>
+                            </Validations>
+                        </Form>
                     </Column>
                 </Row>
             </ModalBody>
@@ -52,32 +53,55 @@
     [CascadingParameter]
     public ObservableCollection<TaskInfoDto> Tasks { get; set; } = [];
 
+    private TaskDuplicateActionRequestDto CloneModel = new();
     private Modal CloneModal = new();
+    private Validations Validations = new();
 
     private bool cloneInProgress = false;
     private bool isModalVisible = false;
 
-    public async Task ChangeStateTask()
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (shortcutDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+                await CloneTask();
+                break;
+            case ShortcutKeys.ESCAPE:
+                await HideModal();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public async Task CloneTask()
     {
         cloneInProgress = true;
 
-        var cloned = await taskApiService.CloneTask(TaskInfo.ID);
-        if (cloned is not null)
+        if (await Validations.ValidateAll())
         {
-            var clonedTaskInfo = mapper.Map<TaskInfoDto>(cloned);
-            Tasks.Insert(0, clonedTaskInfo);
-
-            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}")}: {TaskInfo.Name}";
-            toastService.ShowSuccess(message);
-            uiService.CallRequestRefresh();
+            var cloned = await taskApiService.CloneTask(TaskInfo.ID, CloneModel);
+            if (cloned.Count > 0)
+            {
+                var clonedTaskInfo = mapper.Map<IList<TaskInfoDto>>(cloned);
+                foreach (var clonedTask in clonedTaskInfo)
+                {
+                    Tasks.Insert(0, clonedTask);
+                }
+                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}")}: {TaskInfo.Name}";
+                toastService.ShowSuccess(message);
+                uiService.CallRequestRefresh();
+            }
+            await HideModal();
         }
 
-        await HideModal();
         cloneInProgress = false;
     }
 
     private Task HideModal()
     {
+        mapper.Map(new TaskDuplicateActionRequestDto(), CloneModel);
         isModalVisible = false;
         return CloneModal.Hide();
     }

@@ -5,7 +5,7 @@
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
 
-<Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@OnModalClosing" Class="modal-dialog-wide" Border="Border.Rounded">
+<Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@OnModalClosing" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
     @if (isModalVisible)
     {
         @if (TaskMetadata.InitializationInProgres)
@@ -31,10 +31,10 @@
                                     <Row>
                                         <Column ColumnSize="ColumnSize.IsFull">
                                             <Validations @ref="Validations"
-                                                         Mode="ValidationMode.Auto"
-                                                         ValidateOnLoad="false"
-                                                         EditContext="EditContext"
-                                                         HandlerType="ValidationHandlerType.DataAnnotation">
+                                            Mode="ValidationMode.Auto"
+                                            ValidateOnLoad="false"
+                                            EditContext="EditContext"
+                                            HandlerType="ValidationHandlerType.DataAnnotation">
                                                 <CascadingValue Value="Validations">
                                                     <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
                                                         <TaskSubitemsDataFormSection />
@@ -48,7 +48,7 @@
                             </ModalBody>
 
                             <CascadingValue Value="Operation">
-                                <TaskEditModalFooter Validations="Validations" />
+                                <TaskEditModalFooter Validations="Validations" @ref="@TaskEditModalFooter" />
                             </CascadingValue>
 
                         </CascadingValue>
@@ -77,6 +77,7 @@
     private TaskViewMetadataDto TaskMetadata;
 
     private Modal Modal;
+    private TaskEditModalFooter TaskEditModalFooter = new();
     private Validations Validations;
     private EditContext? EditContext;
 
@@ -88,6 +89,8 @@
         Modal = new Modal();
         Validations = new Validations();
     }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e) => await TaskEditModalFooter.HandleKeyDown(e);
 
     private async Task ResetCancellationToken()
     {
@@ -133,7 +136,7 @@
                     {
                         uiService.CallRequestRefresh();
 
-                        var updated = await taskApiService.RefreshTaskOptions(Task);
+                        var updated = await taskApiService.RefreshTaskOptions(Task.ID, Task);
                         if (updated is not null && !token.IsCancellationRequested)
                         {
                             mapper.Map(updated, Task);

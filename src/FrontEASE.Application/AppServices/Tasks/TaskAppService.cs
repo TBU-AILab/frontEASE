@@ -3,6 +3,8 @@ using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Services.Tasks;
 using FrontEASE.Domain.Services.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks;
+using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
+using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Results;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
@@ -102,25 +104,64 @@ namespace FrontEASE.Application.AppServices.Tasks
             return insertedDto;
         }
 
-        public async Task<TaskDto> Duplicate(Guid id)
+        public async Task<IList<TaskDto>> Duplicate(Guid id, TaskDuplicateActionRequestDto request)
         {
             var duplicatedEntity = await _taskService.Load(id);
-            duplicatedEntity = await _taskService.Duplicate(duplicatedEntity);
+            var duplicates = new List<Domain.Entities.Tasks.Task>();
 
-            var duplicatedDto = _mapper.Map<TaskDto>(duplicatedEntity);
-            return duplicatedDto;
+            for(int i = 0; i < request.Copies; ++i)
+            {
+                duplicatedEntity = await _taskService.Duplicate(duplicatedEntity, $"{request.Name}_{i}");
+                duplicates.Add(duplicatedEntity);
+            }
+
+            var duplicatesDto = _mapper.Map<IList<TaskDto>>(duplicates);
+            return duplicatesDto;
         }
 
-        public async Task Delete(Guid id)
+        public async Task<IList<TaskBulkActionResultDto>> Delete(IList<Guid> ids)
         {
-            var deletedEntity = await _taskService.Load(id);
-            await _taskService.Delete(deletedEntity);
+            var resultList = new List<TaskBulkActionResultDto>();
+            var deletedEntities = await _taskService.Load(ids);
+
+            foreach (var taskID in ids)
+            {
+                var deletedEntity = deletedEntities.FirstOrDefault(x => x.ID == taskID);
+                var result = new TaskBulkActionResultDto { TaskID = taskID };
+                try
+                {
+                    await _taskService.Delete(deletedEntity!);
+                    result.Success = true;
+                }
+                catch (Exception ex)
+                {
+                    result.ExceptionMessage = ex.Message;
+                }
+                resultList.Add(result);
+            }
+            return resultList;
         }
 
-        public async Task ChangeState(Guid id, TaskState state)
+        public async Task<IList<TaskBulkActionResultDto>> ChangeState(IList<Guid> ids, TaskState state)
         {
-            var modifiedTask = await _taskService.Load(id);
-            await _taskService.ChangeState(modifiedTask, state);
+            var resultList = new List<TaskBulkActionResultDto>();
+            var modifiedEntities = await _taskService.Load(ids);
+
+            foreach (var taskID in ids)
+            {
+                var modifiedTask = modifiedEntities.FirstOrDefault(x => x.ID == taskID);
+                var result = new TaskBulkActionResultDto { TaskID = taskID };
+                try
+                {
+                    await _taskService.ChangeState(modifiedTask!, state);
+                    result.Success = true;
+                }
+                catch (Exception ex)
+                {
+                    result.ExceptionMessage = ex.Message;
+                }
+            }
+            return resultList;
         }
     }
 }

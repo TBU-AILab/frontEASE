@@ -1,4 +1,6 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Tasks;
+using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
+using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Results;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks;
@@ -12,9 +14,9 @@ namespace FrontEASE.Application.AppServices.Tasks
         Task<IList<TaskInfoDto>> LoadAll();
         Task<IList<TaskStatusDto>> LoadAllStatuses();
         Task<TaskDto> Create();
-        Task<TaskDto> Duplicate(Guid id);
+        Task<IList<TaskDto>> Duplicate(Guid id, TaskDuplicateActionRequestDto request);
         Task<TaskDto> Update(TaskDto task);
-        Task Delete(Guid id);
-        Task ChangeState(Guid id, TaskState state);
+        Task<IList<TaskBulkActionResultDto>> Delete(IList<Guid> ids);
+        Task<IList<TaskBulkActionResultDto>> ChangeState(IList<Guid> ids, TaskState state);
     }
 }

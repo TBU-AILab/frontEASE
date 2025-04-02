@@ -1,14 +1,16 @@
-﻿@inject IResourceHandler resourceHandler
+﻿@inject IJSRuntime jsRuntime
+@inject IResourceHandler resourceHandler
 @inject IUserApiService userApiService
 @inject IUIService uiService
 @inject IManagementApiService managementApiService
 @inject IMapper mapper
+@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navManager
 
-<Form Margin="Margin.Is4.FromTop" Class="text-form-size">
+<Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="HandleKeyDown">
     <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="LoginModel" ValidateOnLoad="false">
         <Fields>
             <Validation>
@@ -17,10 +19,9 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Username), PropertyDisplayResourceType.FIELD)))
                     </FieldLabel>
                     <TextEdit ElementId="@(GetElementIdByOperation(nameof(LoginDto.Username)))"
-                    KeyDown="HandleKeyDown"
-                    Role="TextRole.Text"
-                    Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Username), PropertyDisplayResourceType.PLACEHOLDER)))"
-                    @bind-Text="@LoginModel.Username">
+                              Role="TextRole.Text"
+                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Username), PropertyDisplayResourceType.PLACEHOLDER)))"
+                              @bind-Text="@LoginModel.Username">
                         <Feedback>
                             <ValidationError Multiline="true" />
                         </Feedback>
@@ -34,10 +35,9 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Password), PropertyDisplayResourceType.FIELD)))
                     </FieldLabel>
                     <TextEdit ElementId="@(GetElementIdByOperation(nameof(LoginDto.Password)))"
-                    KeyDown="HandleKeyDown"
-                    Role="TextRole.Password"
-                    Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Password), PropertyDisplayResourceType.PLACEHOLDER)))"
-                    @bind-Text="@LoginModel.Password">
+                              Role="TextRole.Password"
+                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Password), PropertyDisplayResourceType.PLACEHOLDER)))"
+                              @bind-Text="@LoginModel.Password">
                         <Feedback>
                             <ValidationError Multiline="true" />
                         </Feedback>
@@ -79,9 +79,13 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter")
+        switch (shortcutDictionary.GetEnumForm(e.Key))
         {
-            await Login();
+            case ShortcutKeys.ENTER:
+                await Login();
+                break;
+            default:
+                break;
         }
     }
 
