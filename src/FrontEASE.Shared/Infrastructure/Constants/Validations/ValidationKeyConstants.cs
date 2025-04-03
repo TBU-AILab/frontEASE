@@ -12,6 +12,10 @@ namespace FrontEASE.Shared.Infrastructure.Constants.Validations
         public const string StringLengthBetweenValidationKey = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.TextLengthBetween}";
         public const string Base64ValidStringValidationKey = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.Base64String}";
         public const string NumericRangeValidationKey = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.NumericRange}";
+        public const string DateNotInFutureValidationKey = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.NotFutureDate}";
+        public const string DateFromValidationKey = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.DateRangeFrom}";
+        public const string DateToValidationKey = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.DateRangeTo}";
+        public const string DateBetweenValidationKey = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.DateInRange}";
 
         /* Specific */
         public const string ParameterOneOfRequiredKey = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ParameterOneOfRequired}";

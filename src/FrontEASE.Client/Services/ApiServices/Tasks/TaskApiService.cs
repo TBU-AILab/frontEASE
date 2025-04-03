@@ -42,9 +42,10 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
             return (await response.Content.ReadFromJsonAsync<TaskDto>())!;
         }
 
-        public async Task<IList<TaskInfoDto>> LoadTaskInfos()
+        public async Task<IList<TaskInfoDto>> LoadTaskInfos(TaskFilterActionRequestDto? filter)
         {
-            var url = $"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}";
+            var filterQuery = filter is null ? string.Empty : filter.ToQueryString();
+            var url = $"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}{filterQuery}";
             var response = await _client.GetAsync(url);
             var expectedCodes = new List<HttpStatusCode>() { HttpStatusCode.OK, HttpStatusCode.NotFound };
 

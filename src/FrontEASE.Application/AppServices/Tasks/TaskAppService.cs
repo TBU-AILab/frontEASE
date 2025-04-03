@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Services.Tasks;
 using FrontEASE.Domain.Services.Users;
@@ -56,14 +57,15 @@ namespace FrontEASE.Application.AppServices.Tasks
             return task;
         }
 
-        public async Task<IList<TaskInfoDto>> LoadAll()
+        public async Task<IList<TaskInfoDto>> LoadAll(TaskFilterActionRequestDto? filter)
         {
             var userMail = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
             var user = await _userService.Load(userMail);
 
+            var appliedFilter = filter is null ? null : _mapper.Map<TaskFilterActionRequest>(filter);
             var taskEntities = (user is not null && user.UserRole?.RoleId == _appSettings.AuthSettings?.Defaults?.Roles?.SuperadminGuid?.ToString()) ?
-                await _taskService.LoadAll(null) :
-                await _taskService.LoadAllBase(Guid.Parse(user!.Id));
+                await _taskService.LoadAll(null, appliedFilter) :
+                await _taskService.LoadAllBase(Guid.Parse(user!.Id), appliedFilter);
 
             var taskInfoDtos = _mapper.Map<IList<TaskInfoDto>>(taskEntities);
             return taskInfoDtos;
@@ -75,7 +77,7 @@ namespace FrontEASE.Application.AppServices.Tasks
             var userMail = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
             var user = await _userService.Load(userMail);
 
-            var taskEntities = await _taskService.LoadAllBase(Guid.Parse(user!.Id));
+            var taskEntities = await _taskService.LoadAllBase(Guid.Parse(user!.Id), null);
             var taskStatusDtos = _mapper.Map<IList<TaskStatusDto>>(taskEntities);
             return taskStatusDtos;
         }

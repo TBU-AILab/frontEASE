@@ -1,0 +1,226 @@
+﻿@inject IResourceHandler resourceHandler
+
+<Fields>
+    <Validation>
+        <Field ColumnSize="ColumnSize.IsFull">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.Name)))">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.Name), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <TextEdit ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.Name)))"
+                      Role="TextRole.Text"
+                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                      @bind-Text="@Filter.Name">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </TextEdit>
+        </Field>
+    </Validation>
+
+    <Validation MessageLocalizer="resourceHandler.GetValidationResource">
+        <Field ColumnSize="ColumnSize.IsFull">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.State)))">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.State), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <SelectList ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.State)))"
+                        TItem="TaskState"
+                        TValue="TaskState"
+                        Data="@(Enum.GetValues(typeof(TaskState)).Cast<TaskState>())"
+                        TextField="@((item) => resourceHandler.GetResource(item.GetEnumResourceValue()))"
+                        ValueField="@((item) => item)"
+                        Multiple
+                        Size="Size.Large"
+                        @bind-SelectedValues="@Filter.State">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </SelectList>
+        </Field>
+    </Validation>
+
+    <Validation>
+        <Field ColumnSize="ColumnSize.Is3.OnWidescreen.Is6">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.DateCreatedFrom)))">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateCreatedFrom), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <FieldBody>
+                <Addons>
+                    <Addon AddonType="AddonType.Body">
+                        <Column ColumnSize="ColumnSize.Is9.Is10.OnWidescreen">
+                            <Div Class="date-picker-validated">
+                                <DatePicker @ref="@dateCreatedFromPicker"
+                                            TValue="DateTime?"
+                                            ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.DateCreatedFrom)))"
+                                            StaticPicker="true"
+                                            DisplayFormat="dd.MM.yyyy"
+                                            Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateCreatedFrom), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                            @bind-Date="@Filter.DateCreatedFrom">
+
+                                    <Feedback>
+                                        <ValidationError Multiline="true" />
+                                    </Feedback>
+                                </DatePicker>
+                            </Div>
+                        </Column>
+                    </Addon>
+
+                    <Addon AddonType="AddonType.End">
+                        <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
+                            <Button Color="Color.Light" Clicked="@(()=>dateCreatedFromPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                                <Icon Name="IconName.CalendarDay" />
+                            </Button>
+                        </Column>
+                    </Addon>
+
+                </Addons>
+            </FieldBody>
+        </Field>
+    </Validation>
+
+    <Validation>
+        <Field ColumnSize="ColumnSize.Is3.OnWidescreen.Is6">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.DateCreatedTo)))">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateCreatedTo), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <FieldBody>
+                <Addons>
+                    <Addon AddonType="AddonType.Body">
+                        <Column ColumnSize="ColumnSize.Is9.Is10.OnWidescreen">
+                            <Div Class="date-picker-validated">
+                                <DatePicker @ref="@dateCreatedToPicker"
+                                            TValue="DateTime?"
+                                            ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.DateCreatedTo)))"
+                                            StaticPicker="true"
+                                            DisplayFormat="dd.MM.yyyy"
+                                            Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateCreatedTo), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                            @bind-Date="@Filter.DateCreatedTo">
+
+                                    <Feedback>
+                                        <ValidationError Multiline="true" />
+                                    </Feedback>
+                                </DatePicker>
+                            </Div>
+                        </Column>
+                    </Addon>
+
+                    <Addon AddonType="AddonType.End">
+                        <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
+                            <Button Color="Color.Light" Clicked="@(()=>dateCreatedToPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                                <Icon Name="IconName.CalendarDay" />
+                            </Button>
+                        </Column>
+                    </Addon>
+
+                </Addons>
+            </FieldBody>
+        </Field>
+    </Validation>
+
+    <Validation>
+        <Field ColumnSize="ColumnSize.Is3.OnWidescreen.Is6">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.DateUpdatedFrom)))">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedFrom), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <FieldBody>
+                <Addons>
+                    <Addon AddonType="AddonType.Body">
+                        <Column ColumnSize="ColumnSize.Is9.Is10.OnWidescreen">
+                            <Div Class="date-picker-validated">
+                                <DatePicker @ref="@dateUpdatedFromPicker"
+                                            TValue="DateTime?"
+                                            ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.DateUpdatedFrom)))"
+                                            StaticPicker="true"
+                                            DisplayFormat="dd.MM.yyyy"
+                                            Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedFrom), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                            @bind-Date="@Filter.DateUpdatedFrom">
+
+                                    <Feedback>
+                                        <ValidationError Multiline="true" />
+                                    </Feedback>
+                                </DatePicker>
+                            </Div>
+                        </Column>
+                    </Addon>
+
+                    <Addon AddonType="AddonType.End">
+                        <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
+                            <Button Color="Color.Light" Clicked="@(()=>dateUpdatedFromPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                                <Icon Name="IconName.CalendarDay" />
+                            </Button>
+                        </Column>
+                    </Addon>
+
+                </Addons>
+            </FieldBody>
+        </Field>
+    </Validation>
+
+    <Validation>
+        <Field ColumnSize="ColumnSize.Is3.OnWidescreen.Is6">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.DateUpdatedTo)))">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedTo), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <FieldBody>
+                <Addons>
+                    <Addon AddonType="AddonType.Body">
+                        <Column ColumnSize="ColumnSize.Is9.Is10.OnWidescreen">
+                            <Div Class="date-picker-validated">
+                                <DatePicker @ref="@dateUpdatedToPicker"
+                                            TValue="DateTime?"
+                                            ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.DateUpdatedTo)))"
+                                            StaticPicker="true"
+                                            DisplayFormat="dd.MM.yyyy"
+                                            Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedTo), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                            @bind-Date="@Filter.DateUpdatedTo">
+
+                                    <Feedback>
+                                        <ValidationError Multiline="true" />
+                                    </Feedback>
+                                </DatePicker>
+                            </Div>
+                        </Column>
+                    </Addon>
+
+                    <Addon AddonType="AddonType.End">
+                        <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
+                            <Button Color="Color.Light" Clicked="@(()=>dateUpdatedToPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                                <Icon Name="IconName.CalendarDay" />
+                            </Button>
+                        </Column>
+                    </Addon>
+
+                </Addons>
+            </FieldBody>
+        </Field>
+    </Validation>
+
+    <Validation>
+        <Field ColumnSize="ColumnSize.IsFull">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.MessagesContent)))">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <MemoEdit Rows="2"
+                      ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.Name)))"
+                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.PLACEHOLDER)))"
+                      @bind-Text="@Filter.MessagesContent">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </MemoEdit>
+        </Field>
+    </Validation>
+
+
+</Fields>
+
+@code {
+    [CascadingParameter]
+    public TaskFilterActionRequestDto Filter { get; set; } = new();
+
+    private DatePicker<DateTime?> dateCreatedFromPicker = new DatePicker<DateTime?>();
+    private DatePicker<DateTime?> dateCreatedToPicker = new DatePicker<DateTime?>();
+    private DatePicker<DateTime?> dateUpdatedFromPicker = new DatePicker<DateTime?>();
+    private DatePicker<DateTime?> dateUpdatedToPicker = new DatePicker<DateTime?>();
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskFilterActionRequestDto>(elementBase, DataOperation.READ, null);
+}

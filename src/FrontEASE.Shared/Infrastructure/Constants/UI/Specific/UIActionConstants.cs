@@ -2,6 +2,7 @@
 {
     public static class UIActionConstants
     {
+        public const string Filter = "Filter";
         public const string Logout = "Logout";
         public const string Login = "Login";
         public const string Search = "Search";
@@ -20,6 +21,7 @@
         public const string Pause = "Pause";
         public const string Clone = "Clone";
         public const string Use = "Use";
+        public const string Reset = "Reset";
         public const string Download = "Download";
     }
 }

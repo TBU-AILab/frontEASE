@@ -1,0 +1,60 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IShortcutKeyDictionary shortcutDictionary
+@inject IMapper mapper
+@inject IUIManager uiManager
+
+<Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small">
+    <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Padding="Padding.Is2">
+        <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
+            <Text TextWeight="TextWeight.Bold" Class="text-center">
+                @($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Filter}")}")
+            </Text>
+        </Div>
+        <Icon Name="@(!isFilterCollapsed ? IconName.AngleUp : IconName.AngleDown)" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary};")" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
+    </Column>
+
+    @if (!isFilterCollapsed)
+    {
+        <Column ColumnSize="ColumnSize.IsFull" @onkeydown="HandleKeyDown">
+            <Container Fluid Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                <Row>
+                    <Column ColumnSize="ColumnSize.IsFull">
+                        <Validations @ref="Validations"
+                                     Model="@Filter"
+                                     Mode="ValidationMode.Auto"
+                                     ValidateOnLoad="false"
+                                     HandlerType="ValidationHandlerType.DataAnnotation">
+                            <CascadingValue Value="Validations">
+                                <CascadingValue Value="Filter">
+                                    <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
+                                        <TaskInfoFilterDataSection />
+                                        <TaskInfoFilterFooterSection @ref="@FilterFooterSection" />
+                                    </Form>
+                                </CascadingValue>
+                            </CascadingValue>
+                        </Validations>
+                    </Column>
+                </Row>
+            </Container>
+        </Column>
+    }
+</Container>
+
+@code {
+    public TaskFilterActionRequestDto Filter { get; set; } = new();
+    private Validations Validations { get; set; } = new();
+
+    private TaskInfoFilterFooterSection FilterFooterSection = new();
+    private bool isFilterCollapsed = true;
+
+    private async Task HandleKeyDown(KeyboardEventArgs e) => await FilterFooterSection.HandleKeyDown(e);
+
+    private void ChangeCollapseState()
+    {
+        isFilterCollapsed = !isFilterCollapsed;
+        if (isFilterCollapsed)
+        {
+            mapper.Map(new TaskFilterActionRequestDto(), Filter);
+        }
+    }
+}

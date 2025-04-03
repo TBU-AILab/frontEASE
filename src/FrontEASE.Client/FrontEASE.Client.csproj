@@ -30,10 +30,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Infrastructure\Mappings\Tasks\Actions\Results\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Update="wwwroot\resources\images\companies\companyLogoMissing.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
