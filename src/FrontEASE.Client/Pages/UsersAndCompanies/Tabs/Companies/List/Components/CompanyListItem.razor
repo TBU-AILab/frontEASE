@@ -6,7 +6,7 @@
     <Container Fluid Padding="Padding.Is2" Shadow="Shadow.Small" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary};")" Border="Border.Rounded">
         <Row>
             <Column ColumnSize="ColumnSize.Is1.OnWidescreen.Is2.OnTablet" TextAlignment="TextAlignment.Center" Class="align-self-center">
-                <Image Border="Border.RoundedCircle" Source="@(string.IsNullOrWhiteSpace(Company.Image?.ImageUrl) ? @"\resources\images\companies\companyLogoMissing.png" : $"{appSettings.ApiSettings!.BaseUrl}/{Company.Image.ImageUrl}")" Class="full-max-width datagrid-item-image" Loading />
+                <Image Border="Border.RoundedCircle" Source="@(string.IsNullOrWhiteSpace(Company.Image?.ImageUrl) ? ImageConstants.CompanyPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{Company.Image.ImageUrl}")" Class="full-max-width datagrid-item-image" Loading />
             </Column>
             <Column ColumnSize="ColumnSize.Is11.OnWidescreen.Is10.OnTablet">
                 <Container Fluid>

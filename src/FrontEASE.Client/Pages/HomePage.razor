@@ -1,0 +1,13 @@
+﻿@inject NavigationManager navigation
+@inject IResourceHandler resourceHandler
+
+@page "/"
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var baseRoute = resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.TasksRoute}");
+        navigation.NavigateTo(baseRoute);
+    }
+}

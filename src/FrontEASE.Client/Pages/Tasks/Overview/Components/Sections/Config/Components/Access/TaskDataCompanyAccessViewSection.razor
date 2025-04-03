@@ -81,7 +81,6 @@
     {
         var groupData = AvailableCompanies.SingleOrDefault(x => x.ID == groupID);
         return string.IsNullOrWhiteSpace(groupData?.Image?.ImageUrl) ?
-            @"\resources\images\users\companyLogoMissing.png" :
-            $"{appSettings.ApiSettings!.BaseUrl}/{groupData?.Image?.ImageUrl}";
+            ImageConstants.CompanyPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{groupData?.Image?.ImageUrl}";
     }
 }

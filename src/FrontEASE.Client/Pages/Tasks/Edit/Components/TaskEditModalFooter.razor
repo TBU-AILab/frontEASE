@@ -3,6 +3,7 @@
 @inject IUIManager uiManager
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
+@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 
 <ModalFooter Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary} !important; border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")">
@@ -23,12 +24,11 @@
             <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile.Is3.OnFullHD.Is6.WithOffset.OnFullHD">
                 @if (DataOperation != DataOperation.READ)
                 {
-                    <Button
-                        Clicked="@SaveTask"
-                        Style="@($"background-color: {(DataOperation == DataOperation.INSERT ? uiManager.Theme.ColorOptions.Success : uiManager.Theme.BackgroundOptions.Info)}; color: {(DataOperation == DataOperation.INSERT ? uiManager.Theme.White : uiManager.Theme.TextColorOptions.Info)};")"
-                        Class="btn button btn-sized full-width"
-                        Disabled="@savingInProgress"
-                        TextWeight="TextWeight.Bold">
+                    <Button Clicked="@SaveTask"
+                            Style="@($"background-color: {(DataOperation == DataOperation.INSERT ? uiManager.Theme.ColorOptions.Success : uiManager.Theme.BackgroundOptions.Info)};color: {(DataOperation == DataOperation.INSERT ? uiManager.Theme.White : uiManager.Theme.TextColorOptions.Info)};")"
+                            Class="btn button btn-sized full-width"
+                            Disabled="@savingInProgress"
+                            TextWeight="TextWeight.Bold">
                         @if (savingInProgress)
                         {
                             <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
@@ -66,6 +66,21 @@
     private bool savingInProgress = false;
     private bool deletingInProgress = false;
 
+    public async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (shortcutDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+                await SaveTask();
+                break;
+            case ShortcutKeys.ESCAPE:
+                await HideModal();
+                break;
+            default:
+                break;
+        }
+    }
+
     private async Task HideModal()
     {
         if (DataOperation == DataOperation.INSERT)
@@ -86,7 +101,7 @@
 
         if (await Validations.ValidateAll())
         {
-            var updated = await taskApiService.UpdateTask(Task);
+            var updated = await taskApiService.UpdateTask(Task.ID, Task);
             if (updated is not null)
             {
                 mapper.Map(updated, Task);
@@ -100,7 +115,7 @@
                 { Tasks.Insert(0, TaskInfo); }
 
                 var cleanModel = new TaskDto();
-                mapper.Map(cleanModel, Task);    
+                mapper.Map(cleanModel, Task);
 
                 message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(DataOperation == DataOperation.INSERT ? UIActionConstants.Save : UIActionConstants.Update)}")}: {TaskInfo.Name}";
                 if (!string.IsNullOrWhiteSpace(message))
@@ -117,7 +132,7 @@
     private async Task DeleteTask()
     {
         deletingInProgress = true;
-        var deleted = await taskApiService.DeleteTask(Task.ID);
+        await taskApiService.DeleteTasks(new List<Guid>() { Task.ID });
         deletingInProgress = false;
     }
 }

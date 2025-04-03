@@ -10,16 +10,6 @@ using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Domain.Repositories.Users;
 using FrontEASE.Domain.Services.Tasks.Core;
 using FrontEASE.Shared.Data.Enums.Tasks;
-using FrontEASE.Domain.DataQueries.Tasks;
-using FrontEASE.Domain.Entities.Companies;
-using FrontEASE.Domain.Entities.Shared.Users;
-using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
-using FrontEASE.Domain.Entities.Tasks.Configs;
-using FrontEASE.Domain.Infrastructure.Exceptions.Types;
-using FrontEASE.Domain.Repositories.Companies;
-using FrontEASE.Domain.Repositories.Users;
-using FrontEASE.Domain.Services.Tasks.Core;
-using FrontEASE.Shared.Data.Enums.Tasks;
 
 namespace FrontEASE.Domain.Services.Tasks
 {
@@ -45,7 +35,7 @@ namespace FrontEASE.Domain.Services.Tasks
             _mapper = mapper;
         }
 
-        public async Task<Entities.Tasks.Task> Load(Guid id)
+        private TasksQuery GetFullQuery()
         {
             var query = new TasksQuery()
             {
@@ -57,10 +47,21 @@ namespace FrontEASE.Domain.Services.Tasks
                 LoadMessages = true,
                 LoadSolutions = true,
             };
+            return query;
+        }
 
-            var task = await _taskRepository.Load(id, query) ?? throw new NotFoundException();
+        public async Task<Entities.Tasks.Task> Load(Guid id)
+        {
+            var task = await _taskRepository.Load(id, GetFullQuery()) ?? throw new NotFoundException();
             SortConnectedModules(task);
             return task;
+        }
+
+        public async Task<IList<Entities.Tasks.Task>> Load(IList<Guid> ids)
+        {
+            var tasks = await _taskRepository.Load(ids, GetFullQuery()) ?? throw new NotFoundException();
+            foreach (var task in tasks) { SortConnectedModules(task); }
+            return tasks;
         }
 
         public async Task<IList<Entities.Tasks.Task>> LoadAll(Guid? userID) => await _taskRepository.LoadInfo(userID);
@@ -98,11 +99,11 @@ namespace FrontEASE.Domain.Services.Tasks
             return updated;
         }
 
-        public async Task<Entities.Tasks.Task> Duplicate(Entities.Tasks.Task task)
+        public async Task<Entities.Tasks.Task> Duplicate(Entities.Tasks.Task task, string baseName)
         {
             var newTask = new Entities.Tasks.Task();
             _mapper.Map(task, newTask);
-            newTask.Config.Name = $"{task.Config.Name} - Copy";
+            newTask.Config.Name = string.IsNullOrWhiteSpace(baseName) ? task.Config.Name : baseName;
             newTask.AuthorID = task.AuthorID;
 
             var connectedEntities = await SelectConnectedEntities(task);

@@ -28,7 +28,7 @@ Shadow="Shadow.Small">
             <Divider />
 
             <AuthorizeView>
-                <BarLink To="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.BaseRoute}"))" Class="nav-link" Match="Match.All" Margin="Margin.Is3.FromEnd">
+                <BarLink To="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.BaseRoute}")}{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.TasksRoute}")}")" Class="nav-link" Match="Match.All" Margin="Margin.Is3.FromEnd">
                     @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.TasksRoute}"))
                 </BarLink>
                 <Divider />

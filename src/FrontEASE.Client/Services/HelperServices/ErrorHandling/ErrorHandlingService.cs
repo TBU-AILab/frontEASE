@@ -1,7 +1,13 @@
 ﻿using Blazored.Toast.Services;
+using FrontEASE.Client.Services.HelperServices.UI.Manage;
+using FrontEASE.Client.Shared.Styling.Defaults;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
+using FrontEASE.Shared.Data.Enums.Users.Preferences.GeneralOptions;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Generic;
+using FrontEASE.Shared.Infrastructure.Constants.UI.Specific;
 using FrontEASE.Shared.Services.Resources;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -12,11 +18,23 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
     {
         private readonly IToastService _toastService;
         private readonly IResourceHandler _resourceHandler;
+        private readonly IUIManager _uiManager;
+        private readonly NavigationManager _navManager;
 
-        public ErrorHandlingService(IToastService toastService, IResourceHandler resourceHandler)
+        private readonly CustomAuthenticationStateProvider _authStateProvider;
+
+        public ErrorHandlingService(
+            IToastService toastService,
+            IResourceHandler resourceHandler,
+            IUIManager uiManager,
+            NavigationManager navManager,
+            AuthenticationStateProvider authStateProvider)
         {
+            _authStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
             _resourceHandler = resourceHandler;
             _toastService = toastService;
+            _uiManager = uiManager;
+            _navManager = navManager;
         }
 
         public async Task HandleErrorResponse(HttpResponseMessage httpResponse)
@@ -67,10 +85,22 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                     break;
                 case HttpStatusCode.Unauthorized:
                     {
-                        var responseMessage = await httpResponse.Content.ReadFromJsonAsync<UnauthorizedResultDto>();
-                        uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
-                        uiMessageBody = msgBody;
-                        messageLevel = ToastLevel.Warning;
+                        var state = await _authStateProvider.GetAuthenticationStateAsync();
+                        if (state.User.Identity?.IsAuthenticated != true)
+                        {
+                            _authStateProvider.Logout();
+
+                            var loginRoute = _resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}");
+                            _uiManager.ChangeTheme(ThemeDefaults.GetThemeDefaults(ColorScheme.LIGHT));
+                            _navManager.NavigateTo(loginRoute);
+                        }
+                        else
+                        {
+                            var responseMessage = await httpResponse.Content.ReadFromJsonAsync<UnauthorizedResultDto>();
+                            uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
+                            uiMessageBody = msgBody;
+                            messageLevel = ToastLevel.Warning;
+                        }
                     }
                     break;
                 case HttpStatusCode.InternalServerError:

@@ -3,10 +3,11 @@
 @inject IMapper mapper
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
+@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 @inject IUIManager uiManager
 
-<Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible">
+<Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" @onkeydown="HandleKeyDown">
     @if (isModalVisible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")">
@@ -55,6 +56,21 @@
     private Modal DeleteModal = new();
     private bool deletingInProgress = false;
     private bool isModalVisible = false;
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (shortcutDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+                await DeleteToken();
+                break;
+            case ShortcutKeys.ESCAPE:
+                await HideModal();
+                break;
+            default:
+                break;
+        }
+    }
 
     public async Task DeleteToken()
     {

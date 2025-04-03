@@ -3,6 +3,8 @@ using FrontEASE.Application.AppServices.Tasks;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
 using FrontEASE.Shared.Data.DTOs.Tasks;
+using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
+using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Results;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks;
@@ -106,7 +108,7 @@ namespace FrontEASE.Server.Controllers.User
         /// </summary>
         /// <param name="task">Task model.</param>
         /// <returns>Task DTO model.</returns>
-        [HttpPatch($"{TasksControllerConstants.BaseUrl}")]
+        [HttpPatch($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> RefreshTaskOptions([Required, FromBody] TaskDto task)
@@ -151,17 +153,18 @@ namespace FrontEASE.Server.Controllers.User
         /// <summary>
         /// Clones an existing task item.
         /// </summary>
+        /// <param name="request">Task duplication request.</param>
         /// <param name="id">Task identifier.</param>
         /// <returns>Task DTO model.</returns>
         [HttpPost($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}/{TasksControllerConstants.Clone}")]
-        [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(IList<TaskDto>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> CloneTask([Required, FromRoute] Guid id)
+        public async Task<IActionResult> CloneTask([Required, FromRoute] Guid id, [Required, FromBody] TaskDuplicateActionRequestDto request)
         {
             IActionResult result;
             try
             {
-                var duplicatedTask = await _taskAppService.Duplicate(id);
+                var duplicatedTask = await _taskAppService.Duplicate(id, request);
                 result = GetHttpResult(HttpStatusCode.Created, duplicatedTask, nameof(CloneTask));
             }
             catch (Exception ex)
@@ -177,7 +180,7 @@ namespace FrontEASE.Server.Controllers.User
         /// </summary>
         /// <param name="task">DTO with new updated task info.</param>
         /// <returns>Task DTO model.</returns>
-        [HttpPut(TasksControllerConstants.BaseUrl)]
+        [HttpPut($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
@@ -200,19 +203,19 @@ namespace FrontEASE.Server.Controllers.User
 
 
         /// <summary>
-        /// Deletes a task.
+        /// Deletes selected tasks.
         /// </summary>
-        /// <param name="id">Deleted task identifier.</param>
-        [HttpDelete($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        /// <param name="taskIDs">Deleted task identifiers.</param>
+        [HttpDelete($"{TasksControllerConstants.BaseUrl}")]
+        [ProducesResponseType(typeof(IList<TaskBulkActionResultDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> DeleteTask([Required, FromRoute] Guid id)
+        public async Task<IActionResult> DeleteTasks([Required, FromQuery] IList<Guid> taskIDs)
         {
             IActionResult result;
             try
             {
-                await _taskAppService.Delete(id);
-                result = GetHttpResult(HttpStatusCode.NoContent);
+                var deleteResults = await _taskAppService.Delete(taskIDs);
+                result = GetHttpResult(HttpStatusCode.OK, deleteResults);
             }
             catch (Exception ex)
             {
@@ -223,20 +226,20 @@ namespace FrontEASE.Server.Controllers.User
         }
 
         /// <summary>
-        /// Changes state of existing task.
+        /// Changes states of existing tasks.
         /// </summary>
-        /// <param name="id">Modified task identifier.</param>
+        /// <param name="taskIDs">Modified task identifiers.</param>
         /// <param name="state">Modified task new state.</param>
-        [HttpPatch($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}/{TasksControllerConstants.StateParam}")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [HttpPatch($"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.ChangeState}/{TasksControllerConstants.StateParam}")]
+        [ProducesResponseType(typeof(IList<TaskBulkActionResultDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> ChangeTaskState([Required, FromRoute] Guid id, [Required, FromRoute] TaskState state)
+        public async Task<IActionResult> ChangeTaskState([Required, FromQuery] IList<Guid> taskIDs, [Required, FromRoute] TaskState state)
         {
             IActionResult result;
             try
             {
-                await _taskAppService.ChangeState(id, state);
-                result = GetHttpResult(HttpStatusCode.NoContent, null);
+                var stateChangeResults = await _taskAppService.ChangeState(taskIDs, state);
+                result = GetHttpResult(HttpStatusCode.OK, stateChangeResults);
             }
             catch (Exception ex)
             {

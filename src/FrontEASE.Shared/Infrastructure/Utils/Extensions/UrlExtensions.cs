@@ -11,9 +11,14 @@ namespace FrontEASE.Shared.Infrastructure.Utils.Extensions
         {
             _query.Clear();
             BuildQueryString(obj, "");
-
             if (_query.Length > 0) _query[0] = '?';
             return _query.ToString();
+        }
+
+        public static string ToQueryString<T>(this IEnumerable<T> collection, string key)
+        {
+            var query = string.Join("&", collection.Select(item => $"{key}={item}"));
+            return "?" + query;
         }
 
         private static void BuildQueryString<T>(T? obj, string prefix = "") where T : class
@@ -22,34 +27,32 @@ namespace FrontEASE.Shared.Infrastructure.Utils.Extensions
 
             foreach (var p in obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                if (p.GetValue(obj, []) is not null)
+                if (p.GetValue(obj, null) is not null)
                 {
-                    var value = p.GetValue(obj, []);
-
+                    var value = p.GetValue(obj, null);
 
                     if (p.PropertyType.IsArray && value?.GetType() == typeof(DateTime[]))
+                    {
                         foreach (var item in (DateTime[])value)
-                            _query.Append($"&{prefix}{p.Name}={item.ToString("MM/dd/yyyy")}");
-
+                            _query.Append($"&{prefix}{p.Name}={item:MM/dd/yyyy}");
+                    }
                     else if (p.PropertyType.IsArray)
+                    {
                         foreach (var item in (Array)value!)
                             _query.Append($"&{prefix}{p.Name}={item}");
-
+                    }
                     else if (p.PropertyType == typeof(string) || Nullable.GetUnderlyingType(p.PropertyType) == typeof(string))
                     {
                         if (!string.IsNullOrEmpty((string?)value))
                             _query.Append($"&{prefix}{p.Name}={value}");
                     }
-
                     else if (p.PropertyType == typeof(DateTime) || Nullable.GetUnderlyingType(p.PropertyType) == typeof(DateTime))
                     {
                         if (value is DateTime dtValue && dtValue != default)
                             _query.Append($"&{prefix}{p.Name}={dtValue:MM/dd/yyyy}");
                     }
-
                     else if (p.PropertyType.IsValueType && !value!.Equals(Activator.CreateInstance(p.PropertyType)))
                         _query.Append($"&{prefix}{p.Name}={value}");
-
                     else if (p.PropertyType.IsClass)
                         BuildQueryString(value, $"{prefix}{p.Name}.");
                 }

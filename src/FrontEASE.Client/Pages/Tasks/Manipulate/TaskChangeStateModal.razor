@@ -2,14 +2,15 @@
 @inject IUIService uiService
 @inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
+@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 
-<Modal @ref="@ChangeStateModal" @bind-Visible="@isModalVisible">
+<Modal @ref="@ChangeStateModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
     @if (isModalVisible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")">
 
-            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{GetTaskStateActionConstant()}")} - {TaskInfo.Name}")" />
+            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{GetTaskStateActionConstant()}")} ({string.Join(", ", AffectedTasks.Select(x => string.IsNullOrWhiteSpace(x.Name) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : x.Name))})")" />
 
             <ModalBody Margin="Margin.Is3.FromTop">
                 <Row>
@@ -44,12 +45,10 @@
 </Modal>
 
 @code {
-
-    [CascadingParameter]
-    public TaskInfoDto TaskInfo { get; set; } = new();
-
     [CascadingParameter]
     public ObservableCollection<TaskInfoDto> Tasks { get; set; } = [];
+
+    public IList<TaskInfoDto> AffectedTasks { get; set; } = [];
 
     private TaskState? NewTaskState = null;
     private Modal ChangeStateModal = new();
@@ -72,17 +71,45 @@
         }
     }
 
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (shortcutDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+                await ChangeStateTask();
+                break;
+            case ShortcutKeys.ESCAPE:
+                await HideModal();
+                break;
+            default:
+                break;
+        }
+    }
+
     public async Task ChangeStateTask()
     {
         changeInProgress = true;
+        var taskIDs = AffectedTasks.Select(x => x.ID).ToList();
+        var updated = await taskApiService.ChangeTaskStates(taskIDs, NewTaskState!.Value);
 
-        var updated = await taskApiService.ChangeTaskState(TaskInfo, NewTaskState!.Value);
-        if (updated)
+        if (updated.Count > 0)
         {
-            TaskInfo.State = NewTaskState.Value;
-
-            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.StateChange}")}: {TaskInfo.Name}";
-            toastService.ShowSuccess(message);
+            foreach (var changeInfo in updated)
+            {
+                var task = Tasks.First(x => x.ID == changeInfo.TaskID);
+                if (changeInfo.Success)
+                {
+                    task.State = NewTaskState.Value;
+                    var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.StateChange}")}: {task.Name}";
+                    toastService.ShowSuccess(message);
+                }
+                else
+                {
+                    var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.StateChange}")}: {task.Name}";
+                    message = $"{message}{(string.IsNullOrWhiteSpace(changeInfo.ExceptionMessage) ? string.Empty : $" ({changeInfo.ExceptionMessage})")}";
+                    toastService.ShowError(message);
+                }
+            }
             uiService.CallRequestRefresh();
         }
 

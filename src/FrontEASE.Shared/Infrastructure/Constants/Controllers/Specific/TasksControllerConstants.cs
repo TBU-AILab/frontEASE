@@ -5,6 +5,8 @@
         new public const string BaseUrl = $"{ControllerConstants.BaseUrl}/tasks";
 
         public const string StateParam = "{state}";
+
         public const string Clone = "clone";
+        public const string ChangeState = "change-state";
     }
 }

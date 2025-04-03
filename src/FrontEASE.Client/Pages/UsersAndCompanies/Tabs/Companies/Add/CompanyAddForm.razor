@@ -4,6 +4,7 @@
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
 @inject IUIManager uiManager
+@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 
 <Row Background="@uiManager.Theme.BackgroundOptions.Primary" Class="rounded">
@@ -12,7 +13,7 @@
     </Column>
 
     <Column ColumnSize="ColumnSize.Is12" Display="@(isFormCollapsed ? Display.None : Display.Block)" Margin="Margin.Is2.FromTop.Is4.FromBottom">
-        <Form Margin="Margin.Is4.FromTop" Class="text-form-size">
+        <Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="HandleKeyDown">
             <Validations @ref="Validations" Mode="ValidationMode.Manual" Model="CompanyModel">
 
                 <CascadingValue Value="CompanyModel">
@@ -50,6 +51,18 @@
 
     private bool isFormCollapsed = true;
     private bool savingInProgress = false;
+
+    public async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (shortcutDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+                await InsertCompany();
+                break;
+            default:
+                break;
+        }
+    }
 
     public async Task InsertCompany()
     {

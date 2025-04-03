@@ -4,8 +4,9 @@
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
 @inject IUIManager uiManager
+@inject AppSettings appSettings
 
-<Modal @ref="@Modal" Closing="@OnModalClosing" @bind-Visible="@isModalVisible" Class="modal-dialog-extrawide" Border="Border.Rounded">
+<Modal @ref="@Modal" Closing="@OnModalClosing" @bind-Visible="@isModalVisible" Class="modal-dialog-extrawide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
     @if (isModalVisible)
     {
         @if (TaskMetadata.ReloadInProgress)
@@ -43,7 +44,7 @@
                                 </Container>
                             </ModalBody>
 
-                            <TaskOverviewModalFooter />
+                            <TaskOverviewModalFooter @ref="@TaskOverviewModalFooter"/>
 
                         </CascadingValue>
                     </CascadingValue>
@@ -67,6 +68,7 @@
 
     private TaskDto Task;
     private Modal Modal;
+    private TaskOverviewModalFooter TaskOverviewModalFooter = new();
     private TaskViewMetadataDto TaskMetadata;
 
     public TaskOverviewModal()
@@ -76,6 +78,8 @@
 
         Modal = new Modal();
     }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e) => await TaskOverviewModalFooter.HandleKeyDown(e);
 
     private async Task ResetCancellationToken()
     {
@@ -99,6 +103,12 @@
     {
         isModalVisible = true;
         await Modal.Show();
+    }
+
+    private async Task ModalHide()
+    {
+        isModalVisible = false;
+        await Modal.Hide();
     }
 
     public async Task Show()
@@ -138,7 +148,7 @@
                     TaskMetadata.ReloadInProgress = false;
                     uiService.CallRequestRefresh();
                 }
-                await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+                await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(appSettings.PageSettings!.Tasks!.Timers!.SingleTaskStateRefetchIntervalSeconds), cancellationToken);
             }
         }
         catch (Exception ex)

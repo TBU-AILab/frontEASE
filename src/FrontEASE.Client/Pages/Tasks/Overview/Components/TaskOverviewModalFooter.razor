@@ -1,5 +1,6 @@
 ﻿@inject IMapper mapper
 @inject IResourceHandler resourceHandler
+@inject IShortcutKeyDictionary shortcutDictionary
 @inject IUIManager uiManager
 
 <ModalFooter Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary}; border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")">
@@ -20,6 +21,19 @@
 
     [CascadingParameter]
     public Modal Modal { get; set; } = new();
+
+    public async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (shortcutDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+            case ShortcutKeys.ESCAPE:
+                await HideModal();
+                break;
+            default:
+                break;
+        }
+    }
 
     private async Task HideModal()
     {

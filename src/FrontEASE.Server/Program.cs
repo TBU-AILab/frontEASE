@@ -200,7 +200,7 @@ void ConfigureSwagger()
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
-        options.SwaggerEndpoint("/Swagger/v1/swagger.json", "API - EASE");
+        options.SwaggerEndpoint("/Swagger/v1/swagger.json", "API - FrontEASE");
     });
 }
 
@@ -300,9 +300,7 @@ void SetupMonitoring()
             {
                 if (context.TransactionContext.IsParentSampled is not null)
                 {
-                    return context.TransactionContext.IsParentSampled.Value
-                        ? 1.0
-                        : 0.0;
+                    return context.TransactionContext.IsParentSampled.Value ? 1.0 : 0.0;
                 }
 
                 double? sampleRate = context.CustomSamplingContext.GetValueOrDefault("__HttpPath") switch
@@ -342,7 +340,7 @@ void SetupSwaggerGen()
 {
     builder.Services.AddSwaggerGen(options =>
     {
-        options.SwaggerDoc("v1", new OpenApiInfo { Title = "EASE - Effortless Algorithmic Solution Evolution", Version = "1.0" });
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "FrontEASE - Effortless Algorithmic Solution Evolution (FE)", Version = "01.04.2025" });
         options.DescribeAllParametersInCamelCase();
         options.SupportNonNullableReferenceTypes();
 
