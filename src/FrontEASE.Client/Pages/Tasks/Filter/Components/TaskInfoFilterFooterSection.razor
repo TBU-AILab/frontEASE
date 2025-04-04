@@ -1,0 +1,87 @@
+﻿@inject IMapper mapper
+@inject ITaskApiService taskApiService
+@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+@inject IShortcutKeyDictionary shortcutDictionary
+
+<Fields Margin="Margin.Is5.FromTop">
+    <Field ColumnSize="ColumnSize.Is3.OnWidescreen">
+        <Button Color="Color.Danger" Clicked="@ResetModel" Class="btn button btn-sized full-width" Disabled="@resetInProgress" TextWeight="TextWeight.Bold">
+            @if (resetInProgress)
+            {
+                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Reset}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+            }
+            else
+            {
+                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Reset}"))
+            }
+        </Button>
+    </Field>
+    <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart">
+        <Button Color="Color.Info" Clicked="@FilterTasks" Class="btn button btn-sized full-width" Disabled="@filteringInProgress" TextWeight="TextWeight.Bold">
+            @if (filteringInProgress)
+            {
+                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Search}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+            }
+            else
+            {
+                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Search}"))
+            }
+        </Button>
+    </Field>
+</Fields>
+
+@code {
+    [CascadingParameter]
+    public TaskFilterActionRequestDto Filter { get; set; } = new();
+
+    [CascadingParameter]
+    public Validations Validations { get; set; } = new();
+
+    [CascadingParameter]
+    public ObservableCollection<TaskInfoDto> Tasks { get; set; } = [];
+
+    private bool filteringInProgress;
+    private bool resetInProgress;
+
+    public async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (shortcutDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+                await FilterTasks();
+                break;
+            case ShortcutKeys.ESCAPE:
+                ResetModel();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void ResetModel()
+    {
+        resetInProgress = true;
+        mapper.Map(new TaskFilterActionRequestDto(), Filter);
+        resetInProgress = false;
+
+        uiService.CallRequestRefresh();
+    }
+
+    private async Task FilterTasks()
+    {
+        filteringInProgress = true;
+
+        if (await Validations.ValidateAll())
+        {
+            var tasks = await taskApiService.LoadTaskInfos(Filter);
+            if (tasks?.Count > 0 == true)
+            {
+                Tasks.Clear();
+                foreach (var task in tasks) { Tasks.Add(task); }
+            }
+        }
+
+        filteringInProgress = false;
+    }
+}

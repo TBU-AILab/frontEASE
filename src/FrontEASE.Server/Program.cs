@@ -17,6 +17,7 @@ using FrontEASE.Application.Infrastructure.Mappings.Shared.Addresses;
 using FrontEASE.Application.Infrastructure.Mappings.Shared.Images;
 using FrontEASE.Application.Infrastructure.Mappings.Shared.Resources;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks;
+using FrontEASE.Application.Infrastructure.Mappings.Tasks.Actions.Requests;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters;
@@ -414,7 +415,6 @@ void SetupMappings()
         mc.AddProfile(new ResourceMappingProfile());
         mc.AddProfile(new ImageMappingProfile());
         mc.AddProfile(new AddressMappingProfile());
-
         mc.AddProfile(new CompanyMappingProfile());
         mc.AddProfile(new UserMappingProfile());
 
@@ -437,6 +437,8 @@ void SetupMappings()
         mc.AddProfile(new TaskModuleParameterMappingProfile());
         mc.AddProfile(new TaskModuleParameterValueMappingProfile());
         mc.AddProfile(new TaskModuleParameterEnumOptionMappingProfile());
+
+        mc.AddProfile(new TaskFilterActionRequestMappingProfile());
     });
 
     IMapper mapper = mappingConfig.CreateMapper();

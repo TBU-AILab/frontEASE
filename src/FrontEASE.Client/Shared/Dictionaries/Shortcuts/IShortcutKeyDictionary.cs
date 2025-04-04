@@ -4,7 +4,7 @@ namespace FrontEASE.Client.Shared.Dictionaries.Shortcuts
 {
     public interface IShortcutKeyDictionary
     {
-        string? GetTextForm(ShortcutKeys key);
-        ShortcutKeys? GetEnumForm(string key);
+        string? GetTextForm(ShortcutKeys? key);
+        ShortcutKeys? GetEnumForm(string? key);
     }
 }

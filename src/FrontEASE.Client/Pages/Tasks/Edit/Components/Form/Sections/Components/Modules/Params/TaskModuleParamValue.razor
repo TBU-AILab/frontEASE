@@ -135,7 +135,7 @@
                                     ElementId="@(GetElementIdByOperation(ParamOption.Key))"
                                     @bind-SelectedValue="@ParamValue.Value!.EnumValue!.StringValue">
                                 <ChildContent>
-                                    <SelectItem Value="string.Empty" TextColor="TextColor.Black50">
+                                    <SelectItem Value="string.Empty">
                                         @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
                                     </SelectItem>
                                     @foreach (var enumOption in ParamOption.EnumOptions)

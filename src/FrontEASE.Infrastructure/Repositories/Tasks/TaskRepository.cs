@@ -1,9 +1,7 @@
 ﻿using FrontEASE.Domain.DataQueries.Tasks;
+using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
 using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Repositories.Tasks;
-using FrontEASE.Infrastructure.Data;
-using FrontEASE.Domain.DataQueries.Tasks;
-using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -95,7 +93,33 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             return lastMessage;
         }
 
-        public async Task<IList<Domain.Entities.Tasks.Task>> LoadInfo(Guid? userID = null)
+        private IQueryable<Domain.Entities.Tasks.Task> GetFilterQuery(IQueryable<Domain.Entities.Tasks.Task> tasksQuery, TaskFilterActionRequest filter)
+        {
+            var utcDateCreatedFrom = filter.DateCreatedFrom.HasValue ? DateTime.SpecifyKind(filter.DateCreatedFrom.Value.Date, DateTimeKind.Utc) : (DateTime?)null;
+            var utcDateCreatedTo = filter.DateCreatedTo.HasValue ? DateTime.SpecifyKind(filter.DateCreatedTo.Value.Date.AddDays(1), DateTimeKind.Utc) : (DateTime?)null;
+            var utcDateUpdatedFrom = filter.DateUpdatedFrom.HasValue ? DateTime.SpecifyKind(filter.DateUpdatedFrom.Value.Date, DateTimeKind.Utc) : (DateTime?)null;
+            var utcDateUpdatedTo = filter.DateUpdatedTo.HasValue ? DateTime.SpecifyKind(filter.DateUpdatedTo.Value.Date.AddDays(1), DateTimeKind.Utc) : (DateTime?)null;
+
+            if (string.IsNullOrWhiteSpace(filter.MessagesContent))
+            {
+                tasksQuery = tasksQuery.Include(x => x.Messages);
+            }
+
+            tasksQuery = tasksQuery
+                .Where(x =>
+                    (string.IsNullOrWhiteSpace(filter.Name) || EF.Functions.ILike(x.Config.Name, $"%{filter.Name}%")) &&
+                    (string.IsNullOrWhiteSpace(filter.MessagesContent) || x.Messages.Any(e => EF.Functions.ILike(e.Content, $"%{filter.Name}%"))) &&
+                    (filter.State == null || !filter.State.Any() || filter.State.Contains(x.State)) &&
+                    (utcDateCreatedFrom == null || x.DateCreated >= utcDateCreatedFrom.Value) &&
+                    (utcDateCreatedTo == null || x.DateCreated < utcDateCreatedTo.Value) &&
+                    (utcDateUpdatedFrom == null || (x.DateUpdated != null && x.DateUpdated >= utcDateUpdatedFrom.Value)) &&
+                    (utcDateUpdatedTo == null || (x.DateUpdated != null && x.DateUpdated < utcDateUpdatedTo.Value))
+                );
+
+            return tasksQuery;
+        }
+
+        public async Task<IList<Domain.Entities.Tasks.Task>> LoadInfo(Guid? userID = null, TaskFilterActionRequest? filter = null)
         {
             var tasksQuery = _context.Tasks
                 .AsSplitQuery()
@@ -106,6 +130,8 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
                 .Include(x => x.MemberGroups)
                     .ThenInclude(x => x.Users)
                 .Where(x => !x.IsDeleted);
+
+            tasksQuery = filter is null ? tasksQuery : GetFilterQuery(tasksQuery, filter);
 
             var tasks = userID is null ?
                 await tasksQuery.ToListAsync() :
@@ -118,7 +144,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             return tasks;
         }
 
-        public async Task<IList<Domain.Entities.Tasks.Task>> LoadInfoBase(Guid? userID = null)
+        public async Task<IList<Domain.Entities.Tasks.Task>> LoadInfoBase(Guid? userID = null, TaskFilterActionRequest? filter = null)
         {
             var tasksQuery = _context.Tasks
                 .AsSplitQuery()
@@ -127,6 +153,8 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
                 .Include(x => x.MemberGroups)
                     .ThenInclude(x => x.Users)
                 .Where(x => !x.IsDeleted);
+
+            tasksQuery = filter is null ? tasksQuery : GetFilterQuery(tasksQuery, filter);
 
             var tasks = userID is null ?
                 await tasksQuery.ToListAsync() :

@@ -1,60 +1,84 @@
-﻿using System.Reflection;
+﻿using System.Collections;
+using System.Reflection;
 using System.Text;
 
 namespace FrontEASE.Shared.Infrastructure.Utils.Extensions
 {
     public static class UrlExtensions
     {
-        private static readonly StringBuilder _query = new();
-
-        public static string ToQueryString<T>(this T obj) where T : class
+        public static string ToQueryString<T>(this T? obj) where T : class
         {
-            _query.Clear();
-            BuildQueryString(obj, "");
-            if (_query.Length > 0) _query[0] = '?';
-            return _query.ToString();
+            if (obj is null) return string.Empty;
+
+            var queryStringBuilder = new StringBuilder();
+            BuildQueryStringRecursive(obj, "", queryStringBuilder);
+
+            if (queryStringBuilder.Length > 0)
+            {
+                queryStringBuilder[0] = '?';
+            }
+            return queryStringBuilder.ToString();
         }
 
         public static string ToQueryString<T>(this IEnumerable<T> collection, string key)
         {
-            var query = string.Join("&", collection.Select(item => $"{key}={item}"));
+            if (collection is null || !collection.Any() || string.IsNullOrEmpty(key))
+                return string.Empty;
+
+            var query = string.Join("&", collection.Select(item => $"{Uri.EscapeDataString(key)}={Uri.EscapeDataString(item?.ToString() ?? string.Empty)}"));
             return "?" + query;
         }
 
-        private static void BuildQueryString<T>(T? obj, string prefix = "") where T : class
+        private static void BuildQueryStringRecursive(object? obj, string prefix, StringBuilder queryStringBuilder)
         {
             if (obj is null) return;
 
-            foreach (var p in obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                if (p.GetValue(obj, null) is not null)
-                {
-                    var value = p.GetValue(obj, null);
+            var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                .Where(p => p.CanRead);
 
-                    if (p.PropertyType.IsArray && value?.GetType() == typeof(DateTime[]))
+            foreach (var p in properties)
+            {
+                var value = p.GetValue(obj, null);
+                if (value is null) continue;
+
+                var currentKey = string.IsNullOrEmpty(prefix) ? p.Name : $"{prefix}.{p.Name}";
+
+                if (value is IEnumerable enumerable && p.PropertyType != typeof(string))
+                {
+                    var itemAdded = false;
+                    foreach (var item in enumerable)
                     {
-                        foreach (var item in (DateTime[])value)
-                            _query.Append($"&{prefix}{p.Name}={item:MM/dd/yyyy}");
+                        if (item is not null)
+                        {
+                            queryStringBuilder.Append($"&{Uri.EscapeDataString(currentKey)}={Uri.EscapeDataString(item.ToString() ?? string.Empty)}");
+                            itemAdded = true;
+                        }
                     }
-                    else if (p.PropertyType.IsArray)
+                }
+                else if (p.PropertyType == typeof(string) || Nullable.GetUnderlyingType(p.PropertyType) == typeof(string))
+                {
+                    var stringValue = (string?)value;
+                    if (!string.IsNullOrEmpty(stringValue))
+                        queryStringBuilder.Append($"&{Uri.EscapeDataString(currentKey)}={Uri.EscapeDataString(stringValue)}");
+                }
+                else if (p.PropertyType == typeof(DateTime) || Nullable.GetUnderlyingType(p.PropertyType) == typeof(DateTime))
+                {
+                    if (value is DateTime dtValue && dtValue != default)
+                        queryStringBuilder.Append($"&{Uri.EscapeDataString(currentKey)}={Uri.EscapeDataString(dtValue.ToString("MM/dd/yyyy"))}");
+                }
+                else if (p.PropertyType.IsValueType || Nullable.GetUnderlyingType(p.PropertyType)?.IsValueType == true)
+                {
+                    var defaultValue = p.PropertyType.IsValueType && Nullable.GetUnderlyingType(p.PropertyType) is null
+                                      ? Activator.CreateInstance(p.PropertyType) : null;
+
+                    if (!Equals(value, defaultValue))
                     {
-                        foreach (var item in (Array)value!)
-                            _query.Append($"&{prefix}{p.Name}={item}");
+                        queryStringBuilder.Append($"&{Uri.EscapeDataString(currentKey)}={Uri.EscapeDataString(value.ToString() ?? string.Empty)}");
                     }
-                    else if (p.PropertyType == typeof(string) || Nullable.GetUnderlyingType(p.PropertyType) == typeof(string))
-                    {
-                        if (!string.IsNullOrEmpty((string?)value))
-                            _query.Append($"&{prefix}{p.Name}={value}");
-                    }
-                    else if (p.PropertyType == typeof(DateTime) || Nullable.GetUnderlyingType(p.PropertyType) == typeof(DateTime))
-                    {
-                        if (value is DateTime dtValue && dtValue != default)
-                            _query.Append($"&{prefix}{p.Name}={dtValue:MM/dd/yyyy}");
-                    }
-                    else if (p.PropertyType.IsValueType && !value!.Equals(Activator.CreateInstance(p.PropertyType)))
-                        _query.Append($"&{prefix}{p.Name}={value}");
-                    else if (p.PropertyType.IsClass)
-                        BuildQueryString(value, $"{prefix}{p.Name}.");
+                }
+                else if (p.PropertyType.IsClass)
+                {
+                    BuildQueryStringRecursive(value, currentKey, queryStringBuilder);
                 }
             }
         }

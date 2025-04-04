@@ -23,6 +23,7 @@
     else
     {
         <Row Margin="Margin.Is2.FromTop">
+            <TaskInfoFilter />
             @if (Tasks.Count > 0)
             {
                 <TaskInfoDataGrid/>
@@ -124,7 +125,7 @@
 
     private async Task LoadTasks()
     {
-        var tasks = await taskApiService.LoadTaskInfos();
+        var tasks = await taskApiService.LoadTaskInfos(null);
         if (tasks?.Count > 0 == true)
         {
             Tasks.Clear();

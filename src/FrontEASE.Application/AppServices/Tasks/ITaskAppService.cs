@@ -11,7 +11,7 @@ namespace FrontEASE.Application.AppServices.Tasks
     {
         Task<TaskDto> Load(Guid id);
         Task<TaskDto> Refresh(TaskDto task);
-        Task<IList<TaskInfoDto>> LoadAll();
+        Task<IList<TaskInfoDto>> LoadAll(TaskFilterActionRequestDto? filter);
         Task<IList<TaskStatusDto>> LoadAllStatuses();
         Task<TaskDto> Create();
         Task<IList<TaskDto>> Duplicate(Guid id, TaskDuplicateActionRequestDto request);

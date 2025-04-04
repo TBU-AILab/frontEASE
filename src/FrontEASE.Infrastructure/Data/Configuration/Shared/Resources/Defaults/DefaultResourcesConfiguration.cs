@@ -103,6 +103,11 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
         {
             return
             [
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.DateInRange}", Value="Date must be in range {0} - {1}." },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.DateRangeTo}", Value="Date must be lower than {0}." },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.DateRangeFrom}", Value="Date must be higher than {0}." },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.NotFutureDate}", Value="Date must not be in the future." },
+
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.CollectionNotEmpty}", Value="Collection must contain at least one item." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.Required}", Value="Field \"{0}\" is required." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.TextLengthBetween}", Value="Text length must be in range {0} - {1}." },
@@ -111,7 +116,6 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.Base64String}", Value="Value is not a valid base64 string." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.NumericRange}", Value="Value must be in range {0} - {1}." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.TextLengthExact}", Value="Text must be {0} characters long." },
-                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Validation}.{UIValidationConstants.DateInRange}", Value="Date must be in range {0} - {1}." },
 
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ParameterOneOfRequired}", Value="Parameter \"{0}\" must be filled." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ParameterNumericRange}", Value="Value must be in range {0} - {1}." },
@@ -224,6 +228,8 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Pause}", Value="Pause" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}", Value="Download" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}", Value="Clone" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Reset}", Value="Reset" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Filter}", Value="Filter" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.BackToHomepage}", Value="Return to Home page" },
 
                 /* Data Manipulations */
@@ -319,6 +325,15 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.DescriptiveNumber), PropertyDisplayResourceType.FIELD), Value = "Descriptive n°" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.OrientationNumber), PropertyDisplayResourceType.FIELD), Value = "Orientation n°" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Street), PropertyDisplayResourceType.FIELD), Value = "Street" },
+
+                /* TaskFilterActionRequestDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.Name), PropertyDisplayResourceType.FIELD), Value = "Name" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.State), PropertyDisplayResourceType.FIELD), Value = "State" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.FIELD), Value = "Message contents" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateCreatedFrom), PropertyDisplayResourceType.FIELD), Value = "Created (from)" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateCreatedTo), PropertyDisplayResourceType.FIELD), Value = "Created (to)" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedFrom), PropertyDisplayResourceType.FIELD), Value = "Updated (from)" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedTo), PropertyDisplayResourceType.FIELD), Value = "Updated (to)" },
 
                 /* TaskInfoDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.FIELD), Value = "Author" },
@@ -473,6 +488,13 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
 
                 /* TaskDuplicateActionRequestDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "Name - Copy" },
+
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "Name" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is an example message content" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateCreatedFrom), PropertyDisplayResourceType.PLACEHOLDER), Value = "01.01.2024" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateCreatedTo), PropertyDisplayResourceType.PLACEHOLDER), Value = "31.12.2025" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedFrom), PropertyDisplayResourceType.PLACEHOLDER), Value = "01.1.2024" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedTo), PropertyDisplayResourceType.PLACEHOLDER), Value = "31.12.2025" },
             ];
         }
     }

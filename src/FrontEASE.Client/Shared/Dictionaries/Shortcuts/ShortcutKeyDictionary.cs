@@ -13,20 +13,16 @@ namespace FrontEASE.Client.Shared.Dictionaries.Shortcuts
             _dictionaryToText = new Dictionary<ShortcutKeys, string>()
             {
                 { ShortcutKeys.ENTER, KeyboardConstants.EnterKeyName },
-                { ShortcutKeys.ESCAPE, KeyboardConstants.EscapeKeyName }
+                { ShortcutKeys.ESCAPE, KeyboardConstants.EscapeKeyName },
             };
 
             _dictionaryToEnum = _dictionaryToText.ToDictionary(x => x.Value, x => x.Key);
         }
 
-        public string? GetTextForm(ShortcutKeys key)
-        {
-            return _dictionaryToText.TryGetValue(key, out string? value) ? value : null;
-        }
+        public string? GetTextForm(ShortcutKeys? key) =>
+            key is null ? null : _dictionaryToText.TryGetValue(key.Value, out string? value) ? value : null;
 
-        public ShortcutKeys? GetEnumForm(string key)
-        {
-            return _dictionaryToEnum.TryGetValue(key, out ShortcutKeys value) ? value : null;
-        }
+        public ShortcutKeys? GetEnumForm(string? key) =>
+            key is null ? null : _dictionaryToEnum.TryGetValue(key, out ShortcutKeys value) ? value : null;
     }
 }
