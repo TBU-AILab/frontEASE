@@ -12,6 +12,9 @@
         public const string Base64String = "Base64String";
         public const string NumericRange = "NumericRange";
         public const string CollectionNotEmpty = "CollectionNotEmpty";
+        public const string NotFutureDate = "NotFutureDate";
+        public const string DateRangeFrom = "DateFrom";
+        public const string DateRangeTo = "DateTo";
 
         /* Specific */
         public const string ParameterOneOfRequired = "ParameterOneOfRequired";

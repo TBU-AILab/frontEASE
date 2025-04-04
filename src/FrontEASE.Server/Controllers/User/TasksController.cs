@@ -38,15 +38,16 @@ namespace FrontEASE.Server.Controllers.User
         /// <summary>
         /// Gets list of task overview models.
         /// </summary>
+        /// <param name="filter"> The applied filter.</param>
         /// <returns>List of (shortened) task models.</returns>
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}")]
         [ProducesResponseType(typeof(IList<TaskInfoDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetTasks()
+        public async Task<IActionResult> GetTasks([FromQuery] TaskFilterActionRequestDto? filter)
         {
             IActionResult result;
             try
             {
-                var response = await _taskAppService.LoadAll();
+                var response = await _taskAppService.LoadAll(filter);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)

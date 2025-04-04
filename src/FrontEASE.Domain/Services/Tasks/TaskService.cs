@@ -2,6 +2,7 @@
 using FrontEASE.Domain.DataQueries.Tasks;
 using FrontEASE.Domain.Entities.Companies;
 using FrontEASE.Domain.Entities.Shared.Users;
+using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
 using FrontEASE.Domain.Entities.Tasks.Configs;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
@@ -64,9 +65,17 @@ namespace FrontEASE.Domain.Services.Tasks
             return tasks;
         }
 
-        public async Task<IList<Entities.Tasks.Task>> LoadAll(Guid? userID) => await _taskRepository.LoadInfo(userID);
+        public async Task<IList<Entities.Tasks.Task>> LoadAll(Guid? userID, TaskFilterActionRequest? filter)
+        {
+            var tasks = await _taskRepository.LoadInfo(userID, filter);
+            return tasks;
+        }
 
-        public async Task<IList<Entities.Tasks.Task>> LoadAllBase(Guid? userID) => await _taskRepository.LoadInfoBase(userID);
+        public async Task<IList<Entities.Tasks.Task>> LoadAllBase(Guid? userID, TaskFilterActionRequest? filter)
+        {
+            var tasks = await _taskRepository.LoadInfoBase(userID, filter);
+            return tasks;
+        }
 
         public async Task<Entities.Tasks.Task> Create(Entities.Tasks.Task task)
         {

@@ -110,6 +110,7 @@ void SetupMappings()
         mc.AddProfile(new TaskModuleParameterNoValidationMetadataMappingProfile());
 
         mc.AddProfile(new TaskDuplicateActionRequestMappingProfile());
+        mc.AddProfile(new TaskFilterActionRequestMappingProfile());
     });
 
     IMapper mapper = mappingConfig.CreateMapper();

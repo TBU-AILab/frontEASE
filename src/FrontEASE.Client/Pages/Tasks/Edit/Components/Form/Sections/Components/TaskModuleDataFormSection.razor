@@ -27,7 +27,7 @@
                             SelectedValueChanged="@((value) => SelectionChanged(value))"
                             ElementId="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName)))">
                         <ChildContent>
-                            <SelectItem Value="string.Empty" TextColor="TextColor.Black50">
+                            <SelectItem Value="string.Empty">
                                 @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
                             </SelectItem>
                             @foreach (var moduleType in ModuleOptions)
