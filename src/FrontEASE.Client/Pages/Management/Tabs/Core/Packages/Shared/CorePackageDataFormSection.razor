@@ -1,0 +1,52 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+@inject IUIManager uiManager
+
+<Fields>
+    <Validation>
+        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(GlobalPreferenceCorePackageDto.Name)))" RequiredIndicator>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Name), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <TextEdit ElementId="@(GetElementIdByOperation(nameof(GlobalPreferenceCorePackageDto.Name)))"
+                      Role="TextRole.Text"
+                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                      @bind-Text="@PackageModel.Name">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </TextEdit>
+        </Field>
+    </Validation>
+
+    <Validation>
+        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(GlobalPreferenceCorePackageDto.Version)))" RequiredIndicator>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Version), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <TextEdit ElementId="@(GetElementIdByOperation(nameof(GlobalPreferenceCorePackageDto.Version)))"
+                      Role="TextRole.Text"
+                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Version), PropertyDisplayResourceType.PLACEHOLDER)))"
+                      @bind-Text="@PackageModel.Version">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </TextEdit>
+        </Field>
+    </Validation>
+
+</Fields>
+
+@code {
+
+    [CascadingParameter]
+    public GlobalPreferenceCorePackageDto PackageModel { get; set; } = new();
+
+    [Parameter]
+    public DataOperation Operation { get; set; }
+
+    [Parameter]
+    public bool FullWidthFields { get; set; }
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<GlobalPreferenceCorePackageDto>(elementBase, Operation, null);
+}

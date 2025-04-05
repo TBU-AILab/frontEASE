@@ -2,7 +2,7 @@
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values
 {
-    public class TaskModuleParameterValueCoreDto : ITaskCoreDto
+    public class TaskModuleParameterValueCoreDto : ICoreDto
     {
         #region Data
 

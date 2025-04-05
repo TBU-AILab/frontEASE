@@ -2,7 +2,7 @@
 using FrontEASE.Domain.DataQueries.Tasks;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Repositories.Tasks;
-using FrontEASE.Domain.Services.Tasks.Core;
+using FrontEASE.Domain.Services.Core;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using Hangfire;
 using Hangfire.Console;
@@ -14,19 +14,19 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
     public class UpdateTaskStatusesJob : IJob
     {
         private readonly IMapper _mapper;
-        private readonly ITaskCoreService _taskCoreService;
+        private readonly IEASECoreService _coreService;
         private readonly ITaskRepository _taskRepository;
 
         private readonly string _jobName;
 
         public UpdateTaskStatusesJob(
             IMapper mapper,
-            ITaskCoreService taskCoreService,
+            IEASECoreService coreService,
             ITaskRepository taskRepository,
             AppSettings appSettings)
         {
             _mapper = mapper;
-            _taskCoreService = taskCoreService;
+            _coreService = coreService;
             _taskRepository = taskRepository;
 
             _jobName = appSettings.HangfireSettings!.Jobs!.UpdateTaskStatusesJob!.CronName!;
@@ -46,7 +46,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 
                 if (tasks.Count > 0)
                 {
-                    var stateResults = await _taskCoreService.GetTaskStates();
+                    var stateResults = await _coreService.GetTaskStates();
                     foreach (var taskStateInfo in stateResults)
                     {
                         var matchingTask = tasks.SingleOrDefault(x => x.ID == taskStateInfo.ID);

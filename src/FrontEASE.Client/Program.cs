@@ -7,6 +7,7 @@ using Blazorise.Icons.FontAwesome;
 using FrontEASE.Client;
 using FrontEASE.Client.Infrastructure.Mappings.Companies;
 using FrontEASE.Client.Infrastructure.Mappings.Management;
+using FrontEASE.Client.Infrastructure.Mappings.Management.Core;
 using FrontEASE.Client.Infrastructure.Mappings.Management.General;
 using FrontEASE.Client.Infrastructure.Mappings.Management.Tokens;
 using FrontEASE.Client.Infrastructure.Mappings.Management.Tokens.Connectors;
@@ -93,6 +94,8 @@ void SetupMappings()
         mc.AddProfile(new UserPreferenceTokenOptionMappingProfile());
         mc.AddProfile(new UserPreferenceGeneralOptionsMappingProfile());
         mc.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
+        mc.AddProfile(new GlobalPreferencesMappingProfile());
+        mc.AddProfile(new CorePackageMappingProfile());
 
         mc.AddProfile(new TaskMappingProfile());
         mc.AddProfile(new TaskStatusMappingProfile());

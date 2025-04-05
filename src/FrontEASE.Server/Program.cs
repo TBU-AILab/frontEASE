@@ -10,6 +10,7 @@ using FrontEASE.Application.Infrastructure.Jobs;
 using FrontEASE.Application.Infrastructure.Jobs.Tasks;
 using FrontEASE.Application.Infrastructure.Mappings.Companies;
 using FrontEASE.Application.Infrastructure.Mappings.Management;
+using FrontEASE.Application.Infrastructure.Mappings.Management.Core;
 using FrontEASE.Application.Infrastructure.Mappings.Management.General;
 using FrontEASE.Application.Infrastructure.Mappings.Management.Tokens;
 using FrontEASE.Application.Infrastructure.Mappings.Management.Tokens.Connectors;
@@ -36,6 +37,7 @@ using FrontEASE.Domain.Repositories.Shared.Resources;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Domain.Repositories.Users;
 using FrontEASE.Domain.Services.Companies;
+using FrontEASE.Domain.Services.Core;
 using FrontEASE.Domain.Services.Management;
 using FrontEASE.Domain.Services.Shared.Files;
 using FrontEASE.Domain.Services.Shared.Images;
@@ -44,7 +46,6 @@ using FrontEASE.Domain.Services.Shared.Logging.Sentry;
 using FrontEASE.Domain.Services.Shared.Resources;
 using FrontEASE.Domain.Services.Shared.Typelists;
 using FrontEASE.Domain.Services.Tasks;
-using FrontEASE.Domain.Services.Tasks.Core;
 using FrontEASE.Domain.Services.Users;
 using FrontEASE.Infrastructure.Data;
 using FrontEASE.Infrastructure.HealthChecks;
@@ -353,7 +354,7 @@ void SetupSwaggerGen()
 
         var serverAssemblyDoc = $"{Assembly.GetAssembly(typeof(Program))!.GetName().Name}.xml";
         var sharedAssemblyDoc = $"{Assembly.GetAssembly(typeof(StatusResultDto))!.GetName().Name}.xml";
-        var dataContractsAssemblyDoc = $"{Assembly.GetAssembly(typeof(ITaskCoreDto))!.GetName().Name}.xml";
+        var dataContractsAssemblyDoc = $"{Assembly.GetAssembly(typeof(ICoreDto))!.GetName().Name}.xml";
         var docFiles = new List<string>() { serverAssemblyDoc, sharedAssemblyDoc, dataContractsAssemblyDoc };
 
         foreach (var file in docFiles)
@@ -393,7 +394,7 @@ void SetupSwaggerGen()
 
 void AddIntegrationAPIDtos(SwaggerGenOptions options)
 {
-    var taskCoreDtoTypes = typeof(ITaskCoreDto).Assembly.GetTypes().Where(t => typeof(ITaskCoreDto).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+    var taskCoreDtoTypes = typeof(ICoreDto).Assembly.GetTypes().Where(t => typeof(ICoreDto).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
     foreach (var taskCoreDtoType in taskCoreDtoTypes)
     {
         if (taskCoreDtoType.ContainsGenericParameters)
@@ -422,6 +423,8 @@ void SetupMappings()
         mc.AddProfile(new UserPreferencesTokenOptionMappingProfile());
         mc.AddProfile(new UserPreferencesGeneralOptionsMappingProfile());
         mc.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
+        mc.AddProfile(new GlobalPreferencesMappingProfile());
+        mc.AddProfile(new CorePackageMappingProfile());
 
         mc.AddProfile(new TaskInfoMappingProfile());
         mc.AddProfile(new TaskStatusMappingProfile());
@@ -486,7 +489,7 @@ void SetupHelperServices()
 
 void SetupHttpClients()
 {
-    builder!.Services.AddHttpClient<ITaskCoreService, TaskCoreService>();
+    builder!.Services.AddHttpClient<IEASECoreService, EASECoreService>();
 }
 
 void SetupJobServices()

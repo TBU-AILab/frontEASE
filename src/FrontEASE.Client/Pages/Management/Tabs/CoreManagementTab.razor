@@ -1,0 +1,12 @@
+﻿@inject IUIManager uiManager
+
+<CascadingValue Value="GlobalPreferences">
+    <Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small" Class="rounded-top-right-1">
+        <CorePackageAddForm />
+        <CorePackagesList />
+    </Container>
+</CascadingValue>
+
+@code {
+    public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
+}

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.RepeatedMessage
 {
-    public class TaskConfigRepeatedMessageCoreDto : ITaskCoreDto
+    public class TaskConfigRepeatedMessageCoreDto : ICoreDto
     {
         public TaskConfigRepeatedMessageCoreDto()
         {

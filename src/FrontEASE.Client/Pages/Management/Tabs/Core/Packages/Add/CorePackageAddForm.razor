@@ -1,0 +1,84 @@
+﻿@inject IManagementApiService managementApiService
+@inject IManagementManipulationService managementManipulationService
+@inject IUIService uiService
+@inject IUIManager uiManager
+@inject IResourceHandler resourceHandler
+@inject IMapper mapper
+@inject IShortcutKeyDictionary shortcutDictionary
+@inject Blazored.Toast.Services.IToastService toastService
+
+<Row Background="@uiManager.Theme.BackgroundOptions.Primary">
+    <Column ColumnSize="ColumnSize.Is12" Margin="Margin.Is2.FromBottom" Padding="Padding.Is0">
+        <Icon Name="@(isFormCollapsed ? IconName.PlusCircle : IconName.MinusCircle)" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@ChangeCollapseState" Class="float-right main-action-icon main-action-icon-primary" />
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12" Display="@(isFormCollapsed ? Display.None : Display.Block)" Margin="Margin.Is2.FromTop.Is4.FromBottom">
+        <Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="HandleKeyDown">
+            <Validations @ref="Validations" Mode="ValidationMode.Manual" Model="PackageModel">
+
+                <CascadingValue Value="PackageModel">
+                    <CorePackageDataFormSection Operation="DataOperation.INSERT" FullWidthFields="false" />
+                </CascadingValue>
+
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                        <Button Color="Color.Success" Clicked="@InstallPackage" Class="btn button btn-sized full-width" Disabled="@installInProgress" TextWeight="TextWeight.Bold">
+                            @if (installInProgress)
+                            {
+                                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Install}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                            }
+                            else
+                            {
+                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Install}"))
+                            }
+                        </Button>
+                    </Field>
+                </Fields>
+
+            </Validations>
+        </Form>
+    </Column>
+</Row>
+
+@code {
+
+    [CascadingParameter]
+    public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
+
+    private GlobalPreferenceCorePackageDto PackageModel = new();
+    private Validations Validations = new();
+
+    private bool isFormCollapsed = true;
+    private bool installInProgress = false;
+
+    public async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (shortcutDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+                await InstallPackage();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public async Task InstallPackage()
+    {
+        installInProgress = true;
+
+        if (await Validations.ValidateAll())
+        {
+            if (true)
+            {
+                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Install}")}: {PackageModel.Name} - v.{PackageModel.Version})";
+                toastService.ShowSuccess(message);
+            }
+        }
+
+        installInProgress = false;
+        uiService.CallRequestRefresh();
+    }
+
+    private void ChangeCollapseState() => isFormCollapsed = !isFormCollapsed;
+}

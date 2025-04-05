@@ -1,6 +1,7 @@
 ﻿using FrontEASE.Domain.Entities.Shared.Resources;
 using FrontEASE.Shared.Data.DTOs.Companies;
 using FrontEASE.Shared.Data.DTOs.Management;
+using FrontEASE.Shared.Data.DTOs.Management.Core.Packages;
 using FrontEASE.Shared.Data.DTOs.Management.General;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens.Connectors;
@@ -33,6 +34,7 @@ using FrontEASE.Shared.Data.Enums.Users.Preferences.GeneralOptions;
 using FrontEASE.Shared.Data.Enums.Users.Visualisation;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Generic;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Specific;
+using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Management;
 using FrontEASE.Shared.Infrastructure.Utils.Extensions;
 using System.Net;
 
@@ -141,6 +143,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetCollectionResourceValue<TaskMessageDto>(), Value = "Messages" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetCollectionResourceValue<TaskDto>(), Value = "Tasks" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetCollectionResourceValue<UserPreferenceTokenOptionDto>(), Value = "Connection Tokens" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetCollectionResourceValue<GlobalPreferenceCorePackageDto>(), Value = "Core Packages" },
             ];
         }
 
@@ -230,6 +233,8 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}", Value="Clone" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Reset}", Value="Reset" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Filter}", Value="Filter" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Install}", Value="Install" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Uninstall}", Value="Uninstall" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.BackToHomepage}", Value="Return to Home page" },
 
                 /* Data Manipulations */
@@ -253,6 +258,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* UserPreferencesManagementType */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserPreferencesManagementType.TOKENS.GetEnumResourceValue(), Value = "Tokens" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserPreferencesManagementType.GENERAL.GetEnumResourceValue(), Value = "General" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserPreferencesManagementType.CORE.GetEnumResourceValue(), Value = "Core" },
 
                 /* UserRole */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserRole.USER.GetEnumResourceValue(), Value = "User" },
@@ -392,6 +398,15 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* UserPreferenceTokenOptionConnectorTypeDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionConnectorTypeDto>(nameof(UserPreferenceTokenOptionConnectorTypeDto.ConnectorType), PropertyDisplayResourceType.FIELD), Value = "Connector type" },
 
+                /* GlobalPreferenceCorePackageDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Name), PropertyDisplayResourceType.FIELD), Value = "Name" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Version), PropertyDisplayResourceType.FIELD), Value = "Version" },
+
+                /* GlobalPreferenceCoreOptionsDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<GlobalPreferencesDto>(nameof(GlobalPreferencesDto.CorePackages), PropertyDisplayResourceType.FIELD), Value = "Core packages" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetResourceFieldValue<GlobalPreferencesDto>(nameof(GlobalPreferencesDto.CorePackages), PropertyDisplayResourceType.FIELD)}.{ManagementMetadataConstants.System}", Value = "System packages" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetResourceFieldValue<GlobalPreferencesDto>(nameof(GlobalPreferencesDto.CorePackages), PropertyDisplayResourceType.FIELD)}.{ManagementMetadataConstants.Addons}", Value = "Additional packages" },
+
                 /* TaskSolutionDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Feedback), PropertyDisplayResourceType.FIELD), Value = "Feedback" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Fitness), PropertyDisplayResourceType.FIELD), Value = "Fitness" },
@@ -474,6 +489,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Description), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is a company-issued token for the work-related OpenAI API usage." },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "Lab - OpenAI token." },
                 
+                /* GlobalPreferenceCorePackageDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "pydantic_core" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Version), PropertyDisplayResourceType.PLACEHOLDER), Value = "2.33.0" },
+
                 /* TaskKeyValueItemDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskKeyValueItemDto>(nameof(TaskKeyValueItemDto.Key), PropertyDisplayResourceType.PLACEHOLDER), Value = "Key" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskKeyValueItemDto>(nameof(TaskKeyValueItemDto.Value), PropertyDisplayResourceType.PLACEHOLDER), Value = "Value" },

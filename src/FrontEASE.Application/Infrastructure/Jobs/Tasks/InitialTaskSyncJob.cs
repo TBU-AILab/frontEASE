@@ -8,7 +8,6 @@ using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Domain.Repositories.Users;
-using FrontEASE.Domain.Services.Tasks.Core;
 using FrontEASE.Application.Infrastructure.Jobs;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using FrontEASE.Domain.DataQueries.Tasks;
@@ -17,11 +16,11 @@ using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Domain.Repositories.Users;
-using FrontEASE.Domain.Services.Tasks.Core;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.Server;
 using Hangfire.States;
+using FrontEASE.Domain.Services.Core;
 
 namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 {
@@ -30,12 +29,12 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
         private readonly AppSettings _appSettings;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
-        private readonly ITaskCoreService _taskCoreService;
+        private readonly IEASECoreService _coreService;
         private readonly ITaskRepository _taskRepository;
 
         public InitialTaskSyncJob(
             IMapper mapper,
-            ITaskCoreService taskCoreService,
+            IEASECoreService coreService,
             ITaskRepository taskRepository,
             IUserRepository userRepository,
             AppSettings appSettings)
@@ -43,7 +42,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             _appSettings = appSettings;
             _mapper = mapper;
             _userRepository = userRepository;
-            _taskCoreService = taskCoreService;
+            _coreService = coreService;
             _taskRepository = taskRepository;
         }
 
@@ -117,8 +116,8 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
         {
             try
             {
-                var coreTaskData = (await _taskCoreService.GetTasksFullData()).Where(x => x.TaskInfo?.ID is not null).ToList();
-                var coreTaskOptions = await _taskCoreService.GetModuleTypes();
+                var coreTaskData = (await _coreService.GetTasksFullData()).Where(x => x.TaskInfo?.ID is not null).ToList();
+                var coreTaskOptions = await _coreService.GetModuleTypes();
                 var coreTaskIDs = coreTaskData.Select(x => x.TaskInfo!.ID!.Value).Distinct().ToList();
                 var databaseTaskCount = await _taskRepository.LoadTaskCount();
 

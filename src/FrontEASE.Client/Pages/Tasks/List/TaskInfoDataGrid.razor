@@ -4,6 +4,59 @@
 @inject AppSettings appSettings
 
 
+@if (SelectedTasks.Count > 1 && isBulkActionEnabled)
+{
+    <Column ColumnSize="ColumnSize.IsFull">
+        @if (IsBulkRunEnabled)
+        {
+            <Button Color="Color.Success"
+                    Class="btn btn-sized button"
+                    Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.RUN))">
+                <Icon Name="IconName.Play" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                <Text>
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Run}"))
+                </Text>
+            </Button>
+        }
+
+        @if (IsBulkPauseEnabled)
+        {
+            <Button Color="Color.Warning"
+                    Class="btn btn-sized button"
+                    Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.PAUSED))">
+                <Icon Name="IconName.Pause" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                <Text>
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Pause}"))
+                </Text>
+            </Button>
+        }
+
+        @if (IsBulkStopEnabled)
+        {
+            <Button Color="Color.Danger"
+                    Class="btn btn-sized button"
+                    Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.STOP))">
+                <Icon Name="IconName.Stop" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                <Text>
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Stop}"))
+                </Text>
+            </Button>
+        }
+
+        @if (isBulkDeleteEnabled)
+        {
+            <Button Color="Color.Danger"
+                    Class="btn btn-sized button"
+                    Clicked="@(() => ShowDeleteModal(SelectedTasks))">
+                <Icon Name="IconName.Delete" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                <Text>
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))
+                </Text>
+            </Button>
+        }
+    </Column>
+}
+
 <Column ColumnSize="ColumnSize.IsFull" ElementId="tasksGrid">
     <DataGrid TItem="TaskInfoDto"
               Data="@Tasks"
@@ -168,59 +221,6 @@
             </DataGridColumn>
 
         </DataGridColumns>
-
-        <ButtonRowTemplate>
-            @if (SelectedTasks.Count > 1 && isBulkActionEnabled)
-            {
-                @if (IsBulkRunEnabled)
-                {
-                    <Button Color="Color.Success"
-                            Class="btn btn-sized button"
-                            Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.RUN))">
-                        <Icon Name="IconName.Play" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-                        <Text>
-                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Run}"))
-                        </Text>
-                    </Button>
-                }
-
-                @if (IsBulkPauseEnabled)
-                {
-                    <Button Color="Color.Warning"
-                            Class="btn btn-sized button"
-                            Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.PAUSED))">
-                        <Icon Name="IconName.Pause" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-                        <Text>
-                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Pause}"))
-                        </Text>
-                    </Button>
-                }
-
-                @if (IsBulkStopEnabled)
-                {
-                    <Button Color="Color.Danger"
-                            Class="btn btn-sized button"
-                            Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.STOP))">
-                        <Icon Name="IconName.Stop" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-                        <Text>
-                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Stop}"))
-                        </Text>
-                    </Button>
-                }
-
-                @if (isBulkDeleteEnabled)
-                {
-                    <Button Color="Color.Danger"
-                            Class="btn btn-sized button"
-                            Clicked="@(() => ShowDeleteModal(SelectedTasks))">
-                        <Icon Name="IconName.Delete" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-                        <Text>
-                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))
-                        </Text>
-                    </Button>
-                }
-            }
-        </ButtonRowTemplate>
     </DataGrid>
 </Column>
 

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FrontEASE.DataContracts.Models.Core.Errors;
+using FrontEASE.DataContracts.Models.Core.Packages;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using FrontEASE.DataContracts.Models.Core.Tasks.Info;
@@ -15,9 +16,9 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 
-namespace FrontEASE.Domain.Services.Tasks.Core
+namespace FrontEASE.Domain.Services.Core
 {
-    public class TaskCoreService : ITaskCoreService
+    public class EASECoreService : IEASECoreService
     {
         private readonly IMapper _mapper;
 
@@ -26,7 +27,7 @@ namespace FrontEASE.Domain.Services.Tasks.Core
 
         private readonly JsonSerializerOptions _serializerOptions;
 
-        public TaskCoreService(
+        public EASECoreService(
             AppSettings appSettings,
             HttpClient httpClient,
             IMapper mapper,
@@ -313,6 +314,8 @@ namespace FrontEASE.Domain.Services.Tasks.Core
             }
         }
 
+        #region Typelists
+
         public async Task<IList<TaskModuleCoreDto>> GetModuleTypes()
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/options");
@@ -328,6 +331,24 @@ namespace FrontEASE.Domain.Services.Tasks.Core
                 throw new ApplicationException($"{nameof(GetModuleTypes)} - Call FAILED - Exception: {failResult}");
             }
         }
+
+        public async Task<IList<CorePackageCoreDto>> GetPackageTypes()
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/pm/all");
+            var response = await _httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var packages = await response.Content.ReadFromJsonAsync<IList<CorePackageCoreDto>>();
+                return packages ?? [];
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(GetPackageTypes)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+        #endregion
 
         #region Helpers
 
