@@ -23,7 +23,6 @@
         public const string Use = "Use";
         public const string Reset = "Reset";
         public const string Download = "Download";
-        public const string Install = "Install";
         public const string Add = "Add";
     }
 }
