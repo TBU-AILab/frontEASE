@@ -4,6 +4,7 @@ using FrontEASE.DataContracts.Models.Core.Packages;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using FrontEASE.DataContracts.Models.Core.Tasks.Info;
+using FrontEASE.Domain.Entities.Management.Core.Packages;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Repositories.Shared.Resources;
@@ -108,7 +109,6 @@ namespace FrontEASE.Domain.Services.Core
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/{task.ID}");
             var mappedInputTask = _mapper.Map<TaskConfigFullCoreDto>(task);
-            var jsonString = JsonSerializer.Serialize(mappedInputTask);
 
             var response = await _httpClient.PutAsJsonAsync(url, mappedInputTask);
             if (response.IsSuccessStatusCode)
@@ -332,7 +332,11 @@ namespace FrontEASE.Domain.Services.Core
             }
         }
 
-        public async Task<IList<CorePackageCoreDto>> GetPackageTypes()
+        #endregion
+
+        #region Management
+
+        public async Task<IList<CorePackageCoreDto>> GetPackages()
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/pm/all");
             var response = await _httpClient.GetAsync(url);
@@ -344,9 +348,50 @@ namespace FrontEASE.Domain.Services.Core
             else
             {
                 var failResult = await response.Content.ReadAsStringAsync();
-                throw new ApplicationException($"{nameof(GetPackageTypes)} - Call FAILED - Exception: {failResult}");
+                throw new ApplicationException($"{nameof(GetPackages)} - Call FAILED - Exception: {failResult}");
             }
         }
+
+        public async Task<bool> DeletePackages(IList<GlobalPreferenceCorePackage> packages)
+        {
+            var packagesCore = _mapper.Map<IList<CorePackageCoreDto>>(packages);
+            var jsonString = JsonSerializer.Serialize(packagesCore);
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/pm/delete");
+
+            var request = new HttpRequestMessage(HttpMethod.Delete, url)
+            {
+                Content = new StringContent(jsonString, Encoding.UTF8, "application/json")
+            };
+
+            var response = await _httpClient.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(DeletePackages)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+        public async Task<bool> AddPackages(IList<GlobalPreferenceCorePackage> packages)
+        {
+            var packagesCore = _mapper.Map<IList<CorePackageCoreDto>>(packages);
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/pm/add");
+
+            var response = await _httpClient.PostAsJsonAsync(url, packagesCore);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(AddPackages)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
 
         #endregion
 

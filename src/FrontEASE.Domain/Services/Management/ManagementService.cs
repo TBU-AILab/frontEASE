@@ -25,7 +25,7 @@ namespace FrontEASE.Domain.Services.Management
 
         public async Task<GlobalPreferences> LoadGlobal()
         {
-            var packages = await _coreService.GetPackageTypes();
+            var packages = await _coreService.GetPackages();
             var globalPrefs = new GlobalPreferences()
             {
                 CorePackages = _mapper.Map<IList<GlobalPreferenceCorePackage>>(packages)
@@ -52,7 +52,24 @@ namespace FrontEASE.Domain.Services.Management
         public async Task<GlobalPreferences> UpdateGlobal(GlobalPreferences preferences)
         {
             var globalPrefs = await LoadGlobal();
-            return globalPrefs!;
+            await HandleCorePackages(globalPrefs.CorePackages, preferences.CorePackages);
+
+            var updatedPrefs = await LoadGlobal();
+            return updatedPrefs!;
+        }
+
+        private async Task HandleCorePackages(IList<GlobalPreferenceCorePackage> origPackageConfig, IList<GlobalPreferenceCorePackage> newPackageConfig)
+        {
+            var packagesToDelete = origPackageConfig
+                .Where(orig => !orig.System && !newPackageConfig.Any(newPkg => newPkg.Name == orig.Name && newPkg.Version == orig.Version))
+                .ToList();
+
+            var packagesToInstall = newPackageConfig
+                .Where(newPkg => !newPkg.System && !origPackageConfig.Any(orig => orig.Name == newPkg.Name && orig.Version == newPkg.Version))
+                .ToList();
+
+            if (packagesToDelete.Count > 0) { await _coreService.DeletePackages(packagesToDelete); }
+            if (packagesToInstall.Count > 0) { await _coreService.AddPackages(packagesToInstall); }
         }
     }
 }

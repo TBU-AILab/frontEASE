@@ -1,0 +1,25 @@
+﻿@inject IUIManager uiManager
+
+<Row Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")" Class="gx-0 margin-background-offset-top-1">
+    <CardBody>
+        <Container Fluid Shadow="Shadow.Small">
+            <Row>
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text TextWeight="TextWeight.Bold">
+                        @Package.Name
+                    </Text>
+                    <Span Class="font-italic">
+                        <Text Italic="true">
+                            @($" ({Package.Version})")
+                        </Text>
+                    </Span>
+                </Column>
+            </Row>
+        </Container>
+    </CardBody>
+</Row>
+
+@code {
+    [CascadingParameter]
+    public GlobalPreferenceCorePackageDto Package { get; set; } = new();
+}

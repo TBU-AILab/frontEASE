@@ -22,14 +22,14 @@
 
                 <Fields>
                     <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
-                        <Button Color="Color.Success" Clicked="@InstallPackage" Class="btn button btn-sized full-width" Disabled="@installInProgress" TextWeight="TextWeight.Bold">
-                            @if (installInProgress)
+                        <Button Color="Color.Success" Clicked="@AddPackage" Class="btn button btn-sized full-width" Disabled="@addInProgress" TextWeight="TextWeight.Bold">
+                            @if (addInProgress)
                             {
-                                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Install}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
                             }
                             else
                             {
-                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Install}"))
+                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))
                             }
                         </Button>
                     </Field>
@@ -49,34 +49,40 @@
     private Validations Validations = new();
 
     private bool isFormCollapsed = true;
-    private bool installInProgress = false;
+    private bool addInProgress = false;
 
     public async Task HandleKeyDown(KeyboardEventArgs e)
     {
         switch (shortcutDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
-                await InstallPackage();
+                await AddPackage();
                 break;
             default:
                 break;
         }
     }
 
-    public async Task InstallPackage()
+    public async Task AddPackage()
     {
-        installInProgress = true;
+        addInProgress = true;
 
         if (await Validations.ValidateAll())
         {
-            if (true)
+            if (GlobalPreferences.CorePackages.Any(x => string.Equals(x.Name, PackageModel.Name, StringComparison.InvariantCultureIgnoreCase)))
             {
-                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Install}")}: {PackageModel.Name} - v.{PackageModel.Version})";
-                toastService.ShowSuccess(message);
+                var message = string.Format(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.CorePackageAlreadyPresent}"), PackageModel.Name);
+                toastService.ShowWarning(message);
+            }
+            else
+            {
+                var insertedPackage = mapper.Map<GlobalPreferenceCorePackageDto>(PackageModel);
+                GlobalPreferences.CorePackages.Insert(0, insertedPackage);
+                managementManipulationService.ReinitializePackageModel(PackageModel);
             }
         }
 
-        installInProgress = false;
+        addInProgress = false;
         uiService.CallRequestRefresh();
     }
 

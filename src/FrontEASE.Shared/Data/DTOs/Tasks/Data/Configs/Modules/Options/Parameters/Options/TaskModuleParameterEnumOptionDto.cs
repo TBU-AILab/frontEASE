@@ -1,6 +1,6 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Metadata;
 using FrontEASE.Shared.Infrastructure.Attributes;
-using FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific;
+using FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific.Tasks;
 
 namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options
 {

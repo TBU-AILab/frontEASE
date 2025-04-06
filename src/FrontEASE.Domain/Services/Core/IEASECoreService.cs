@@ -1,6 +1,7 @@
 ﻿using FrontEASE.DataContracts.Models.Core.Packages;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using FrontEASE.DataContracts.Models.Core.Tasks.Info;
+using FrontEASE.Domain.Entities.Management.Core.Packages;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,6 +25,9 @@ namespace FrontEASE.Domain.Services.Core
         Task<IList<TaskDynamicInfoCoreDto>> GetTaskRunData(DateTime? dateFrom);
 
         Task<IList<TaskModuleCoreDto>> GetModuleTypes();
-        Task<IList<CorePackageCoreDto>> GetPackageTypes();
+
+        Task<IList<CorePackageCoreDto>> GetPackages();
+        Task<bool> DeletePackages(IList<GlobalPreferenceCorePackage> packages);
+        Task<bool> AddPackages(IList<GlobalPreferenceCorePackage> packages);
     }
 }

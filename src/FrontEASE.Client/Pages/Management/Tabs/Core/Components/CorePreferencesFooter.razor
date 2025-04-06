@@ -1,0 +1,46 @@
+﻿@inject IUIManager uiManager
+@inject IUIService uiService
+@inject IManagementApiService managementApiService
+@inject IMapper mapper
+@inject IResourceHandler resourceHandler
+@inject Blazored.Toast.Services.IToastService toastService
+
+<Fields>
+    <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+        <Button Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Info}; color: {uiManager.Theme.TextColorOptions.Info};")" Clicked="@EditGlobalPreferences" Class="btn button btn-sized full-width" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
+            @if (updateInProgress)
+            {
+                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+            }
+            else
+            {
+                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
+            }
+        </Button>
+    </Field>
+</Fields>
+
+@code {
+    [CascadingParameter]
+    public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
+
+    private bool updateInProgress;
+
+    public async Task EditGlobalPreferences()
+    {
+        updateInProgress = true;
+
+        var editedPreferences = await managementApiService.UpdateGlobalPreferences(GlobalPreferences);
+        if (editedPreferences is not null)
+        {
+            mapper.Map(editedPreferences, GlobalPreferences);
+
+            var editActionName = resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<GlobalPreferencesDto>(nameof(GlobalPreferencesDto.CorePackages), PropertyDisplayResourceType.FIELD));
+            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")}: {editActionName}";
+            toastService.ShowSuccess(message);
+        }
+
+        updateInProgress = false;
+        uiService.CallRequestRefresh();
+    }
+}

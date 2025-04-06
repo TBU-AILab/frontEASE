@@ -41,8 +41,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\Management\Tabs\Core\Packages\Delete\" />
-  </ItemGroup>
-
 </Project>

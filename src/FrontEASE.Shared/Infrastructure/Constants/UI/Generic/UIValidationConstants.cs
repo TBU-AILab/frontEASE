@@ -20,5 +20,7 @@
         public const string ParameterOneOfRequired = "ParameterOneOfRequired";
         public const string ParameterNumericRange = "ParameterNumericRange";
         public const string ParameterOneOfEnumValues = "ParameterOneOfEnumValues";
+
+        public const string CorePackageAlreadyPresent = "CorePackageAlreadyPresent";
     }
 }
