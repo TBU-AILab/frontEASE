@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FrontEASE.Shared.Data.DTOs.Management;
+using FrontEASE.Shared.Data.DTOs.Management.Core.Packages;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens.Connectors;
 
@@ -39,6 +40,12 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Management
         {
             var cleanModel = new UserPreferenceTokenOptionDto();
             _mapper.Map(cleanModel, token);
+        }
+
+        public void ReinitializePackageModel(GlobalPreferenceCorePackageDto package)
+        {
+            var cleanModel = new GlobalPreferenceCorePackageDto();
+            _mapper.Map(cleanModel, package);
         }
     }
 }

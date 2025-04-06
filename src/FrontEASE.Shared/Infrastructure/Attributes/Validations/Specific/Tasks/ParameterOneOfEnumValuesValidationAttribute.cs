@@ -5,7 +5,7 @@ using FrontEASE.Shared.Infrastructure.Constants.Validations;
 using FrontEASE.Shared.Services.Resources;
 using System.ComponentModel.DataAnnotations;
 
-namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific
+namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific.Tasks
 {
     public class ParameterOneOfEnumValuesValidationAttribute : ValidationAttribute
     {

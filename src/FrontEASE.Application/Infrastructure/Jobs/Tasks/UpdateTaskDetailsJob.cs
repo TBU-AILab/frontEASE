@@ -4,7 +4,7 @@ using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Repositories.Tasks;
-using FrontEASE.Domain.Services.Tasks.Core;
+using FrontEASE.Domain.Services.Core;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.Server;
@@ -15,19 +15,19 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
     public class UpdateTaskDetailsJob : IJob
     {
         private readonly IMapper _mapper;
-        private readonly ITaskCoreService _taskCoreService;
+        private readonly IEASECoreService _coreService;
         private readonly ITaskRepository _taskRepository;
 
         private readonly string _jobName;
 
         public UpdateTaskDetailsJob(
             IMapper mapper,
-            ITaskCoreService taskCoreService,
+            IEASECoreService coreService,
             ITaskRepository taskRepository,
             AppSettings appSettings)
         {
             _mapper = mapper;
-            _taskCoreService = taskCoreService;
+            _coreService = coreService;
             _taskRepository = taskRepository;
 
             _jobName = appSettings.HangfireSettings!.Jobs!.UpdateTaskDetailsJob!.CronName!;
@@ -41,7 +41,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 
             try
             {
-                var newTaskData = await _taskCoreService.GetTaskRunData(lastExecution);
+                var newTaskData = await _coreService.GetTaskRunData(lastExecution);
                 if (newTaskData.Count > 0)
                 {
                     context.WriteLine($"Checking messages, runs, solutions for: {newTaskData.Count} items.");

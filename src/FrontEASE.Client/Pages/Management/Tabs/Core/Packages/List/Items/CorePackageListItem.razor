@@ -1,0 +1,18 @@
+﻿@inject IMapper mapper
+@inject IUIManager uiManager
+
+<Card Margin="Margin.Is3.FromBottom" Border="Border.Is2.Rounded" Overflow="Overflow.Hidden" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")">
+    <Row Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")" Class="gx-0 margin-background-offset-top-1">
+        @if (!Package.System)
+        {
+            <CorePackageListItemHeader />
+        }
+        <CorePackageListItemBody />
+    </Row>
+</Card>
+
+
+@code {
+    [CascadingParameter]
+    public GlobalPreferenceCorePackageDto Package { get; set; } = new();
+}

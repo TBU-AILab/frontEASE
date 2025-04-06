@@ -2,7 +2,7 @@
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules
 {
-    public class TaskModuleInputCoreDto : TaskModuleBaseCoreDto, ITaskCoreDto
+    public class TaskModuleInputCoreDto : TaskModuleBaseCoreDto, ICoreDto
     {
         public TaskModuleInputCoreDto()
         {

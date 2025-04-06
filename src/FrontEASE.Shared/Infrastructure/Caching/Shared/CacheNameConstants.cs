@@ -6,5 +6,6 @@
         public const string PreferencesDictionaryKey = "User.Preferences";
 
         public const string TypelistModuleTypes = "Typelists.ModuleTypes";
+        public const string TypelistCorePackages = "Typelists.CorePackages";
     }
 }

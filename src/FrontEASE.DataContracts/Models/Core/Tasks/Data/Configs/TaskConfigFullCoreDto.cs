@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs
 {
-    public class TaskConfigFullCoreDto : TaskConfigCoreBaseDto, ITaskCoreDto
+    public class TaskConfigFullCoreDto : TaskConfigCoreBaseDto, ICoreDto
     {
         [JsonPropertyName("modules")]
         public IList<TaskModuleInputCoreDto>? Modules { get; set; }

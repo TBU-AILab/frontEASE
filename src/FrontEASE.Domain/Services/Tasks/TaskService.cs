@@ -9,7 +9,7 @@ using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Repositories.Companies;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Domain.Repositories.Users;
-using FrontEASE.Domain.Services.Tasks.Core;
+using FrontEASE.Domain.Services.Core;
 using FrontEASE.Shared.Data.Enums.Tasks;
 
 namespace FrontEASE.Domain.Services.Tasks
@@ -19,20 +19,20 @@ namespace FrontEASE.Domain.Services.Tasks
         private readonly ITaskRepository _taskRepository;
         private readonly IUserRepository _userRepository;
         private readonly ICompanyRepository _companyRepository;
-        private readonly ITaskCoreService _taskCoreService;
+        private readonly IEASECoreService _coreService;
         private readonly IMapper _mapper;
 
         public TaskService(
             ITaskRepository taskRepository,
             IUserRepository userRepository,
             ICompanyRepository companyRepository,
-            ITaskCoreService taskCoreService,
+            IEASECoreService coreService,
             IMapper mapper)
         {
             _userRepository = userRepository;
             _taskRepository = taskRepository;
             _companyRepository = companyRepository;
-            _taskCoreService = taskCoreService;
+            _coreService = coreService;
             _mapper = mapper;
         }
 
@@ -82,14 +82,14 @@ namespace FrontEASE.Domain.Services.Tasks
             var author = await _userRepository.Load(task.AuthorID);
             task.Members.Add(author!);
 
-            await _taskCoreService.HandleTaskCreate(task);
+            await _coreService.HandleTaskCreate(task);
             var inserted = await _taskRepository.Insert(task);
             return inserted!;
         }
 
         public async Task<IList<TaskModule>> RefreshOptions(Entities.Tasks.Task task)
         {
-            await _taskCoreService.RefreshTaskOptions(task);
+            await _coreService.RefreshTaskOptions(task);
             return task.Config.AvailableModules;
         }
 
@@ -101,7 +101,7 @@ namespace FrontEASE.Domain.Services.Tasks
             _mapper.Map(task, updated);
             UpdateConnectedEntities(updated, task, connectedEntities);
             UpdateConnectedModules(updated);
-            await _taskCoreService.HandleTaskInit(updated);
+            await _coreService.HandleTaskInit(updated);
 
             updated = await _taskRepository.Update(updated);
             SortConnectedModules(updated);
@@ -120,7 +120,7 @@ namespace FrontEASE.Domain.Services.Tasks
             UpdateConnectedModules(newTask);
             CleanTaskRunData(newTask);
 
-            await _taskCoreService.HandleTaskDuplicate(newTask, task.ID);
+            await _coreService.HandleTaskDuplicate(newTask, task.ID);
             var duplicated = await _taskRepository.Insert(newTask);
 
             return duplicated;
@@ -133,7 +133,7 @@ namespace FrontEASE.Domain.Services.Tasks
                 await ChangeState(task, TaskState.BREAK);
             }
 
-            await _taskCoreService.HandleTaskDelete(task);
+            await _coreService.HandleTaskDelete(task);
             await _taskRepository.Delete(task);
         }
 
@@ -142,13 +142,13 @@ namespace FrontEASE.Domain.Services.Tasks
             switch (state)
             {
                 case TaskState.RUN:
-                    await _taskCoreService.ChangeTaskState(modifiedTask, TaskState.RUN);
+                    await _coreService.ChangeTaskState(modifiedTask, TaskState.RUN);
                     break;
                 case TaskState.STOP:
-                    await _taskCoreService.ChangeTaskState(modifiedTask, TaskState.STOP);
+                    await _coreService.ChangeTaskState(modifiedTask, TaskState.STOP);
                     break;
                 case TaskState.PAUSED:
-                    await _taskCoreService.ChangeTaskState(modifiedTask, TaskState.PAUSED);
+                    await _coreService.ChangeTaskState(modifiedTask, TaskState.PAUSED);
                     break;
             }
             await _taskRepository.Update(modifiedTask);

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Info
 {
-    public class TaskFullCoreDto : ITaskCoreDto
+    public class TaskFullCoreDto : ICoreDto
     {
         [JsonPropertyName("task_info")]
         public TaskInfoCoreDto? TaskInfo { get; set; }

@@ -35,6 +35,13 @@ namespace FrontEASE.Application.AppServices.Management
             return preferencesDto;
         }
 
+        public async Task<GlobalPreferencesDto> LoadGlobal()
+        {
+            var globalPreferences = await _managementService.LoadGlobal();
+            var preferencesDto = _mapper.Map<GlobalPreferencesDto>(globalPreferences);
+            return preferencesDto;
+        }
+
         public async Task<UserPreferencesDto> Update(UserPreferencesDto preferences)
         {
             var id = await GetUserID();
@@ -42,6 +49,15 @@ namespace FrontEASE.Application.AppServices.Management
 
             var updated = await _managementService.Update(id, preferencesEntity);
             var updatedDto = _mapper.Map<UserPreferencesDto>(updated);
+            return updatedDto;
+        }
+
+        public async Task<GlobalPreferencesDto> UpdateGlobal(GlobalPreferencesDto globalPreferences)
+        {
+            var preferencesEntity = _mapper.Map<GlobalPreferences>(globalPreferences);
+
+            var updated = await _managementService.UpdateGlobal(preferencesEntity);
+            var updatedDto = _mapper.Map<GlobalPreferencesDto>(updated);
             return updatedDto;
         }
 

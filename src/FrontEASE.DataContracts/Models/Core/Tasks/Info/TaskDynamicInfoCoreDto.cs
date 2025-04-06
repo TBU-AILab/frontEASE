@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Info
 {
-    public class TaskDynamicInfoCoreDto : ITaskCoreDto
+    public class TaskDynamicInfoCoreDto : ICoreDto
     {
         public TaskDynamicInfoCoreDto()
         {

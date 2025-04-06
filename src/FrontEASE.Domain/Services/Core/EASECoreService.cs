@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using FrontEASE.DataContracts.Models.Core.Errors;
+using FrontEASE.DataContracts.Models.Core.Packages;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using FrontEASE.DataContracts.Models.Core.Tasks.Info;
+using FrontEASE.Domain.Entities.Management.Core.Packages;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Repositories.Shared.Resources;
@@ -15,9 +17,9 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 
-namespace FrontEASE.Domain.Services.Tasks.Core
+namespace FrontEASE.Domain.Services.Core
 {
-    public class TaskCoreService : ITaskCoreService
+    public class EASECoreService : IEASECoreService
     {
         private readonly IMapper _mapper;
 
@@ -26,7 +28,7 @@ namespace FrontEASE.Domain.Services.Tasks.Core
 
         private readonly JsonSerializerOptions _serializerOptions;
 
-        public TaskCoreService(
+        public EASECoreService(
             AppSettings appSettings,
             HttpClient httpClient,
             IMapper mapper,
@@ -107,7 +109,6 @@ namespace FrontEASE.Domain.Services.Tasks.Core
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/{task.ID}");
             var mappedInputTask = _mapper.Map<TaskConfigFullCoreDto>(task);
-            var jsonString = JsonSerializer.Serialize(mappedInputTask);
 
             var response = await _httpClient.PutAsJsonAsync(url, mappedInputTask);
             if (response.IsSuccessStatusCode)
@@ -313,6 +314,8 @@ namespace FrontEASE.Domain.Services.Tasks.Core
             }
         }
 
+        #region Typelists
+
         public async Task<IList<TaskModuleCoreDto>> GetModuleTypes()
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/options");
@@ -328,6 +331,69 @@ namespace FrontEASE.Domain.Services.Tasks.Core
                 throw new ApplicationException($"{nameof(GetModuleTypes)} - Call FAILED - Exception: {failResult}");
             }
         }
+
+        #endregion
+
+        #region Management
+
+        public async Task<IList<CorePackageCoreDto>> GetPackages()
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/pm/all");
+            var response = await _httpClient.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                var packages = await response.Content.ReadFromJsonAsync<IList<CorePackageCoreDto>>();
+                return packages ?? [];
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(GetPackages)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+        public async Task<bool> DeletePackages(IList<GlobalPreferenceCorePackage> packages)
+        {
+            var packagesCore = _mapper.Map<IList<CorePackageCoreDto>>(packages);
+            var jsonString = JsonSerializer.Serialize(packagesCore);
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/pm/delete");
+
+            var request = new HttpRequestMessage(HttpMethod.Delete, url)
+            {
+                Content = new StringContent(jsonString, Encoding.UTF8, "application/json")
+            };
+
+            var response = await _httpClient.SendAsync(request);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(DeletePackages)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+        public async Task<bool> AddPackages(IList<GlobalPreferenceCorePackage> packages)
+        {
+            var packagesCore = _mapper.Map<IList<CorePackageCoreDto>>(packages);
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/pm/add");
+
+            var response = await _httpClient.PostAsJsonAsync(url, packagesCore);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(AddPackages)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+
+        #endregion
 
         #region Helpers
 

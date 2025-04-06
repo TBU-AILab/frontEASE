@@ -1,5 +1,5 @@
 ﻿namespace FrontEASE.DataContracts.Models.Core
 {
-    public interface ITaskCoreDto
+    public interface ICoreDto
     { }
 }
