@@ -4,13 +4,71 @@
 @inject AppSettings appSettings
 
 
-<Column ColumnSize="ColumnSize.IsFull" ElementId="tasksGrid">
+@if (SelectedTasks.Count > 1 && isBulkActionEnabled)
+{
+    <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Start">
+        @if (IsBulkRunEnabled)
+        {
+            <Button Color="Color.Success"
+                    Margin="Margin.Is2.FromEnd"
+                    Class="btn btn-sized button"
+                    Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.RUN))">
+                <Icon Name="IconName.Play" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                <Text>
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Run}"))
+                </Text>
+            </Button>
+        }
+
+        @if (IsBulkPauseEnabled)
+        {
+            <Button Color="Color.Warning"
+                    Margin="Margin.Is2.FromEnd"
+                    Class="btn btn-sized button"
+                    Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.PAUSED))">
+                <Icon Name="IconName.Pause" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                <Text>
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Pause}"))
+                </Text>
+            </Button>
+        }
+
+        @if (IsBulkStopEnabled)
+        {
+            <Button Color="Color.Danger"
+                    Margin="Margin.Is2.FromEnd"
+                    Class="btn btn-sized button"
+                    Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.STOP))">
+                <Icon Name="IconName.Stop" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                <Text>
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Stop}"))
+                </Text>
+            </Button>
+        }
+
+        @if (isBulkDeleteEnabled)
+        {
+            <Button Color="Color.Danger"
+                    Class="btn btn-sized button"
+                    Clicked="@(() => ShowDeleteModal(SelectedTasks))">
+                <Icon Name="IconName.Delete" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                <Text>
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))
+                </Text>
+            </Button>
+        }
+    </Column>
+}
+
+<Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is2.FromTop.Is5.FromBottom" ElementId="tasksGrid">
     <DataGrid TItem="TaskInfoDto"
               Data="@Tasks"
               @ref="@TaskInfoGrid"
               PageSizes="@TaskInfoGridPageSizeOptions"
               Filterable="true"
               FixedHeader="true"
+              FixedHeaderDataGridHeight="auto"
+              FixedHeaderDataGridMaxHeight="auto"
               ShowPager="true"
               ShowPageSizes="true"
               SelectedRowsChanged="OnSelectionChanged"
@@ -41,7 +99,7 @@
                                 </Text>
                             </Column>
                             <Column ColumnSize="ColumnSize.IsFull">
-                                <Text TextColor="TextColor.Primary">
+                                <Text>
                                     @context.DateCreated.ToString("HH:mm:ss")
                                 </Text>
                             </Column>
@@ -169,58 +227,6 @@
 
         </DataGridColumns>
 
-        <ButtonRowTemplate>
-            @if (SelectedTasks.Count > 1 && isBulkActionEnabled)
-            {
-                @if (IsBulkRunEnabled)
-                {
-                    <Button Color="Color.Success"
-                            Class="btn btn-sized button"
-                            Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.RUN))">
-                        <Icon Name="IconName.Play" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-                        <Text>
-                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Run}"))
-                        </Text>
-                    </Button>
-                }
-
-                @if (IsBulkPauseEnabled)
-                {
-                    <Button Color="Color.Warning"
-                            Class="btn btn-sized button"
-                            Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.PAUSED))">
-                        <Icon Name="IconName.Pause" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-                        <Text>
-                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Pause}"))
-                        </Text>
-                    </Button>
-                }
-
-                @if (IsBulkStopEnabled)
-                {
-                    <Button Color="Color.Danger"
-                            Class="btn btn-sized button"
-                            Clicked="@(() => ShowChangeStateModal(SelectedTasks, TaskState.STOP))">
-                        <Icon Name="IconName.Stop" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-                        <Text>
-                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Stop}"))
-                        </Text>
-                    </Button>
-                }
-
-                @if (isBulkDeleteEnabled)
-                {
-                    <Button Color="Color.Danger"
-                            Class="btn btn-sized button"
-                            Clicked="@(() => ShowDeleteModal(SelectedTasks))">
-                        <Icon Name="IconName.Delete" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-                        <Text>
-                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))
-                        </Text>
-                    </Button>
-                }
-            }
-        </ButtonRowTemplate>
     </DataGrid>
 </Column>
 

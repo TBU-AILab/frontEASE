@@ -11,24 +11,20 @@
         @if (LoggedUser.Id is not null)
         {
             <Dropdown RightAligned Class="navbar-dropdown-menu">
-                <DropdownToggle Padding="Padding.Is3.FromStart.Is3.FromEnd" Class="nav-link nav-link-custom" ElementId="navbar-login-toggle">
-                    <Container Class="d-flex align-items-center justify-content-center">
-                        <Row Display="Display.Flex" Class="align-items-center justify-content-center">
-                            <Column ColumnSize="ColumnSize.Is2.OnWidescreen" Padding="Padding.Is0" Display="Display.Flex" Class="align-items-center justify-content-center">
-                                <Image Border="Border.Is1.RoundedCircle"
-                                       Source="@(string.IsNullOrWhiteSpace(LoggedUser.Image?.ImageUrl) ? ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{LoggedUser.Image?.ImageUrl}")"
-                                       Class="full-max-width datagrid-item-image-extrasmall" Loading />
-                            </Column>
-                            <Column ColumnSize="ColumnSize.Is8.OnWidescreen" Display="Display.None.InlineBlock.OnWidescreen" Class="align-items-center justify-content-center">
-                                <Text TextWeight=TextWeight.Bold>@LoggedUser.UserName</Text>
-                                <Text TextSize="TextSize.Small">@LoggedUser.Email</Text>
-                            </Column>
-                        </Row>
-                    </Container>
+                <DropdownToggle Padding="Padding.Is3.FromStart.Is3.FromEnd.Is0.FromBottom" Class="nav-link nav-link-custom" ElementId="navbar-login-toggle">
+                    <div class="d-flex align-items-center">
+                        <Image Border="Border.Is1.RoundedCircle"
+                               Source="@(string.IsNullOrWhiteSpace(LoggedUser.Image?.ImageUrl) ? ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{LoggedUser.Image?.ImageUrl}")"
+                               Class="full-max-width datagrid-item-image-extrasmall" Loading />
+                        <div class="d-flex flex-column justify-content-start ms-3 text-start">
+                            <Text TextWeight=TextWeight.Bold Display="Display.Block">@LoggedUser.UserName</Text>
+                            <Text TextSize="TextSize.Small" Display="Display.Block">@LoggedUser.Email</Text>
+                        </div>
+                    </div>
                 </DropdownToggle>
-                <DropdownMenu Background="Background.Primary" Class="navbar-dropdown-menu">
-                    <DropdownItem Class="navbar-dropdown-item" Padding="Padding.Is0" TextAlignment="TextAlignment.Center">
-                        <BarLink TextWeight="TextWeight.Bold" Margin="Margin.Is1.FromStart.Is1.FromEnd" @onclick="Logout" Match="Match.All" Class="navbar-link-big nav-link-custom">Logout</BarLink>
+                <DropdownMenu Padding="Padding.Is0" Width="Width.Is100" Class="navbar-dropdown-menu" Background="Background.Transparent" Border="Border.Is0">
+                    <DropdownItem Class="navbar-dropdown-item" Background="Background.Transparent" Padding="Padding.Is0" TextAlignment="TextAlignment.Center">
+                        <BarLink TextWeight="TextWeight.Bold" Margin="Margin.Is2.FromTop" @onclick="Logout" Match="Match.All" Class="navbar-link-big nav-link-custom">Logout</BarLink>
                     </DropdownItem>
                 </DropdownMenu>
             </Dropdown>

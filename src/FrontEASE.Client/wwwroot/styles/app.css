@@ -7,6 +7,7 @@ html, body {
 input, select, textarea {
     background-color: var(--b-theme-background-secondary) !important;
     color: var(--b-theme-text-primary) !important;
+    border: 1px solid var(--b-theme-background-light) !important
 }
 
 input::placeholder, select::placeholder, textarea::placeholder {
@@ -43,7 +44,7 @@ input[type="range"]::-moz-range-track {
 
 
 
-.fas {
+div[role="tooltip"] > .fas {
     background-color: var(--b-theme-background-primary);
 }
 
@@ -183,6 +184,37 @@ code {
     background-color: var(--b-theme-background-light);
     border: 1px solid var(--b-theme-background-light);
 }
+
+.pagination .page-item a {
+    color: var(--b-theme-text-primary);
+    background-color: var(--b-theme-background-secondary);
+    border-color: var(--b-theme-background-light);
+}
+
+.pagination .page-item a:hover {
+    color: var(--b-theme-text-primary);
+    background-color: var(--b-theme-background-light);
+    border-color: var(--b-theme-background-light);
+}
+
+.pagination .page-item select {
+    border: 1px solid var(--b-theme-background-light);
+}
+
+.pagination .page-item.disabled a,
+.pagination .page-item.disabled a:hover {
+    color: var(--b-theme-text-muted);
+    background-color: var(--b-theme-background-secondary);
+    border-color: var(--b-theme-background-light);
+}
+
+.pagination .page-item.active a,
+.pagination .page-item.active a:hover {
+    color: var(--b-theme-white);
+    background-color: var(--b-theme-primary);
+    border-color: var(--b-theme-primary);
+}
+
 
 
 
@@ -443,7 +475,7 @@ a, .btn-link {
 
     .action-icon-primary:hover {
         color: var(--b-theme-white);
-        background: var(--b-theme-primary);
+        background: var(--b-theme-primary) !important;
         border: 2px solid var(--b-theme-primary);
     }
 
@@ -459,7 +491,7 @@ a, .btn-link {
 
     .action-icon-warning:hover {
         color: var(--b-theme-white);
-        background: var(--b-theme-warning);
+        background: var(--b-theme-warning) !important;
         border: 2px solid var(--b-theme-warning);
     }
 
@@ -475,7 +507,7 @@ a, .btn-link {
 
     .action-icon-success:hover {
         color: var(--b-theme-white);
-        background: var(--b-theme-success);
+        background: var(--b-theme-success) !important;
         border: 2px solid var(--b-theme-success);
     }
 
@@ -491,7 +523,7 @@ a, .btn-link {
 
     .action-icon-info:hover {
         color: var(--b-theme-white);
-        background: var(--b-theme-info);
+        background: var(--b-theme-info) !important;
         border: 2px solid var(--b-theme-info);
     }
 
@@ -507,7 +539,7 @@ a, .btn-link {
 
     .action-icon-danger:hover {
         color: var(--b-theme-white);
-        background: var(--b-theme-danger);
+        background: var(--b-theme-danger) !important;
         border: 2px solid var(--b-theme-danger);
     }
 
