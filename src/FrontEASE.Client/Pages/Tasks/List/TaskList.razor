@@ -26,7 +26,7 @@
             <TaskInfoFilter />
             @if (Tasks.Count > 0)
             {
-                <TaskInfoDataGrid/>
+                <TaskInfoDataGrid />
             }
             else
             {
@@ -57,10 +57,10 @@
     [CascadingParameter]
     public IList<CompanyDto> AvailableCompanies { get; set; } = [];
 
-    private bool isTasksLoading = false;
-    private bool isUsersLoading = false;
-    private bool isCompaniesLoading = false;
-    private bool isTaskOptionsLoading = false;
+    private bool isTasksLoading;
+    private bool isUsersLoading;
+    private bool isCompaniesLoading;
+    private bool isTaskOptionsLoading;
     private CancellationTokenSource cancellationTokenSource;
 
     public TaskList()

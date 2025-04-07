@@ -16,10 +16,24 @@ namespace FrontEASE.Client.Services.ApiServices.Management
             HttpClient client,
             IMapper mapper,
             IErrorHandlingService errorHandlingService,
-            IManagementManipulationService managementManipulationService) : 
+            IManagementManipulationService managementManipulationService) :
             base(client, mapper, errorHandlingService)
         {
             _managementManipulationService = managementManipulationService;
+        }
+
+        public async Task<GlobalPreferencesDto?> LoadGlobalPreferences()
+        {
+            var url = string.Format($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Global}");
+            var response = await _client.GetAsync(url);
+            var expectedCodes = new List<HttpStatusCode>() { HttpStatusCode.OK };
+
+            if (!expectedCodes.Contains(response.StatusCode))
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return null;
+            }
+            return await response.Content.ReadFromJsonAsync<GlobalPreferencesDto>();
         }
 
         public async Task<UserPreferencesDto?> LoadPreferences()
@@ -34,6 +48,18 @@ namespace FrontEASE.Client.Services.ApiServices.Management
                 return null;
             }
             return response.StatusCode == HttpStatusCode.NotFound ? null : (await response.Content.ReadFromJsonAsync<UserPreferencesDto>())!;
+        }
+
+        public async Task<GlobalPreferencesDto?> UpdateGlobalPreferences(GlobalPreferencesDto editedGlobalPreferencesDto)
+        {
+            var url = string.Format($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Global}");
+            var response = await _client.PutAsJsonAsync(url, editedGlobalPreferencesDto);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return null;
+            }
+            return await response.Content.ReadFromJsonAsync<GlobalPreferencesDto>();
         }
 
         public async Task<UserPreferencesDto?> UpdatePreferences(UserPreferencesDto editedPreferencesDto)
