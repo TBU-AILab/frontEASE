@@ -45,13 +45,12 @@ namespace FrontEASE.Shared.Infrastructure.Utils.Extensions
 
                 if (value is IEnumerable enumerable && p.PropertyType != typeof(string))
                 {
-                    var itemAdded = false;
                     foreach (var item in enumerable)
                     {
                         if (item is not null)
                         {
-                            queryStringBuilder.Append($"&{Uri.EscapeDataString(currentKey)}={Uri.EscapeDataString(item.ToString() ?? string.Empty)}");
-                            itemAdded = true;
+                            var itemValue = item.GetType().IsEnum ? Convert.ToInt32(item).ToString() : item.ToString();
+                            queryStringBuilder.Append($"&{Uri.EscapeDataString(currentKey)}={Uri.EscapeDataString(itemValue ?? string.Empty)}");
                         }
                     }
                 }

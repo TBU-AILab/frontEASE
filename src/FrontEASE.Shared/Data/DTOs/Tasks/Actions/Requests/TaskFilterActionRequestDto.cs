@@ -1,6 +1,7 @@
 ﻿using FrontEASE.Shared.Data.Enums.Tasks;
 using FrontEASE.Shared.Infrastructure.Attributes;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
+using System.Text.Json.Serialization;
 
 namespace FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests
 {
@@ -12,6 +13,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests
         public TaskFilterActionRequestDto()
         {
             State = [];
+            SelectedFilterStates = [];
         }
 
         /// <summary>
@@ -32,7 +34,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests
         /// Task states.
         /// </summary>
         [Resource($"{nameof(TaskFilterActionRequestDto)}.{nameof(State)}")]
-        public IReadOnlyList<TaskState> State { get; set; }
+        public IList<TaskState> State { get; set; }
 
         /// <summary>
         /// Date of creation - from
@@ -65,5 +67,16 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests
         [DateNotInFutureValidation]
         [DateRangeValidation(from: "2025-01-01")]
         public DateTime? DateUpdatedTo { get; set; }
+
+
+        #region Visualization
+
+        /// <summary>
+        /// UI only - selected states for this filter.
+        /// </summary>
+        [JsonIgnore]
+        public IReadOnlyList<TaskState> SelectedFilterStates { get; set; }
+
+        #endregion
     }
 }

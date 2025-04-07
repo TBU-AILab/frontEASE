@@ -279,6 +279,16 @@
     private bool isBulkDeleteEnabled => SelectedTasks.Count > 0 && SelectedTasks.All(task => deletableTaskStates.Contains(task.State));
     private bool isBulkActionEnabled => isBulkDeleteEnabled || IsBulkPauseEnabled || IsBulkRunEnabled || IsBulkStopEnabled;
 
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        await base.OnInitializedAsync();
+    }
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
     private async Task ShowOverviewModal(TaskInfoDto taskInfo)
     {
         TaskInfo = taskInfo;

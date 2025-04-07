@@ -73,7 +73,7 @@
             else
             {
                 <Div>
-                    <Text>
+                    <Text Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important;")">
                         @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(TaskConfigDto)}.{CollectionName}.{UIElementConstants.Collection}"))
                     </Text>
                 </Div>
