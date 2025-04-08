@@ -75,13 +75,14 @@
         if (await Validations.ValidateAll())
         {
             var tasks = await taskApiService.LoadTaskInfos(Filter);
+            Tasks.Clear();
             if (tasks?.Count > 0 == true)
             {
-                Tasks.Clear();
                 foreach (var task in tasks) { Tasks.Add(task); }
             }
         }
 
+        uiService.CallRequestRefresh();
         filteringInProgress = false;
     }
 }

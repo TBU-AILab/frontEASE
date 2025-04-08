@@ -17,7 +17,7 @@
         </Field>
     </Validation>
 
-    <Validation MessageLocalizer="resourceHandler.GetValidationResource">
+    <Validation>
         <Field ColumnSize="ColumnSize.IsFull">
             <FieldLabel For="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.State)))">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.State), PropertyDisplayResourceType.FIELD)))
@@ -30,7 +30,7 @@
                         ValueField="@((item) => item)"
                         Multiple
                         Size="Size.Large"
-                        @bind-SelectedValues="@Filter.State">
+                        @bind-SelectedValues="@Filter.SelectedFilterStates">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
