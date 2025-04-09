@@ -13,6 +13,11 @@
         /// <summary>
         /// General options management
         /// </summary>
-        GENERAL
+        GENERAL,
+
+        /// <summary>
+        /// Python core management
+        /// </summary>
+        CORE
     }
 }

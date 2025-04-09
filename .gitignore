@@ -326,17 +326,26 @@ publish/
 *.publishproj
 PublishScripts/
 
-# NuGet Packages
+# Ignore NuGet package files
 *.nupkg
-# NuGet Symbol Packages
 *.snupkg
-# The packages folder can be ignored because of Package Restore
-**/[Pp]ackages/*
-# except build/, which is used as an MSBuild target.
-!**/[Pp]ackages/build/
-# NuGet v3's project.json files produces more ignorable files
+
+# Ignore NuGet build artifacts (props/targets files)
 *.nuget.props
 *.nuget.targets
+
+# Ignore only NuGet packages folder content, but allow source code
+[Pp]ackages/**/*.nupkg
+[Pp]ackages/**/*.snupkg
+[Pp]ackages/**/*.nuspec
+[Pp]ackages/**/*.dll
+[Pp]ackages/**/*.exe
+[Pp]ackages/**/*.xml
+[Pp]ackages/**/*.targets
+[Pp]ackages/**/*.props
+
+# Allow build/ folder inside packages
+!**/[Pp]ackages/build/
 
 # Microsoft Azure Build Output
 csx/

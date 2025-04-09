@@ -44,6 +44,11 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
 
         public async Task<IList<TaskInfoDto>> LoadTaskInfos(TaskFilterActionRequestDto? filter)
         {
+            if (filter is not null)
+            {
+                _taskManipulationService.PrepareTaskFilter(filter!);
+            }
+
             var filterQuery = filter is null ? string.Empty : filter.ToQueryString();
             var url = $"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}{filterQuery}";
             var response = await _client.GetAsync(url);

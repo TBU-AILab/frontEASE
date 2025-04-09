@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.Parameters
 {
-    public class TaskModuleParameterCoreDto : ITaskCoreDto
+    public class TaskModuleParameterCoreDto : ICoreDto
     {
         public TaskModuleParameterCoreDto()
         {

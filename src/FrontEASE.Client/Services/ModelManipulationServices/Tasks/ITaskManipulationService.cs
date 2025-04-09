@@ -1,4 +1,5 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Tasks;
+using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage;
@@ -22,5 +23,6 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
         void CleanCompaniesInfo(TaskDto task);
 
         void PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions);
+        void PrepareTaskFilter(TaskFilterActionRequestDto filter);
     }
 }

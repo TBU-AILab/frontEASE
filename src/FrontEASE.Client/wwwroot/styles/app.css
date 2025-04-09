@@ -7,43 +7,44 @@ html, body {
 input, select, textarea {
     background-color: var(--b-theme-background-secondary) !important;
     color: var(--b-theme-text-primary) !important;
+    border: 1px solid var(--b-theme-background-light) !important
 }
 
-input::placeholder, select::placeholder, textarea::placeholder {
-    color: var(--b-theme-text-muted) !important;
-}
+    input::placeholder, select::placeholder, textarea::placeholder {
+        color: var(--b-theme-text-muted) !important;
+    }
 
-/* For Chrome, Safari, Edge, Opera */
-input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    background: var(--b-theme-white);
-    border-radius: 50%; /* Make it circular */
-    cursor: pointer;
-}
+    /* For Chrome, Safari, Edge, Opera */
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        background: var(--b-theme-white);
+        border-radius: 50%; /* Make it circular */
+        cursor: pointer;
+    }
 
-input[type="range"]::-webkit-slider-runnable-track {
-    background: var(--b-theme-background-light); /* Change this to your desired rail color */
-}
+    input[type="range"]::-webkit-slider-runnable-track {
+        background: var(--b-theme-background-light); /* Change this to your desired rail color */
+    }
 
-/* For Firefox */
-input[type="range"]::-moz-range-thumb {
-    width: 16px;
-    height: 16px;
-    background: var(--b-theme-white);
-    border-radius: 50%; /* Make it circular */
-    cursor: pointer;
-}
+    /* For Firefox */
+    input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: var(--b-theme-white);
+        border-radius: 50%; /* Make it circular */
+        cursor: pointer;
+    }
 
-input[type="range"]::-moz-range-track {
-    background: var(--b-theme-background-light); /* Change this to your desired rail color */
-}
+    input[type="range"]::-moz-range-track {
+        background: var(--b-theme-background-light); /* Change this to your desired rail color */
+    }
 
 
 
-.fas {
+div[role="tooltip"] > .fas {
     background-color: var(--b-theme-background-primary);
 }
 
@@ -166,10 +167,10 @@ code {
     color: var(--b-theme-text-primary);
 }
 
-.EasyMDEContainer > .editor-toolbar > button:hover {
-    background-color: transparent;
-    border: 1px solid var(--b-theme-background-light);
-}
+    .EasyMDEContainer > .editor-toolbar > button:hover {
+        background-color: transparent;
+        border: 1px solid var(--b-theme-background-light);
+    }
 
 .CodeMirror-code {
     color: var(--b-theme-text-primary);
@@ -183,6 +184,37 @@ code {
     background-color: var(--b-theme-background-light);
     border: 1px solid var(--b-theme-background-light);
 }
+
+.pagination .page-item a {
+    color: var(--b-theme-text-primary);
+    background-color: var(--b-theme-background-secondary);
+    border-color: var(--b-theme-background-light);
+}
+
+    .pagination .page-item a:hover {
+        color: var(--b-theme-text-primary);
+        background-color: var(--b-theme-background-light);
+        border-color: var(--b-theme-background-light);
+    }
+
+.pagination .page-item select {
+    border: 1px solid var(--b-theme-background-light);
+}
+
+.pagination .page-item.disabled a,
+.pagination .page-item.disabled a:hover {
+    color: var(--b-theme-text-muted);
+    background-color: var(--b-theme-background-secondary);
+    border-color: var(--b-theme-background-light);
+}
+
+.pagination .page-item.active a,
+.pagination .page-item.active a:hover {
+    color: var(--b-theme-white);
+    background-color: var(--b-theme-primary);
+    border-color: var(--b-theme-primary);
+}
+
 
 
 
@@ -443,7 +475,7 @@ a, .btn-link {
 
     .action-icon-primary:hover {
         color: var(--b-theme-white);
-        background: var(--b-theme-primary);
+        background: var(--b-theme-primary) !important;
         border: 2px solid var(--b-theme-primary);
     }
 
@@ -459,7 +491,7 @@ a, .btn-link {
 
     .action-icon-warning:hover {
         color: var(--b-theme-white);
-        background: var(--b-theme-warning);
+        background: var(--b-theme-warning) !important;
         border: 2px solid var(--b-theme-warning);
     }
 
@@ -475,7 +507,7 @@ a, .btn-link {
 
     .action-icon-success:hover {
         color: var(--b-theme-white);
-        background: var(--b-theme-success);
+        background: var(--b-theme-success) !important;
         border: 2px solid var(--b-theme-success);
     }
 
@@ -491,7 +523,7 @@ a, .btn-link {
 
     .action-icon-info:hover {
         color: var(--b-theme-white);
-        background: var(--b-theme-info);
+        background: var(--b-theme-info) !important;
         border: 2px solid var(--b-theme-info);
     }
 
@@ -507,7 +539,7 @@ a, .btn-link {
 
     .action-icon-danger:hover {
         color: var(--b-theme-white);
-        background: var(--b-theme-danger);
+        background: var(--b-theme-danger) !important;
         border: 2px solid var(--b-theme-danger);
     }
 
@@ -540,13 +572,13 @@ a, .btn-link {
     color: var(--b-theme-text-primary) !important;
 }
 
-.blazored-toast > .blazored-toast-icon > .fas {
-    background-color: var(--b-theme-background-secondary) !important;
-}
+    .blazored-toast > .blazored-toast-icon > .fas {
+        background-color: var(--b-theme-background-secondary) !important;
+    }
 
-.blazored-toast > .blazored-toast-progressbar > span {
-    background-color: var(--b-theme-background-light) !important;
-}
+    .blazored-toast > .blazored-toast-progressbar > span {
+        background-color: var(--b-theme-background-light) !important;
+    }
 
 .btn-custom-file-picker .form-file {
     display: none;
@@ -745,6 +777,16 @@ nav.navbar {
     height: 35px;
     border-radius: 50%
 }
+
+#navbar-login-toggle {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+    #navbar-login-toggle::after {
+        visibility: hidden;
+    }
 
 /* User + Company management */
 

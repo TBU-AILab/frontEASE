@@ -4,7 +4,7 @@ using FrontEASE.Shared.Infrastructure.Utils.Extensions;
 using FrontEASE.Shared.Services.Resources;
 using System.ComponentModel.DataAnnotations;
 
-namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific
+namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific.Tasks
 {
     public class ParameterPropertyFilledValidationAttribute<T> : ValidationAttribute where T : class
     {

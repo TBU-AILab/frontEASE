@@ -8,7 +8,7 @@
             <Column ColumnSize="ColumnSize.Is4.OnWidescreen" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is3.FromTop.Is3.FromBottom">
                 <Image Padding="Padding.Is0" Source="@(string.IsNullOrWhiteSpace(User.Image?.ImageUrl) ? ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{User.Image.ImageUrl}")" Border="Border.RoundedCircle" Class="full-max-width user-card-image" Loading />
             </Column>
-            <Column ColumnSize="ColumnSize.IsAuto.OnWidescreen" Class="text-center-desktop">
+            <Column ColumnSize="ColumnSize.Is8.OnWidescreen" Class="text-center-desktop">
                 <Row Padding="Padding.Is3.FromTop">
                     <Column ColumnSize="ColumnSize.Is12">
                         <Heading Size="HeadingSize.Is5" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary}; margin-bottom: 0;")" TextWeight="TextWeight.Bold">

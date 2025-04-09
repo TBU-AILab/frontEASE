@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FrontEASE.Shared.Data.DTOs.Tasks;
+using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage;
@@ -22,6 +23,17 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 
         public void AddModule(IList<TaskModuleDto> modules, ModuleType moduleType) => modules.Add(new() { PackageType = moduleType });
         public void RemoveModule(IList<TaskModuleDto> modules, TaskModuleDto item) => modules.Remove(item);
+
+        public void PrepareTaskFilter(TaskFilterActionRequestDto filter)
+        {
+            var states = filter.SelectedFilterStates.Select(x => x) ?? [];
+
+            filter.State.Clear();
+            foreach (var state in states)
+            {
+                filter.State.Add(state);
+            }
+        }
 
         public void PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions)
         {

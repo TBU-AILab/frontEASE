@@ -2,7 +2,7 @@
 
 namespace FrontEASE.DataContracts.Models.Core.Errors
 {
-    public class CoreValidationErrorDetail : ITaskCoreDto
+    public class CoreValidationErrorDetail : ICoreDto
     {
         public CoreValidationErrorDetail()
         {

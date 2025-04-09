@@ -2,7 +2,7 @@
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Solutions
 {
-    public class TaskSolutionCoreDto : ITaskCoreDto
+    public class TaskSolutionCoreDto : ICoreDto
     {
         public TaskSolutionCoreDto()
         {

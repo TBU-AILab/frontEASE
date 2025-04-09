@@ -1,4 +1,5 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Management;
+using FrontEASE.Shared.Data.DTOs.Management.Core.Packages;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens;
 
 namespace FrontEASE.Client.Services.ModelManipulationServices.Management
@@ -8,5 +9,6 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Management
         void SetItemConnectorTypes(UserPreferencesDto preferences);
         void SetItemPriorities(UserPreferencesDto preferences);
         void ReinitializeTokenModel(UserPreferenceTokenOptionDto token);
+        void ReinitializePackageModel(GlobalPreferenceCorePackageDto package);
     }
 }
