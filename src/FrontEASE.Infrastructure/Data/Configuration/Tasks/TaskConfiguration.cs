@@ -12,6 +12,20 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Tasks
             new EntityTrackedFullManualStampConfiguration<Domain.Entities.Tasks.Task>().Configure(builder);
             builder.ToTable(TableConstants.Tasks, SchemaConstants.Data);
 
+            builder.HasIndex(e => e.IsDeleted)
+                .HasDatabaseName($"IX_{nameof(Domain.Entities.Tasks.Task)}_{nameof(Domain.Entities.Tasks.Task.IsDeleted)}");
+            builder.HasIndex(e => e.State)
+                .HasDatabaseName($"IX_{nameof(Domain.Entities.Tasks.Task)}_{nameof(Domain.Entities.Tasks.Task.State)}");
+            builder.HasIndex(e => e.DateCreated)
+                .HasDatabaseName($"IX_{nameof(Domain.Entities.Tasks.Task)}_{nameof(Domain.Entities.Tasks.Task.DateCreated)}");
+            builder.HasIndex(e => e.DateUpdated)
+                .HasDatabaseName($"IX_{nameof(Domain.Entities.Tasks.Task)}_{nameof(Domain.Entities.Tasks.Task.DateUpdated)}");
+
+            builder.HasIndex(e => new { e.State, e.DateCreated })
+                .HasDatabaseName($"IX_{nameof(Domain.Entities.Tasks.Task)}_{nameof(Domain.Entities.Tasks.Task.State)}_{nameof(Domain.Entities.Tasks.Task.DateCreated)}");
+            builder.HasIndex(e => new { e.IsDeleted, e.State })
+                .HasDatabaseName($"IX_{nameof(Domain.Entities.Tasks.Task)}_{nameof(Domain.Entities.Tasks.Task.IsDeleted)}_{nameof(Domain.Entities.Tasks.Task.State)}");
+
             builder.HasOne(e => e.Config)
                 .WithOne(e => e.Task);
 

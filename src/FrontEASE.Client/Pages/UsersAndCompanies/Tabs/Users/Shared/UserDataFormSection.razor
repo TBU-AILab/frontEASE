@@ -62,7 +62,7 @@
                       Filter=".jpg, .jpeg, .jfif, .png, .gif, .bmp, .tiff"
                       AutoReset="false"
                       ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Image)))"
-                      MaxFileSize="@DataLoader.MaxImageSize"
+                      MaxFileSize="@(SizeConstants.FiveMegabytes)"
                       Changed="args => ImageLoaded(args, UserModel.Image!)"
                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.PLACEHOLDER)))" />
         </Label>

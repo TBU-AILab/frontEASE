@@ -55,7 +55,7 @@
                       Filter=".jpg, .jpeg, .jfif, .png, .gif, .bmp, .tiff"
                       AutoReset="false"
                       ElementId="@(GetElementIdByOperation(nameof(CompanyDto.Image)))"
-                      MaxFileSize="@DataLoader.MaxImageSize"
+                      MaxFileSize="@(SizeConstants.FiveMegabytes)"
                       Changed="args => ImageLoaded(args, CompanyModel.Image!)"
                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Image), PropertyDisplayResourceType.PLACEHOLDER)))" />
         </Label>

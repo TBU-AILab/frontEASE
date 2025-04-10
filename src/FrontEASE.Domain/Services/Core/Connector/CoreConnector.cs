@@ -12,14 +12,15 @@ using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Web;
 
-namespace FrontEASE.Domain.Services.Core
+namespace FrontEASE.Domain.Services.Core.Connector
 {
-    public class EASECoreService : IEASECoreService
+    public class CoreConnector : ICoreConnector
     {
         private readonly IMapper _mapper;
 
@@ -28,7 +29,7 @@ namespace FrontEASE.Domain.Services.Core
 
         private readonly JsonSerializerOptions _serializerOptions;
 
-        public EASECoreService(
+        public CoreConnector(
             AppSettings appSettings,
             HttpClient httpClient,
             IMapper mapper,
@@ -47,6 +48,24 @@ namespace FrontEASE.Domain.Services.Core
                 ReadCommentHandling = JsonCommentHandling.Skip,
                 MaxDepth = 64
             };
+        }
+
+
+        public async Task HandleModuleImport(Entities.Shared.Files.File moduleFile)
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/import");
+
+            using var content = new MultipartFormDataContent();
+            using var fileContent = new ByteArrayContent(moduleFile.Content);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            content.Add(fileContent, nameof(File).ToLower(), moduleFile.Name);
+
+            var response = await _httpClient.PostAsync(url, content);
+            if (!response.IsSuccessStatusCode)
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(HandleModuleImport)} - Call FAILED - Exception: {failResult}");
+            }
         }
 
         public async Task HandleTaskCreate(Entities.Tasks.Task task)

@@ -3,19 +3,19 @@ using FrontEASE.Domain.Entities.Management;
 using FrontEASE.Domain.Entities.Management.Core.Packages;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Repositories.Management;
-using FrontEASE.Domain.Services.Core;
+using FrontEASE.Domain.Services.Core.Connector;
 
 namespace FrontEASE.Domain.Services.Management
 {
     public class ManagementService : IManagementService
     {
         private readonly IManagementRepository _managementRepository;
-        private readonly IEASECoreService _coreService;
+        private readonly ICoreConnector _coreService;
         private readonly IMapper _mapper;
 
         public ManagementService(
             IManagementRepository managementRepository,
-            IEASECoreService coreService,
+            ICoreConnector coreService,
             IMapper mapper)
         {
             _coreService = coreService;

@@ -1,0 +1,39 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
+@inject IUIService uiService
+@inject IMapper mapper
+@inject IManagementApiService managementApiService
+
+<FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<GlobalPreferenceCoreModuleDto>()))" />
+<Divider Class="divider-main" Shadow="Shadow.Small" Style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop" />
+
+
+@if (!isInitialized)
+{
+    <ContentLoadSpinner />
+}
+
+@code {
+    [Parameter]
+    public bool FullWidthFields { get; set; }
+
+    [Parameter]
+    public DataOperation Operation { get; set; } = DataOperation.READ;
+
+    private bool isInitialized = false;
+    private bool isPreferencesLoading;
+    private bool isSystemPackagesCollapsed;
+    private bool isAddonsPackagesCollapsed;
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<GlobalPreferencesDto>(elementBase, Operation, null);
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        await base.OnInitializedAsync();
+        isInitialized = true;
+    }
+
+    private void RefreshView()
+    { StateHasChanged(); }
+}

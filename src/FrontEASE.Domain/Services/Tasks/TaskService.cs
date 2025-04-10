@@ -9,7 +9,7 @@ using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Repositories.Companies;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Domain.Repositories.Users;
-using FrontEASE.Domain.Services.Core;
+using FrontEASE.Domain.Services.Core.Connector;
 using FrontEASE.Shared.Data.Enums.Tasks;
 
 namespace FrontEASE.Domain.Services.Tasks
@@ -19,14 +19,14 @@ namespace FrontEASE.Domain.Services.Tasks
         private readonly ITaskRepository _taskRepository;
         private readonly IUserRepository _userRepository;
         private readonly ICompanyRepository _companyRepository;
-        private readonly IEASECoreService _coreService;
+        private readonly ICoreConnector _coreService;
         private readonly IMapper _mapper;
 
         public TaskService(
             ITaskRepository taskRepository,
             IUserRepository userRepository,
             ICompanyRepository companyRepository,
-            IEASECoreService coreService,
+            ICoreConnector coreService,
             IMapper mapper)
         {
             _userRepository = userRepository;

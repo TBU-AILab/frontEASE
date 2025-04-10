@@ -12,6 +12,7 @@ using FrontEASE.Client.Infrastructure.Mappings.Management.General;
 using FrontEASE.Client.Infrastructure.Mappings.Management.Tokens;
 using FrontEASE.Client.Infrastructure.Mappings.Management.Tokens.Connectors;
 using FrontEASE.Client.Infrastructure.Mappings.Shared.Addresses;
+using FrontEASE.Client.Infrastructure.Mappings.Shared.Files;
 using FrontEASE.Client.Infrastructure.Mappings.Shared.Images;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Actions.Requests;
@@ -27,6 +28,7 @@ using FrontEASE.Client.Infrastructure.Mappings.Tasks.Solutions;
 using FrontEASE.Client.Infrastructure.Settings.AppSettings;
 using FrontEASE.Client.Services.ApiServices.Companies;
 using FrontEASE.Client.Services.ApiServices.Management;
+using FrontEASE.Client.Services.ApiServices.Shared.Core;
 using FrontEASE.Client.Services.ApiServices.Shared.Files;
 using FrontEASE.Client.Services.ApiServices.Shared.Resources;
 using FrontEASE.Client.Services.ApiServices.Shared.Typelists;
@@ -85,6 +87,7 @@ void SetupMappings()
 {
     var mappingConfig = new MapperConfiguration(mc =>
     {
+        mc.AddProfile(new FileMappingProfile());
         mc.AddProfile(new ImageMappingProfile());
         mc.AddProfile(new UserMappingProfile());
         mc.AddProfile(new CompanyMappingProfile());
@@ -96,6 +99,7 @@ void SetupMappings()
         mc.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
         mc.AddProfile(new GlobalPreferencesMappingProfile());
         mc.AddProfile(new CorePackageMappingProfile());
+        mc.AddProfile(new CoreModuleMappingProfile());
 
         mc.AddProfile(new TaskMappingProfile());
         mc.AddProfile(new TaskStatusMappingProfile());
@@ -159,6 +163,7 @@ void SetupApiServices()
     builder!.Services.AddTransient<IFileApiService, FileApiService>();
     builder!.Services.AddTransient<IManagementApiService, ManagementApiService>();
     builder!.Services.AddTransient<ITypelistApiService, TypelistApiService>();
+    builder!.Services.AddTransient<ICoreApiService, CoreApiService>();
 }
 void SetupModelManipulationServices()
 {
