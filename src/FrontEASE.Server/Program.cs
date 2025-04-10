@@ -2,6 +2,7 @@ using AutoMapper;
 using FrontEASE.Application.AppServices.Companies;
 using FrontEASE.Application.AppServices.Files;
 using FrontEASE.Application.AppServices.Management;
+using FrontEASE.Application.AppServices.Shared.Core;
 using FrontEASE.Application.AppServices.Shared.Resources;
 using FrontEASE.Application.AppServices.Shared.Typelists;
 using FrontEASE.Application.AppServices.Tasks;
@@ -15,6 +16,7 @@ using FrontEASE.Application.Infrastructure.Mappings.Management.General;
 using FrontEASE.Application.Infrastructure.Mappings.Management.Tokens;
 using FrontEASE.Application.Infrastructure.Mappings.Management.Tokens.Connectors;
 using FrontEASE.Application.Infrastructure.Mappings.Shared.Addresses;
+using FrontEASE.Application.Infrastructure.Mappings.Shared.Files;
 using FrontEASE.Application.Infrastructure.Mappings.Shared.Images;
 using FrontEASE.Application.Infrastructure.Mappings.Shared.Resources;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks;
@@ -38,6 +40,7 @@ using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Domain.Repositories.Users;
 using FrontEASE.Domain.Services.Companies;
 using FrontEASE.Domain.Services.Core;
+using FrontEASE.Domain.Services.Core.Connector;
 using FrontEASE.Domain.Services.Management;
 using FrontEASE.Domain.Services.Shared.Files;
 using FrontEASE.Domain.Services.Shared.Images;
@@ -413,6 +416,7 @@ void SetupMappings()
 {
     var mappingConfig = new MapperConfiguration(mc =>
     {
+        mc.AddProfile(new FileMappingProfile());
         mc.AddProfile(new ResourceMappingProfile());
         mc.AddProfile(new ImageMappingProfile());
         mc.AddProfile(new AddressMappingProfile());
@@ -425,6 +429,7 @@ void SetupMappings()
         mc.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
         mc.AddProfile(new GlobalPreferencesMappingProfile());
         mc.AddProfile(new CorePackageMappingProfile());
+        mc.AddProfile(new CoreModuleMappingProfile());
 
         mc.AddProfile(new TaskInfoMappingProfile());
         mc.AddProfile(new TaskStatusMappingProfile());
@@ -467,6 +472,7 @@ void SetupServices()
     builder!.Services.AddTransient<IFileService, FileService>();
     builder!.Services.AddTransient<IManagementService, ManagementService>();
     builder!.Services.AddTransient<ITypelistService, TypelistService>();
+    builder!.Services.AddTransient<ICoreService, CoreService>();
 }
 
 void SetupAppServices()
@@ -478,6 +484,7 @@ void SetupAppServices()
     builder!.Services.AddTransient<ITaskAppService, TaskAppService>();
     builder!.Services.AddTransient<IManagementAppService, ManagementAppService>();
     builder!.Services.AddTransient<ITypelistAppService, TypelistAppService>();
+    builder!.Services.AddTransient<ICoreAppService, CoreAppService>();
 }
 
 void SetupHelperServices()
@@ -489,7 +496,7 @@ void SetupHelperServices()
 
 void SetupHttpClients()
 {
-    builder!.Services.AddHttpClient<IEASECoreService, EASECoreService>();
+    builder!.Services.AddHttpClient<ICoreConnector, CoreConnector>();
 }
 
 void SetupJobServices()

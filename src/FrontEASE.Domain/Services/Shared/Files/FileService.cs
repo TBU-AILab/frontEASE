@@ -1,7 +1,7 @@
 ﻿using FrontEASE.Domain.DataQueries.Tasks;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Repositories.Tasks;
-using FrontEASE.Domain.Services.Core;
+using FrontEASE.Domain.Services.Core.Connector;
 using FrontEASE.Shared.Data.Enums.Shared.Files;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,10 +9,10 @@ namespace FrontEASE.Domain.Services.Shared.Files
 {
     public class FileService : IFileService
     {
-        private readonly IEASECoreService _coreService;
+        private readonly ICoreConnector _coreService;
         private readonly ITaskRepository _taskRepository;
 
-        public FileService(ITaskRepository taskRepository, IEASECoreService coreService)
+        public FileService(ITaskRepository taskRepository, ICoreConnector coreService)
         {
             _taskRepository = taskRepository;
             _coreService = coreService;

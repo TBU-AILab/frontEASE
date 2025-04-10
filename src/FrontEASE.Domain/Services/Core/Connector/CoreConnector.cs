@@ -12,23 +12,23 @@ using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Web;
 
-namespace FrontEASE.Domain.Services.Core
+namespace FrontEASE.Domain.Services.Core.Connector
 {
-    public class EASECoreService : IEASECoreService
+    public class CoreConnector : ICoreConnector
     {
         private readonly IMapper _mapper;
-
         private readonly AppSettings _appSettings;
         private readonly HttpClient _httpClient;
 
         private readonly JsonSerializerOptions _serializerOptions;
 
-        public EASECoreService(
+        public CoreConnector(
             AppSettings appSettings,
             HttpClient httpClient,
             IMapper mapper,
@@ -47,6 +47,24 @@ namespace FrontEASE.Domain.Services.Core
                 ReadCommentHandling = JsonCommentHandling.Skip,
                 MaxDepth = 64
             };
+        }
+
+
+        public async Task HandleModuleImport(Entities.Shared.Files.File moduleFile)
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/import");
+
+            using var content = new MultipartFormDataContent();
+            using var fileContent = new ByteArrayContent(moduleFile.Content);
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            content.Add(fileContent, nameof(File).ToLower(), moduleFile.Name);
+
+            var response = await _httpClient.PostAsync(url, content);
+            if (!response.IsSuccessStatusCode)
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(HandleModuleImport)} - Call FAILED - Exception: {failResult}");
+            }
         }
 
         public async Task HandleTaskCreate(Entities.Tasks.Task task)
@@ -74,12 +92,13 @@ namespace FrontEASE.Domain.Services.Core
             }
         }
 
-        public async Task HandleTaskDuplicate(Entities.Tasks.Task task, Guid origTaskID)
+        public async Task HandleTaskDuplicate(IList<Entities.Tasks.Task> tasks, Guid origTaskID, string baseName, int copies)
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/{origTaskID}/duplicate");
             var queryParams = new Dictionary<string, string>()
             {
-                { "new_name", task.Config.Name }
+                { "new_name", baseName },
+                { "num", copies.ToString() }
             };
 
             url = BuildUrlWithParams(url, queryParams);
@@ -87,8 +106,15 @@ namespace FrontEASE.Domain.Services.Core
 
             if (response.IsSuccessStatusCode)
             {
-                var responseData = await response.Content.ReadFromJsonAsync<TaskInfoCoreDto>(_serializerOptions);
-                _mapper.Map(responseData, task);
+                var responseData = await response.Content.ReadFromJsonAsync<IList<TaskInfoCoreDto>>(_serializerOptions);
+                if (responseData is not null)
+                {
+                    for (var i = 0; i < responseData.Count; ++i)
+                    {
+                        var matchingTask = tasks.ElementAt(i);
+                        _mapper.Map(responseData.ElementAt(i), matchingTask);
+                    }
+                }
             }
             else
             {
@@ -131,15 +157,21 @@ namespace FrontEASE.Domain.Services.Core
             }
         }
 
-        public async Task HandleTaskDelete(Entities.Tasks.Task task)
+        public async Task HandleTaskDelete(IList<Entities.Tasks.Task> tasks)
         {
-            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/{task.ID}");
-            var response = await _httpClient.DeleteAsync(url);
+            var taskIDs = tasks.Select(x => x.ID).ToList();
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/batch/delete");
 
+            var request = new HttpRequestMessage(HttpMethod.Delete, url)
+            {
+                Content = new StringContent(JsonSerializer.Serialize(taskIDs), Encoding.UTF8, "application/json")
+            };
+
+            var response = await _httpClient.SendAsync(request);
             if (!response.IsSuccessStatusCode)
             {
                 var failResult = await response.Content.ReadAsStringAsync();
-                throw new ApplicationException($"{nameof(HandleTaskInit)} - Call FAILED - Exception: {failResult}");
+                throw new ApplicationException($"{nameof(HandleTaskDelete)} - Call FAILED - Exception: {failResult}");
             }
         }
 
@@ -172,9 +204,10 @@ namespace FrontEASE.Domain.Services.Core
             }
         }
 
-        public async Task ChangeTaskState(Entities.Tasks.Task task, TaskState state)
+        public async Task ChangeTaskState(IList<Entities.Tasks.Task> tasks, TaskState state)
         {
-            var url = $"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/{task.ID}";
+            var taskIDs = tasks.Select(x => x.ID).ToList();
+            var url = $"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/batch";
             switch (state)
             {
                 case TaskState.RUN:
@@ -188,12 +221,19 @@ namespace FrontEASE.Domain.Services.Core
                     break;
             }
             var urlFull = new Uri(url);
-            var response = await _httpClient.PatchAsync(url, null);
+            var response = await _httpClient.PatchAsJsonAsync(url, taskIDs);
 
             if (response.IsSuccessStatusCode)
             {
-                var responseData = await response.Content.ReadFromJsonAsync<TaskInfoCoreDto>(_serializerOptions);
-                _mapper.Map(responseData, task);
+                var responseData = await response.Content.ReadFromJsonAsync<IList<TaskInfoCoreDto>>(_serializerOptions);
+                if (responseData is not null)
+                {
+                    foreach (var responseTask in responseData)
+                    {
+                        var matchingTask = tasks.FirstOrDefault(x => x.ID == responseTask.ID);
+                        _mapper.Map(responseTask, matchingTask);
+                    }
+                }
             }
             else
             {

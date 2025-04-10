@@ -208,15 +208,15 @@ namespace FrontEASE.Server.Controllers.User
         /// </summary>
         /// <param name="taskIDs">Deleted task identifiers.</param>
         [HttpDelete($"{TasksControllerConstants.BaseUrl}")]
-        [ProducesResponseType(typeof(IList<TaskBulkActionResultDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> DeleteTasks([Required, FromQuery] IList<Guid> taskIDs)
         {
             IActionResult result;
             try
             {
-                var deleteResults = await _taskAppService.Delete(taskIDs);
-                result = GetHttpResult(HttpStatusCode.OK, deleteResults);
+                await _taskAppService.Delete(taskIDs);
+                result = GetHttpResult(HttpStatusCode.NoContent, null);
             }
             catch (Exception ex)
             {
@@ -232,15 +232,15 @@ namespace FrontEASE.Server.Controllers.User
         /// <param name="taskIDs">Modified task identifiers.</param>
         /// <param name="state">Modified task new state.</param>
         [HttpPatch($"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.ChangeState}/{TasksControllerConstants.StateParam}")]
-        [ProducesResponseType(typeof(IList<TaskBulkActionResultDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> ChangeTaskState([Required, FromQuery] IList<Guid> taskIDs, [Required, FromRoute] TaskState state)
         {
             IActionResult result;
             try
             {
-                var stateChangeResults = await _taskAppService.ChangeState(taskIDs, state);
-                result = GetHttpResult(HttpStatusCode.OK, stateChangeResults);
+                await _taskAppService.ChangeState(taskIDs, state);
+                result = GetHttpResult(HttpStatusCode.NoContent, null);
             }
             catch (Exception ex)
             {

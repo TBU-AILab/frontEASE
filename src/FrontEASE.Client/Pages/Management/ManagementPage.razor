@@ -30,9 +30,9 @@
                     }
                 </Items>
                 <Content>
-                    @foreach (var personType in Enum.GetValues(typeof(UserPreferencesManagementType)))
+                    @foreach (var managementType in Enum.GetValues(typeof(UserPreferencesManagementType)))
                     {
-                        <TabPanel TextAlignment="TextAlignment.Start" Name="@(personType.ToString())">
+                        <TabPanel TextAlignment="TextAlignment.Start" Name="@(managementType.ToString())">
                             @switch (managementTypeSelected)
                             {
                                 case UserPreferencesManagementType.TOKENS:

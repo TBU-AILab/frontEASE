@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
-using FrontEASE.Domain.Services.Core;
+using FrontEASE.Domain.Services.Core.Connector;
 using FrontEASE.Shared.Infrastructure.Caching.Shared;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -10,9 +10,9 @@ namespace FrontEASE.Domain.Services.Shared.Typelists
     {
         private readonly IMapper _mapper;
         private readonly IMemoryCache _memoryCache;
-        private readonly IEASECoreService _coreService;
+        private readonly ICoreConnector _coreService;
 
-        public TypelistService(IMapper mapper, IMemoryCache memoryCache, IEASECoreService coreService)
+        public TypelistService(IMapper mapper, IMemoryCache memoryCache, ICoreConnector coreService)
         {
             _mapper = mapper;
             _memoryCache = memoryCache;

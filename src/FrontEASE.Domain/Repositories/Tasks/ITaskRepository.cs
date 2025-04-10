@@ -17,6 +17,7 @@ namespace FrontEASE.Domain.Repositories.Tasks
         Task<Entities.Tasks.Task> Insert(Entities.Tasks.Task task);
         Task<IList<Entities.Tasks.Task>> InsertRange(IList<Entities.Tasks.Task> tasks, bool saveChanges);
         Task<Entities.Tasks.Task> Update(Entities.Tasks.Task task);
+        Task<IList<Entities.Tasks.Task>> UpdateRange(IList<Entities.Tasks.Task> task);
         Task Delete(Entities.Tasks.Task task);
         Task DeleteRange(IList<Entities.Tasks.Task> task, bool hardDelete, bool saveChanges);
     }

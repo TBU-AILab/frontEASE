@@ -4,7 +4,7 @@ using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Repositories.Tasks;
-using FrontEASE.Domain.Services.Core;
+using FrontEASE.Domain.Services.Core.Connector;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.Server;
@@ -15,14 +15,14 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
     public class UpdateTaskDetailsJob : IJob
     {
         private readonly IMapper _mapper;
-        private readonly IEASECoreService _coreService;
+        private readonly ICoreConnector _coreService;
         private readonly ITaskRepository _taskRepository;
 
         private readonly string _jobName;
 
         public UpdateTaskDetailsJob(
             IMapper mapper,
-            IEASECoreService coreService,
+            ICoreConnector coreService,
             ITaskRepository taskRepository,
             AppSettings appSettings)
         {

@@ -5,19 +5,20 @@ using FrontEASE.Domain.Entities.Management.Core.Packages;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FrontEASE.Domain.Services.Core
+namespace FrontEASE.Domain.Services.Core.Connector
 {
-    public interface IEASECoreService
+    public interface ICoreConnector
     {
         Task HandleTaskCreate(Entities.Tasks.Task task);
         Task HandleTaskInit(Entities.Tasks.Task task);
-        Task HandleTaskDuplicate(Entities.Tasks.Task task, Guid origTaskID);
-        Task HandleTaskDelete(Entities.Tasks.Task task);
+        Task HandleTaskDuplicate(IList<Entities.Tasks.Task> tasks, Guid origTaskID, string baseName, int copies);
+        Task HandleTaskDelete(IList<Entities.Tasks.Task> tasks);
         Task RefreshTaskOptions(Entities.Tasks.Task task);
-        Task ChangeTaskState(Entities.Tasks.Task task, TaskState state);
+        Task ChangeTaskState(IList<Entities.Tasks.Task> tasks, TaskState state);
 
         Task<FileStreamResult> DownloadTaskFull(Guid taskID);
         Task<FileStreamResult> DownloadTaskSolution(Guid taskID, Guid messageID);
+        Task HandleModuleImport(Entities.Shared.Files.File moduleFile);
 
         Task<IList<TaskInfoCoreDto>> GetTaskInfos();
         Task<IList<TaskFullCoreDto>> GetTasksFullData();

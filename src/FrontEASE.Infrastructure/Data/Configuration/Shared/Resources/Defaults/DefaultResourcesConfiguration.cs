@@ -1,11 +1,13 @@
 ﻿using FrontEASE.Domain.Entities.Shared.Resources;
 using FrontEASE.Shared.Data.DTOs.Companies;
 using FrontEASE.Shared.Data.DTOs.Management;
+using FrontEASE.Shared.Data.DTOs.Management.Core.Modules;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Packages;
 using FrontEASE.Shared.Data.DTOs.Management.General;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens.Connectors;
 using FrontEASE.Shared.Data.DTOs.Shared.Addresses;
+using FrontEASE.Shared.Data.DTOs.Shared.Files;
 using FrontEASE.Shared.Data.DTOs.Shared.Images;
 using FrontEASE.Shared.Data.DTOs.Shared.Resources;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
@@ -146,6 +148,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetCollectionResourceValue<TaskDto>(), Value = "Tasks" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetCollectionResourceValue<UserPreferenceTokenOptionDto>(), Value = "Connection Tokens" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetCollectionResourceValue<GlobalPreferenceCorePackageDto>(), Value = "Core Packages" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetCollectionResourceValue<GlobalPreferenceCoreModuleDto>(), Value = "Core Modules" },
             ];
         }
 
@@ -236,6 +239,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Stop}", Value="Stop" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Pause}", Value="Pause" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}", Value="Download" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Import}", Value="Import" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}", Value="Clone" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Reset}", Value="Reset" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Filter}", Value="Filter" },
@@ -264,6 +268,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserPreferencesManagementType.TOKENS.GetEnumResourceValue(), Value = "Tokens" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserPreferencesManagementType.GENERAL.GetEnumResourceValue(), Value = "General" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserPreferencesManagementType.CORE.GetEnumResourceValue(), Value = "Core" },
+
+                /* CorePreferencesManagementType */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = CorePreferencesManagementType.PACKAGES.GetEnumResourceValue(), Value = "Packages" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = CorePreferencesManagementType.MODULES.GetEnumResourceValue(), Value = "Modules" },
 
                 /* UserRole */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserRole.USER.GetEnumResourceValue(), Value = "User" },
@@ -460,6 +468,14 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* ResourceDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<ResourceDto>(nameof(ResourceDto.Value), PropertyDisplayResourceType.FIELD), Value = "Value" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<ResourceDto>(nameof(ResourceDto.ResourceCode), PropertyDisplayResourceType.FIELD), Value = "Code" },
+
+                /* GlobalPreferenceModuleDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCoreModuleDto>(nameof(GlobalPreferenceCoreModuleDto.Files), PropertyDisplayResourceType.FIELD), Value = "Files" },
+
+                /* FileDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Name), PropertyDisplayResourceType.FIELD), Value = "File name" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.MimeType), PropertyDisplayResourceType.FIELD), Value = "MIME type" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Content), PropertyDisplayResourceType.FIELD), Value = "Content" },
             ];
         }
 
@@ -519,6 +535,11 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateCreatedTo), PropertyDisplayResourceType.PLACEHOLDER), Value = "31.12.2025" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedFrom), PropertyDisplayResourceType.PLACEHOLDER), Value = "01.1.2024" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedTo), PropertyDisplayResourceType.PLACEHOLDER), Value = "31.12.2025" },
+
+                /* FileDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "module.zip" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.MimeType), PropertyDisplayResourceType.PLACEHOLDER), Value = "application/zip" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Content), PropertyDisplayResourceType.PLACEHOLDER), Value = "Select file(s) ..." },
             ];
         }
     }

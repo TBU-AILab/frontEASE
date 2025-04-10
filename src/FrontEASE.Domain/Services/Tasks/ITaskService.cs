@@ -13,8 +13,8 @@ namespace FrontEASE.Domain.Services.Tasks
         Task<IList<Entities.Tasks.Task>> LoadAllBase(Guid? userID, TaskFilterActionRequest? filter);
         Task<Entities.Tasks.Task> Create(Entities.Tasks.Task task);
         Task<Entities.Tasks.Task> Update(Entities.Tasks.Task task);
-        Task<Entities.Tasks.Task> Duplicate(Entities.Tasks.Task task, string taskName);
-        Task Delete(Entities.Tasks.Task task);
-        Task ChangeState(Entities.Tasks.Task task, TaskState state);
+        Task<IList<Entities.Tasks.Task>> Duplicate(Entities.Tasks.Task task, string taskName, int copies);
+        Task Delete(IList<Entities.Tasks.Task> tasks);
+        Task ChangeState(IList<Entities.Tasks.Task> task, TaskState state);
     }
 }

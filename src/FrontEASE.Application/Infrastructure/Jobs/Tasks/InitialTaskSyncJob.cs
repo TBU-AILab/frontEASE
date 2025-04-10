@@ -20,7 +20,7 @@ using Hangfire;
 using Hangfire.Console;
 using Hangfire.Server;
 using Hangfire.States;
-using FrontEASE.Domain.Services.Core;
+using FrontEASE.Domain.Services.Core.Connector;
 
 namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 {
@@ -29,12 +29,12 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
         private readonly AppSettings _appSettings;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
-        private readonly IEASECoreService _coreService;
+        private readonly ICoreConnector _coreService;
         private readonly ITaskRepository _taskRepository;
 
         public InitialTaskSyncJob(
             IMapper mapper,
-            IEASECoreService coreService,
+            ICoreConnector coreService,
             ITaskRepository taskRepository,
             IUserRepository userRepository,
             AppSettings appSettings)

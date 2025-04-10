@@ -17,7 +17,7 @@ namespace FrontEASE.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.2")
+                .HasAnnotation("ProductVersion", "9.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -107,6 +107,9 @@ namespace FrontEASE.Infrastructure.Migrations
 
                     b.HasIndex("ImageID")
                         .IsUnique();
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_Company_IsDeleted");
 
                     b.ToTable("Companies", "Auth");
                 });
@@ -304,7 +307,8 @@ namespace FrontEASE.Infrastructure.Migrations
 
                     b.HasKey("ResourceCode");
 
-                    b.HasIndex("CountryCodeID");
+                    b.HasIndex("CountryCodeID", "ResourceCode")
+                        .HasDatabaseName("IX_Resource_CountryCodeID_ResourceCode");
 
                     b.ToTable("Resources", "App");
                 });
@@ -676,6 +680,24 @@ namespace FrontEASE.Infrastructure.Migrations
 
                     b.HasIndex("ConfigID")
                         .IsUnique();
+
+                    b.HasIndex("DateCreated")
+                        .HasDatabaseName("IX_Task_DateCreated");
+
+                    b.HasIndex("DateUpdated")
+                        .HasDatabaseName("IX_Task_DateUpdated");
+
+                    b.HasIndex("IsDeleted")
+                        .HasDatabaseName("IX_Task_IsDeleted");
+
+                    b.HasIndex("State")
+                        .HasDatabaseName("IX_Task_State");
+
+                    b.HasIndex("IsDeleted", "State")
+                        .HasDatabaseName("IX_Task_IsDeleted_State");
+
+                    b.HasIndex("State", "DateCreated")
+                        .HasDatabaseName("IX_Task_State_DateCreated");
 
                     b.ToTable("Tasks", "Data");
                 });

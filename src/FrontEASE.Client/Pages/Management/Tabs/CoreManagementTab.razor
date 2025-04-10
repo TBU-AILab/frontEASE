@@ -1,14 +1,66 @@
 ﻿@inject IUIManager uiManager
+@inject IUIService uiService
+@inject IResourceHandler resourceHandler
 
-<CascadingValue Value="GlobalPreferences">
-    <Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small" Class="rounded-top-right-1">
-        <CorePackageAddForm />
-        <CorePackagesList />
+<Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small" Class="rounded-top-right-1">
+    <Row>
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Container Fluid Padding="Padding.Is2.FromStart.Is2.FromEnd">
+                <Row>
+                    <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
+                        <Tabs RenderMode="TabsRenderMode.LazyReload"
+                              SelectedTab="@managementTypeSelected.ToString()"
+                              SelectedTabChanged="@OnSelectedTabChanged"
+                              Class="tab-control"
+                              Border="Border.Is0">
+                            <Items>
+                                @foreach (var managementType in Enum.GetValues(typeof(CorePreferencesManagementType)))
+                                {
+                                    <Tab Name="@(managementType.ToString())">
+                                        @(resourceHandler.GetResource(((CorePreferencesManagementType)managementType).GetEnumResourceValue()))
+                                    </Tab>
+                                }
+                            </Items>
+                            <Content>
+                                @foreach (var managementType in Enum.GetValues(typeof(CorePreferencesManagementType)))
+                                {
+                                    <TabPanel TextAlignment="TextAlignment.Start" Name="@(managementType.ToString())">
+                                        @switch (managementTypeSelected)
+                                        {
+                                            case CorePreferencesManagementType.PACKAGES:
+                                                <CoreManagementPackagesTab />
+                                                break;
+                                            case CorePreferencesManagementType.MODULES:
+                                                <CoreManagementModulesTab />
+                                                break;
+                                        }
+                                    </TabPanel>
+                                }
+                            </Content>
+                        </Tabs>
 
-        <CorePreferencesFooter />
-    </Container>
-</CascadingValue>
+                    </Column>
+                </Row>
+            </Container>
+        </Column>
+    </Row>
+</Container>
 
 @code {
-    public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
+    private CorePreferencesManagementType managementTypeSelected = CorePreferencesManagementType.PACKAGES;
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        await base.OnInitializedAsync();
+    }
+
+    private Task OnSelectedTabChanged(string name)
+    {
+        managementTypeSelected = (CorePreferencesManagementType)Enum.Parse(typeof(CorePreferencesManagementType), name);
+        return Task.CompletedTask;
+    }
 }

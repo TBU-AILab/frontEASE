@@ -16,7 +16,7 @@ namespace FrontEASE.Application.AppServices.Tasks
         Task<TaskDto> Create();
         Task<IList<TaskDto>> Duplicate(Guid id, TaskDuplicateActionRequestDto request);
         Task<TaskDto> Update(TaskDto task);
-        Task<IList<TaskBulkActionResultDto>> Delete(IList<Guid> ids);
-        Task<IList<TaskBulkActionResultDto>> ChangeState(IList<Guid> ids, TaskState state);
+        Task Delete(IList<Guid> ids);
+        Task ChangeState(IList<Guid> ids, TaskState state);
     }
 }

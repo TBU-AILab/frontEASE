@@ -4,6 +4,7 @@ using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Shared.Data.DTOs.Management;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Packages;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
+using FrontEASE.Shared.Infrastructure.Constants.Auth;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers.Specific;
 using FrontEASE.Shared.Services.Resources;
 using Microsoft.AspNetCore.Authorization;
@@ -57,6 +58,7 @@ namespace FrontEASE.Server.Controllers.User
         /// Gets the global preferences
         /// </summary>
         /// <returns>Python package options.</returns>
+        [Authorize(Roles = $"{UserRoleNames.AdminRoleName},{UserRoleNames.SuperadminRoleName}")]
         [HttpGet($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Global}")]
         [ProducesResponseType(typeof(GlobalPreferenceCorePackageDto), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> LoadGlobalPreferences()
@@ -106,11 +108,12 @@ namespace FrontEASE.Server.Controllers.User
         /// </summary>
         /// <param name="preferences">DTO with new updated global preferences.</param>
         /// <returns>Global preferences DTO model.</returns>
+        [Authorize(Roles = $"{UserRoleNames.AdminRoleName},{UserRoleNames.SuperadminRoleName}")]
         [HttpPut($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Global}")]
         [ProducesResponseType(typeof(GlobalPreferencesDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
-        public async Task<IActionResult> UpdatePreferences([Required, FromBody] GlobalPreferencesDto preferences)
+        public async Task<IActionResult> UpdateGlobalPreferences([Required, FromBody] GlobalPreferencesDto preferences)
         {
             IActionResult result;
             try

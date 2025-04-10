@@ -74,27 +74,15 @@
         deletingInProgress = true;
 
         var taskIDs = AffectedTasks.Select(t => t.ID).ToList();
-        var deleteResults = await taskApiService.DeleteTasks(taskIDs);
-        if (deleteResults.Count > 0)
+        var deleteResult = await taskApiService.DeleteTasks(taskIDs);
+
+        if (deleteResult)
         {
-            foreach (var result in deleteResults)
+            foreach (var task in AffectedTasks)
             {
-                var task = AffectedTasks.FirstOrDefault(t => t.ID == result.TaskID);
-                if (task != null)
-                {
-                    if (result.Success)
-                    {
-                        Tasks.Remove(task);
-                        var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {task.Name}";
-                        toastService.ShowSuccess(message);
-                    }
-                    else
-                    {
-                        var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {task.Name}" +
-                                      $"{(string.IsNullOrWhiteSpace(result.ExceptionMessage) ? string.Empty : $" ({result.ExceptionMessage})")}";
-                        toastService.ShowError(message);
-                    }
-                }
+                Tasks.Remove(task);
+                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {task.Name}";
+                toastService.ShowSuccess(message);
             }
             uiService.CallRequestRefresh();
         }
