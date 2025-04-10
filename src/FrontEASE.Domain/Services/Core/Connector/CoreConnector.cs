@@ -23,7 +23,6 @@ namespace FrontEASE.Domain.Services.Core.Connector
     public class CoreConnector : ICoreConnector
     {
         private readonly IMapper _mapper;
-
         private readonly AppSettings _appSettings;
         private readonly HttpClient _httpClient;
 
@@ -93,12 +92,13 @@ namespace FrontEASE.Domain.Services.Core.Connector
             }
         }
 
-        public async Task HandleTaskDuplicate(Entities.Tasks.Task task, Guid origTaskID)
+        public async Task HandleTaskDuplicate(IList<Entities.Tasks.Task> tasks, Guid origTaskID, string baseName, int copies)
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/{origTaskID}/duplicate");
             var queryParams = new Dictionary<string, string>()
             {
-                { "new_name", task.Config.Name }
+                { "new_name", baseName },
+                { "num", copies.ToString() }
             };
 
             url = BuildUrlWithParams(url, queryParams);
@@ -106,8 +106,15 @@ namespace FrontEASE.Domain.Services.Core.Connector
 
             if (response.IsSuccessStatusCode)
             {
-                var responseData = await response.Content.ReadFromJsonAsync<TaskInfoCoreDto>(_serializerOptions);
-                _mapper.Map(responseData, task);
+                var responseData = await response.Content.ReadFromJsonAsync<IList<TaskInfoCoreDto>>(_serializerOptions);
+                if (responseData is not null)
+                {
+                    for (var i = 0; i < responseData.Count; ++i)
+                    {
+                        var matchingTask = tasks.ElementAt(i);
+                        _mapper.Map(responseData.ElementAt(i), matchingTask);
+                    }
+                }
             }
             else
             {
@@ -150,15 +157,21 @@ namespace FrontEASE.Domain.Services.Core.Connector
             }
         }
 
-        public async Task HandleTaskDelete(Entities.Tasks.Task task)
+        public async Task HandleTaskDelete(IList<Entities.Tasks.Task> tasks)
         {
-            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/{task.ID}");
-            var response = await _httpClient.DeleteAsync(url);
+            var taskIDs = tasks.Select(x => x.ID).ToList();
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/batch/delete");
 
+            var request = new HttpRequestMessage(HttpMethod.Delete, url)
+            {
+                Content = new StringContent(JsonSerializer.Serialize(taskIDs), Encoding.UTF8, "application/json")
+            };
+
+            var response = await _httpClient.SendAsync(request);
             if (!response.IsSuccessStatusCode)
             {
                 var failResult = await response.Content.ReadAsStringAsync();
-                throw new ApplicationException($"{nameof(HandleTaskInit)} - Call FAILED - Exception: {failResult}");
+                throw new ApplicationException($"{nameof(HandleTaskDelete)} - Call FAILED - Exception: {failResult}");
             }
         }
 
@@ -191,9 +204,10 @@ namespace FrontEASE.Domain.Services.Core.Connector
             }
         }
 
-        public async Task ChangeTaskState(Entities.Tasks.Task task, TaskState state)
+        public async Task ChangeTaskState(IList<Entities.Tasks.Task> tasks, TaskState state)
         {
-            var url = $"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/{task.ID}";
+            var taskIDs = tasks.Select(x => x.ID).ToList();
+            var url = $"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/batch";
             switch (state)
             {
                 case TaskState.RUN:
@@ -207,12 +221,19 @@ namespace FrontEASE.Domain.Services.Core.Connector
                     break;
             }
             var urlFull = new Uri(url);
-            var response = await _httpClient.PatchAsync(url, null);
+            var response = await _httpClient.PatchAsJsonAsync(url, taskIDs);
 
             if (response.IsSuccessStatusCode)
             {
-                var responseData = await response.Content.ReadFromJsonAsync<TaskInfoCoreDto>(_serializerOptions);
-                _mapper.Map(responseData, task);
+                var responseData = await response.Content.ReadFromJsonAsync<IList<TaskInfoCoreDto>>(_serializerOptions);
+                if (responseData is not null)
+                {
+                    foreach (var responseTask in responseData)
+                    {
+                        var matchingTask = tasks.FirstOrDefault(x => x.ID == responseTask.ID);
+                        _mapper.Map(responseTask, matchingTask);
+                    }
+                }
             }
             else
             {

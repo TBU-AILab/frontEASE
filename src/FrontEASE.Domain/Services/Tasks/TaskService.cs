@@ -108,50 +108,56 @@ namespace FrontEASE.Domain.Services.Tasks
             return updated;
         }
 
-        public async Task<Entities.Tasks.Task> Duplicate(Entities.Tasks.Task task, string baseName)
+        public async Task<IList<Entities.Tasks.Task>> Duplicate(Entities.Tasks.Task task, string baseName, int copies)
         {
-            var newTask = new Entities.Tasks.Task();
-            _mapper.Map(task, newTask);
-            newTask.Config.Name = string.IsNullOrWhiteSpace(baseName) ? task.Config.Name : baseName;
-            newTask.AuthorID = task.AuthorID;
+            var duplicates = new List<Entities.Tasks.Task>();
+            for (int i = 0; i < copies; i++)
+            {
+                var newTask = new Entities.Tasks.Task();
+                _mapper.Map(task, newTask);
+                newTask.Config.Name = string.IsNullOrWhiteSpace(baseName) ? $"{task.Config.Name}_{i + 1}" : $"{baseName}_{i + 1}";
+                newTask.AuthorID = task.AuthorID;
 
-            var connectedEntities = await SelectConnectedEntities(task);
-            UpdateConnectedEntities(newTask, task, connectedEntities);
-            UpdateConnectedModules(newTask);
-            CleanTaskRunData(newTask);
+                var connectedEntities = await SelectConnectedEntities(task);
+                UpdateConnectedEntities(newTask, task, connectedEntities);
+                UpdateConnectedModules(newTask);
+                CleanTaskRunData(newTask);
 
-            await _coreService.HandleTaskDuplicate(newTask, task.ID);
-            var duplicated = await _taskRepository.Insert(newTask);
+                duplicates.Add(newTask);
+            }
 
+            await _coreService.HandleTaskDuplicate(duplicates, task.ID, baseName, copies);
+            var duplicated = await _taskRepository.InsertRange(duplicates, true);
             return duplicated;
         }
 
-        public async Task Delete(Entities.Tasks.Task task)
+        public async Task Delete(IList<Entities.Tasks.Task> tasks)
         {
-            if (task.State == TaskState.RUN)
+            var runningTasks = tasks.Where(x => x.State == TaskState.RUN).ToList();
+            if(runningTasks.Count > 0)
             {
-                await ChangeState(task, TaskState.BREAK);
+                await ChangeState(runningTasks, TaskState.BREAK);
             }
 
-            await _coreService.HandleTaskDelete(task);
-            await _taskRepository.Delete(task);
+            await _coreService.HandleTaskDelete(tasks);
+            await _taskRepository.DeleteRange(tasks, false, true);
         }
 
-        public async Task ChangeState(Entities.Tasks.Task modifiedTask, TaskState state)
+        public async Task ChangeState(IList<Entities.Tasks.Task> modifiedTasks, TaskState state)
         {
             switch (state)
             {
                 case TaskState.RUN:
-                    await _coreService.ChangeTaskState(modifiedTask, TaskState.RUN);
+                    await _coreService.ChangeTaskState(modifiedTasks, TaskState.RUN);
                     break;
                 case TaskState.STOP:
-                    await _coreService.ChangeTaskState(modifiedTask, TaskState.STOP);
+                    await _coreService.ChangeTaskState(modifiedTasks, TaskState.STOP);
                     break;
                 case TaskState.PAUSED:
-                    await _coreService.ChangeTaskState(modifiedTask, TaskState.PAUSED);
+                    await _coreService.ChangeTaskState(modifiedTasks, TaskState.PAUSED);
                     break;
             }
-            await _taskRepository.Update(modifiedTask);
+            await _taskRepository.UpdateRange(modifiedTasks);
         }
 
         private async Task<(IList<ApplicationUser> Users, IList<Company> Companies)> SelectConnectedEntities(Entities.Tasks.Task sourceTask)

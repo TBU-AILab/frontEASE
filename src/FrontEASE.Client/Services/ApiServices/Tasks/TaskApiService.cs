@@ -3,7 +3,6 @@ using FrontEASE.Client.Services.HelperServices.ErrorHandling;
 using FrontEASE.Client.Services.ModelManipulationServices.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
-using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Results;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks;
@@ -141,32 +140,32 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
             return await response.Content.ReadFromJsonAsync<TaskDto>();
         }
 
-        public async Task<IList<TaskBulkActionResultDto>> ChangeTaskStates(IList<Guid> taskIDs, TaskState state)
+        public async Task<bool> ChangeTaskStates(IList<Guid> taskIDs, TaskState state)
         {
             var url = $"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.ChangeState}/{(int)state}{taskIDs.ToQueryString(nameof(taskIDs))}";
             var response = await _client.PatchAsync(url, null);
-            if (response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.NoContent)
             {
                 await _errorHandlingService.HandleErrorResponse(response);
-                return [];
+                return false;
             }
-            return await response.Content.ReadFromJsonAsync<IList<TaskBulkActionResultDto>>() ?? [];
+            return true;
         }
 
         #endregion
 
         #region Delete
 
-        public async Task<IList<TaskBulkActionResultDto>> DeleteTasks(IList<Guid> taskIDs)
+        public async Task<bool> DeleteTasks(IList<Guid> taskIDs)
         {
             var url = $"{TasksControllerConstants.BaseUrl}{taskIDs.ToQueryString(nameof(taskIDs))}";
             var response = await _client.DeleteAsync(url);
-            if (response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.NoContent)
             {
                 await _errorHandlingService.HandleErrorResponse(response);
-                return [];
+                return false;
             }
-            return await response.Content.ReadFromJsonAsync<IList<TaskBulkActionResultDto>>() ?? [];
+            return true;
         }
 
         #endregion

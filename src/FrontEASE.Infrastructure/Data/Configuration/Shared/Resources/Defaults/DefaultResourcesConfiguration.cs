@@ -539,7 +539,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* FileDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "module.zip" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.MimeType), PropertyDisplayResourceType.PLACEHOLDER), Value = "application/zip" },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Content), PropertyDisplayResourceType.PLACEHOLDER), Value = "Select file ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Content), PropertyDisplayResourceType.PLACEHOLDER), Value = "Select file(s) ..." },
             ];
         }
     }

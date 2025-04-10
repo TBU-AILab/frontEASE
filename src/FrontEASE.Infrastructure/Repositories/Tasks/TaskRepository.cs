@@ -171,14 +171,12 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
         {
             await _context.Tasks.AddAsync(task);
             await _context.SaveChangesAsync();
-
             return task;
         }
 
         public async Task<IList<Domain.Entities.Tasks.Task>> InsertRange(IList<Domain.Entities.Tasks.Task> tasks, bool saveChanges)
         {
             await _context.Tasks.AddRangeAsync(tasks);
-
             if (saveChanges)
             {
                 await _context.SaveChangesAsync();
@@ -191,6 +189,13 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             _context.Tasks.Update(task);
             await _context.SaveChangesAsync();
             return task;
+        }
+
+        public async Task<IList<Domain.Entities.Tasks.Task>> UpdateRange(IList<Domain.Entities.Tasks.Task> tasks)
+        {
+            _context.Tasks.UpdateRange(tasks);
+            await _context.SaveChangesAsync();
+            return tasks;
         }
 
         public async Task Delete(Domain.Entities.Tasks.Task task)

@@ -92,23 +92,13 @@
         var taskIDs = AffectedTasks.Select(x => x.ID).ToList();
         var updated = await taskApiService.ChangeTaskStates(taskIDs, NewTaskState!.Value);
 
-        if (updated.Count > 0)
+        if (updated)
         {
-            foreach (var changeInfo in updated)
+            foreach (var task in AffectedTasks)
             {
-                var task = Tasks.First(x => x.ID == changeInfo.TaskID);
-                if (changeInfo.Success)
-                {
-                    task.State = NewTaskState.Value;
-                    var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.StateChange}")}: {task.Name}";
-                    toastService.ShowSuccess(message);
-                }
-                else
-                {
-                    var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.StateChange}")}: {task.Name}";
-                    message = $"{message}{(string.IsNullOrWhiteSpace(changeInfo.ExceptionMessage) ? string.Empty : $" ({changeInfo.ExceptionMessage})")}";
-                    toastService.ShowError(message);
-                }
+                task.State = NewTaskState.Value;
+                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.StateChange}")}: {task.Name}";
+                toastService.ShowSuccess(message);
             }
             uiService.CallRequestRefresh();
         }

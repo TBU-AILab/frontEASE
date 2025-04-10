@@ -1,6 +1,5 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
-using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Results;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks;
@@ -22,11 +21,11 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
 
         #region Update
         Task<TaskDto?> UpdateTask(Guid taskID, TaskDto updateTaskDto);
-        Task<IList<TaskBulkActionResultDto>> ChangeTaskStates(IList<Guid> taskIDs, TaskState state);
+        Task<bool> ChangeTaskStates(IList<Guid> taskIDs, TaskState state);
         #endregion
 
         #region Delete
-        Task<IList<TaskBulkActionResultDto>> DeleteTasks(IList<Guid> taskIDs);
+        Task<bool> DeleteTasks(IList<Guid> taskIDs);
         #endregion
 
         #region Manipulate
