@@ -160,7 +160,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
         public async Task HandleTaskDelete(IList<Entities.Tasks.Task> tasks)
         {
             var taskIDs = tasks.Select(x => x.ID).ToList();
-            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/batch/delete");
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/batch/delete");
 
             var request = new HttpRequestMessage(HttpMethod.Delete, url)
             {
@@ -207,7 +207,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
         public async Task ChangeTaskState(IList<Entities.Tasks.Task> tasks, TaskState state)
         {
             var taskIDs = tasks.Select(x => x.ID).ToList();
-            var url = $"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/batch";
+            var url = $"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/batch";
             switch (state)
             {
                 case TaskState.RUN:
