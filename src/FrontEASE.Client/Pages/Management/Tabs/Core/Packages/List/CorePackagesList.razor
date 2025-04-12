@@ -14,7 +14,7 @@
 }
 else
 {
-    <Row Margin="Margin.Is2.FromTop">
+    <Row Margin="Margin.Is2.FromTop.Is0.FromStart.Is0.FromEnd">
         @if (GlobalPreferences.CorePackages.Where(x => !x.System).Any())
         {
             <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small">
@@ -30,7 +30,7 @@ else
                 @if (!isAddonsPackagesCollapsed)
                 {
                     <Column ColumnSize="ColumnSize.IsFull">
-                        <Row>
+                        <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
                             @if (!GlobalPreferences.CorePackages.Any(x => !x.System))
                             {
                                 <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
@@ -69,7 +69,7 @@ else
             @if (!isSystemPackagesCollapsed)
             {
                 <Column ColumnSize="ColumnSize.IsFull">
-                    <Row>
+                    <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
                         @if (!GlobalPreferences.CorePackages.Any(x => x.System))
                         {
                             <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
