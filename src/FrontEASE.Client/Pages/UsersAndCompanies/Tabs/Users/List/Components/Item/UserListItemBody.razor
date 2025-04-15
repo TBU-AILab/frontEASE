@@ -2,7 +2,7 @@
 @inject AppSettings appSettings
 @inject IUIManager uiManager
 
-<Row Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")" Class="gx-0 margin-background-offset-top-1">
+<Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary">
     <CardBody>
         <Row>
             <Column ColumnSize="ColumnSize.Is4.OnWidescreen" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is3.FromTop.Is3.FromBottom">
@@ -11,7 +11,7 @@
             <Column ColumnSize="ColumnSize.Is8.OnWidescreen" Class="text-center-desktop">
                 <Row Padding="Padding.Is3.FromTop">
                     <Column ColumnSize="ColumnSize.Is12">
-                        <Heading Size="HeadingSize.Is5" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary}; margin-bottom: 0;")" TextWeight="TextWeight.Bold">
+                        <Heading Size="HeadingSize.Is5" Class="text-custom-primary me-0" TextWeight="TextWeight.Bold">
                             @User.UserName
                         </Heading>
                     </Column>
@@ -20,7 +20,7 @@
                 {
                     <Row>
                         <Column ColumnSize="ColumnSize.Is12">
-                            <Text Style="@($"color: {uiManager.Theme.TextColorOptions.Primary};")">
+                            <Text Class="text-custom-primary">
                                 @User.Email
                             </Text>
                         </Column>

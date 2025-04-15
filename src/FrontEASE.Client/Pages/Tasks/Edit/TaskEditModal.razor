@@ -10,7 +10,7 @@
     {
         @if (TaskMetadata.InitializationInProgres)
         {
-            <BackgroundLoadSpinner Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary}; color: {uiManager.Theme.TextColorOptions.Primary}")" TextSize="TextSize.Large" />
+            <BackgroundLoadSpinner Class="bg-custom-primary text-custom-primary" TextSize="TextSize.Large" />
         }
 
         <ModalContent Centered Shadow="Shadow.Small">
@@ -26,7 +26,7 @@
 
                             <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}{(string.IsNullOrWhiteSpace(Task.Config?.Name) ? string.Empty : $" - {Task.Config.Name}")}")" />
 
-                            <ModalBody Padding="Padding.Is0" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary}; color: {uiManager.Theme.TextColorOptions.Primary};")">
+                            <ModalBody Padding="Padding.Is0" Class="bg-custom-primary text-custom-primary">
                                 <Container Fluid>
                                     <Row>
                                         <Column ColumnSize="ColumnSize.IsFull">

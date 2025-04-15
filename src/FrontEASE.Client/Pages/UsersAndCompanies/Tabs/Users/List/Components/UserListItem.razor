@@ -2,7 +2,7 @@
 @inject IUIManager uiManager
 
 <Column ColumnSize="ColumnSize.Is3.OnQuadHD.Is4.OnWidescreen.Is6.OnDesktop">
-    <Card Shadow="Shadow.Small" Margin="Margin.Is4.FromBottom" Border="Border.Is2.Rounded" Overflow="Overflow.Hidden" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")">
+    <Card Shadow="Shadow.Small" Margin="Margin.Is4.FromBottom" Border="Border.Is2.Rounded" Class="border-custom-light" Overflow="Overflow.Hidden">
         <UserListItemHeader />
         <UserListItemBody />
     </Card>

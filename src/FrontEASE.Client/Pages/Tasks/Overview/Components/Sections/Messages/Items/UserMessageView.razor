@@ -3,10 +3,10 @@
 <Container Fluid>
     <Row>
         <Column ColumnSize="ColumnSize.Is8.OnWidescreen.Is4.WithOffset.OnWidescreen.Is10.OnMobile.Is2.WithOffset.OnMobile" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
-            <Card Border="Border.Rounded" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light};")">
+            <Card Border="Border.Rounded" Class="border-custom-light">
                 <MessageViewHeader />
 
-                <CardBody Class="throws-shadow" Border="Border.Is0" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light}; background-color: {uiManager.Theme.BackgroundOptions.Primary};")">
+                <CardBody Class="throws-shadow border-custom-light bg-custom-primary" Border="Border.Is0">
                     @Message.Content
                 </CardBody>
 

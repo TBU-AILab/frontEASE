@@ -15,7 +15,7 @@
             </Column>
         }
         <Label For="@(GetElementIdByOperation(nameof(FileDto.Content)))" Display="@(fileLoadInProgress ? Display.None : Display.Block)" Cursor="@(fileLoadInProgress ? Cursor.Default : Cursor.Pointer)" Border="Border.Is1.Rounded" Class="button btn btn-sized btn-custom-file-picker" Overflow="Overflow.Auto" Margin="Margin.Is0.FromBottom">
-            <Text Display="Display.InlineBlock" Overflow="Overflow.Hidden" Width="Width.Is100" TextAlignment="TextAlignment.Start" TextWeight="TextWeight.Normal" TextSize="TextSize.Small" Style="@($"color: {(ModuleModel.Files.Count > 0 ? uiManager.Theme.TextColorOptions.Muted : uiManager.Theme.TextColorOptions.Primary)}")">
+            <Text Display="Display.InlineBlock" Overflow="Overflow.Hidden" Width="Width.Is100" TextAlignment="TextAlignment.Start" TextWeight="TextWeight.Normal" TextSize="TextSize.Small" Class="@($"{(ModuleModel.Files.Count > 0 ? "text-custom-muted" : "text-custom-primary")}")">
                 @(!(ModuleModel.Files.Count > 0) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Content), PropertyDisplayResourceType.PLACEHOLDER)) : string.Join(", ", ModuleModel.Files.Select(x => x.Name)))
             </Text>
             <FileEdit Display="Display.None"

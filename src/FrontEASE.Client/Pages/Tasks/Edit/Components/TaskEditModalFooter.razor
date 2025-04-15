@@ -6,7 +6,7 @@
 @inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 
-<ModalFooter Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary} !important; border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")">
+<ModalFooter Class="bg-custom-secondary border-custom-light">
     <Container Fluid Padding="Padding.Is0">
         <Row Margin="Margin.Is0">
             <Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is5.OnMobile">
@@ -25,8 +25,7 @@
                 @if (DataOperation != DataOperation.READ)
                 {
                     <Button Clicked="@SaveTask"
-                            Style="@($"background-color: {(DataOperation == DataOperation.INSERT ? uiManager.Theme.ColorOptions.Success : uiManager.Theme.BackgroundOptions.Info)};color: {(DataOperation == DataOperation.INSERT ? uiManager.Theme.White : uiManager.Theme.TextColorOptions.Info)};")"
-                            Class="btn button btn-sized full-width"
+                            Class="@($"btn button btn-sized full-width {(DataOperation == DataOperation.INSERT ? "bg-custom-success text-custom-white" : "bg-custom-info text-custom-info")}")"
                             Disabled="@savingInProgress"
                             TextWeight="TextWeight.Bold">
                         @if (savingInProgress)

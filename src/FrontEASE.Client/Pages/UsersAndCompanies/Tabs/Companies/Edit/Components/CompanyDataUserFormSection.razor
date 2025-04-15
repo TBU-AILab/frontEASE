@@ -4,14 +4,14 @@
 @inject IUIManager uiManager
 @inject AppSettings appSettings
 
-<Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded.Primary" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small">
+<Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded.Primary" Class="border-custom-light" Shadow="Shadow.Small">
     <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Padding="Padding.Is2" Shadow="Shadow.Small">
         <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
-            <Text TextWeight="TextWeight.Bold" Class="text-center" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important;")">
+            <Text TextWeight="TextWeight.Bold" Class="text-center text-custom-primary">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Users), PropertyDisplayResourceType.FIELD)))
             </Text>
         </Div>
-        <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important;")" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
+        <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" Class="text-custom-primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
     </Column>
 
     @if (!isSectionCollapsed)
@@ -30,7 +30,7 @@
                             Filterable="true"
                             FilterMode="DataGridFilterMode.Default"
                             FilterMethod="DataGridFilterMethod.Contains"
-                            Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important; border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")"
+                            Class="text-custom-primary border-custom-light"
                             Responsive>
 
                                 <DataGridColumns>

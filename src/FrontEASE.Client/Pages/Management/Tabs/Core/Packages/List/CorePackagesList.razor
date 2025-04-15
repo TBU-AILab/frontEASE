@@ -5,7 +5,7 @@
 @inject IManagementApiService managementApiService
 
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<GlobalPreferenceCorePackageDto>()))" />
-<Divider Class="divider-main" Shadow="Shadow.Small" Style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Margin="Margin.Is0.FromTop" />
+<Divider Class="divider-main bg-custom-light" Shadow="Shadow.Small" Style="@($"height: 2px !important;")" Margin="Margin.Is0.FromTop" />
 
 
 @if (!isInitialized)
@@ -14,23 +14,23 @@
 }
 else
 {
-    <Row Margin="Margin.Is2.FromTop">
+    <Row Margin="Margin.Is2.FromTop.Is0.FromStart.Is0.FromEnd">
         @if (GlobalPreferences.CorePackages.Where(x => !x.System).Any())
         {
-            <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small">
+            <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
                 <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseStateAddons" Padding="Padding.Is2">
                     <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
                         <Text TextWeight="TextWeight.Bold" Class="text-center">
                             @(resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<GlobalPreferencesDto>(nameof(GlobalPreferencesDto.CorePackages), PropertyDisplayResourceType.FIELD)}.{ManagementMetadataConstants.Addons}"))
                         </Text>
                     </Div>
-                    <Icon Name="@(!isAddonsPackagesCollapsed ? IconName.AngleUp : IconName.AngleDown)" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary};")" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
+                    <Icon Name="@(!isAddonsPackagesCollapsed ? IconName.AngleUp : IconName.AngleDown)" Class="text-custom-primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
                 </Column>
 
                 @if (!isAddonsPackagesCollapsed)
                 {
                     <Column ColumnSize="ColumnSize.IsFull">
-                        <Row>
+                        <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
                             @if (!GlobalPreferences.CorePackages.Any(x => !x.System))
                             {
                                 <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
@@ -56,20 +56,20 @@ else
             </Container>
         }
 
-        <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small">
+        <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
             <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseStateSystem" Padding="Padding.Is2">
                 <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
                     <Text TextWeight="TextWeight.Bold" Class="text-center">
                         @(resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<GlobalPreferencesDto>(nameof(GlobalPreferencesDto.CorePackages), PropertyDisplayResourceType.FIELD)}.{ManagementMetadataConstants.System}"))
                     </Text>
                 </Div>
-                <Icon Name="@(!isSystemPackagesCollapsed ? IconName.AngleUp : IconName.AngleDown)" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary};")" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
+                <Icon Name="@(!isSystemPackagesCollapsed ? IconName.AngleUp : IconName.AngleDown)" Class="text-custom-primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
             </Column>
 
             @if (!isSystemPackagesCollapsed)
             {
                 <Column ColumnSize="ColumnSize.IsFull">
-                    <Row>
+                    <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
                         @if (!GlobalPreferences.CorePackages.Any(x => x.System))
                         {
                             <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">

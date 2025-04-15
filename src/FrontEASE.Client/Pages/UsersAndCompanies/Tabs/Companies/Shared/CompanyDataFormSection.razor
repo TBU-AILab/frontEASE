@@ -47,7 +47,8 @@
             </Column>
         }
         <Label For="@(GetElementIdByOperation(nameof(CompanyDto.Image)))" Display="@(imageLoadInProgress ? Display.None : Display.Block)" Cursor="@(imageLoadInProgress ? Cursor.Default : Cursor.Pointer)" Border="Border.Is1.Rounded" Background="Background.White" Class="button btn btn-sized btn-custom-file-picker" Overflow="Overflow.Auto" Margin="Margin.Is0.FromBottom">
-            <Text Display="Display.InlineBlock" Overflow="Overflow.Hidden" Width="Width.Is100" TextAlignment="TextAlignment.Start" Style="@($"color: {(string.IsNullOrEmpty(CompanyModel.Image?.ImageData) ? uiManager.Theme.TextColorOptions.Muted : uiManager.Theme.TextColorOptions.Primary)}")" TextWeight="TextWeight.Normal" TextSize="TextSize.Small">
+            <Text Display="Display.InlineBlock" Overflow="Overflow.Hidden" Width="Width.Is100" TextAlignment="TextAlignment.Start"
+                  Class="@($"{(string.IsNullOrEmpty(CompanyModel.Image?.ImageData) ? "text-custom-muted" : "text-custom-primary")}")" TextWeight="TextWeight.Normal" TextSize="TextSize.Small">
                 @(string.IsNullOrEmpty(CompanyModel.Image?.ImageData) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Image), PropertyDisplayResourceType.PLACEHOLDER)) : CompanyModel.Image.Name)
             </Text>
             <FileEdit Display="Display.None"
