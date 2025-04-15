@@ -265,13 +265,14 @@
     [CascadingParameter]
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
+    private Guid ParameterID = Guid.NewGuid();
     private bool IsDescriptionPresent { get; set; }
     private bool IsDefaultPresent { get; set; }
     private bool IsSpecialCaseParam { get; set; }
 
     private bool DisplayActions => (IsDescriptionPresent || IsDefaultPresent) && !IsSpecialCaseParam;
 
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, Task.ID.ToString());
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
 
     public static (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto parameter)
     {

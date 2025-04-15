@@ -114,6 +114,7 @@ void SetupMappings()
         mc.AddProfile(new TaskModuleParameterMappingProfile());
         mc.AddProfile(new TaskModuleParameterValueMappingProfile());
         mc.AddProfile(new TaskModuleParameterEnumOptionMappingProfile());
+        mc.AddProfile(new TaskModuleParameterListOptionMappingProfile());
         mc.AddProfile(new TaskModuleParameterNoValidationMetadataMappingProfile());
 
         mc.AddProfile(new TaskDuplicateActionRequestMappingProfile());

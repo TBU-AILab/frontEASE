@@ -18,25 +18,30 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Op
         {
             CreateMap<TaskModuleParameterValue, TaskModuleParameterValueDto>()
                 .ForMember(x => x.EnumValue, cd => cd.MapFrom(map => map.EnumValue))
+                .ForMember(x => x.ListValue, cd => cd.MapFrom(map => map.ListValue))
                 .ReverseMap();
 
             CreateMap<TaskModuleParameterValue, TaskModuleParameterValueNoValidationDto>()
                 .ForMember(x => x.EnumValue, cd => cd.MapFrom(map => map.EnumValue))
+                .ForMember(x => x.ListValue, cd => cd.MapFrom(map => map.ListValue))
                 .ReverseMap();
 
             CreateMap<TaskModuleParameterValueEntity, TaskModuleParameterValueDto>()
                 .ForMember(x => x.EnumValue, cd => cd.MapFrom(map => map.EnumValue))
+                //.ForMember(x => x.ListValue, cd => cd.MapFrom(map => map.ListValue))
                 .ReverseMap();
 
             CreateMap<TaskModuleParameterValueEntity, TaskModuleParameterValueNoValidationDto>()
                 .ForMember(x => x.EnumValue, cd => cd.MapFrom(map => map.EnumValue))
+                //.ForMember(x => x.ListValue, cd => cd.MapFrom(map => map.ListValue))
                 .ReverseMap();
         }
 
         private void CreateMapsEntities()
         {
             CreateMap<TaskModuleParameterValue, TaskModuleParameterValue>()
-                .ForMember(x => x.EnumValue, cd => cd.MapFrom(map => map.EnumValue));
+                .ForMember(x => x.EnumValue, cd => cd.MapFrom(map => map.EnumValue))
+                .ForMember(x => x.ListValue, cd => cd.MapFrom(map => map.ListValue));
 
             CreateMap<TaskModuleParameterValueEntity, TaskModuleParameterValueEntity>()
                 .ForMember(x => x.ID, cd => cd.Ignore())
@@ -44,16 +49,19 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Op
                 .ForMember(x => x.Parameter, cd => cd.Ignore())
 
                 .ForMember(x => x.EnumValue, cd => cd.MapFrom(map => map.EnumValue));
+                //.ForMember(x => x.ListValue, cd => cd.MapFrom(map => map.ListValue));
         }
 
         private void CreateMapsCore()
         {
             CreateMap<TaskModuleParameterValue, TaskModuleParameterValueCoreDto>()
                 .ForMember(x => x.EnumValue, cd => cd.MapFrom(map => map.EnumValue))
+                .ForMember(x => x.ListValue, cd => cd.MapFrom(map => map.ListValue))
                 .ReverseMap();
 
             CreateMap<TaskModuleParameterValueEntity, TaskModuleParameterValueCoreDto>()
                 .ForMember(x => x.EnumValue, cd => cd.MapFrom(map => map.EnumValue))
+                //.ForMember(x => x.ListValue, cd => cd.MapFrom(map => map.ListValue))
                 .ReverseMap();
         }
     }

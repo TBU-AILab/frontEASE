@@ -1,4 +1,5 @@
 ﻿using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values;
+using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.Parameters;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.Parameters.Options;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -39,6 +40,24 @@ namespace FrontEASE.DataContracts.Converters.Tasks.Parameters
                 {
                     dto.BoolValue = root.GetBoolean();
                 }
+                else if (root.ValueKind == JsonValueKind.Array)
+                {
+                    var listOption = new TaskModuleParameterListOptionCoreDto();
+
+                    foreach (var item in root.EnumerateArray())
+                    {
+                        foreach (var property in item.EnumerateObject())
+                        {
+                            var parameter = JsonSerializer.Deserialize<TaskModuleParameterCoreDto>(property.Value.GetRawText(), options);
+                            if (parameter is not null)
+                            {
+                                listOption.ParameterValues[property.Name] = parameter;
+                            }
+                        }
+                    }
+
+                    dto.ListValue = listOption;
+                }
                 else if (root.ValueKind == JsonValueKind.Object)
                 {
                     dto.EnumValue = JsonSerializer.Deserialize<TaskModuleParameterEnumOptionCoreDto>(root.GetRawText(), options);
@@ -65,6 +84,11 @@ namespace FrontEASE.DataContracts.Converters.Tasks.Parameters
             else if (value.BoolValue.HasValue)
             {
                 writer.WriteBooleanValue(value.BoolValue.Value);
+            }
+            else if (value.ListValue is not null)
+            {
+                // Serialize ListValue for multi-LLM connectors
+                JsonSerializer.Serialize(writer, value.ListValue.ParameterValues, options);
             }
             else if (value.EnumValue is not null)
             {

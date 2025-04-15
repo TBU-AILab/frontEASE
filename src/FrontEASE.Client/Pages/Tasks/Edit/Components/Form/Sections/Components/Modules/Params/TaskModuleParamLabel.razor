@@ -139,12 +139,10 @@
     [CascadingParameter]
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
+    private Guid ParameterID = Guid.NewGuid();
+
     private bool HasDescription => !string.IsNullOrWhiteSpace(ParamOption.Description);
-    private bool IsSpecialCase()
-    {
-        var isSpecial = ParamOption.ShortName == TaskMetadataConstants.InitMessageTemplate;
-        return isSpecial;
-    }
+    private bool IsSpecialCase() => ParamOption.ShortName == TaskMetadataConstants.InitMessageTemplate;
 
     private void FillInitMessageValue()
     {
@@ -152,5 +150,5 @@
         uiService.CallRequestRefresh();
     }
 
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, Task.ID.ToString());
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
 }

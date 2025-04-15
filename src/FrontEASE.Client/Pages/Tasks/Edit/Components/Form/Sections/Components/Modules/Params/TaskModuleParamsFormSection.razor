@@ -14,41 +14,40 @@
         </Column>
 
 
-            <Column ColumnSize="ColumnSize.IsFull">
-                <Container Fluid>
-                    <Row>
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Container Fluid>
+                <Row>
 
-                        <Container Fluid Margin="Margin.Is3.FromTop">
-                            <Row Padding="Padding.Is0">
+                    <Container Fluid Margin="Margin.Is3.FromTop">
+                        <Row Padding="Padding.Is0">
 
-                                @foreach (var ParamOption in AvailableParams.OrderBy(x => x.Readonly))
-                                {
-                                    var ParamValue = Module.Parameters?.SingleOrDefault(x => x.ShortName == ParamOption.ShortName);
-                                    var paramType = DynamicParamUtils.GetParameterType(ParamOption.Type);
+                            @foreach (var ParamOption in AvailableParams.OrderBy(x => x.Readonly))
+                            {
+                                var ParamValue = Module.Parameters?.SingleOrDefault(x => x.ShortName == ParamOption.ShortName);
+                                var paramType = DynamicParamUtils.GetParameterType(ParamOption.Type);
 
-                                    ParamValue = ParamOption.Readonly == true ? InitializeReadonlyParamValue(ParamValue, ParamOption) : InitializeParamValue(ParamValue, ParamOption, paramType!.Value);
+                                ParamValue = ParamOption.Readonly == true ? InitializeReadonlyParamValue(ParamValue, ParamOption) : InitializeParamValue(ParamValue, ParamOption, paramType!.Value);
 
-                                    <Fields>
-                                        <CascadingValue Value="ParamOption">
-                                            <CascadingValue Value="ParamValue">
-                                                @if (ParamOption.Readonly != true)
-                                                {
-                                                    <TaskModuleParamValue />
-                                                }
-                                                else
-                                                {
-                                                    <TaskModuleParamLabel />
-                                                }
-                                            </CascadingValue>
+                                <Fields>
+                                    <CascadingValue Value="ParamOption">
+                                        <CascadingValue Value="ParamValue">
+                                            @if (ParamOption.Readonly != true)
+                                            {
+                                                <TaskModuleParamValue />
+                                            }
+                                            else
+                                            {
+                                                <TaskModuleParamLabel />
+                                            }
                                         </CascadingValue>
-
-                                    </Fields>
-                                }
-                            </Row>
-                        </Container>
-                    </Row>
-                </Container>
-            </Column>
+                                    </CascadingValue>
+                                </Fields>
+                            }
+                        </Row>
+                    </Container>
+                </Row>
+            </Container>
+        </Column>
     </Row>
 }
 

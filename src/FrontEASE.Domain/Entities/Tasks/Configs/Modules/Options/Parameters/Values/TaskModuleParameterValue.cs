@@ -6,6 +6,7 @@ namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Val
     {
         #region Data
 
+        public TaskModuleParameterListOption? ListValue { get; set; }
         public TaskModuleParameterEnumOption? EnumValue { get; set; }
         public float? FloatValue { get; set; }
         public int? IntValue { get; set; }

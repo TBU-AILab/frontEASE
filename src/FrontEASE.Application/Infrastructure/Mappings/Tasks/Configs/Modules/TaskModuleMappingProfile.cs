@@ -159,6 +159,11 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules
                 { return value.EnumValue.StringValue; }
             }
 
+            if (value.ListValue is not null)
+            {
+                return context.Mapper.Map<TaskModuleInputCoreDto>(value.ListValue.ParameterValues);
+            }
+
             return value.StringValue ?? (object?)value.IntValue ?? (object?)value.FloatValue ?? value.BoolValue;
         }
 
