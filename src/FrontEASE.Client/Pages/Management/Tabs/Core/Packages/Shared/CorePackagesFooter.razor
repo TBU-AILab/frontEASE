@@ -7,7 +7,7 @@
 
 <Fields>
     <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
-        <Button Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Info}; color: {uiManager.Theme.TextColorOptions.Info};")" Clicked="@EditGlobalPreferences" Class="btn button btn-sized full-width" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
+        <Button Clicked="@EditGlobalPreferences" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
             @if (updateInProgress)
             {
                 <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />

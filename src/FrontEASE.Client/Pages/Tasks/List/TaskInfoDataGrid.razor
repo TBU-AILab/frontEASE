@@ -77,7 +77,7 @@
               SelectionMode="DataGridSelectionMode.Multiple"
               FilterMode="DataGridFilterMode.Default"
               FilterMethod="DataGridFilterMethod.Contains"
-              Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important; border-color: {uiManager.Theme.BackgroundOptions.Light};")"
+              Class="text-custom-primary border-custom-light"
               Responsive>
         <DataGridColumns>
             <DataGridColumn Field="@nameof(TaskInfoDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true" />

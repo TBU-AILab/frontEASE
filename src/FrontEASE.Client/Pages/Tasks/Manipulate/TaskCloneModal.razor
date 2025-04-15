@@ -9,7 +9,7 @@
 <Modal @ref="@CloneModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
     @if (isModalVisible)
     {
-        <ModalContent Centered Shadow="Shadow.Small" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")">
+        <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
 
             <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}")} - {TaskInfo.Name}")" />
 
@@ -23,7 +23,7 @@
 
                                     <Fields>
                                         <Field ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
-                                            <Button Clicked="@CloneTask" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Info}; color: {uiManager.Theme.TextColorOptions.Info};")" Class="btn btn-sized button full-width" Disabled="@cloneInProgress" TextWeight="TextWeight.Bold">
+                                            <Button Clicked="@CloneTask" Class="btn btn-sized button full-width bg-custom-info text-custom-info" Disabled="@cloneInProgress" TextWeight="TextWeight.Bold">
                                                 @if (cloneInProgress)
                                                 {
                                                     <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))" TextSize="TextSize.Medium" />

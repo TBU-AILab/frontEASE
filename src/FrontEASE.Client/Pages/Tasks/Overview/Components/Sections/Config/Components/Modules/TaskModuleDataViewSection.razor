@@ -7,7 +7,7 @@
         <FormSectionHeader DisplayText="@ModuleName" />
     </Container>
 
-    <Divider Class="divider-section" Shadow="Shadow.Small" Style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" />
+    <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Style="@($"height: 2px !important;")" />
     @{
         var TaskModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == Module.ShortName);
     }

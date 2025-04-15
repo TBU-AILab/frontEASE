@@ -1,7 +1,7 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject IUIManager uiManager
 
-<Row Padding="Padding.Is2" Border="Border.Is1.Rounded" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" TextOverflow="TextOverflow.Wrap">
+<Row Padding="Padding.Is2" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" TextOverflow="TextOverflow.Wrap">
     <Column ColumnSize="ColumnSize.IsFull" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" Padding="Padding.Is2" Shadow="Shadow.Small">
         <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
             <Text TextWeight="TextWeight.Bold" Class="text-center">
@@ -20,7 +20,7 @@
         </Span>
     </Column>
 
-    <Divider Class="divider-subsection" Style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" />
+    <Divider Class="divider-subsection bg-custom-light" Style="@($"height: 2px !important;")" Shadow="Shadow.Small" />
 
     @foreach (var messageItem in Task.Config.RepeatedMessage.RepeatedMessageItems)
     {
@@ -44,7 +44,7 @@
 
         @if (messageItem != Task.Config.RepeatedMessage.RepeatedMessageItems.LastOrDefault())
         {
-            <Divider Class="divider-subsection" Style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" />
+            <Divider Class="divider-subsection bg-custom-light" Style="@($"height: 2px !important;")" Shadow="Shadow.Small" />
         }
     }
 

@@ -385,6 +385,50 @@ a, .btn-link {
     background-color: var(--b-theme-primary) !important;
 }
 
+.bg-custom-light {
+    background-color: var(--b-theme-background-light) !important;
+}
+
+.bg-custom-info {
+    background-color: var(--b-theme-background-info) !important;
+}
+
+.bg-custom-primary {
+    background-color: var(--b-theme-background-primary) !important;
+}
+
+.bg-custom-secondary {
+    background-color: var(--b-theme-background-secondary) !important;
+}
+
+.bg-custom-success {
+    background-color: var(--b-theme-background-success) !important;
+}
+
+.text-custom-primary {
+    color: var(--b-theme-text-primary) !important;
+}
+
+.text-custom-info {
+    color: var(--b-theme-text-info) !important;
+}
+
+.text-custom-muted {
+    color: var(--b-theme-text-muted) !important;
+}
+
+.text-custom-white {
+    color: var(--b-theme-white) !important;
+}
+
+.border-custom-light {
+    border-color: var(--b-theme-background-light) !important;
+}
+
+.border-custom-info {
+    border-color: var(--b-theme-background-info) !important;
+}
+
 
 /* CUSTOM CLASSES - SHARED */
 
