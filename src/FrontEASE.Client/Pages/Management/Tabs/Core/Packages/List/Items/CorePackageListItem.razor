@@ -1,8 +1,8 @@
 ﻿@inject IMapper mapper
 @inject IUIManager uiManager
 
-<Card Margin="Margin.Is3.FromBottom" Border="Border.Is2.Rounded" Overflow="Overflow.Hidden" Style="@($"border-color: {uiManager.Theme.BackgroundOptions.Light} !important;")">
-    <Row Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Primary};")" Class="gx-0 margin-background-offset-top-1">
+<Card Margin="Margin.Is3.FromBottom" Border="Border.Is2.Rounded" Overflow="Overflow.Hidden" Class="border-custom-light">
+    <Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary">
         @if (!Package.System)
         {
             <CorePackageListItemHeader />

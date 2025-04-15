@@ -8,7 +8,7 @@
         <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<TaskMessageDto>()))" />
     </Container>
 
-    <Divider Class="divider-section" Style="@($"height: 2px !important; background-color: {uiManager.Theme.BackgroundOptions.Light};")" Shadow="Shadow.Small" />
+    <Divider Class="divider-section bg-custom-light" Style="@($"height: 2px !important;")" Shadow="Shadow.Small" />
 
     <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
         <Row>
@@ -37,7 +37,7 @@
             else
             {
                 <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
-                    <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary} !important;")">
+                    <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold" Class="text-custom-primary">
                         @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(TaskMessageDto)}.{UIElementConstants.Collection}"))
                     </Heading>
                 </Column>

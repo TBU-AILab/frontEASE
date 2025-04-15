@@ -3,7 +3,7 @@
 @inject AppSettings appSettings
 
 <Column ColumnSize="ColumnSize.Is12" Margin="Margin.Is3.FromBottom">
-    <Container Fluid Padding="Padding.Is2" Shadow="Shadow.Small" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary};")" Border="Border.Rounded">
+    <Container Fluid Padding="Padding.Is2" Shadow="Shadow.Small" Class="bg-custom-secondary" Border="Border.Rounded">
         <Row>
             <Column ColumnSize="ColumnSize.Is1.OnWidescreen.Is2.OnTablet" TextAlignment="TextAlignment.Center" Class="align-self-center">
                 <Image Border="Border.RoundedCircle" Source="@(string.IsNullOrWhiteSpace(Company.Image?.ImageUrl) ? ImageConstants.CompanyPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{Company.Image.ImageUrl}")" Class="full-max-width datagrid-item-image" Loading />

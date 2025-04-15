@@ -2,7 +2,7 @@
 @inject IUIManager uiManager
 
 <Column Margin="Margin.Is3.FromBottom" ColumnSize="ColumnSize.Is12">
-    <Container Fluid Padding="Padding.Is2" Shadow="Shadow.Small" Border="Border.Rounded" Style="@($"background-color: {uiManager.Theme.BackgroundOptions.Secondary};")">
+    <Container Fluid Padding="Padding.Is2" Shadow="Shadow.Small" Border="Border.Rounded" Class="bg-custom-secondary">
 
         <Row Margin="Margin.Is2.FromTop" Class="justify-content-center text-break">
             <Column TextAlignment="TextAlignment.Center" Class="align-self-center ">
@@ -13,7 +13,7 @@
                 {
                     <Row Margin="Margin.Is2.FromTop" Class="text-break">
                         <Column TextAlignment="TextAlignment.Center">
-                            <Span Class="font-large" TextOverflow="TextOverflow.Wrap" Style="@($"color: {uiManager.Theme.TextColorOptions.Primary};")">
+                            <Span Class="font-large text-custom-primary" TextOverflow="TextOverflow.Wrap">
                                 @Token.Description
                             </Span>
                         </Column>
