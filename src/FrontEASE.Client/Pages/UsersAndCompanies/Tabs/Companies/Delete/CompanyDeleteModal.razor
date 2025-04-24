@@ -1,7 +1,6 @@
 ﻿@inject ICompanyApiService companyApiService
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 @inject IUIManager uiManager
 
@@ -58,7 +57,7 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await DeleteCompany();

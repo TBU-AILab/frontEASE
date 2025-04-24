@@ -1,0 +1,15 @@
+﻿@inject IMapper mapper
+@inject IUIManager uiManager
+
+<Card Margin="Margin.Is3.FromBottom" Border="Border.Is2.Rounded" Overflow="Overflow.Hidden" Class="border-custom-light">
+    <Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary">
+        <CoreModuleListItemHeader />
+        <CoreModuleListItemBody />
+    </Row>
+</Card>
+
+
+@code {
+    [CascadingParameter]
+    public TaskModuleNoValidationDto Module { get; set; } = new();
+}

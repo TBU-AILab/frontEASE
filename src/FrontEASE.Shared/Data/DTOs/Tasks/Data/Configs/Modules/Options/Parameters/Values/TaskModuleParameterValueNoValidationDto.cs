@@ -36,13 +36,13 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
         /// Parameter - enum module value
         /// </summary>
         [Resource($"{nameof(TaskModuleParameterValueDto)}.{nameof(EnumValue)}")]
-        public TaskModuleParameterEnumOptionDto? EnumValue { get; set; }
+        public TaskModuleParameterEnumOptionNoValidationDto? EnumValue { get; set; }
 
         /// <summary>
         /// Parameter - list module value
         /// </summary>
         [Resource($"{nameof(TaskModuleParameterValueDto)}.{nameof(ListValue)}")]
-        public TaskModuleParameterListOptionDto? ListValue { get; set; }
+        public TaskModuleParameterListOptionNoValidationDto? ListValue { get; set; }
 
         #endregion
 

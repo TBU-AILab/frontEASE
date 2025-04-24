@@ -3,10 +3,9 @@
 @inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 
-<Modal @ref="@CloneModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
+<Modal @ref="@CloneModal" Closed="@OnModalClosing" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
     @if (isModalVisible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
@@ -62,7 +61,7 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await CloneTask();
@@ -74,6 +73,9 @@
                 break;
         }
     }
+
+    private async Task OnModalClosing() => await HideModal();
+
 
     public async Task CloneTask()
     {

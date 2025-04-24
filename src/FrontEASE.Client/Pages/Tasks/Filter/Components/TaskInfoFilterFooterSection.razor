@@ -2,7 +2,6 @@
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
-@inject IShortcutKeyDictionary shortcutDictionary
 
 <Fields Margin="Margin.Is5.FromTop">
     <Field ColumnSize="ColumnSize.Is3.OnWidescreen">
@@ -46,7 +45,7 @@
 
     public async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await FilterTasks();

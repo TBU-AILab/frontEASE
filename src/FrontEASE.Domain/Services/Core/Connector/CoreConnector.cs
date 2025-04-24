@@ -464,7 +464,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             {
                 foreach (var detail in validationError.Detail)
                 {
-                    string loc = detail.Loc != null && detail.Loc.Count > 0 ? string.Join(" > ", detail.Loc) : string.Empty;
+                    string loc = detail.Loc is not null && detail.Loc.Count > 0 ? string.Join(" > ", detail.Loc) : string.Empty;
                     messages.Add(!string.IsNullOrEmpty(loc) ? detail.Msg : $"{loc}: {detail.Msg}");
                 }
             }

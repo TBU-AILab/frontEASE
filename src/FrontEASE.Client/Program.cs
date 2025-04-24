@@ -44,7 +44,6 @@ using FrontEASE.Client.Services.ModelManipulationServices.Companies;
 using FrontEASE.Client.Services.ModelManipulationServices.Management;
 using FrontEASE.Client.Services.ModelManipulationServices.Tasks;
 using FrontEASE.Client.Services.ModelManipulationServices.User;
-using FrontEASE.Client.Shared.Dictionaries.Shortcuts;
 using FrontEASE.Shared.Services.Resources;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -62,10 +61,8 @@ SetupUIEnhancements();
 SetupHelperServices();
 SetupApiServices();
 SetupModelManipulationServices();
-SetupDictionaries();
 SetupUtils();
 SetupMappings();
-SetupUIEnhancements();
 
 await builder.Build().RunAsync();
 
@@ -76,8 +73,8 @@ void SetupUIEnhancements()
         options.ChangeSliderOnHold = true;
         options.EnableNumericStep = true;
         options.ShowNumericStepButtons = true;
-        options.Immediate = true;
-        options.DebounceInterval = 500;
+        options.Immediate = false;
+        options.DebounceInterval = 50;
         options.Debounce = true;
     }).AddBootstrap5Providers().AddFontAwesomeIcons();
     builder.Services.AddBlazoredToast();
@@ -172,9 +169,4 @@ void SetupModelManipulationServices()
     builder!.Services.AddTransient<IUserManipulationService, UserManipulationService>();
     builder!.Services.AddTransient<ITaskManipulationService, TaskManipulationService>();
     builder!.Services.AddTransient<IManagementManipulationService, ManagementManipulationService>();
-}
-
-void SetupDictionaries()
-{
-    builder!.Services.AddTransient<IShortcutKeyDictionary, ShortcutKeyDictionary>();
 }

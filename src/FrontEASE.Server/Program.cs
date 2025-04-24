@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using FrontEASE.Application.AppServices.Companies;
 using FrontEASE.Application.AppServices.Files;
 using FrontEASE.Application.AppServices.Management;
@@ -345,7 +345,7 @@ void SetupSwaggerGen()
 {
     builder.Services.AddSwaggerGen(options =>
     {
-        options.SwaggerDoc("v1", new OpenApiInfo { Title = "FrontEASE - Effortless Algorithmic Solution Evolution (FE)", Version = "01.04.2025" });
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "FrontEASE - Effortless Algorithmic Solution Evolution (FE)", Version = DateTime.UtcNow.ToString("dd.MM.yyyy") });
         options.DescribeAllParametersInCamelCase();
         options.SupportNonNullableReferenceTypes();
 

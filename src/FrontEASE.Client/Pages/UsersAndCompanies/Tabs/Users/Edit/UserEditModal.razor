@@ -3,7 +3,6 @@
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
 @inject IUIManager uiManager
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 @inject AppSettings appSettings
 
@@ -73,7 +72,7 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await EditUser();

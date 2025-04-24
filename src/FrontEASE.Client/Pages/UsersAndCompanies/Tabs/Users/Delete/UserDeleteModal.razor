@@ -2,7 +2,6 @@
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject IUIManager uiManager
 
 <Modal @ref="@DeleteModal" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
@@ -57,7 +56,7 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await DeleteUser();

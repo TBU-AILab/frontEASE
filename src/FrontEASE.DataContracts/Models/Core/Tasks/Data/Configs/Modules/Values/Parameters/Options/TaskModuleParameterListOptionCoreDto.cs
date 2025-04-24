@@ -4,9 +4,9 @@
     {
         public TaskModuleParameterListOptionCoreDto()
         {
-            ParameterValues = new Dictionary<string, TaskModuleParameterCoreDto>();
+            ParameterValues = new List<IDictionary<string, TaskModuleParameterCoreDto>>();
         }
 
-        public IDictionary<string, TaskModuleParameterCoreDto> ParameterValues { get; set; }
+        public IList<IDictionary<string, TaskModuleParameterCoreDto>> ParameterValues { get; set; }
     }
 }

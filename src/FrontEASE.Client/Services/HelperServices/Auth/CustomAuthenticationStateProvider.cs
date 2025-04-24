@@ -50,7 +50,7 @@ namespace FrontEASE.Client.Services.HelperServices
                         new(ClaimTypes.Email, email ?? string.Empty)
                     };
 
-                    if (roles != null)
+                    if (roles is not null)
                     {
                         foreach (var role in roles)
                         {

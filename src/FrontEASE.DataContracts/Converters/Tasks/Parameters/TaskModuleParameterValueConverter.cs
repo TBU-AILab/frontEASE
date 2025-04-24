@@ -46,17 +46,22 @@ namespace FrontEASE.DataContracts.Converters.Tasks.Parameters
 
                     foreach (var item in root.EnumerateArray())
                     {
+                        var listItem = new Dictionary<string, TaskModuleParameterCoreDto>();
                         foreach (var property in item.EnumerateObject())
                         {
                             var parameter = JsonSerializer.Deserialize<TaskModuleParameterCoreDto>(property.Value.GetRawText(), options);
                             if (parameter is not null)
                             {
-                                listOption.ParameterValues[property.Name] = parameter;
+                                listItem[property.Name] = parameter;
                             }
+                        }
+                        if (listItem.Count > 0)
+                        {
+                            listOption.ParameterValues.Add(listItem);
                         }
                     }
 
-                    dto.ListValue = listOption;
+                    dto.ListValue = listOption.ParameterValues.Count > 0 ? listOption : null;
                 }
                 else if (root.ValueKind == JsonValueKind.Object)
                 {
@@ -87,7 +92,6 @@ namespace FrontEASE.DataContracts.Converters.Tasks.Parameters
             }
             else if (value.ListValue is not null)
             {
-                // Serialize ListValue for multi-LLM connectors
                 JsonSerializer.Serialize(writer, value.ListValue.ParameterValues, options);
             }
             else if (value.EnumValue is not null)

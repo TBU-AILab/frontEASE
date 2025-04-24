@@ -29,6 +29,7 @@ using FrontEASE.Shared.Data.Enums.Shared.Addresses;
 using FrontEASE.Shared.Data.Enums.Shared.General;
 using FrontEASE.Shared.Data.Enums.Shared.Resources;
 using FrontEASE.Shared.Data.Enums.Tasks;
+using FrontEASE.Shared.Data.Enums.Tasks.Config;
 using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.RepeatedMessage;
 using FrontEASE.Shared.Data.Enums.Tasks.Messages;
 using FrontEASE.Shared.Data.Enums.Tasks.Visualisation;
@@ -189,6 +190,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(GlobalPreferenceCorePackageDto)}.{ManagementMetadataConstants.System}.{UIElementConstants.Collection}", Value="No system packages have been found." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(GlobalPreferenceCorePackageDto)}.{ManagementMetadataConstants.Addons}.{UIElementConstants.Collection}", Value="No addons packages have been found." },
 
+                /* TaskModuleDto */
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(TaskModuleDto)}.{UIElementConstants.Collection}", Value="No modules have been found." },
+
                 /* TaskDto */
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(TaskDto)}.{UIElementConstants.Collection}", Value="No tasks have been found." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(TaskDto)}.{UIConstants.Question}", Value="Do you really wish to permanently delete the task(s)?" },
@@ -247,7 +251,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.BackToHomepage}", Value="Return to Home page" },
 
                 /* Data Manipulations */
-                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{ UIConstants.Base}.{ UIConstants.Generic}.{ UIActionConstants.Use}.{ UIStateConstants.Default}", Value="Use default value" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}", Value="Use default value" },
  
                 /* Errors and Exceptions */
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIConstants.Error}", Value="Error" },
@@ -291,6 +295,15 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TaskState.STOP.GetEnumResourceValue(), Value = "Stopped" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TaskState.FINISH.GetEnumResourceValue(), Value = "Finished" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TaskState.BREAK.GetEnumResourceValue(), Value = "Error" },
+
+                /* ModuleType */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = ModuleType.ANALYSIS.GetEnumResourceValue(), Value = "Analysis" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = ModuleType.EVALUATOR.GetEnumResourceValue(), Value = "Evaluator" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = ModuleType.LLM_CONNECTOR.GetEnumResourceValue(), Value = "LLM Connector" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = ModuleType.SOLUTION.GetEnumResourceValue(), Value = "Solution" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = ModuleType.STOPPING_CONDITION.GetEnumResourceValue(), Value = "Stopping Condition" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = ModuleType.TEST.GetEnumResourceValue(), Value = "Test" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = ModuleType.STATISTIC.GetEnumResourceValue(), Value = "Statistic" },
 
                 /* MessageRole */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = MessageRole.USER.GetEnumResourceValue(), Value = "User" },

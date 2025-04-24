@@ -1,6 +1,5 @@
 ﻿@inject IMapper mapper
 @inject IResourceHandler resourceHandler
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject IUIManager uiManager
 
 <ModalFooter Class="bg-custom-secondary border-custom-light">
@@ -24,7 +23,7 @@
 
     public async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
             case ShortcutKeys.ESCAPE:

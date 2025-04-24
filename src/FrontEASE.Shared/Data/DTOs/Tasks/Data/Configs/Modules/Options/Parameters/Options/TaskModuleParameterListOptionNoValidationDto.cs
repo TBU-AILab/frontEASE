@@ -4,12 +4,12 @@
     {
         public TaskModuleParameterListOptionNoValidationDto()
         {
-            ParameterValues = new Dictionary<string, TaskModuleParameterNoValidationDto>();
+            ParameterValues = new List<IList<TaskModuleParameterNoValidationDto>>();
         }
 
         /// <summary>
         /// Nested pararmeters.
         /// </summary>
-        public IDictionary<string, TaskModuleParameterNoValidationDto> ParameterValues { get; set; }
+        public IList<IList<TaskModuleParameterNoValidationDto>> ParameterValues { get; set; }
     }
 }

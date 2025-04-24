@@ -1,8 +1,8 @@
 ﻿@inject IUIService uiService
 @inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
+@inject ITypelistApiService typelistApiService
 @inject IMapper mapper
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject ICoreApiService coreApiService
 @inject Blazored.Toast.Services.IToastService toastService
 
@@ -36,6 +36,9 @@
 </Row>
 
 @code {
+    [CascadingParameter]
+    public IList<TaskModuleNoValidationDto> TaskModules { get; set; } = [];
+
     private GlobalPreferenceCoreModuleDto ModuleModel = new();
 
     private bool isFormCollapsed = true;
@@ -52,7 +55,7 @@
 
     public async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await AddModule();
@@ -90,6 +93,16 @@
 
         addInProgress = false;
         uiService.CallRequestRefresh();
+    }
+
+    private async Task LoadTaskModuleOptions()
+    {
+        var moduleOptions = await typelistApiService.LoadTaskModuleOptions();
+        if (moduleOptions?.Count > 0 == true)
+        {
+            TaskModules.Clear();
+            foreach (var option in moduleOptions) { TaskModules.Add(option); }
+        }
     }
 
     private void ChangeCollapseState() => isFormCollapsed = !isFormCollapsed;

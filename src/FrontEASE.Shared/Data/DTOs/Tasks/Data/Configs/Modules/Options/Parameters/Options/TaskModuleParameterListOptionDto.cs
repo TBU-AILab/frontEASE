@@ -9,13 +9,13 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
     {
         public TaskModuleParameterListOptionDto()
         {
-            ParameterValues = new Dictionary<string, TaskModuleParameterDto>();
+            ParameterValues = new List<IList<TaskModuleParameterDto>>();
         }
 
         /// <summary>
         /// Nested pararmeters.
         /// </summary>
         [Resource($"{nameof(TaskModuleParameterListOptionDto)}.{nameof(ParameterValues)}")]
-        public IDictionary<string, TaskModuleParameterDto> ParameterValues { get; set; }
+        public IList<IList<TaskModuleParameterDto>> ParameterValues { get; set; }
     }
 }

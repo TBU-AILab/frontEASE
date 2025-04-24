@@ -10,7 +10,7 @@
     {
         @if (TaskMetadata.InitializationInProgres)
         {
-            <BackgroundLoadSpinner Class="bg-custom-primary text-custom-primary" TextSize="TextSize.Large" />
+            <BackgroundLoadSpinner Class="bg-custom-primary text-custom-primary background-load-spinner-overlay" TextSize="TextSize.Large" />
         }
 
         <ModalContent Centered Shadow="Shadow.Small">
@@ -31,10 +31,10 @@
                                     <Row>
                                         <Column ColumnSize="ColumnSize.IsFull">
                                             <Validations @ref="Validations"
-                                            Mode="ValidationMode.Auto"
-                                            ValidateOnLoad="false"
-                                            EditContext="EditContext"
-                                            HandlerType="ValidationHandlerType.DataAnnotation">
+                                                         Mode="ValidationMode.Auto"
+                                                         ValidateOnLoad="false"
+                                                         EditContext="EditContext"
+                                                         HandlerType="ValidationHandlerType.DataAnnotation">
                                                 <CascadingValue Value="Validations">
                                                     <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
                                                         <TaskSubitemsDataFormSection />

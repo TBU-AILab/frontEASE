@@ -1,4 +1,6 @@
-﻿<Div Style="@(Style ?? string.Empty)" Class="background-load-spinner-overlay" TextAlignment="TextAlignment.End" TextColor="@(TextColor ?? TextColor.White)">
+﻿<Div Style="@(Style ?? string.Empty)" Class="@((string.IsNullOrWhiteSpace(Class) ? Class : "background-load-spinner-overlay"))"
+     TextAlignment="TextAlignment.End"
+     TextColor="@(TextColor ?? TextColor.White)">
     <Span Class="spinner-border" role="status" aria-hidden="true"></Span>
 </Div>
 
@@ -11,4 +13,7 @@
 
     [Parameter]
     public IFluentTextSize? TextSize { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
 }

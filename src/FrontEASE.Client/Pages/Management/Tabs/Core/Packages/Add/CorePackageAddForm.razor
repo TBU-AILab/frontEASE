@@ -4,7 +4,6 @@
 @inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 
 <Row Background="@uiManager.Theme.BackgroundOptions.Primary">
@@ -53,7 +52,7 @@
 
     public async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await AddPackage();

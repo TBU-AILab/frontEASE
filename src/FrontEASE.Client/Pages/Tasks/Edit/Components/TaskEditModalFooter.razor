@@ -3,7 +3,6 @@
 @inject IUIManager uiManager
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 
 <ModalFooter Class="bg-custom-secondary border-custom-light">
@@ -67,7 +66,7 @@
 
     public async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await SaveTask();

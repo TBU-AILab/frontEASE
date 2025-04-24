@@ -69,6 +69,7 @@
         parameterValue!.Value ??= new();
         parameterValue.Value.Metadata = mapper.Map<TaskModuleParameterNoValidationMetadataDto>(parameterOption);
 
+        parameterValue.Value.ListValue ??= parameterType == ParameterType.LIST ? new() : null;
         parameterValue.Value.EnumValue ??= parameterType == ParameterType.ENUM ? new() : null;
         if (parameterValue.Value.EnumValue is not null)
         {
@@ -91,11 +92,11 @@
         if (parameterValue is null)
         {
             parameterValue = new()
-                {
-                    Key = parameterOption.Key,
-                    ShortName = parameterOption.ShortName,
-                    Type = parameterOption.Type
-                };
+            {
+                Key = parameterOption.Key,
+                ShortName = parameterOption.ShortName,
+                Type = parameterOption.Type
+            };
 
             Module.Parameters.Add(parameterValue);
         }

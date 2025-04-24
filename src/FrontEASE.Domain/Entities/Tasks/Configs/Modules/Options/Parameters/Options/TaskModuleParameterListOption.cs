@@ -4,9 +4,9 @@
     {
         public TaskModuleParameterListOption()
         {
-            ParameterValues = new Dictionary<string, TaskModuleParameter>();
+            ParameterValues = new List<IList<TaskModuleParameter>>();
         }
 
-        public IDictionary<string, TaskModuleParameter> ParameterValues { get; set; }
+        public IList<IList<TaskModuleParameter>> ParameterValues { get; set; }
     }
 }
