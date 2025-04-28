@@ -151,4 +151,4 @@ This work is licensed under a [Creative Commons Attribution 4.0 International Li
 
 ## Contact
 
-For inquiries, please contact [ailab@fai.utb.cz](mailto:ailab@fai.utb.cz).
+For inquiries, please contact [ease@utb.cz](mailto:ease@utb.cz).
