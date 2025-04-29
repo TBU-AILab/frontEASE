@@ -39,9 +39,8 @@
                                 var isDescriptionPresent = CheckDescriptionPresent(paramOption, paramVal);
                                 (var isListDefaultPresent, var listDefaultValue) = ExtractDefaultValue(paramOption);
                                 var displayActions = isListDefaultPresent || isDescriptionPresent;
-                                var skipListLabel = parameterType == ParameterType.ENUM && ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
+                                var skipListLabel = parameterType == ParameterType.ENUM && paramOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
                                 var paramType = DynamicParamUtils.GetParameterType(paramOption.Type);
-
 
                                 if (paramType is not null)
                                 {
@@ -65,6 +64,7 @@
                                                                         internalDescription = paramOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
                                                                     }
                                                                 }
+
                                                                 <Tooltip Multiline="true" Text="@(paramOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
                                                                     <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                                                                 </Tooltip>
