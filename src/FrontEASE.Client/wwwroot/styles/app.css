@@ -909,3 +909,11 @@ nav.navbar {
         box-shadow: 0 0 6px var(--b-theme-warning), 0 0 10px var(--b-theme-warning);
     }
 }
+
+
+/* Tasks */
+.action-icon-section-full-length {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+}

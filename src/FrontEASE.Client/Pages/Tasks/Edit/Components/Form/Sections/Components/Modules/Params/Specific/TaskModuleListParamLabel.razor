@@ -13,49 +13,49 @@
     </FieldLabel>
     <Div>
         <Divider Class="divider-main bg-custom-light"
-                 Shadow="Shadow.Small"
-                 Style="height:2px !important;"
-                 Margin="Margin.Is0.FromTop" />
+        Shadow="Shadow.Small"
+        Style="height:2px !important;"
+        Margin="Margin.Is0.FromTop" />
     </Div>
 </Field>
 
 @if (displayActions)
 {
     <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD"
-           TextAlignment="TextAlignment.Center"
-           Class="align-self-center"
-           Padding="Padding.Is0.FromEnd.Is0.FromStart"
-           Margin="Margin.Is2.FromTop">
+    TextAlignment="TextAlignment.Center"
+    Class="align-self-center"
+    Padding="Padding.Is0.FromEnd.Is0.FromStart"
+    Margin="Margin.Is2.FromTop">
         <FieldLabel>
-            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Info}"))
+            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
         </FieldLabel>
         <Div>
             @if (containsDescription)
             {
                 <Tooltip Multiline="true"
-                         Text="@(ParamOption?.Description)"
-                         Display="Display.InlineBlock"
-                         Margin="Padding.Is2.FromEnd"
-                         Placement="TooltipPlacement.Top">
+                Text="@(ParamOption?.Description)"
+                Display="Display.InlineBlock"
+                Margin="Padding.Is2.FromEnd"
+                Placement="TooltipPlacement.Top">
                     <Icon Class="action-icon-sm action-icon-info"
-                          Name="IconName.InfoCircle"
-                          IconSize="IconSize.Default"
-                          IconStyle="IconStyle.Solid" />
+                    Name="IconName.InfoCircle"
+                    IconSize="IconSize.Default"
+                    IconStyle="IconStyle.Solid" />
                 </Tooltip>
             }
             <Icon Class="action-icon-sm action-icon-success"
-                  Name="IconName.PlusCircle"
-                  IconSize="IconSize.Default"
-                  IconStyle="IconStyle.Solid"
-                  Clicked="(() => AddListParameter(ParamValue))" />
+            Name="IconName.PlusCircle"
+            IconSize="IconSize.Default"
+            IconStyle="IconStyle.Solid"
+            Clicked="(() => AddListParameter(ParamValue))" />
         </Div>
     </Field>
 }
 
 <Divider Class="divider-main bg-custom-light"
-         Shadow="Shadow.Small"
-         Style="height:2px !important;"
-         Margin="Margin.Is0.FromTop" />
+Shadow="Shadow.Small"
+Style="height:2px !important;"
+Margin="Margin.Is0.FromTop" />
 
 @code {
     [Parameter]
@@ -86,8 +86,33 @@
             var mappedParam = mapper.Map<TaskModuleParameterDto>(param);
             newListParam.Add(mappedParam);
         }
+        foreach(var paramItem in newListParam)
+        {
+            var paramType = DynamicParamUtils.GetParameterType(paramItem.Type);
+            var paramOption = ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.SingleOrDefault(x => x.Key == paramItem.Key);
+            if(paramType is not null && paramOption is not null)
+            {
+                InitializeParamValue(paramItem, paramOption, paramType.Value);
+            }
+        }
 
         parameter.Value!.ListValue!.ParameterValues.Add(newListParam);
         uIService.CallRequestRefresh();
+    }
+
+
+    private TaskModuleParameterDto InitializeParamValue(TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption, ParameterType parameterType)
+    {
+        parameterValue!.Value ??= new();
+        parameterValue.Value.Metadata = mapper.Map<TaskModuleParameterNoValidationMetadataDto>(parameterOption);
+
+        parameterValue.Value.ListValue ??= parameterType == ParameterType.LIST ? new() : null;
+        parameterValue.Value.EnumValue ??= parameterType == ParameterType.ENUM ? new() : null;
+        if (parameterValue.Value.EnumValue is not null)
+        {
+            parameterValue.Value.EnumValue.Metadata = parameterValue.Value.Metadata;
+        }
+
+        return parameterValue;
     }
 }

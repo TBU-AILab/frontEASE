@@ -6,7 +6,7 @@
     var parameterType = DynamicParamUtils.GetParameterType(ParamOption.Type);
     IsListParam = parameterType == ParameterType.LIST;
 
-    IsDescriptionPresent = (!string.IsNullOrWhiteSpace(ParamOption.Description) || (ParamOption.EnumDescriptions?.Count > 0 && !string.IsNullOrWhiteSpace(ParamValue.Value!.EnumValue?.StringValue))) && ParamOption.Readonly != true;
+    IsDescriptionPresent = CheckDescriptionPresent(ParamOption, ParamValue);
     (IsDefaultPresent, var defaultValue) = ExtractDefaultValue(ParamOption);
 
     var parameterName = ParamOption.LongName ?? ParamOption.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
@@ -28,51 +28,81 @@
 
         @foreach (var listParam in ParamValue.Value!.ListValue!.ParameterValues)
         {
-            <Field ColumnSize="ColumnSize.Is10.Is11.OnFullHD" @key="listParam">
-                <Container Fluid>
-                    <Row>
+            <Container Fluid Border="Border.Is1.Rounded.Light">
+                <Row Margin="Margin.Is2.FromTop.Is2.FromBottom">
+                    <Column ColumnSize="ColumnSize.Is11">
                         @foreach (var paramVal in listParam)
                         {
                             var paramOption = GetListValueParamOption(paramVal.ShortName);
                             if (paramOption is not null)
                             {
+                                var isDescriptionPresent = CheckDescriptionPresent(paramOption, paramVal);
+                                (var isListDefaultPresent, var listDefaultValue) = ExtractDefaultValue(paramOption);
+                                var displayActions = isListDefaultPresent || isDescriptionPresent;
+                                var skipListLabel = parameterType == ParameterType.ENUM && ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
                                 var paramType = DynamicParamUtils.GetParameterType(paramOption.Type);
+
+
                                 if (paramType is not null)
                                 {
-                                    <CascadingValue Value="paramOption" Name="ParamOption">
-                                        <CascadingValue Value="paramVal" Name="ParamValue">
-                                            <TaskModuleParamValueInput SkipLabel="@skipLabel" DisplayActions="@DisplayActions" />
-                                        </CascadingValue>
-                                    </CascadingValue>
+                                    <Container Fluid>
+                                        <Row>
+                                            <Column ColumnSize="ColumnSize.IsFull">
+                                                <Fields>
+                                                    <TaskModuleParamValueInput SkipLabel="@skipListLabel" ParamOption="@paramOption" ParamValue="@paramVal" DisplayActions="@displayActions" />
+
+                                                    @if (displayActions)
+                                                    {
+                                                        <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+                                                            @if (isDescriptionPresent)
+                                                            {
+                                                                var internalDescription = string.Empty;
+                                                                if (!string.IsNullOrWhiteSpace(paramVal.Value?.EnumValue?.StringValue))
+                                                                {
+                                                                    var indexOfSelected = paramOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == paramVal?.Value?.EnumValue?.StringValue);
+                                                                    if (indexOfSelected >= 0)
+                                                                    {
+                                                                        internalDescription = paramOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+                                                                    }
+                                                                }
+                                                                <Tooltip Multiline="true" Text="@(paramOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                                                                    <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                                                                </Tooltip>
+                                                            }
+                                                            @if (isListDefaultPresent && !TaskMetadata.InitializationInProgres)
+                                                            {
+                                                                <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{listDefaultValue}\"")" Display="Display.InlineBlock">
+                                                                    <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => FillParamDefaultValue(paramVal, listDefaultValue))" />
+                                                                </Tooltip>
+                                                            }
+                                                        </Field>
+                                                    }
+                                                </Fields>
+                                            </Column>
+                                        </Row>
+                                    </Container>
+
+
                                 }
                             }
                         }
-                    </Row>
-                </Container>
-            </Field>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is1" Padding="Padding.Is2" Margin="Margin.Is3.FromTop.FromBottom">
+                        @if (!TaskMetadata.InitializationInProgres)
+                        {
+                            <Icon Class="action-icon-sm action-icon-danger action-icon-section-full-length" Display="Display.Flex" Width="Width.Is100" Height="Height.Is100" Name="IconName.MinusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => RemoveListParameter(listParam))" />
+                        }
+                    </Column>
+                </Row>
+            </Container>
 
-            <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD"
-                   TextAlignment="TextAlignment.Center"
-                   Class="align-self-center"
-                   Padding="Padding.Is0.FromEnd.Is0.FromStart"
-                   Margin="Margin.Is2.FromTop">
-                <Icon Class="action-icon-sm action-icon-danger"
-                      Name="IconName.MinusCircle"
-                      IconSize="IconSize.Default"
-                      IconStyle="IconStyle.Solid"
-                      Clicked="(() => RemoveListParameter(listParam))" />
-            </Field>
-
-            <Divider Class="divider-main bg-custom-light"
-                     Shadow="Shadow.Small"
-                     Style="height:2px !important;"
-                     Margin="Margin.Is0.FromTop" />
+            <Divider Class="divider-main bg-custom-light" Shadow="Shadow.Small" Style="height:2px !important;" Margin="Margin.Is0.FromTop" />
         }
     }
     else
     {
         IsSpecialCaseParam = false;
-        <TaskModuleParamValueInput SkipLabel="@skipLabel" DisplayActions="@DisplayActions" />
+        <TaskModuleParamValueInput SkipLabel="@skipLabel" ParamOption="@ParamOption" ParamValue="@ParamValue" DisplayActions="@DisplayActions" />
     }
 }
 
@@ -208,6 +238,11 @@
             default:
                 break;
         }
+    }
+
+    private bool CheckDescriptionPresent(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramValue)
+    {
+        return (!string.IsNullOrWhiteSpace(paramOption.Description) || (paramOption.EnumDescriptions?.Count > 0 && !string.IsNullOrWhiteSpace(paramValue.Value!.EnumValue?.StringValue))) && paramOption.Readonly != true;
     }
 
     private void RemoveListParameter(IList<TaskModuleParameterDto> listParam) =>

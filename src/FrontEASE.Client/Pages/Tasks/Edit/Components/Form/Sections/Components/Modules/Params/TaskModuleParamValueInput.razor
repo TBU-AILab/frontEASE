@@ -186,6 +186,12 @@
     [Parameter]
     public bool DisplayActions { get; set; }
 
+    [Parameter]
+    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
+
+    [Parameter]
+    public TaskModuleParameterDto ParamValue { get; set; } = new();
+
     [CascadingParameter]
     public DataOperation Operation { get; set; }
 
@@ -194,12 +200,6 @@
 
     [CascadingParameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
-
-    [CascadingParameter]
-    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
-
-    [CascadingParameter]
-    public TaskModuleParameterDto ParamValue { get; set; } = new();
 
     private Guid ParameterID = Guid.NewGuid();
 

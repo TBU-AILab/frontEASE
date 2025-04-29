@@ -39,6 +39,7 @@ using FrontEASE.Shared.Infrastructure.Constants.UI.Generic;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Specific;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Management;
 using FrontEASE.Shared.Infrastructure.Utils.Extensions;
+using Microsoft.AspNetCore.Http;
 using System.Net;
 
 namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
@@ -135,7 +136,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
             return
             [
                 /* TaskConfigRepeatedMessageDto */
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{nameof(TaskConfigRepeatedMessageDto.RepeatedMessageItems)}.{UIStateConstants.Explanation}", Value = "When repeated message does not have any explicitly configured item, default base prompt (\"Improve\") will be used" }
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{nameof(TaskConfigRepeatedMessageDto.RepeatedMessageItems)}.{UIStateConstants.Explanation}", Value = "When repeated message does not have any explicitly configured item, default base prompt (\"Improve\") will be used" },
+
+                /* Login Expiration */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{ UIConstants.Error}.{HttpStatusCode.Unauthorized}.{UIStateConstants.TokenExpiration}.{ UIStateConstants.Explanation}", Value = "Your session has expired. You have been signed out." }
             ];
         }
 

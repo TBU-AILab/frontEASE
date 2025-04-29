@@ -88,17 +88,19 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                         var state = await _authStateProvider.GetAuthenticationStateAsync();
                         if (state.User.Identity?.IsAuthenticated != true)
                         {
-                            _authStateProvider.Logout();
+                            uiMessageBody = _resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Error}.{httpResponse.StatusCode}.{UIStateConstants.TokenExpiration}.{UIStateConstants.Explanation}");
+                            messageLevel = ToastLevel.Info;
 
-                            var loginRoute = _resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}");
+                            _authStateProvider.Logout();
                             _uiManager.ChangeTheme(ThemeDefaults.GetThemeDefaults(ColorScheme.LIGHT));
+                            var loginRoute = _resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}");
                             _navManager.NavigateTo(loginRoute);
                         }
                         else
                         {
                             var responseMessage = await httpResponse.Content.ReadFromJsonAsync<UnauthorizedResultDto>();
-                            uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                             uiMessageBody = msgBody;
+                            uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                             messageLevel = ToastLevel.Warning;
                         }
                     }
