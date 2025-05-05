@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FrontEASE.DataContracts.Converters.Tasks.Parameters;
 using FrontEASE.DataContracts.Models.Core.Errors;
 using FrontEASE.DataContracts.Models.Core.Packages;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
@@ -45,8 +46,10 @@ namespace FrontEASE.Domain.Services.Core.Connector
             {
                 PropertyNameCaseInsensitive = true,
                 ReadCommentHandling = JsonCommentHandling.Skip,
-                MaxDepth = 64
+                MaxDepth = 64,
             };
+
+            _serializerOptions.Converters.Add(new TaskModuleParameterCoreDtoConverter());
         }
 
 
@@ -362,7 +365,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
-                var modules = await response.Content.ReadFromJsonAsync<IList<TaskModuleCoreDto>>();
+                var modules = await response.Content.ReadFromJsonAsync<IList<TaskModuleCoreDto>>(_serializerOptions);
                 return modules ?? [];
             }
             else
@@ -382,7 +385,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
-                var packages = await response.Content.ReadFromJsonAsync<IList<CorePackageCoreDto>>();
+                var packages = await response.Content.ReadFromJsonAsync<IList<CorePackageCoreDto>>(_serializerOptions);
                 return packages ?? [];
             }
             else

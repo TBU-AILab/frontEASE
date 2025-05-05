@@ -1,0 +1,116 @@
+﻿@inject IResourceHandler resourceHandler
+@inject ITaskManipulationService taskManipulationService
+@inject IUIService uiService
+@inject IMapper mapper
+
+@{
+    var parameterType = DynamicParamUtils.GetParameterType(ParamOption.Type);
+    IsListParam = parameterType == ParameterType.LIST;
+
+    IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(ParamOption, ParamValue);
+    (IsDefaultPresent, var defaultValue) = taskManipulationService.ExtractDefaultValue(ParamOption);
+
+    var parameterName = ParamOption.LongName ?? ParamOption.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
+    var skipLabel = parameterType == ParameterType.ENUM && ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
+}
+
+
+@if (parameterType is not null)
+{
+    @if (Module?.PackageType == ModuleType.LLM_CONNECTOR && ParamOption.ShortName?.Contains(TaskMetadataConstants.Token) == true)
+    {
+        IsSpecialCaseParam = true;
+        <TaskModuleParamValueTokenSelector ParameterName="@parameterName" />
+    }
+    else if (IsListParam)
+    {
+        IsSpecialCaseParam = true;
+        <TaskModuleListParamLabel ParameterName="@parameterName" />
+        <TaskModuleListParamValue/>
+    }
+    else
+    {
+        IsSpecialCaseParam = false;
+        <TaskModuleParamValueInput SkipLabel="@skipLabel" ParamOption="@ParamOption" ParamValue="@ParamValue" DisplayActions="@DisplayActions" />
+    }
+}
+
+@if (DisplayActions)
+{
+    <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+        <FieldLabel>
+            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
+        </FieldLabel>
+        <Div>
+            @if (IsDescriptionPresent)
+            {
+                var internalDescription = string.Empty;
+                if (!string.IsNullOrWhiteSpace(ParamValue.Value?.EnumValue?.StringValue))
+                {
+                    var indexOfSelected = ParamOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == ParamValue?.Value?.EnumValue?.StringValue);
+                    if (indexOfSelected >= 0)
+                    {
+                        internalDescription = ParamOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+                    }
+                }
+                <Tooltip Multiline="true" Text="@(ParamOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                    <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                </Tooltip>
+            }
+            @if (IsDefaultPresent && !TaskMetadata.InitializationInProgres)
+            {
+                <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{defaultValue}\"")" Display="Display.InlineBlock">
+                    <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => taskManipulationService.FillParamDefaultValue(ParamValue, defaultValue))" />
+                </Tooltip>
+            }
+        </Div>
+    </Field>
+}
+
+@if (parameterType == ParameterType.MARKDOWN)
+{
+    <Validation>
+        <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)" Class="input-validation-only">
+
+            <MemoEdit ElementId="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(MemoEdit)}"))"
+                      Disabled="@(TaskMetadata.InitializationInProgres)"
+                      @bind-Text="@ParamValue.Value!.StringValue"
+                      Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </MemoEdit>
+        </Field>
+    </Validation>
+}
+
+@code {
+
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+
+    [CascadingParameter]
+    public DataOperation Operation { get; set; }
+
+    [CascadingParameter]
+    public TaskModuleDto Module { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskModuleParameterDto ParamValue { get; set; } = new();
+
+    private Guid ParameterID = Guid.NewGuid();
+    private bool IsDescriptionPresent { get; set; }
+    private bool IsDefaultPresent { get; set; }
+    private bool IsListParam { get; set; }
+    private bool IsSpecialCaseParam { get; set; }
+
+    private bool DisplayActions => (IsDescriptionPresent || IsDefaultPresent || IsListParam) && !IsSpecialCaseParam;
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
+}

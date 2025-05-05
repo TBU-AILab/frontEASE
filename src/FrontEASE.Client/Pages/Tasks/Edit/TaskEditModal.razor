@@ -5,7 +5,8 @@
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
 
-<Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@OnModalClosing" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
+@* <Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@OnModalClosing" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown"> *@
+<Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@OnModalClosing" Class="modal-dialog-wide" Border="Border.Rounded">
     @if (isModalVisible)
     {
         @if (TaskMetadata.InitializationInProgres)
