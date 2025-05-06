@@ -18,7 +18,7 @@ using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
-using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.Enum;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Values;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Messages;

@@ -1,12 +1,14 @@
 ﻿using FrontEASE.Client.Infrastructure.Settings.AppSettings.Api;
 using FrontEASE.Client.Infrastructure.Settings.AppSettings.Environment;
 using FrontEASE.Client.Infrastructure.Settings.AppSettings.Integration;
+using FrontEASE.Client.Infrastructure.Settings.AppSettings.Libraries;
 using FrontEASE.Client.Infrastructure.Settings.AppSettings.Pages;
 
 namespace FrontEASE.Client.Infrastructure.Settings.AppSettings
 {
     public class AppSettings
     {
+        public LibrarySettings? LibrarySettings { get; set; }
         public PageSettings? PageSettings { get; set; }
         public ApiSettings? ApiSettings { get; set; }
         public IntegrationSettings? IntegrationSettings { get; set; }

@@ -39,7 +39,14 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
                                         .ThenInclude(x => x!.ModuleValue)
                                             .ThenInclude(x => x!.Parameters)
                                                 .ThenInclude(x => x!.Value)
-                                                    .ThenInclude(x => x!.EnumValue);
+                                                    .ThenInclude(x => x!.EnumValue)
+                        .Include(x => x.Config)
+                        .ThenInclude(x => x.Modules)
+                            .ThenInclude(x => x.Parameters)
+                                .ThenInclude(x => x.Value)
+                                    .ThenInclude(x => x!.ListValue)
+                                        .ThenInclude(x => x!.ParameterValues)
+                                            .ThenInclude(x => x!.ParameterItems);
                 }
                 else
                 {

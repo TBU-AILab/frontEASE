@@ -1,4 +1,5 @@
-﻿using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options;
+﻿using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List;
 
 namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values
 {

@@ -20,6 +20,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Para
 
             builder.HasOne(e => e.Value)
                 .WithOne(e => e.Parameter);
+
+            builder.HasOne(e => e.ListValue)
+                .WithMany(e => e.ParameterItems)
+                .HasForeignKey(p => p.ListValueID);
         }
     }
 }

@@ -6,7 +6,7 @@
     <Container Fluid Border="Border.Is1.Rounded.Light">
         <Row Margin="Margin.Is3.FromTop.Is2.FromBottom" Class="align-items-stretch">
             <Column ColumnSize="ColumnSize.Is11">
-                @foreach (var paramVal in listParam)
+                @foreach (var paramVal in listParam.ParameterItems)
                 {
                     var paramOption = taskManipulationService.GetListValueParamOption(paramVal.ShortName, ParamOption);
                     if (paramOption is not null)

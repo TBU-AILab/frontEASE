@@ -29,5 +29,7 @@
         public const string TaskModuleParameters = "TaskModuleParameters";
         public const string TaskModuleParameterValues = "TaskModuleParameterValues";
         public const string TaskModuleParameterEnumValues = "TaskModuleParameterEnumValues";
+        public const string TaskModuleParameterListValues = "TaskModuleParameterListValues";
+        public const string TaskModuleParameterListValueItems = "TaskModuleParameterListValueItems";
     }
 }

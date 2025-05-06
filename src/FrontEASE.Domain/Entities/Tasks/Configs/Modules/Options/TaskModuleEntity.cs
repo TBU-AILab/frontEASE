@@ -1,6 +1,6 @@
 ﻿using FrontEASE.Domain.Entities.Base.Tracked;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters;
-using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum;
 using FrontEASE.Shared.Data.Enums.Tasks.Config;
 
 namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options

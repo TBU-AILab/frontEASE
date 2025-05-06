@@ -3,7 +3,7 @@ using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.Parameters;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters;
-using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 

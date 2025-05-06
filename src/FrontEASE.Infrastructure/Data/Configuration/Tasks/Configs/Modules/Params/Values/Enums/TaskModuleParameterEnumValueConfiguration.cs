@@ -1,11 +1,11 @@
-﻿using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options;
+﻿using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values;
 using FrontEASE.Infrastructure.Constants;
 using FrontEASE.Infrastructure.Data.Configuration.Shared.Base.Tracked;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.Values
+namespace FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.Values.Enums
 {
     public class TaskModuleParameterEnumValueConfiguration : IEntityTypeConfiguration<TaskModuleParameterEnumValueEntity>
     {

@@ -1,4 +1,4 @@
-﻿namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options
+﻿namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum
 {
     public class TaskModuleParameterEnumOption : ITaskModuleParameterEnumOption
     {

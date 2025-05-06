@@ -1,7 +1,7 @@
 ﻿using FrontEASE.Domain.Entities.Base.Tracked;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values;
 
-namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options
+namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum
 {
     public class TaskModuleParameterEnumValueEntity : EntityBase, ITaskModuleParameterEnumOption
     {

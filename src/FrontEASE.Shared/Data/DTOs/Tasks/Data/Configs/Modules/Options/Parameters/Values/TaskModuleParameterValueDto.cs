@@ -1,5 +1,6 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Metadata;
-using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.Enum;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List;
 using FrontEASE.Shared.Infrastructure.Attributes;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific.FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;

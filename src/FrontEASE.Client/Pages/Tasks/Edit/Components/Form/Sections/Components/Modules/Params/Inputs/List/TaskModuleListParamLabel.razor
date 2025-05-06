@@ -80,16 +80,16 @@ Margin="Margin.Is0.FromTop" />
 
     private void AddListParameter(TaskModuleParameterDto parameter)
     {
-        var newListParam = new List<TaskModuleParameterDto>();
-        foreach (var param in ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault() ?? [])
+        var newListParam = new TaskModuleParameterListOptionParamsDto();
+        foreach (var param in ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems ?? [])
         {
             var mappedParam = mapper.Map<TaskModuleParameterDto>(param);
-            newListParam.Add(mappedParam);
+            newListParam.ParameterItems.Add(mappedParam);
         }
-        foreach(var paramItem in newListParam)
+        foreach(var paramItem in newListParam.ParameterItems)
         {
             var paramType = DynamicParamUtils.GetParameterType(paramItem.Type);
-            var paramOption = ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.SingleOrDefault(x => x.Key == paramItem.Key);
+            var paramOption = ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems?.SingleOrDefault(x => x.Key == paramItem.Key);
             if(paramType is not null && paramOption is not null)
             {
                 InitializeParamValue(paramItem, paramOption, paramType.Value);

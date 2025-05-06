@@ -1,5 +1,5 @@
 ﻿using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
-using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum;
 using FrontEASE.Infrastructure.Constants;
 using FrontEASE.Infrastructure.Data.Configuration.Shared.Base.Tracked;
 using Microsoft.EntityFrameworkCore;

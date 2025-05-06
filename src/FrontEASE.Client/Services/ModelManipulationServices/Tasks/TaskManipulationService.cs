@@ -4,7 +4,8 @@ using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters;
-using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.Enum;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List.Params;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks.Config;
@@ -165,10 +166,10 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
                 (paramOption.EnumDescriptions?.Count > 0 && !string.IsNullOrWhiteSpace(paramValue.Value!.EnumValue?.StringValue))) && paramOption.Readonly != true;
         }
 
-        public void RemoveListParameter(IList<TaskModuleParameterDto> listParam, TaskModuleParameterDto paramValue) =>
+        public void RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam, TaskModuleParameterDto paramValue) =>
             paramValue.Value!.ListValue!.ParameterValues.Remove(listParam);
 
         public TaskModuleParameterNoValidationDto? GetListValueParamOption(string shortName, TaskModuleParameterNoValidationDto paramOption) =>
-            paramOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.FirstOrDefault(x => x.ShortName == shortName);
+            paramOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems?.FirstOrDefault(x => x.ShortName == shortName);
     }
 }

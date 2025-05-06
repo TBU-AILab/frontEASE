@@ -3,6 +3,7 @@ using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List.Params;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks.Config;
@@ -29,7 +30,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
         (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto parameter);
         void FillParamDefaultValue(TaskModuleParameterDto parameter, string? defaultValue);
         bool CheckDescriptionPresent(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramValue);
-        void RemoveListParameter(IList<TaskModuleParameterDto> listParam, TaskModuleParameterDto paramValue);
+        void RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam, TaskModuleParameterDto paramValue);
         TaskModuleParameterNoValidationDto? GetListValueParamOption(string shortName, TaskModuleParameterNoValidationDto paramOption);
     }
 }

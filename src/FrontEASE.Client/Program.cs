@@ -20,7 +20,8 @@ using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options.Parameters;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options.Parameters.Metadata;
-using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options.Parameters.Options;
+using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options.Parameters.Options.Enum;
+using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options.Parameters.Options.List;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.RepeatedMessage;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Messages;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Shared;
@@ -76,6 +77,8 @@ void SetupUIEnhancements()
         options.Immediate = false;
         options.DebounceInterval = 50;
         options.Debounce = true;
+
+        options.ProductToken = settings!.LibrarySettings!.Blazorise!.ProductToken;
     }).AddBootstrap5Providers().AddFontAwesomeIcons();
     builder.Services.AddBlazoredToast();
 }
@@ -112,6 +115,7 @@ void SetupMappings()
         mc.AddProfile(new TaskModuleParameterValueMappingProfile());
         mc.AddProfile(new TaskModuleParameterEnumOptionMappingProfile());
         mc.AddProfile(new TaskModuleParameterListOptionMappingProfile());
+        mc.AddProfile(new TaskModuleParameterListOptionParamsMappingProfile());
         mc.AddProfile(new TaskModuleParameterNoValidationMetadataMappingProfile());
 
         mc.AddProfile(new TaskDuplicateActionRequestMappingProfile());

@@ -1,4 +1,4 @@
-﻿using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options;
+﻿using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.Enum;
 using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.Parameters;
 
 namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Metadata

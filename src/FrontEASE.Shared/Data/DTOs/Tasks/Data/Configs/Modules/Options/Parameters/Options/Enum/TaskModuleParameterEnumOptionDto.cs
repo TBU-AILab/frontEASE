@@ -2,7 +2,7 @@
 using FrontEASE.Shared.Infrastructure.Attributes;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific.Tasks;
 
-namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options
+namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.Enum
 {
     /// <summary>
     /// Enum value option for dynamic module parameters

@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values.Converters;
+using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values.List.Converters;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.Parameters.Options;
-using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options;
-using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List;
 
-namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values
+namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values.List
 {
     public class TaskModuleParameterListOptionMappingProfile : Profile
     {
