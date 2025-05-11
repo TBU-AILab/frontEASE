@@ -5,59 +5,61 @@
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
 
-<Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@OnModalClosing" Class="modal-dialog-wide" Border="Border.Rounded">
-    @if (isModalVisible)
-    {
-        @if (TaskMetadata.InitializationInProgres)
+<CascadingValue Value="Operation">
+    <Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@OnModalClosing" Class="modal-dialog-wide" Border="Border.Rounded">
+        @if (isModalVisible)
         {
-            <BackgroundLoadSpinner Class="bg-custom-primary text-custom-primary background-load-spinner-overlay" TextSize="TextSize.Large" />
-        }
-
-        <ModalContent Centered Shadow="Shadow.Small">
-            @if (isTaskLoading)
+            @if (TaskMetadata.InitializationInProgres)
             {
-                <ContentLoadSpinner />
+                <BackgroundLoadSpinner Class="bg-custom-primary text-custom-primary background-load-spinner-overlay" TextSize="TextSize.Large" />
             }
-            else
-            {
-                <CascadingValue Value="Task">
-                    <CascadingValue Value="TaskMetadata">
-                        <CascadingValue Value="Modal">
 
-                            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}{(string.IsNullOrWhiteSpace(Task.Config?.Name) ? string.Empty : $" - {Task.Config.Name}")}")" />
+            <ModalContent Centered Shadow="Shadow.Small">
+                @if (isTaskLoading)
+                {
+                    <ContentLoadSpinner />
+                }
+                else
+                {
+                    <CascadingValue Value="Task">
+                        <CascadingValue Value="TaskMetadata">
+                            <CascadingValue Value="Modal">
 
-                            <ModalBody Padding="Padding.Is0" Class="bg-custom-primary text-custom-primary">
-                                <Container Fluid>
-                                    <Row>
-                                        <Column ColumnSize="ColumnSize.IsFull">
-                                            <Validations @ref="Validations"
-                                                         Mode="ValidationMode.Auto"
-                                                         ValidateOnLoad="false"
-                                                         EditContext="EditContext"
-                                                         HandlerType="ValidationHandlerType.DataAnnotation">
-                                                <CascadingValue Value="EditContext">
-                                                    <CascadingValue Value="Validations">
-                                                        <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
-                                                            <TaskSubitemsDataFormSection />
-                                                        </Form>
+                                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}{(string.IsNullOrWhiteSpace(Task.Config?.Name) ? string.Empty : $" - {Task.Config.Name}")}")" />
+
+                                <ModalBody Padding="Padding.Is0" Class="bg-custom-primary text-custom-primary">
+                                    <Container Fluid>
+                                        <Row>
+                                            <Column ColumnSize="ColumnSize.IsFull">
+                                                <Validations @ref="Validations"
+                                                             Mode="ValidationMode.Auto"
+                                                             ValidateOnLoad="false"
+                                                             EditContext="EditContext"
+                                                             HandlerType="ValidationHandlerType.DataAnnotation">
+                                                    <CascadingValue Value="EditContext">
+                                                        <CascadingValue Value="Validations">
+                                                            <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
+                                                                <TaskSubitemsDataFormSection />
+                                                            </Form>
+                                                        </CascadingValue>
                                                     </CascadingValue>
-                                                </CascadingValue>
-                                            </Validations>
-                                        </Column>
-                                    </Row>
+                                                </Validations>
+                                            </Column>
+                                        </Row>
 
-                                </Container>
-                            </ModalBody>
+                                    </Container>
+                                </ModalBody>
 
-                            <TaskEditModalFooter Validations="Validations" @ref="@TaskEditModalFooter" />
+                                <TaskEditModalFooter Validations="Validations" @ref="@TaskEditModalFooter" />
 
+                            </CascadingValue>
                         </CascadingValue>
                     </CascadingValue>
-                </CascadingValue>
-            }
-        </ModalContent>
-    }
-</Modal>
+                }
+            </ModalContent>
+        }
+    </Modal>
+</CascadingValue>
 
 @code {
     [CascadingParameter]
@@ -66,7 +68,7 @@
     [CascadingParameter]
     public TaskInfoDto TaskInfo { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public DataOperation Operation { get; set; }
 
     private bool isTaskLoading = false;

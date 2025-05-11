@@ -115,11 +115,11 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 
             var defaultValue = parameter.Default switch
             {
-                { StringValue: { Length: > 0 } } => parameter.Default.StringValue,
+                { StringValue.Length: > 0 } => parameter.Default.StringValue,
                 { FloatValue: not null } => parameter.Default.FloatValue?.ToString(),
                 { IntValue: not null } => parameter.Default.IntValue?.ToString(),
                 { BoolValue: not null } => parameter.Default.BoolValue?.ToString(),
-                { EnumValue.StringValue: { Length: > 0 } } => parameter.Default.EnumValue.StringValue,
+                { EnumValue.StringValue.Length: > 0 } => parameter.Default.EnumValue.StringValue,
                 _ => null
             };
 
@@ -134,6 +134,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             switch (parameterType)
             {
                 case ParameterType.INT:
+                case ParameterType.TIME:
                     parameter.Value!.IntValue = int.Parse(defaultValue);
                     break;
 
@@ -172,7 +173,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             foreach (var presentParam in listParam.ParameterItems)
             {
                 var type = DynamicParamUtils.GetParameterType(presentParam.Type);
-                if (type == ParameterType.ENUM && presentParam.Value?.EnumValue?.ModuleValue is not null)
+                if (type == ParameterType.ENUM && !string.IsNullOrWhiteSpace(presentParam.Value?.EnumValue?.ModuleValue?.ShortName))
                 {
                     refreshOptions = true;
                 }

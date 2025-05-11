@@ -24,14 +24,17 @@ namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific
                     return new ValidationResult("Invalid object type for validation.");
                 }
 
-                if (dto.Metadata is null || dto.Metadata.Readonly || (dto.Metadata.Type != ParameterType.INT && dto.Metadata.Type != ParameterType.FLOAT))
+                var validatableTypes = new List<ParameterType>() { ParameterType.INT, ParameterType.FLOAT, ParameterType.TIME };
+                var integerTypes = new List<ParameterType>() { ParameterType.INT, ParameterType.TIME };
+
+                if (dto.Metadata is null || dto.Metadata.Readonly || (!validatableTypes.Any(x => x == dto.Metadata.Type)))
                 { return ValidationResult.Success!; }
 
                 if (_nullable && (value is null || string.IsNullOrEmpty(value.ToString())))
                 { return ValidationResult.Success!; }
 
-                var minValue = dto.Metadata.MinValue ?? (dto.Metadata.Type == ParameterType.INT ? int.MinValue : float.MinValue);
-                var maxValue = dto.Metadata.MaxValue ?? (dto.Metadata.Type == ParameterType.INT ? int.MaxValue : float.MaxValue);
+                var minValue = dto.Metadata.MinValue ?? (integerTypes.Contains(dto.Metadata.Type) ? int.MinValue : float.MinValue);
+                var maxValue = dto.Metadata.MaxValue ?? (integerTypes.Contains(dto.Metadata.Type) ? int.MaxValue : float.MaxValue);
 
                 if (value is double doubleValue && (doubleValue < minValue || doubleValue > maxValue) ||
                     value is int intValue && (intValue < minValue || intValue > maxValue))

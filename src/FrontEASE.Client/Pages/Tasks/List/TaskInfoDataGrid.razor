@@ -230,17 +230,11 @@
 </Column>
 
 <CascadingValue Value="TaskInfo">
-    <CascadingValue Value="DataOperation.UPDATE" Name="Operation">
-        <TaskEditModal @ref="EditModal" />
-        <TaskChangeStateModal @ref="ChangeStateModal" />
-        <TaskCloneModal @ref="CloneModal" />
-    </CascadingValue>
-    <CascadingValue Value="DataOperation.READ" Name="Operation">
-        <TaskOverviewModal @ref="OverviewModal" />
-    </CascadingValue>
-    <CascadingValue Value="DataOperation.DELETE" Name="Operation">
-        <TaskDeleteModal @ref="DeleteModal" />
-    </CascadingValue>
+    <TaskEditModal @ref="EditModal" Operation="DataOperation.UPDATE" />
+    <TaskChangeStateModal @ref="ChangeStateModal" Operation="DataOperation.UPDATE" />
+    <TaskCloneModal @ref="CloneModal" Operation="DataOperation.UPDATE" />
+    <TaskOverviewModal @ref="OverviewModal" Operation="DataOperation.READ" />
+    <TaskDeleteModal @ref="DeleteModal" Operation="DataOperation.DELETE" />
 </CascadingValue>
 
 

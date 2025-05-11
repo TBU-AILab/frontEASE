@@ -74,13 +74,12 @@
 
                 @if (!TaskMetadata.InitializationInProgres)
                 {
-                    <Field ColumnSize="ColumnSize.Is1.OnWidescreen" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
-                        <FieldLabel>
-                            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
-                        </FieldLabel>
-                        <Div>
-                            <Icon Class="action-icon-sm action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@((e) => (RemoveTaskRepeatedMessageItem(e, repeatedMessageItem)))" />
-                        </Div>
+                    <Field ColumnSize="ColumnSize.Is1.OnWidescreen" Display="Display.Flex" Class="alignment-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Style="gap: 25px;" Margin="Margin.Is2.FromTop">
+                        <Div Class="vertical-divider" />
+
+                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Remove}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                            <Icon Class="action-icon-sm action-icon-danger" Name="IconName.MinusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@((e) => (RemoveTaskRepeatedMessageItem(e, repeatedMessageItem)))" />
+                        </Tooltip>
                     </Field>
                 }
 

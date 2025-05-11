@@ -60,7 +60,7 @@ namespace FrontEASE.Application.AppServices.Tasks
                     emptyModules.Add(module);
                 }
             }
-            taskEntity.Config.Modules = taskEntity.Config.Modules.Except(emptyModules).ToList();
+            taskEntity.Config.Modules = [.. taskEntity.Config.Modules.Except(emptyModules)];
 
             var refreshedOptions = await _taskService.RefreshOptions(taskEntity);
             task.Config.AvailableModules = _mapper.Map<IList<TaskModuleNoValidationDto>>(refreshedOptions);

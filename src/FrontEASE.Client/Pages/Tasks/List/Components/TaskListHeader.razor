@@ -17,10 +17,7 @@
 
 
 <Divider Class="divider-main bg-custom-light" Shadow="Shadow.Small" Style="@($"height: 2px !important;")" Margin="Margin.Is0.FromTop" />
-
-<CascadingValue Value="DataOperation.INSERT" Name="Operation">
-    <TaskEditModal @ref="@AddModal" />
-</CascadingValue>
+<TaskEditModal @ref="@AddModal" Operation="DataOperation.INSERT" />
 
 @code {
     private TaskEditModal AddModal = new();

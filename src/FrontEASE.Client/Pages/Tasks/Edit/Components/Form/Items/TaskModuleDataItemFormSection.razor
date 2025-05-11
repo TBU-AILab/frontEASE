@@ -163,7 +163,10 @@
         {
             taskManipulationService.RemoveModule(Modules, module);
         }
-        EditContext.NotifyFieldChanged(new FieldIdentifier(Task, TaskMetadataConstants.ShortName));
+        if (!string.IsNullOrWhiteSpace(module.ShortName))
+        {
+            EditContext.NotifyFieldChanged(new FieldIdentifier(Task, TaskMetadataConstants.ShortName));
+        }
         return System.Threading.Tasks.Task.CompletedTask;
     }
 

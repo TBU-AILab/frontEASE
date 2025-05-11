@@ -8,7 +8,6 @@ using FrontEASE.DataContracts.Models.Core.Tasks.Info;
 using FrontEASE.Domain.Entities.Management.Core.Packages;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Infrastructure.Settings.App;
-using FrontEASE.Domain.Repositories.Shared.Resources;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -32,9 +31,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
         public CoreConnector(
             AppSettings appSettings,
             HttpClient httpClient,
-            IMapper mapper,
-            ITaskRepository taskRepository,
-            IResourceRepository resourceRepository)
+            IMapper mapper)
         {
             _mapper = mapper;
             _appSettings = appSettings;

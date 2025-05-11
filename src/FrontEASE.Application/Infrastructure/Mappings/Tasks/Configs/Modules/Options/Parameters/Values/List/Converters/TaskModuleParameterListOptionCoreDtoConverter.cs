@@ -17,14 +17,13 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Op
                 {
                     var paramList = new TaskModuleParameterListOptionParams
                     {
-                        ParameterItems = dict
+                        ParameterItems = [.. dict
                             .Select(kvp =>
                             {
                                 var param = context.Mapper.Map<TaskModuleParameter>(kvp.Value);
                                 param.Key = kvp.Key;
                                 return param;
-                            })
-                            .ToList()
+                            })]
                     };
                     return paramList;
                 })

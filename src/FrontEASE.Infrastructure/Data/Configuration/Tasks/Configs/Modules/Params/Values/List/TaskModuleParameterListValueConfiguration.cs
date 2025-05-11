@@ -21,7 +21,8 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Para
 
             builder.HasMany(e => e.ParameterValues)
                 .WithOne(e => e.ListParamValue)
-                .HasForeignKey(e => e.ListParamValueID);
+                .HasForeignKey(e => e.ListParamValueID)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

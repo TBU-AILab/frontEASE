@@ -6,54 +6,56 @@
 @inject IUIManager uiManager
 @inject AppSettings appSettings
 
-<Modal @ref="@Modal" Closing="@OnModalClosing" @bind-Visible="@isModalVisible" Class="modal-dialog-extrawide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
-    @if (isModalVisible)
-    {
-        @if (TaskMetadata.ReloadInProgress)
+<CascadingValue Value="Operation">
+    <Modal @ref="@Modal" Closing="@OnModalClosing" @bind-Visible="@isModalVisible" Class="modal-dialog-extrawide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
+        @if (isModalVisible)
         {
-            <BackgroundLoadSpinner TextColor="TextColor.White" TextSize="TextSize.Large" />
-        }
-
-        <ModalContent Centered Shadow="Shadow.Small">
-            @if (isTaskLoading)
+            @if (TaskMetadata.ReloadInProgress)
             {
-                <ContentLoadSpinner />
+                <BackgroundLoadSpinner TextColor="TextColor.White" TextSize="TextSize.Large" />
             }
-            else
-            {
-                <CascadingValue Value="Task">
-                    <CascadingValue Value="TaskMetadata">
-                        <CascadingValue Value="Modal">
 
-                            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}")} - {Task.Config.Name}")" />
+            <ModalContent Centered Shadow="Shadow.Small">
+                @if (isTaskLoading)
+                {
+                    <ContentLoadSpinner />
+                }
+                else
+                {
+                    <CascadingValue Value="Task">
+                        <CascadingValue Value="TaskMetadata">
+                            <CascadingValue Value="Modal">
 
-                            <ModalBody Padding="Padding.Is0" Class="bg-custom-primary text-custom-primary">
-                                <Container Fluid Height="Height.Is100">
-                                    <Row Height="Height.Is100">
-                                        <Column ColumnSize="ColumnSize.Is3.OnWidescreen" TextAlignment="TextAlignment.Start" Class="overview-dialog-column" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnEnd">
-                                            <TaskSubitemsDataViewSection />
-                                        </Column>
-                                        <Column ColumnSize="ColumnSize.Is6.OnWidescreen" Class="overview-dialog-column" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnStart.Is1.OnEnd">
-                                            <TaskMessagesViewSection />
-                                        </Column>
-                                        <Column ColumnSize="ColumnSize.Is3.OnWidescreen" TextAlignment="TextAlignment.Start" Class="overview-dialog-column" Height="Height.Is100" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnStart">
-                                            <TaskInfoDataViewSection />
-                                        </Column>
-                                    </Row>
+                                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}")} - {Task.Config.Name}")" />
 
-                                </Container>
-                            </ModalBody>
+                                <ModalBody Padding="Padding.Is0" Class="bg-custom-primary text-custom-primary">
+                                    <Container Fluid Height="Height.Is100">
+                                        <Row Height="Height.Is100">
+                                            <Column ColumnSize="ColumnSize.Is3.OnWidescreen" TextAlignment="TextAlignment.Start" Class="overview-dialog-column" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnEnd">
+                                                <TaskSubitemsDataViewSection />
+                                            </Column>
+                                            <Column ColumnSize="ColumnSize.Is6.OnWidescreen" Class="overview-dialog-column" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnStart.Is1.OnEnd">
+                                                <TaskMessagesViewSection />
+                                            </Column>
+                                            <Column ColumnSize="ColumnSize.Is3.OnWidescreen" TextAlignment="TextAlignment.Start" Class="overview-dialog-column" Height="Height.Is100" Display="Display.Flex" Flex="Flex.Column" Overflow="Overflow.Auto" Border="Border.Is1.OnStart">
+                                                <TaskInfoDataViewSection />
+                                            </Column>
+                                        </Row>
 
-                            <TaskOverviewModalFooter @ref="@TaskOverviewModalFooter"/>
+                                    </Container>
+                                </ModalBody>
 
+                                <TaskOverviewModalFooter @ref="@TaskOverviewModalFooter" />
+
+                            </CascadingValue>
                         </CascadingValue>
                     </CascadingValue>
-                </CascadingValue>
-            }
-        </ModalContent>
-    }
+                }
+            </ModalContent>
+        }
 
-</Modal>
+    </Modal>
+</CascadingValue>
 
 @code {
     [CascadingParameter]
@@ -61,6 +63,9 @@
 
     [CascadingParameter]
     public TaskInfoDto TaskInfo { get; set; } = new();
+
+    [Parameter]
+    public DataOperation Operation { get; set; }
 
     private bool isTaskLoading;
     private bool isModalVisible;

@@ -76,6 +76,32 @@
         </Validation>
         break;
 
+
+    case ParameterType.TIME:
+        <Validation @ref="timeValidationComponent" Validator="@ValidateTimeParameter">
+            <Field ColumnSize="@(DisplayActions ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!SkipLabel)
+                {
+                    <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
+                        @parameterName
+                    </FieldLabel>
+                }
+                <InputMask @ref="timeInputMask"
+                           ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                           Mask="99:99:99"
+                           MaskPlaceholder="_"
+                           Placeholder="@GetTimeInputPlaceholder()"
+                           Disabled="@(TaskMetadata.InitializationInProgres)"
+                           Value="@timeStringValue"
+                           ValueChanged="@OnTimeStringChanged"
+                           ClearIncomplete="true"
+                           ShowMaskOnFocus="true" />
+
+                <ValidationError Multiline="true" />
+            </Field>
+        </Validation>
+        break;
+
     case ParameterType.FLOAT:
         <Validation>
             <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
@@ -203,9 +229,68 @@
     [CascadingParameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
 
+    private string? timeStringValue;
+    private InputMask? timeInputMask;
+    private Validation? timeValidationComponent;
+
     public TaskModuleParamValueInput()
     {
         ParameterID ??= Guid.NewGuid();
+    }
+
+    private void ValidateTimeParameter(ValidatorEventArgs args) => ParameterTimeHelper.ValidateTimeParameter(args, ParamValue, resourceHandler);
+
+    protected override void OnParametersSet()
+    {
+        if (DynamicParamUtils.GetParameterType(ParamOption.Type) == ParameterType.TIME)
+        {
+            timeStringValue = ParameterTimeHelper.ConvertSecondsToTimeString(ParamValue.Value?.IntValue);
+        }
+        base.OnParametersSet();
+    }
+
+    private string GetTimeInputPlaceholder()
+    {
+        if (ParamOption.Default?.IntValue is not null && ParamOption.Default.IntValue.Value != -1)
+        {
+            return ParameterTimeHelper.ConvertSecondsToTimeString(ParamOption.Default.IntValue) ?? string.Empty;
+        }
+        return string.Empty;
+    }
+
+    private int? ConvertTimeStringToSeconds(string? timeString)
+    {
+        const string maskPattern = "__:__:__";
+        if (string.IsNullOrWhiteSpace(timeString) || timeString == maskPattern)
+        {
+            return null;
+        }
+
+        var parts = timeString.Split(':');
+        if (parts.Length == 3)
+        {
+            if (int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int hours) &&
+                int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int minutes) &&
+                int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out int seconds))
+            {
+                if (hours >= 0 && hours <= 99 && minutes >= 0 && minutes <= 59 && seconds >= 0 && seconds <= 59)
+                {
+                    return (hours * 3600) + (minutes * 60) + seconds;
+                }
+            }
+        }
+        return -1;
+    }
+
+
+    private async Task OnTimeStringChanged(string? newValue)
+    {
+        timeStringValue = newValue;
+        if (ParamValue.Value != null)
+        {
+            ParamValue.Value.IntValue = ConvertTimeStringToSeconds(timeStringValue);
+        }
+        await InvokeAsync(StateHasChanged);
     }
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");

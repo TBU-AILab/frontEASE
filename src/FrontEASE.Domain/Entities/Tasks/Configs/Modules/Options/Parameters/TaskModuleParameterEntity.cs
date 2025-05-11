@@ -17,8 +17,8 @@ namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters
 
         #region Navigation
 
-        public Guid ModuleID { get; set; }
-        public TaskModuleEntity Module { get; set; }
+        public Guid? ModuleID { get; set; }
+        public TaskModuleEntity? Module { get; set; }
 
         public Guid? ListValueID { get; set; }
         public TaskModuleParameterListValueItemEntity? ListValue { get; set; }

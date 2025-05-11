@@ -12,15 +12,14 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Op
             if (source is not null)
             {
                 destination ??= new TaskModuleParameterListOptionCoreDto();
-                destination.ParameterValues = source.ParameterValues
+                destination.ParameterValues = [.. source.ParameterValues
                     .Select(paramList =>
                         (IDictionary<string, TaskModuleParameterCoreDto>)paramList.ParameterItems
                             .ToDictionary(
                                 param => param.Key,
                                 param => context.Mapper.Map<TaskModuleParameterCoreDto>(param)
                             )
-                    )
-                    .ToList();
+                    )];
             }
             return destination;
         }

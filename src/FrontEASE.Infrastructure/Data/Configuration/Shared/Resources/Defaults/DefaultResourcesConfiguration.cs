@@ -19,6 +19,7 @@ using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.Enum;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Values;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Messages;
@@ -30,6 +31,7 @@ using FrontEASE.Shared.Data.Enums.Shared.General;
 using FrontEASE.Shared.Data.Enums.Shared.Resources;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using FrontEASE.Shared.Data.Enums.Tasks.Config;
+using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.Parameters;
 using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.RepeatedMessage;
 using FrontEASE.Shared.Data.Enums.Tasks.Messages;
 using FrontEASE.Shared.Data.Enums.Tasks.Visualisation;
@@ -126,6 +128,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ParameterOneOfRequired}", Value="Parameter \"{0}\" must be filled." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ParameterNumericRange}", Value="Value must be in range {0} - {1}." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ParameterOneOfEnumValues}", Value="Selected value must be one of the following values: {0}." },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ParameterTimeFormat}", Value="Value must be in valid \"HH:mm:ss.\" format." },
 
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.CorePackageAlreadyPresent}", Value="The package \"{0}\" is already present in the list of core packages. Please make sure to uninstall previous version first when attempting to upgrade."},
             ];
@@ -494,6 +497,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Name), PropertyDisplayResourceType.FIELD), Value = "File name" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.MimeType), PropertyDisplayResourceType.FIELD), Value = "MIME type" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Content), PropertyDisplayResourceType.FIELD), Value = "Content" },
+
+                /* TaskModuleParameterListOptionDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskModuleParameterListOptionDto>(nameof(TaskModuleParameterListOptionDto.ParameterValues), PropertyDisplayResourceType.FIELD), Value = "Modules list" },
             ];
         }
 
@@ -558,6 +564,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "module.zip" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.MimeType), PropertyDisplayResourceType.PLACEHOLDER), Value = "application/zip" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Content), PropertyDisplayResourceType.PLACEHOLDER), Value = "Select file(s) ..." },
+
+                /* TaskModuleParameterValueDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetResourceFieldValue<TaskModuleParameterValueDto>(nameof(TaskModuleParameterValueDto.IntValue), PropertyDisplayResourceType.FIELD)}.{ParameterType.TIME}", Value = "HH:mm:ss" },
             ];
         }
     }

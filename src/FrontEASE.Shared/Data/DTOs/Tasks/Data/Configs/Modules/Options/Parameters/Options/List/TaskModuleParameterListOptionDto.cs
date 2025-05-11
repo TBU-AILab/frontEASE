@@ -1,5 +1,6 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List.Params;
 using FrontEASE.Shared.Infrastructure.Attributes;
+using FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
 
 namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List
 {
@@ -17,6 +18,8 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
         /// Nested list options.
         /// </summary>
         [Resource($"{nameof(TaskModuleParameterListOptionDto)}.{nameof(ParameterValues)}")]
+        [RequiredValidation<TaskModuleParameterListOptionDto>]
+        [CollectionNotEmptyValidation]
         public IList<TaskModuleParameterListOptionParamsDto> ParameterValues { get; set; }
     }
 }

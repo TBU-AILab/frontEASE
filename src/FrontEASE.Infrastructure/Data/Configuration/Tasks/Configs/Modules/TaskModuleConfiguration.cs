@@ -17,7 +17,8 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules
 
             builder.HasMany(e => e.Parameters)
                 .WithOne(p => p.Module)
-                .HasForeignKey(p => p.ModuleID);
+                .HasForeignKey(p => p.ModuleID)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(e => e.TaskConfig)
                 .WithMany(e => e.Modules)

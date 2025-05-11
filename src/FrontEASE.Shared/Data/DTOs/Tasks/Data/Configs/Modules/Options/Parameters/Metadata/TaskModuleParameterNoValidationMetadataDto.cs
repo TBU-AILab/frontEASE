@@ -21,7 +21,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
         /// <summary>
         /// Is parameter required
         /// </summary>
-        public bool Required { get; set; }
+        public bool? Required { get; set; }
 
         /// <summary>
         /// Parameter is readonly

@@ -18,8 +18,8 @@ namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options
 
         #region Navigation
 
-        public Guid TaskConfigID { get; set; }
-        public TaskConfig TaskConfig { get; set; }
+        public Guid? TaskConfigID { get; set; }
+        public TaskConfig? TaskConfig { get; set; }
 
         public TaskModuleParameterEnumValueEntity ParameterEnumValue { get; set; }
 

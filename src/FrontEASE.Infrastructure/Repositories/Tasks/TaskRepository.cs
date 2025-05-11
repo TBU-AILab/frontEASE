@@ -1,5 +1,6 @@
 ﻿using FrontEASE.Domain.DataQueries.Tasks;
 using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values;
 using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Infrastructure.Data;
@@ -28,34 +29,21 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
 
             if (query.LoadConfig)
             {
+                tasksQuery = tasksQuery.Include(x => x.Config);
+
                 if (query.LoadConfigModules)
                 {
                     tasksQuery = tasksQuery
-                        .Include(x => x.Config)
-                        .ThenInclude(x => x.Modules)
-                            .ThenInclude(x => x.Parameters)
-                                .ThenInclude(x => x.Value)
-                                    .ThenInclude(x => x!.EnumValue)
-                                        .ThenInclude(x => x!.ModuleValue)
-                                            .ThenInclude(x => x!.Parameters)
-                                                .ThenInclude(x => x!.Value)
-                                                    .ThenInclude(x => x!.EnumValue)
-                        .Include(x => x.Config)
-                        .ThenInclude(x => x.Modules)
-                            .ThenInclude(x => x.Parameters)
-                                .ThenInclude(x => x.Value)
-                                    .ThenInclude(x => x!.ListValue)
-                                        .ThenInclude(x => x!.ParameterValues)
-                                            .ThenInclude(x => x!.ParameterItems);
+                        .Include(x => x.Config.Modules)
+                            .ThenInclude(m => m.Parameters);
                 }
-                else
+
+                if (query.LoadConfigRepeatedMessage)
                 {
-                    tasksQuery = tasksQuery.Include(x => x.Config);
+                    tasksQuery = tasksQuery
+                        .Include(x => x.Config.RepeatedMessage)
+                            .ThenInclude(rm => rm.RepeatedMessageItems);
                 }
-
-                if (query.LoadConfigRepeatedMessage) { tasksQuery = tasksQuery.Include(x => x.Config).ThenInclude(x => x.RepeatedMessage).ThenInclude(x => x.RepeatedMessageItems); }
-
-                tasksQuery = tasksQuery.Include(x => x.Config);
             }
 
             if (query.WithNoTracking) { tasksQuery = tasksQuery.AsNoTracking(); }
@@ -72,19 +60,58 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             {
                 tasksQuery = tasksQuery.Where(predicate);
             }
-            return await tasksQuery.ToListAsync() ?? [];
+            var tasks = await tasksQuery.ToListAsync() ?? [];
+            await LoadTaskNestedModules(query, tasks);
+
+            return tasks;
+        }
+
+        private async Task LoadTaskNestedModules(TasksQuery query, IList<Domain.Entities.Tasks.Task> tasks)
+        {
+            if (query.LoadConfig && query.LoadConfigModules)
+            {
+                foreach (var task in tasks)
+                {
+                    if (task.Config?.Modules is not null)
+                    {
+                        foreach (var module in task.Config.Modules)
+                        {
+                            if (module.Parameters is not null)
+                            {
+                                foreach (var param in module.Parameters)
+                                {
+                                    if (param.Value is null && param.ValueID.HasValue)
+                                    {
+                                        await _context.Entry(param).Reference(p => p.Value).LoadAsync();
+                                    }
+                                    await LoadModuleParameterValueRecursivelyAsync(param.Value);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         public async Task<Domain.Entities.Tasks.Task?> Load(Guid id, TasksQuery query)
         {
             var taskQuery = ComposeQuery(query);
-            return await taskQuery.SingleOrDefaultAsync(x => x.ID == id);
+            var task = await taskQuery.SingleOrDefaultAsync(x => x.ID == id);
+
+            if (task is not null)
+            {
+                await LoadTaskNestedModules(query, [task]);
+            }
+
+            return task;
         }
 
         public async Task<IList<Domain.Entities.Tasks.Task>> Load(IList<Guid> ids, TasksQuery query)
         {
             var taskQuery = ComposeQuery(query);
-            return await taskQuery.Where(x => ids.Contains(x.ID)).ToListAsync();
+            var tasks = await taskQuery.Where(x => ids.Contains(x.ID)).ToListAsync() ?? [];
+            await LoadTaskNestedModules(query, tasks);
+            return tasks;
         }
 
 
@@ -100,7 +127,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             return lastMessage;
         }
 
-        private IQueryable<Domain.Entities.Tasks.Task> GetFilterQuery(IQueryable<Domain.Entities.Tasks.Task> tasksQuery, TaskFilterActionRequest filter)
+        private static IQueryable<Domain.Entities.Tasks.Task> GetFilterQuery(IQueryable<Domain.Entities.Tasks.Task> tasksQuery, TaskFilterActionRequest filter)
         {
             var utcDateCreatedFrom = filter.DateCreatedFrom.HasValue ? DateTime.SpecifyKind(filter.DateCreatedFrom.Value.Date, DateTimeKind.Utc) : (DateTime?)null;
             var utcDateCreatedTo = filter.DateCreatedTo.HasValue ? DateTime.SpecifyKind(filter.DateCreatedTo.Value.Date.AddDays(1), DateTimeKind.Utc) : (DateTime?)null;
@@ -230,6 +257,74 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             if (saveChanges)
             {
                 await _context.SaveChangesAsync();
+            }
+        }
+
+        private async Task LoadModuleParameterValueRecursivelyAsync(TaskModuleParameterValueEntity? value)
+        {
+            if (value is null)
+            {
+                return;
+            }
+
+            if (value.EnumValue is null && value.EnumValueID.HasValue)
+            {
+                await _context.Entry(value).Reference(v => v.EnumValue).LoadAsync();
+            }
+
+            if (value.EnumValue is not null)
+            {
+                if (value.EnumValue.ModuleValue is null && value.EnumValue.ModuleValueID.HasValue)
+                {
+                    await _context.Entry(value.EnumValue).Reference(ev => ev.ModuleValue).LoadAsync();
+                }
+
+                if (value.EnumValue.ModuleValue is not null)
+                {
+                    if (!_context.Entry(value.EnumValue.ModuleValue).Collection(m => m.Parameters).IsLoaded)
+                    {
+                        await _context.Entry(value.EnumValue.ModuleValue).Collection(m => m.Parameters).LoadAsync();
+                    }
+
+                    foreach (var nestedParam in value.EnumValue.ModuleValue.Parameters)
+                    {
+                        if (nestedParam.Value is null && nestedParam.ValueID.HasValue)
+                        {
+                            await _context.Entry(nestedParam).Reference(p => p.Value).LoadAsync();
+                        }
+                        await LoadModuleParameterValueRecursivelyAsync(nestedParam.Value);
+                    }
+                }
+            }
+
+            if (value.ListValue is null && value.ListValueID.HasValue)
+            {
+                await _context.Entry(value).Reference(v => v.ListValue).LoadAsync();
+            }
+
+            if (value.ListValue is not null)
+            {
+                if (!_context.Entry(value.ListValue).Collection(lv => lv.ParameterValues).IsLoaded)
+                {
+                    await _context.Entry(value.ListValue).Collection(lv => lv.ParameterValues).LoadAsync();
+                }
+
+                foreach (var listItem in value.ListValue.ParameterValues)
+                {
+                    if (!_context.Entry(listItem).Collection(i => i.ParameterItems).IsLoaded)
+                    {
+                        await _context.Entry(listItem).Collection(i => i.ParameterItems).LoadAsync();
+                    }
+
+                    foreach (var paramInListItem in listItem.ParameterItems)
+                    {
+                        if (paramInListItem.Value is null && paramInListItem.ValueID.HasValue)
+                        {
+                            await _context.Entry(paramInListItem).Reference(p => p.Value).LoadAsync();
+                        }
+                        await LoadModuleParameterValueRecursivelyAsync(paramInListItem.Value);
+                    }
+                }
             }
         }
 

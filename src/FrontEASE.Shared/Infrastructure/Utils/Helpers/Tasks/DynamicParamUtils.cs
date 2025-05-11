@@ -6,7 +6,7 @@ namespace FrontEASE.Shared.Infrastructure.Utils.Helpers.Tasks
     {
         public static ParameterType? GetParameterType(string parameterType)
         {
-            foreach (ParameterType type in Enum.GetValues(typeof(ParameterType)))
+            foreach (ParameterType type in Enum.GetValues<ParameterType>())
             {
                 if (string.Equals(type.ToString(), parameterType, StringComparison.OrdinalIgnoreCase))
                 {

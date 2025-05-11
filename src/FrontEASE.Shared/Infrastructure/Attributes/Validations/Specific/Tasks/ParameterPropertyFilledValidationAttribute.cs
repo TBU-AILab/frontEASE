@@ -24,7 +24,8 @@ namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific.Tasks
                 { nameof(dto.IntValue), dto.IntValue },
                 { nameof(dto.StringValue), dto.StringValue },
                 { nameof(dto.BoolValue), dto.BoolValue },
-                { nameof(dto.EnumValue), dto.EnumValue }
+                { nameof(dto.EnumValue), dto.EnumValue },
+                { nameof(dto.ListValue), dto.ListValue }
             };
 
             if (!properties.Values.Any(v => v is not null && (v is not string str || !string.IsNullOrWhiteSpace(str))))

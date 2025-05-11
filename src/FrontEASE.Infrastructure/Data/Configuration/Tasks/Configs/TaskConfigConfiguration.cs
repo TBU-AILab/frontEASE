@@ -21,7 +21,8 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs
                 .WithOne(e => e.TaskConfig);
 
             builder.HasMany(e => e.Modules)
-                .WithOne(e => e.TaskConfig);
+                .WithOne(e => e.TaskConfig)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Ignore(e => e.AvailableModules);
         }

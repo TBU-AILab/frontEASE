@@ -26,6 +26,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
         [Resource($"{nameof(TaskModuleParameterValueDto)}.{nameof(IntValue)}")]
         [ParameterPropertyFilledValidation<TaskModuleParameterValueDto>]
         [ParameterNumericRangeValidation(true)]
+        [ParameterTimeValidation]
         public int? IntValue { get; set; }
 
         /// <summary>
