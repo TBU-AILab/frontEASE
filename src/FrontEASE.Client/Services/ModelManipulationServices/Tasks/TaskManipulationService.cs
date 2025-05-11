@@ -166,8 +166,21 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
                 (paramOption.EnumDescriptions?.Count > 0 && !string.IsNullOrWhiteSpace(paramValue.Value!.EnumValue?.StringValue))) && paramOption.Readonly != true;
         }
 
-        public void RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam, TaskModuleParameterDto paramValue) =>
+        public bool RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam, TaskModuleParameterDto paramValue)
+        {
+            var refreshOptions = false;
+            foreach (var presentParam in listParam.ParameterItems)
+            {
+                var type = DynamicParamUtils.GetParameterType(presentParam.Type);
+                if (type == ParameterType.ENUM && presentParam.Value?.EnumValue?.ModuleValue is not null)
+                {
+                    refreshOptions = true;
+                }
+            }
             paramValue.Value!.ListValue!.ParameterValues.Remove(listParam);
+            return refreshOptions;
+        }
+
 
         public TaskModuleParameterNoValidationDto? GetListValueParamOption(string shortName, TaskModuleParameterNoValidationDto paramOption) =>
             paramOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems?.FirstOrDefault(x => x.ShortName == shortName);

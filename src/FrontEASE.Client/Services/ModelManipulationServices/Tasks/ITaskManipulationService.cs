@@ -30,7 +30,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
         (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto parameter);
         void FillParamDefaultValue(TaskModuleParameterDto parameter, string? defaultValue);
         bool CheckDescriptionPresent(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramValue);
-        void RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam, TaskModuleParameterDto paramValue);
+        bool RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam, TaskModuleParameterDto paramValue);
         TaskModuleParameterNoValidationDto? GetListValueParamOption(string shortName, TaskModuleParameterNoValidationDto paramOption);
     }
 }

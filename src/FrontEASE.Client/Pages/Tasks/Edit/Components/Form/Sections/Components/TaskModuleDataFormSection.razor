@@ -92,7 +92,9 @@
     [Parameter]
     public string? ModuleName { get; set; }
 
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleDto>(elementBase, Operation, Task.ID.ToString());
+    private Guid ModuleID = Guid.NewGuid();
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ModuleID.ToString()}");
 
     private void SelectionChanged(string value)
     {

@@ -5,12 +5,14 @@ using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options
 
 namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values.List.Converters
 {
-    public class TaskModuleParameterListOptionCoreDtoConverter : ITypeConverter<TaskModuleParameterListOptionCoreDto, TaskModuleParameterListOption>
+    public class TaskModuleParameterListOptionCoreDtoConverter : ITypeConverter<TaskModuleParameterListOptionCoreDto?, TaskModuleParameterListOption?>
     {
-        public TaskModuleParameterListOption Convert(TaskModuleParameterListOptionCoreDto source, TaskModuleParameterListOption destination, ResolutionContext context)
+        public TaskModuleParameterListOption? Convert(TaskModuleParameterListOptionCoreDto? source, TaskModuleParameterListOption? destination, ResolutionContext context)
         {
-            destination ??= new TaskModuleParameterListOption();
-            destination.ParameterValues = source?.ParameterValues?
+            if (source is not null)
+            {
+                destination ??= new TaskModuleParameterListOption();
+                destination.ParameterValues = source?.ParameterValues?
                 .Select(dict =>
                 {
                     var paramList = new TaskModuleParameterListOptionParams
@@ -27,6 +29,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Op
                     return paramList;
                 })
                 .ToList() ?? [];
+            }
             return destination;
         }
     }

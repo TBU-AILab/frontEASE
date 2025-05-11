@@ -24,20 +24,34 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Op
             CreateMap<TaskModuleParameterListOption, TaskModuleParameterListOptionNoValidationDto>()
                 .ForMember(x => x.ParameterValues, opt => opt.MapFrom(src => src.ParameterValues))
                 .ReverseMap();
+
+            CreateMap<TaskModuleParameterListValueEntity, TaskModuleParameterListOptionDto>()
+                .ForMember(x => x.ParameterValues, opt => opt.MapFrom(src => src.ParameterValues))
+                .ReverseMap();
+
+            CreateMap<TaskModuleParameterListValueEntity, TaskModuleParameterListOptionNoValidationDto>()
+                .ForMember(x => x.ParameterValues, opt => opt.MapFrom(src => src.ParameterValues))
+                .ReverseMap();
         }
 
         private void CreateMapsEntities()
         {
             CreateMap<TaskModuleParameterListOption, TaskModuleParameterListOption>()
                 .ForMember(x => x.ParameterValues, opt => opt.MapFrom(src => src.ParameterValues));
+
+            CreateMap<TaskModuleParameterListValueEntity, TaskModuleParameterListValueEntity>()
+                .ForMember(x => x.ID, cd => cd.Ignore())
+                .ForMember(x => x.ParameterValue, cd => cd.Ignore())
+
+                .ForMember(x => x.ParameterValues, cd => cd.MapFrom(map => map.ParameterValues));
         }
 
         private void CreateMapsCore()
         {
-            CreateMap<TaskModuleParameterListOptionCoreDto, TaskModuleParameterListOption>()
+            CreateMap<TaskModuleParameterListOptionCoreDto?, TaskModuleParameterListOption?>()
                 .ConvertUsing(new TaskModuleParameterListOptionCoreDtoConverter());
 
-            CreateMap<TaskModuleParameterListOption, TaskModuleParameterListOptionCoreDto>()
+            CreateMap<TaskModuleParameterListOption?, TaskModuleParameterListOptionCoreDto?>()
                 .ConvertUsing(new TaskModuleParameterListOptionCoreDtoReverseConverter());
         }
     }

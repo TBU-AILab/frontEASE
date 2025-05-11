@@ -13,8 +13,8 @@
                     {
                         var listParamType = DynamicParamUtils.GetParameterType(paramOption.Type);
                         var isDescriptionPresent = taskManipulationService.CheckDescriptionPresent(paramOption, paramVal);
-                        (var isListDefaultPresent, var listDefaultValue) = taskManipulationService.ExtractDefaultValue(paramOption);
                         var skipListLabel = listParamType == ParameterType.ENUM && paramOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
+                        (var isListDefaultPresent, var listDefaultValue) = taskManipulationService.ExtractDefaultValue(paramOption);
                         var displayActions = isListDefaultPresent || (isDescriptionPresent && !skipListLabel);
 
                         if (listParamType is not null)
@@ -78,11 +78,13 @@
 
                 @if (!TaskMetadata.InitializationInProgres)
                 {
-                    <Icon Class="action-icon-sm action-icon-danger"
-                          Name="IconName.MinusCircle"
-                          IconSize="IconSize.Default"
-                          IconStyle="IconStyle.Solid"
-                          Clicked="(() => taskManipulationService.RemoveListParameter(listParam, ParamValue))" />
+                    <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Remove}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                        <Icon Class="action-icon-sm action-icon-danger"
+                              Name="IconName.MinusCircle"
+                              IconSize="IconSize.Default"
+                              IconStyle="IconStyle.Solid"
+                              Clicked="(() => RemoveListParameter(listParam))" />
+                    </Tooltip>
                 }
             </Column>
         </Row>
@@ -96,6 +98,9 @@
 
 @code {
     [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
 
     [CascadingParameter]
@@ -106,4 +111,17 @@
 
     [CascadingParameter]
     public TaskModuleParameterDto ParamValue { get; set; } = new();
+
+    [CascadingParameter]
+    public EditContext EditContext { get; set; } = null!;
+
+    private Task RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam)
+    {
+        var refreshOptions = taskManipulationService.RemoveListParameter(listParam, ParamValue);
+        if (refreshOptions)
+        {
+            EditContext.NotifyFieldChanged(new FieldIdentifier(Task, TaskMetadataConstants.ShortName));
+        }
+        return System.Threading.Tasks.Task.CompletedTask;
+    }
 }

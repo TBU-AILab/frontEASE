@@ -14,7 +14,9 @@
                     @if (!TaskMetadata.InitializationInProgres)
                     {
                         <Column ColumnSize="ColumnSize.Is2" TextAlignment="TextAlignment.End" Class="align-self-center">
-                            <Icon Class="action-icon-sm action-icon-success" Name="IconName.PlusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@AddNewModule" />
+                            <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                                <Icon Class="action-icon-sm action-icon-success" Name="IconName.PlusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@AddNewModule" />
+                            </Tooltip>
                         </Column>
                     }
                 </Div>
@@ -26,72 +28,100 @@
 
     <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
         <Container Fluid>
-            @foreach (var module in Modules)
-            {
-                var moduleElemID = Guid.NewGuid();
-                var TaskModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == module.ShortName);
-
-                <Fields Class="form-group">
-                    <Validation>
-                        <Field ColumnSize="ColumnSize.Is10.OnWidescreen.Is11.OnFullHD">
-                            <FieldLabel For="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName), moduleElemID))" RequiredIndicator>
-                                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.ShortName), PropertyDisplayResourceType.FIELD)))
-                            </FieldLabel>
-                            <Select TValue="string"
-                            Disabled="@(TaskMetadata.InitializationInProgres)"
-                            SelectedValue="@module.ShortName"
-                            SelectedValueExpression="@(() => module.ShortName)"
-                            SelectedValueChanged="@((value) => TypeSelectionChanged(value, module))"
-                            ElementId="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName), moduleElemID))">
-                                <ChildContent>
-                                    <SelectItem Value="string.Empty">
-                                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
-                                    </SelectItem>
-                                    @foreach (var moduleType in ModuleOptions)
-                                    {
-                                        <SelectItem Value="@(moduleType.ShortName)">
-                                            @(moduleType.LongName)
-                                        </SelectItem>
-                                    }
-                                </ChildContent>
-                                <Feedback>
-                                    <ValidationError Multiline="true" />
-                                </Feedback>
-                            </Select>
-                        </Field>
-                    </Validation>
-
-                    <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
-                        <FieldLabel>
-                            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
-                        </FieldLabel>
-                        <Div>
-                            @if (!string.IsNullOrWhiteSpace(TaskModuleData?.Description))
-                            {
-                                <Tooltip Multiline="true" Text="@(TaskModuleData?.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd">
-                                    <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-                                </Tooltip>
-                            }
-                            @if (!TaskMetadata.InitializationInProgres)
-                            {
-                                <Icon Class="action-icon-sm action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@((e) => (RemoveModule(e, module)))" />
-                            }
-                        </Div>
-                    </Field>
-                </Fields>
-
-                @if (!string.IsNullOrWhiteSpace(module.ShortName))
+            <Row>
+                @foreach (var module in Modules)
                 {
-                    var Module = module;
-                    var moduleOptions = ModuleOptions.Single(x => x.ShortName == module.ShortName);
+                    <Column ColumnSize="ColumnSize.Is11">
+                        @{
+                            var moduleElemID = Guid.NewGuid();
+                            var TaskModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == module.ShortName);
+                            var isDescriptionPresent = !string.IsNullOrWhiteSpace(TaskModuleData?.Description);
+                        }
 
-                    <CascadingValue Value="Module">
-                        <TaskModuleParamsFormSection AvailableParams="@moduleOptions.Parameters" />
-                    </CascadingValue>
+                        <Fields Class="form-group">
+                            <Validation>
+                                <Field ColumnSize="@(isDescriptionPresent ? ColumnSize.Is10.OnWidescreen.Is11.OnFullHD : ColumnSize.IsFull)">
+                                    <FieldLabel For="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName), moduleElemID))" RequiredIndicator>
+                                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.ShortName), PropertyDisplayResourceType.FIELD)))
+                                    </FieldLabel>
+                                    <Select TValue="string"
+                                            Disabled="@(TaskMetadata.InitializationInProgres)"
+                                            SelectedValue="@module.ShortName"
+                                            SelectedValueExpression="@(() => module.ShortName)"
+                                            SelectedValueChanged="@((value) => TypeSelectionChanged(value, module))"
+                                            ElementId="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName), moduleElemID))">
+                                        <ChildContent>
+                                            <SelectItem Value="string.Empty">
+                                                @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
+                                            </SelectItem>
+                                            @foreach (var moduleType in ModuleOptions)
+                                            {
+                                                <SelectItem Value="@(moduleType.ShortName)">
+                                                    @(moduleType.LongName)
+                                                </SelectItem>
+                                            }
+                                        </ChildContent>
+                                        <Feedback>
+                                            <ValidationError Multiline="true" />
+                                        </Feedback>
+                                    </Select>
+                                </Field>
+                            </Validation>
+
+                            @if (isDescriptionPresent)
+                            {
+                                <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+                                    <FieldLabel>
+                                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
+                                    </FieldLabel>
+                                    <Div>
+                                        @if (!string.IsNullOrWhiteSpace(TaskModuleData?.Description))
+                                        {
+                                            <Tooltip Multiline="true" Text="@(TaskModuleData?.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd">
+                                                <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                                            </Tooltip>
+                                        }
+                                    </Div>
+                                </Field>
+                            }
+                        </Fields>
+
+                        @if (!string.IsNullOrWhiteSpace(module.ShortName))
+                        {
+                            var Module = module;
+                            var moduleOptions = ModuleOptions.Single(x => x.ShortName == module.ShortName);
+
+                            <CascadingValue Value="Module">
+                                <TaskModuleParamsFormSection AvailableParams="@moduleOptions.Parameters" />
+                            </CascadingValue>
+                        }
+                    </Column>
+
+                    <Column ColumnSize="ColumnSize.Is1"
+                            Padding="Padding.Is2.FromStart.Is2.FromEnd"
+                            Display="Display.Flex"
+                            Class="alignment-center"
+                            Style="gap: 25px;">
+
+                        <Div Class="vertical-divider" />
+
+                        @if (!TaskMetadata.InitializationInProgres)
+                        {
+                            <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Remove}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                                <Icon Class="action-icon-sm action-icon-danger"
+                                      Name="IconName.MinusCircle"
+                                      IconSize="IconSize.Default"
+                                      IconStyle="IconStyle.Solid"
+                                      Clicked="@((e) => RemoveModule(e, module))" />
+                            </Tooltip>
+                        }
+                    </Column>
                 }
-            }
+            </Row>
         </Container>
     </Column>
+
+
 </Row>
 
 @code {
@@ -103,6 +133,9 @@
 
     [CascadingParameter]
     public DataOperation Operation { get; set; }
+
+    [CascadingParameter]
+    public EditContext EditContext { get; set; } = null!;
 
     [Parameter]
     public IList<TaskModuleNoValidationDto> ModuleOptions { get; set; } = [];
@@ -130,6 +163,7 @@
         {
             taskManipulationService.RemoveModule(Modules, module);
         }
+        EditContext.NotifyFieldChanged(new FieldIdentifier(Task, TaskMetadataConstants.ShortName));
         return System.Threading.Tasks.Task.CompletedTask;
     }
 

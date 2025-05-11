@@ -21,11 +21,26 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Op
             CreateMap<TaskModuleParameterListOptionParams, TaskModuleParameterListOptionParamsNoValidationDto>()
                 .ForMember(x => x.ParameterItems, opt => opt.MapFrom(src => src.ParameterItems))
                 .ReverseMap();
+
+            CreateMap<TaskModuleParameterListValueItemEntity, TaskModuleParameterListOptionParamsDto>()
+                .ForMember(x => x.ParameterItems, opt => opt.MapFrom(src => src.ParameterItems))
+                .ReverseMap();
+
+            CreateMap<TaskModuleParameterListValueItemEntity, TaskModuleParameterListOptionParamsNoValidationDto>()
+                .ForMember(x => x.ParameterItems, opt => opt.MapFrom(src => src.ParameterItems))
+                .ReverseMap();
         }
 
         private void CreateMapsEntities()
         {
             CreateMap<TaskModuleParameterListOptionParams, TaskModuleParameterListOptionParams>()
+                .ForMember(x => x.ParameterItems, opt => opt.MapFrom(src => src.ParameterItems));
+
+            CreateMap<TaskModuleParameterListValueItemEntity, TaskModuleParameterListValueItemEntity>()
+                .ForMember(x => x.ID, cd => cd.Ignore())
+                .ForMember(x => x.ListParamValueID, cd => cd.Ignore())
+                .ForMember(x => x.ListParamValue, cd => cd.Ignore())
+
                 .ForMember(x => x.ParameterItems, opt => opt.MapFrom(src => src.ParameterItems));
         }
     }

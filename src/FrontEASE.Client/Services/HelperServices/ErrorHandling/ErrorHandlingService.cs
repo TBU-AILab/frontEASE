@@ -116,15 +116,14 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                     break;
             }
 
-            await VisualizeException(uiMessageTitle ?? "N/A", uiMessageBody, messageLevel);
+            await VisualizeException(uiMessageTitle ?? _resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}"), uiMessageBody, messageLevel);
         }
 
         private async Task VisualizeException(string title, string body, ToastLevel level)
         {
-            await Console.Out.WriteLineAsync(title);
-            await Console.Out.WriteLineAsync(body);
-
+            await Console.Out.WriteLineAsync($"{title}{Environment.NewLine}{body}");
             var content = string.IsNullOrWhiteSpace(title) ? $"{body}" : $"{title.ToUpper()} : {body}";
+
             switch (level)
             {
                 case ToastLevel.Error:

@@ -95,5 +95,6 @@
     [CascadingParameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
 
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, Task.ID.ToString());
+    private Guid ParameterID = Guid.NewGuid();
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
 }

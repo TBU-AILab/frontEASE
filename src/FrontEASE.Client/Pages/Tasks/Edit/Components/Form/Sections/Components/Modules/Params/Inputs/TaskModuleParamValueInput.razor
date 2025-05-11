@@ -18,8 +18,7 @@
 
             @if (!TaskMetadata.InitializationInProgres)
             {
-                <Markdown ElementId="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))"
-                          UploadImage="false"
+                <Markdown UploadImage="false"
                           NativeSpellcheck="false"
                           SpellChecker="false"
                           @bind-Value="@ParamValue.Value!.StringValue"
@@ -192,6 +191,9 @@
     [Parameter]
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
+    [Parameter]
+    public Guid? ParameterID { get; set; }
+
     [CascadingParameter]
     public DataOperation Operation { get; set; }
 
@@ -201,7 +203,10 @@
     [CascadingParameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
 
-    private Guid ParameterID = Guid.NewGuid();
+    public TaskModuleParamValueInput()
+    {
+        ParameterID ??= Guid.NewGuid();
+    }
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
 }

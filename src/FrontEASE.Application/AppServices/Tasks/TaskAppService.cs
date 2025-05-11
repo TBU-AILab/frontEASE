@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Services.Tasks;
 using FrontEASE.Domain.Services.Users;
@@ -50,6 +51,16 @@ namespace FrontEASE.Application.AppServices.Tasks
         public async Task<TaskDto> Refresh(TaskDto task)
         {
             var taskEntity = _mapper.Map<Domain.Entities.Tasks.Task>(task);
+
+            var emptyModules = new List<TaskModuleEntity>();
+            foreach (var module in taskEntity.Config.Modules)
+            {
+                if (module.Parameters.Count == 0)
+                {
+                    emptyModules.Add(module);
+                }
+            }
+            taskEntity.Config.Modules = taskEntity.Config.Modules.Except(emptyModules).ToList();
 
             var refreshedOptions = await _taskService.RefreshOptions(taskEntity);
             task.Config.AvailableModules = _mapper.Map<IList<TaskModuleNoValidationDto>>(refreshedOptions);

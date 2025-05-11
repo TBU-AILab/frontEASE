@@ -159,9 +159,22 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules
                 { return value.EnumValue.StringValue; }
             }
 
+
             if (value.ListValue is not null)
             {
-                return context.Mapper.Map<TaskModuleInputCoreDto>(value.ListValue.ParameterValues);
+                if (value.ListValue.ParameterValues.Count > 0)
+                {
+                    var paramArr = new List<object>();
+                    foreach (var paramArrItem in value.ListValue.ParameterValues)
+                    {
+                        var paramsMapped = paramArrItem.ParameterItems.ToDictionary(
+                                param => param.Key,
+                                param => MapParameterValue(param.Value, context)
+                            );
+                        paramArr.Add(paramsMapped);
+                    }
+                    return paramArr;
+                }
             }
 
             return value.StringValue ?? (object?)value.IntValue ?? (object?)value.FloatValue ?? value.BoolValue;
@@ -179,6 +192,23 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules
 
                 if (!string.IsNullOrEmpty(value.EnumValue.StringValue))
                 { return value.EnumValue.StringValue; }
+            }
+
+            if (value.ListValue is not null)
+            {
+                if (value.ListValue.ParameterValues.Count > 0)
+                {
+                    var paramArr = new List<object>();
+                    foreach (var paramArrItem in value.ListValue.ParameterValues)
+                    {
+                        var paramsMapped = paramArrItem.ParameterItems.ToDictionary(
+                                param => param.Key,
+                                param => MapParameterValueEntity(param.Value, context)
+                            );
+                        paramArr.Add(paramsMapped);
+                    }
+                    return paramArr;
+                }
             }
 
             return value.StringValue ?? (object?)value.IntValue ?? (object?)value.FloatValue ?? value.BoolValue;

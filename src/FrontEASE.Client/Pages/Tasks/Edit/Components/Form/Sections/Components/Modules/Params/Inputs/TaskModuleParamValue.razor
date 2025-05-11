@@ -6,12 +6,10 @@
 @{
     var parameterType = DynamicParamUtils.GetParameterType(ParamOption.Type);
     IsListParam = parameterType == ParameterType.LIST;
-
     IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(ParamOption, ParamValue);
     (IsDefaultPresent, var defaultValue) = taskManipulationService.ExtractDefaultValue(ParamOption);
-
+    SkipLabel = parameterType == ParameterType.ENUM && ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
     var parameterName = ParamOption.LongName ?? ParamOption.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
-    var skipLabel = parameterType == ParameterType.ENUM && ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
 }
 
 
@@ -26,12 +24,12 @@
     {
         IsSpecialCaseParam = true;
         <TaskModuleListParamLabel ParameterName="@parameterName" />
-        <TaskModuleListParamValue/>
+        <TaskModuleListParamValue />
     }
     else
     {
         IsSpecialCaseParam = false;
-        <TaskModuleParamValueInput SkipLabel="@skipLabel" ParamOption="@ParamOption" ParamValue="@ParamValue" DisplayActions="@DisplayActions" />
+        <TaskModuleParamValueInput ParameterID="@ParameterID" SkipLabel="@SkipLabel" ParamOption="@ParamOption" ParamValue="@ParamValue" DisplayActions="@DisplayActions" />
     }
 }
 
@@ -72,7 +70,7 @@
     <Validation>
         <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)" Class="input-validation-only">
 
-            <MemoEdit ElementId="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(MemoEdit)}"))"
+            <MemoEdit ElementId="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))"
                       Disabled="@(TaskMetadata.InitializationInProgres)"
                       @bind-Text="@ParamValue.Value!.StringValue"
                       Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)">
@@ -105,12 +103,14 @@
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
     private Guid ParameterID = Guid.NewGuid();
+
+    private bool SkipLabel { get; set; }
     private bool IsDescriptionPresent { get; set; }
     private bool IsDefaultPresent { get; set; }
     private bool IsListParam { get; set; }
     private bool IsSpecialCaseParam { get; set; }
 
-    private bool DisplayActions => (IsDescriptionPresent || IsDefaultPresent || IsListParam) && !IsSpecialCaseParam;
+    private bool DisplayActions => ((IsDescriptionPresent && !SkipLabel) || IsDefaultPresent || IsListParam) && !IsSpecialCaseParam;
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
 }

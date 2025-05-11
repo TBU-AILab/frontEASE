@@ -64,21 +64,6 @@
     private bool savingInProgress = false;
     private bool deletingInProgress = false;
 
-    public async Task HandleKeyDown(KeyboardEventArgs e)
-    {
-        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
-        {
-            case ShortcutKeys.ENTER:
-                await SaveTask();
-                break;
-            case ShortcutKeys.ESCAPE:
-                await HideModal();
-                break;
-            default:
-                break;
-        }
-    }
-
     private async Task HideModal()
     {
         if (DataOperation == DataOperation.INSERT)

@@ -16,7 +16,9 @@
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Data}.{nameof(TaskConfigRepeatedMessageDto.RepeatedMessageItems)}.{UIStateConstants.Explanation}"))" Display="Display.InlineBlock">
                             <Icon Class="action-icon-sm action-icon-warning" Name="IconName.ExclamationCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                         </Tooltip>
-                        <Icon Class="action-icon-sm action-icon-success" Name="IconName.PlusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@AddNewTaskRepeatedMessageItem" />
+                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                            <Icon Class="action-icon-sm action-icon-success" Name="IconName.PlusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@AddNewTaskRepeatedMessageItem" />
+                        </Tooltip>
                     </Column>
                 }
             </Div>

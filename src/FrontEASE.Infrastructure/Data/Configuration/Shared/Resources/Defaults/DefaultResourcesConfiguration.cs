@@ -239,6 +239,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Select}", Value="Select" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}", Value="Save" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}", Value="Delete" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Remove}", Value="Remove" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}", Value="Update" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Discard}", Value="Discard" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}", Value="Overview" },
