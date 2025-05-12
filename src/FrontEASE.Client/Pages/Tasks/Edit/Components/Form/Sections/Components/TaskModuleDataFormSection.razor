@@ -9,23 +9,23 @@
 
     <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Style="@($"height: 2px !important;")" Margin="Margin.Is0.FromTop.Is1.FromBottom" />
     @{
-        var TaskModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == Module.ShortName);
+        var taskModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == Module.ShortName);
     }
 
     <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
         <Fields>
 
             <Validation>
-                <Field ColumnSize="@(!string.IsNullOrWhiteSpace(TaskModuleData?.Description) ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                <Field ColumnSize="@(!string.IsNullOrWhiteSpace(taskModuleData?.Description) ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
                     <FieldLabel For="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName)))" RequiredIndicator>
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.ShortName), PropertyDisplayResourceType.FIELD)))
                     </FieldLabel>
                     <Select TValue="string"
-                            Disabled="@(TaskMetadata.InitializationInProgres)"
-                            SelectedValue="@Module.ShortName"
-                            SelectedValueExpression="@(() => Module.ShortName)"
-                            SelectedValueChanged="@((value) => SelectionChanged(value))"
-                            ElementId="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName)))">
+                    Disabled="@(TaskMetadata.InitializationInProgres)"
+                    SelectedValue="@Module.ShortName"
+                    SelectedValueExpression="@(() => Module.ShortName)"
+                    SelectedValueChanged="@((value) => SelectionChanged(value))"
+                    ElementId="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName)))">
                         <ChildContent>
                             <SelectItem Value="string.Empty">
                                 @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
@@ -44,14 +44,14 @@
                 </Field>
             </Validation>
 
-            @if (!string.IsNullOrWhiteSpace(TaskModuleData?.Description))
+            @if (!string.IsNullOrWhiteSpace(taskModuleData?.Description))
             {
                 <Field ColumnSize="ColumnSize.Is2.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
                     <FieldLabel>
                         @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
                     </FieldLabel>
                     <Div>
-                        <Tooltip Multiline="true" Text="@(TaskModuleData?.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd">
+                        <Tooltip Multiline="true" Text="@(taskModuleData?.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd">
                             <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                         </Tooltip>
                     </Div>
@@ -64,9 +64,7 @@
             <Container Fluid>
                 @if (!string.IsNullOrWhiteSpace(Module.ShortName))
                 {
-                    <CascadingValue Value="Module">
-                        <TaskModuleParamsFormSection AvailableParams="@TaskModuleData?.Parameters" />
-                    </CascadingValue>
+                    <TaskModuleParamsFormSection Module="@Module" AvailableParams="@taskModuleData?.Parameters" />
                 }
             </Container>
         </Column>
@@ -78,7 +76,7 @@
     public TaskDto Task { get; set; } = new();
 
     [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
     [CascadingParameter]
     public DataOperation Operation { get; set; }

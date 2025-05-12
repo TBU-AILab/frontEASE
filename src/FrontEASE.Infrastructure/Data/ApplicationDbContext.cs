@@ -1,5 +1,6 @@
 ﻿using FrontEASE.Domain.Entities.Base.Tracked;
 using FrontEASE.Domain.Entities.Companies;
+using FrontEASE.Domain.Entities.Jobs;
 using FrontEASE.Domain.Entities.Management;
 using FrontEASE.Domain.Entities.Management.General;
 using FrontEASE.Domain.Entities.Management.Tokens;
@@ -20,6 +21,7 @@ using FrontEASE.Domain.Entities.Tasks.Configs.Modules.RepeatedMessage;
 using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Infrastructure.Data.Configuration.Companies;
+using FrontEASE.Infrastructure.Data.Configuration.Jobs;
 using FrontEASE.Infrastructure.Data.Configuration.Management;
 using FrontEASE.Infrastructure.Data.Configuration.Management.Modules;
 using FrontEASE.Infrastructure.Data.Configuration.Management.Modules.Connectors;
@@ -46,6 +48,9 @@ namespace FrontEASE.Infrastructure.Data
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         { }
+
+        /* App Control */
+        public DbSet<JobLog> JobExecutions { get; set; }
 
         /* App Data */
         public DbSet<CountryCode> CountryCodes { get; set; }
@@ -87,6 +92,8 @@ namespace FrontEASE.Infrastructure.Data
 
         private void ApplyCustomConfigurations(ModelBuilder builder)
         {
+            builder.ApplyConfiguration(new JobLogConfiguration());
+
             builder.ApplyConfiguration(new CountryCodeConfiguration());
             builder.ApplyConfiguration(new ResourceConfiguration());
             builder.ApplyConfiguration(new AddressConfiguration());

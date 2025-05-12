@@ -34,8 +34,8 @@
                     <Column ColumnSize="ColumnSize.Is11">
                         @{
                             var moduleElemID = Guid.NewGuid();
-                            var TaskModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == module.ShortName);
-                            var isDescriptionPresent = !string.IsNullOrWhiteSpace(TaskModuleData?.Description);
+                            var taskModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == module.ShortName);
+                            var isDescriptionPresent = !string.IsNullOrWhiteSpace(taskModuleData?.Description);
                         }
 
                         <Fields Class="form-group">
@@ -75,9 +75,9 @@
                                         @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
                                     </FieldLabel>
                                     <Div>
-                                        @if (!string.IsNullOrWhiteSpace(TaskModuleData?.Description))
+                                        @if (!string.IsNullOrWhiteSpace(taskModuleData?.Description))
                                         {
-                                            <Tooltip Multiline="true" Text="@(TaskModuleData?.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd">
+                                            <Tooltip Multiline="true" Text="@(taskModuleData?.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd">
                                                 <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                                             </Tooltip>
                                         }
@@ -88,12 +88,8 @@
 
                         @if (!string.IsNullOrWhiteSpace(module.ShortName))
                         {
-                            var Module = module;
                             var moduleOptions = ModuleOptions.Single(x => x.ShortName == module.ShortName);
-
-                            <CascadingValue Value="Module">
-                                <TaskModuleParamsFormSection AvailableParams="@moduleOptions.Parameters" />
-                            </CascadingValue>
+                            <TaskModuleParamsFormSection Module="@module" AvailableParams="@moduleOptions.Parameters" />
                         }
                     </Column>
 
@@ -147,7 +143,6 @@
     public string ModuleName { get; set; } = string.Empty;
 
     private ModuleType? moduleType => ModuleOptions?.FirstOrDefault()?.PackageType;
-
 
     private void AddNewModule()
     {

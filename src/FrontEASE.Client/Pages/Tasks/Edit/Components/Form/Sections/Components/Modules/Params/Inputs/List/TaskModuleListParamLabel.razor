@@ -2,12 +2,7 @@
 @inject IUIService uIService
 @inject IMapper mapper
 
-@{
-    var displayActions = true;
-    var containsDescription = !string.IsNullOrWhiteSpace(ParamOption?.Description);
-}
-
-<Field ColumnSize="@(displayActions ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+<Field ColumnSize="ColumnSize.IsFull">
     <FieldLabel For="@(GetElementIdByOperation(ParamOption!.Key))" RequiredIndicator>
         @ParameterName
     </FieldLabel>
@@ -19,39 +14,37 @@
     </Div>
 </Field>
 
-@if (displayActions)
-{
-    <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD"
-           TextAlignment="TextAlignment.Center"
-           Class="align-self-center"
-           Padding="Padding.Is0.FromEnd.Is0.FromStart"
-           Margin="Margin.Is2.FromTop">
-        <FieldLabel>
-            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
-        </FieldLabel>
-        <Div>
-            @if (containsDescription)
-            {
-                <Tooltip Multiline="true"
-                         Text="@(ParamOption?.Description)"
-                         Display="Display.InlineBlock"
-                         Margin="Padding.Is2.FromEnd"
-                         Placement="TooltipPlacement.Top">
-                    <Icon Class="action-icon-sm action-icon-info"
-                          Name="IconName.InfoCircle"
-                          IconSize="IconSize.Default"
-                          IconStyle="IconStyle.Solid" />
-                </Tooltip>
-            }
-            <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                <Icon Class="action-icon-sm action-icon-success"
-                      Name="IconName.PlusCircle"
+<Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD"
+       TextAlignment="TextAlignment.Center"
+       Class="align-self-center"
+       Padding="Padding.Is0.FromEnd.Is0.FromStart"
+       Margin="Margin.Is2.FromTop">
+    <FieldLabel>
+        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
+    </FieldLabel>
+    <Div>
+        @if (ContainsDescription)
+        {
+            <Tooltip Multiline="true"
+                     Text="@(ParamOption?.Description)"
+                     Display="Display.InlineBlock"
+                     Margin="Padding.Is2.FromEnd"
+                     Placement="TooltipPlacement.Top">
+                <Icon Class="action-icon-sm action-icon-info"
+                      Name="IconName.InfoCircle"
                       IconSize="IconSize.Default"
-                      IconStyle="IconStyle.Solid"
-                      Clicked="(() => AddListParameter(ParamValue))" />
+                      IconStyle="IconStyle.Solid" />
             </Tooltip>
-        </Div>
-    </Field>
+        }
+        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+            <Icon Class="action-icon-sm action-icon-success"
+                  Name="IconName.PlusCircle"
+                  IconSize="IconSize.Default"
+                  IconStyle="IconStyle.Solid"
+                  Clicked="(() => AddListParameter(ParamValue))" />
+        </Tooltip>
+    </Div>
+</Field>
 }
 
 <Divider Class="divider-main bg-custom-light"
@@ -60,23 +53,27 @@
          Margin="Margin.Is0.FromTop" />
 
 @code {
-    [Parameter]
-    public string ParameterName { get; set; } = string.Empty;
-
     [CascadingParameter]
     public TaskDto Task { get; set; } = new();
 
     [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+
+    [CascadingParameter]
     public DataOperation Operation { get; set; }
 
-    [CascadingParameter]
+
+    [Parameter]
     public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+    [Parameter]
+    public string ParameterName { get; set; } = string.Empty;
+
+
+    private bool ContainsDescription => !string.IsNullOrWhiteSpace(ParamOption.Description);
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, Task.ID.ToString());
 

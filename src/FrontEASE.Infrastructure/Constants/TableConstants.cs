@@ -2,6 +2,9 @@
 {
     public static class TableConstants
     {
+        /* Control */
+        public const string JobExecutions = "JobExecutions";
+
         /* App */
         public const string Resources = "Resources";
         public const string CountryCodes = "CountryCodes";

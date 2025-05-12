@@ -36,6 +36,7 @@ using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Infrastructure.Settings.Connection;
 using FrontEASE.Domain.Repositories.Companies;
+using FrontEASE.Domain.Repositories.Jobs;
 using FrontEASE.Domain.Repositories.Management;
 using FrontEASE.Domain.Repositories.Shared.Resources;
 using FrontEASE.Domain.Repositories.Tasks;
@@ -55,6 +56,7 @@ using FrontEASE.Domain.Services.Users;
 using FrontEASE.Infrastructure.Data;
 using FrontEASE.Infrastructure.HealthChecks;
 using FrontEASE.Infrastructure.Repositories.Companies;
+using FrontEASE.Infrastructure.Repositories.Jobs;
 using FrontEASE.Infrastructure.Repositories.Management;
 using FrontEASE.Infrastructure.Repositories.Shared.Resources;
 using FrontEASE.Infrastructure.Repositories.Tasks;
@@ -464,6 +466,7 @@ void SetupRepositories()
     builder!.Services.AddTransient<IUserRepository, UserRepository>();
     builder!.Services.AddTransient<ITaskRepository, TaskRepository>();
     builder!.Services.AddTransient<IManagementRepository, ManagementRepository>();
+    builder!.Services.AddTransient<IJobLogRepository, JobLogRepository>();
 }
 
 void SetupServices()

@@ -1,7 +1,7 @@
 ﻿@inject IResourceHandler resourceHandler
 
 @{
-    var matchingTokens = Options.TokenOptions.Where(x => x.ConnectorTypes.Any(z => z.ConnectorType == Module.ShortName))?.ToList() ?? [];
+    var matchingTokens = Options.TokenOptions.Where(x => x.ConnectorTypes.Any(z => z.ConnectorType == Module?.ShortName))?.ToList() ?? [];
     var selectedToken = matchingTokens.SingleOrDefault(x => x.Token == ParamValue.Value?.StringValue);
     var displayActions = !string.IsNullOrWhiteSpace(selectedToken?.Description) || !string.IsNullOrWhiteSpace(ParamOption?.Description);
 
@@ -16,7 +16,7 @@
     <Field ColumnSize="@(displayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
 
         <FieldLabel For="@(GetElementIdByOperation(ParamOption!.Key))" RequiredIndicator>
-            @ParameterName
+            @ParamName
         </FieldLabel>
 
         @if (matchingTokens?.Count > 0)
@@ -71,9 +71,6 @@
 
 
 @code {
-    [Parameter]
-    public string ParameterName { get; set; } = string.Empty;
-
     [CascadingParameter]
     public UserPreferencesDto Options { get; set; } = new();
 
@@ -81,19 +78,24 @@
     public TaskDto Task { get; set; } = new();
 
     [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+
+    [CascadingParameter]
     public DataOperation Operation { get; set; }
 
-    [CascadingParameter]
-    public TaskModuleDto Module { get; set; } = new();
 
-    [CascadingParameter]
+
+    [Parameter]
+    public TaskModuleDto? Module { get; set; } = null;
+
+    [Parameter]
     public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+    [Parameter]
+    public string ParamName { get; set; } = string.Empty;
 
     private Guid ParameterID = Guid.NewGuid();
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");

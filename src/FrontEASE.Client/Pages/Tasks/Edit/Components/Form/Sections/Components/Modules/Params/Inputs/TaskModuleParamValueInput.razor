@@ -19,10 +19,10 @@
             @if (!TaskMetadata.InitializationInProgres)
             {
                 <Markdown UploadImage="false"
-                          NativeSpellcheck="false"
-                          SpellChecker="false"
-                          @bind-Value="@ParamValue.Value!.StringValue"
-                          Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)" />
+                NativeSpellcheck="false"
+                SpellChecker="false"
+                @bind-Value="@ParamValue.Value!.StringValue"
+                Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)" />
             }
         </Field>
         break;
@@ -39,10 +39,10 @@
                 }
 
                 <MemoEdit ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-                          Disabled="@(TaskMetadata.InitializationInProgres)"
-                          @bind-Text="@ParamValue.Value!.StringValue"
-                          Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)"
-                          Rows="2" AutoSize="true">
+                Disabled="@(TaskMetadata.InitializationInProgres)"
+                @bind-Text="@ParamValue.Value!.StringValue"
+                Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)"
+                Rows="2" AutoSize="true">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -62,12 +62,12 @@
                 }
 
                 <NumericEdit TValue="int?"
-                             ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-                             Disabled="@(TaskMetadata.InitializationInProgres)"
-                             @bind-Value="@ParamValue.Value!.IntValue"
-                             Placeholder="@(ParamOption.Default?.IntValue?.ToString() ?? 0.ToString())"
-                             Min="@(ParamOption.MinValue is float intMin ? (int)intMin : int.MinValue)"
-                             Max="@(ParamOption.MaxValue is float intMax ? (int)intMax : int.MaxValue)">
+                ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                Disabled="@(TaskMetadata.InitializationInProgres)"
+                @bind-Value="@ParamValue.Value!.IntValue"
+                Placeholder="@(ParamOption.Default?.IntValue?.ToString() ?? 0.ToString())"
+                Min="@(ParamOption.MinValue is float intMin ? (int)intMin : int.MinValue)"
+                Max="@(ParamOption.MaxValue is float intMax ? (int)intMax : int.MaxValue)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -87,15 +87,15 @@
                     </FieldLabel>
                 }
                 <InputMask @ref="timeInputMask"
-                           ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-                           Mask="99:99:99"
-                           MaskPlaceholder="_"
-                           Placeholder="@GetTimeInputPlaceholder()"
-                           Disabled="@(TaskMetadata.InitializationInProgres)"
-                           Value="@timeStringValue"
-                           ValueChanged="@OnTimeStringChanged"
-                           ClearIncomplete="true"
-                           ShowMaskOnFocus="true" />
+                ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                Mask="99:99:99"
+                MaskPlaceholder="_"
+                Placeholder="@GetTimeInputPlaceholder()"
+                Disabled="@(TaskMetadata.InitializationInProgres)"
+                Value="@timeStringValue"
+                ValueChanged="@OnTimeStringChanged"
+                ClearIncomplete="true"
+                ShowMaskOnFocus="true" />
 
                 <ValidationError Multiline="true" />
             </Field>
@@ -113,12 +113,12 @@
                 }
 
                 <NumericEdit TValue="float?"
-                             ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-                             Disabled="@(TaskMetadata.InitializationInProgres)"
-                             @bind-Value="@ParamValue.Value!.FloatValue"
-                             Placeholder="@(ParamOption.Default?.FloatValue?.ToString() ?? 0.0.ToString())"
-                             Min="@(ParamOption.MinValue is float floatMin ? floatMin : float.MinValue)"
-                             Max="@(ParamOption.MaxValue is float floatMax ? floatMax : float.MaxValue)">
+                ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                Disabled="@(TaskMetadata.InitializationInProgres)"
+                @bind-Value="@ParamValue.Value!.FloatValue"
+                Placeholder="@(ParamOption.Default?.FloatValue?.ToString() ?? 0.0.ToString())"
+                Min="@(ParamOption.MinValue is float floatMin ? floatMin : float.MinValue)"
+                Max="@(ParamOption.MaxValue is float floatMax ? floatMax : float.MaxValue)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -140,9 +140,9 @@
                     }
 
                     <Select TValue="string"
-                            Disabled="@(TaskMetadata.InitializationInProgres)"
-                            ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-                            @bind-SelectedValue="@ParamValue.Value!.EnumValue!.StringValue">
+                    Disabled="@(TaskMetadata.InitializationInProgres)"
+                    ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                    @bind-SelectedValue="@ParamValue.Value!.EnumValue!.StringValue">
                         <ChildContent>
                             <SelectItem Value="string.Empty">
                                 @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
@@ -192,9 +192,9 @@
                 }
 
                 <Check TValue="bool?"
-                       ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-                       Disabled="@(TaskMetadata.InitializationInProgres)"
-                       @bind-Checked="@ParamValue.Value!.BoolValue">
+                ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                Disabled="@(TaskMetadata.InitializationInProgres)"
+                @bind-Checked="@ParamValue.Value!.BoolValue">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -205,11 +205,14 @@
 }
 
 @code {
-    [Parameter]
-    public bool SkipLabel { get; set; }
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
 
-    [Parameter]
-    public bool DisplayActions { get; set; }
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+
+    [CascadingParameter]
+    public DataOperation Operation { get; set; }
 
     [Parameter]
     public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
@@ -220,25 +223,20 @@
     [Parameter]
     public Guid? ParameterID { get; set; }
 
-    [CascadingParameter]
-    public DataOperation Operation { get; set; }
+    [Parameter]
+    public bool SkipLabel { get; set; }
 
-    [CascadingParameter]
-    public TaskDto Task { get; set; } = new();
+    [Parameter]
+    public bool DisplayActions { get; set; }
 
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
 
     private string? timeStringValue;
     private InputMask? timeInputMask;
     private Validation? timeValidationComponent;
 
-    public TaskModuleParamValueInput()
-    {
-        ParameterID ??= Guid.NewGuid();
-    }
+    public TaskModuleParamValueInput() => ParameterID ??= Guid.NewGuid();
 
-    private void ValidateTimeParameter(ValidatorEventArgs args) => ParameterTimeHelper.ValidateTimeParameter(args, ParamValue, resourceHandler);
+    private void ValidateTimeParameter(ValidatorEventArgs args) => ParameterTimeValidator.ValidateTimeParameter(args, ParamValue, resourceHandler);
 
     protected override void OnParametersSet()
     {

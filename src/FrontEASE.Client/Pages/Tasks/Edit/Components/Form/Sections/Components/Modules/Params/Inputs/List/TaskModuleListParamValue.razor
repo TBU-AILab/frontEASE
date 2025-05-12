@@ -11,53 +11,46 @@
                     var paramOption = taskManipulationService.GetListValueParamOption(paramVal.ShortName, ParamOption);
                     if (paramOption is not null)
                     {
-                        var listParamType = DynamicParamUtils.GetParameterType(paramOption.Type);
-                        var isDescriptionPresent = taskManipulationService.CheckDescriptionPresent(paramOption, paramVal);
-                        var skipListLabel = listParamType == ParameterType.ENUM && paramOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
-                        (var isListDefaultPresent, var listDefaultValue) = taskManipulationService.ExtractDefaultValue(paramOption);
-                        var displayActions = isListDefaultPresent || (isDescriptionPresent && !skipListLabel);
-
-                        if (listParamType is not null)
+                        var flags = GetListParamFlags(paramOption, paramVal);
+                        if (flags.ListParamType is not null)
                         {
                             <Container Fluid>
                                 <Row>
                                     <Column ColumnSize="ColumnSize.IsFull">
                                         <Fields>
-                                            <TaskModuleParamValueInput SkipLabel="@skipListLabel" ParamOption="@paramOption" ParamValue="@paramVal" DisplayActions="@displayActions" />
-
-                                            @if (displayActions)
+                                            @if (flags.IsReadonly)
                                             {
-                                                var internalDescription = string.Empty;
-                                                if (!string.IsNullOrWhiteSpace(paramVal.Value?.EnumValue?.StringValue))
+                                                <TaskModuleParamLabel ParamOption="@paramOption" ParamValue="@paramVal" />
+                                            }
+                                            else
+                                            {
+                                                <TaskModuleParamValueInput SkipLabel="@flags.SkipListLabel" ParamOption="@paramOption" ParamValue="@paramVal" DisplayActions="@flags.DisplayActions" />
+
+                                                @if (flags.DisplayActions)
                                                 {
-                                                    var indexOfSelected = paramOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == paramVal?.Value?.EnumValue?.StringValue);
-                                                    if (indexOfSelected >= 0)
-                                                    {
-                                                        internalDescription = paramOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
-                                                    }
+                                                    var internalDescription = GetListParamInternalDescription(paramOption, paramVal);
+                                                    <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+                                                        <FieldLabel>
+                                                            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
+                                                        </FieldLabel>
+
+                                                        <Div>
+                                                            @if (flags.IsDescriptionPresent)
+                                                            {
+                                                                <Tooltip Multiline="true" Text="@(paramOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                                                                    <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                                                                </Tooltip>
+                                                            }
+
+                                                            @if (flags.IsListDefaultPresent && !TaskMetadata.InitializationInProgres)
+                                                            {
+                                                                <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{flags.ListDefaultValue}\"")" Display="Display.InlineBlock">
+                                                                    <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => taskManipulationService.FillParamDefaultValue(paramVal, flags.ListDefaultValue))" />
+                                                                </Tooltip>
+                                                            }
+                                                        </Div>
+                                                    </Field>
                                                 }
-
-                                                <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
-                                                    <FieldLabel>
-                                                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
-                                                    </FieldLabel>
-
-                                                    <Div>
-                                                        @if (isDescriptionPresent && !skipListLabel)
-                                                        {
-                                                            <Tooltip Multiline="true" Text="@(paramOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                                                                <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-                                                            </Tooltip>
-                                                        }
-
-                                                        @if (isListDefaultPresent && !TaskMetadata.InitializationInProgres)
-                                                        {
-                                                            <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{listDefaultValue}\"")" Display="Display.InlineBlock">
-                                                                <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => taskManipulationService.FillParamDefaultValue(paramVal, listDefaultValue))" />
-                                                            </Tooltip>
-                                                        }
-                                                    </Div>
-                                                </Field>
                                             }
                                         </Fields>
                                     </Column>
@@ -101,19 +94,50 @@
     public TaskDto Task { get; set; } = new();
 
     [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
     [CascadingParameter]
     public DataOperation Operation { get; set; }
 
     [CascadingParameter]
+    public EditContext EditContext { get; set; } = null!;
+
+
+    [Parameter]
     public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
-    [CascadingParameter]
-    public EditContext EditContext { get; set; } = null!;
+    private ListParamFlags GetListParamFlags(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal)
+    {
+        var flags = new ListParamFlags()
+            {
+                IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(paramOption, paramVal),
+                ListParamType = DynamicParamUtils.GetParameterType(paramOption.Type),
+                IsReadonly = paramOption.Readonly == true
+            };
+
+        flags.SkipListLabel = flags.ListParamType == ParameterType.ENUM && paramOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
+        (flags.IsListDefaultPresent, flags.ListDefaultValue) = taskManipulationService.ExtractDefaultValue(paramOption);
+        flags.DisplayActions = flags.IsListDefaultPresent || (flags.IsDescriptionPresent && !flags.SkipListLabel);
+
+        return flags;
+    }
+
+    private string GetListParamInternalDescription(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal)
+    {
+        var internalDescription = string.Empty;
+        if (!string.IsNullOrWhiteSpace(paramVal.Value?.EnumValue?.StringValue))
+        {
+            var indexOfSelected = paramOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == paramVal?.Value?.EnumValue?.StringValue);
+            if (indexOfSelected >= 0)
+            {
+                internalDescription = paramOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+            }
+        }
+        return internalDescription;
+    }
 
     private Task RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam)
     {

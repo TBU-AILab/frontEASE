@@ -17,30 +17,25 @@
         <Column ColumnSize="ColumnSize.IsFull">
             <Container Fluid>
                 <Row>
-
                     <Container Fluid Margin="Margin.Is3.FromTop">
                         <Row Padding="Padding.Is0">
 
-                            @foreach (var ParamOption in AvailableParams.OrderBy(x => x.Readonly))
+                            @foreach (var paramOption in AvailableParams.OrderBy(x => x.Readonly))
                             {
-                                var ParamValue = Module.Parameters?.SingleOrDefault(x => x.ShortName == ParamOption.ShortName);
-                                var paramType = DynamicParamUtils.GetParameterType(ParamOption.Type);
+                                var paramValue = Module?.Parameters?.SingleOrDefault(x => x.ShortName == paramOption.ShortName);
+                                var paramType = DynamicParamUtils.GetParameterType(paramOption.Type);
 
-                                ParamValue = ParamOption.Readonly == true ? InitializeReadonlyParamValue(ParamValue, ParamOption) : InitializeParamValue(ParamValue, ParamOption, paramType!.Value);
+                                paramValue = paramOption.Readonly == true ? InitializeReadonlyParamValue(paramValue, paramOption) : InitializeParamValue(paramValue, paramOption, paramType!.Value);
 
                                 <Fields>
-                                    <CascadingValue Value="ParamOption">
-                                        <CascadingValue Value="ParamValue">
-                                            @if (ParamOption.Readonly != true)
-                                            {
-                                                <TaskModuleParamValue />
-                                            }
-                                            else
-                                            {
-                                                <TaskModuleParamLabel />
-                                            }
-                                        </CascadingValue>
-                                    </CascadingValue>
+                                    @if (paramOption.Readonly != true)
+                                    {
+                                        <TaskModuleParamValue Module="@Module" ParamOption="@paramOption" ParamValue="@paramValue" />
+                                    }
+                                    else
+                                    {
+                                        <TaskModuleParamLabel ParamOption="@paramOption" ParamValue="@paramValue" />
+                                    }
                                 </Fields>
                             }
                         </Row>
@@ -55,11 +50,11 @@
     [CascadingParameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
-    public TaskModuleDto Module { get; set; } = new();
+    [Parameter]
+    public TaskModuleDto? Module { get; set; }
 
     [Parameter]
-    public IList<TaskModuleParameterNoValidationDto> AvailableParams { get; set; } = null!;
+    public IList<TaskModuleParameterNoValidationDto> AvailableParams { get; set; } = [];
 
 
     private TaskModuleParameterDto InitializeParamValue(TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption, ParameterType parameterType)
@@ -92,11 +87,11 @@
         if (parameterValue is null)
         {
             parameterValue = new()
-            {
-                Key = parameterOption.Key,
-                ShortName = parameterOption.ShortName,
-                Type = parameterOption.Type
-            };
+                {
+                    Key = parameterOption.Key,
+                    ShortName = parameterOption.ShortName,
+                    Type = parameterOption.Type
+                };
 
             Module.Parameters.Add(parameterValue);
         }

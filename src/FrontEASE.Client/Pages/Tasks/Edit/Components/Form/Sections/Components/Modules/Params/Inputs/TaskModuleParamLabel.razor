@@ -5,7 +5,7 @@
     @{
         var notAvailableResource = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
         var parameterType = DynamicParamUtils.GetParameterType(ParamOption.Type);
-        var parameterName = !string.IsNullOrWhiteSpace(ParamOption.LongName) ? ParamOption.LongName : !string.IsNullOrWhiteSpace(ParamValue.ShortName) ? ParamValue.ShortName : notAvailableResource;
+        var parameterName = !string.IsNullOrWhiteSpace(ParamOption.LongName) ? ParamOption.LongName : !string.IsNullOrWhiteSpace(ParamOption.ShortName) ? ParamOption.ShortName : notAvailableResource;
     }
 
     <Span TextSize="TextSize.Small" TextColor="TextColor.Info">
@@ -38,6 +38,12 @@
                     </Label>
                     break;
 
+                case ParameterType.TIME:
+                    <Label TextWeight="TextWeight.Normal" Class="fst-italic">
+                        @($"{ParameterTimeHelper.FormatTimeValueForDisplay(ParamOption.Default?.IntValue, resourceHandler)}")
+                    </Label>
+                    break;
+
                 case ParameterType.BOOL:
                     <Label TextWeight="TextWeight.Normal" Class="fst-italic">
                         @(ParamOption.Default?.BoolValue?.ToString() ?? notAvailableResource)
@@ -48,6 +54,17 @@
                     <Label TextWeight="TextWeight.Normal" Class="fst-italic">
                         @((MarkupString)Markdig.Markdown.ToHtml(ParamOption.Default?.StringValue?.ToString() ?? notAvailableResource))
                     </Label>
+                    break;
+
+                case ParameterType.LIST:
+                    foreach (var listParam in ParamOption.Default!.ListValue!.ParameterValues)
+                    {
+                        foreach (var listParamItem in listParam.ParameterItems)
+                        {
+                            <TaskModuleParamLabel ParamOption="@listParamItem" />
+                        }
+                    }
+
                     break;
 
                 case ParameterType.ENUM:
@@ -125,19 +142,13 @@
     public TaskDto Task { get; set; } = new();
 
     [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
     [CascadingParameter]
     public DataOperation Operation { get; set; }
 
-    [CascadingParameter]
-    public TaskModuleDto Module { get; set; } = null!;
-
-    [CascadingParameter]
+    [Parameter]
     public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
-
-    [CascadingParameter]
-    public TaskModuleParameterDto ParamValue { get; set; } = new();
 
     private Guid ParameterID = Guid.NewGuid();
 

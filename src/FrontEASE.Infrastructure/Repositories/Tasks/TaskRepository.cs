@@ -2,6 +2,7 @@
 using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values;
 using FrontEASE.Domain.Entities.Tasks.Messages;
+using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -52,6 +53,12 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             return tasksQuery;
         }
 
+
+        public async Task<IList<TaskMessage>> LoadAllMessagesWhere(Expression<Func<TaskMessage, bool>>? predicate)
+        {
+            var messagesQuery = predicate is not null ? _context.TaskMessages.Include(x => x.TaskSolution).Where(predicate) : _context.TaskMessages;
+            return await messagesQuery.ToListAsync();
+        }  
 
         public async Task<IList<Domain.Entities.Tasks.Task>> LoadAllWhere(Expression<Func<Domain.Entities.Tasks.Task, bool>>? predicate, TasksQuery query)
         {
@@ -116,16 +123,6 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
 
 
         public async Task<int> LoadTaskCount() => await _context.Tasks.CountAsync();
-
-        public async Task<TaskMessage?> LoadLastMessage()
-        {
-            var lastMessage = await _context.TaskMessages
-                .OrderByDescending(x => x.DateCreated)
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
-
-            return lastMessage;
-        }
 
         private static IQueryable<Domain.Entities.Tasks.Task> GetFilterQuery(IQueryable<Domain.Entities.Tasks.Task> tasksQuery, TaskFilterActionRequest filter)
         {
@@ -237,6 +234,24 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             task.IsDeleted = true;
             _context.Tasks.Update(task);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteRange(IList<TaskSolution> solutions, bool saveChanges)
+        {
+            _context.TaskSolutions.RemoveRange(solutions);
+            if (saveChanges)
+            {
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteRange(IList<TaskMessage> messages, bool saveChanges)
+        {
+            _context.TaskMessages.RemoveRange(messages);
+            if (saveChanges)
+            {
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task DeleteRange(IList<Domain.Entities.Tasks.Task> tasks, bool hardDelete, bool saveChanges)
