@@ -10,9 +10,11 @@ namespace FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Compo
         public bool SkipLabel { get; set; }
         public bool IsDescriptionPresent { get; set; }
         public bool IsDefaultPresent { get; set; }
-        public bool IsListParam { get; set; }
-        public bool IsSpecialCaseParam { get; set; }
         public bool DisplayActions { get; set; }
         public string? InternalDescription { get; set; }
+
+        public bool IsListParam { get; set; }
+        public bool IsTokenSelector { get; set; }
+        public bool IsSpecialCaseParam { get; set; }
     }
 }

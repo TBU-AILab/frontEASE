@@ -17,10 +17,9 @@
     [CascadingParameter]
     public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
 
-    private Task RemovePackage()
+    private async Task RemovePackage()
     {
         GlobalPreferences.CorePackages.Remove(Package);
-        uiService.CallRequestRefresh();
-        return Task.CompletedTask;
+        await uiService.CallRequestRefreshAsync();
     }
 }

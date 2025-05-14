@@ -18,7 +18,7 @@
         <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
             <Tabs RenderMode="TabsRenderMode.LazyReload"
                   SelectedTab="@managementTypeSelected.ToString()"
-                  SelectedTabChanged="@OnSelectedTabChanged"
+                  SelectedTabChanged="OnSelectedTabChanged"
                   Class="tab-control"
                   Border="Border.Is0">
                 <Items>
@@ -57,18 +57,19 @@
 @code {
     private UserPreferencesManagementType managementTypeSelected = UserPreferencesManagementType.TOKENS;
 
-    private void RefreshView()
-    { StateHasChanged(); }
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
         await base.OnInitializedAsync();
     }
 
-    private Task OnSelectedTabChanged(string name)
+    private void OnSelectedTabChanged(string name)
     {
         managementTypeSelected = (UserPreferencesManagementType)Enum.Parse(typeof(UserPreferencesManagementType), name);
-        return Task.CompletedTask;
     }
 }

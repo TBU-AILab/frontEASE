@@ -27,7 +27,7 @@
                         <Container Fluid
                                    Class="@($"cursor-pointer {(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? "border-custom-info" : "border-custom-light")}")"
                                    Border="@(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? Border.Is2.Rounded : Border.Is1.Rounded)"
-                                   @onclick="(() => SelectMessageSolution(solution))"
+                                   @onclick="(async () => await SelectMessageSolution(solution))"
                                    Shadow="Shadow.Small"
                                    Margin="Margin.Is2.FromTop"
                                    Padding="Padding.Is2.FromBottom.Is2.FromTop">
@@ -110,11 +110,11 @@
         solutionDownloadsOngoing.Remove(solution.ID);
     }
 
-    private void SelectMessageSolution(TaskSolutionDto solution)
+    private async Task SelectMessageSolution(TaskSolutionDto solution)
     {
         TaskMetadata.SelectedMessageID =
         TaskMetadata.SelectedMessageID == solution.TaskMessageID ? null : solution.TaskMessageID;
 
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 }

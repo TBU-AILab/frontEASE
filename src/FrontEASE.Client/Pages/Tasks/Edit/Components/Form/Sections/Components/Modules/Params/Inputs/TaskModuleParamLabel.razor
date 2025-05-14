@@ -129,7 +129,7 @@
                 @if (ParamOption.ShortName == TaskMetadataConstants.InitMessageTemplate && !string.IsNullOrEmpty(ParamOption.Default?.StringValue))
                 {
                     <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{ParamOption.Default?.StringValue}\"")" Display="Display.InlineBlock">
-                        <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => FillInitMessageValue())" />
+                        <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(async() => await FillInitMessageValue())" />
                     </Tooltip>
                 }
             }
@@ -155,10 +155,10 @@
     private bool HasDescription => !string.IsNullOrWhiteSpace(ParamOption.Description);
     private bool IsSpecialCase() => ParamOption.ShortName == TaskMetadataConstants.InitMessageTemplate;
 
-    private void FillInitMessageValue()
+    private async Task FillInitMessageValue()
     {
         Task.Config.InitMessage = ParamOption.Default?.StringValue ?? string.Empty;
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");

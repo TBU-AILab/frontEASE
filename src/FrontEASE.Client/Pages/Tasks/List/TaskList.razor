@@ -68,12 +68,14 @@
         cancellationTokenSource = new();
     }
 
-    private void RefreshView()
-    { StateHasChanged(); }
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
 
         var loadTasksTask = Task.CompletedTask;
         var loadUsersTask = Task.CompletedTask;
@@ -108,12 +110,12 @@
             while (!cancellationToken.IsCancellationRequested)
             {
                 var taskStatuses = await taskApiService.LoadTaskStatuses();
-                await InvokeAsync(() =>
+                await InvokeAsync(async () =>
                 {
                     var updateNecessary = taskManipulationService.UpdateTaskStatuses(Tasks, taskStatuses);
                     if (updateNecessary)
                     {
-                        uiService.CallRequestRefresh();
+                        await uiService.CallRequestRefreshAsync();
                     }
                 });
 

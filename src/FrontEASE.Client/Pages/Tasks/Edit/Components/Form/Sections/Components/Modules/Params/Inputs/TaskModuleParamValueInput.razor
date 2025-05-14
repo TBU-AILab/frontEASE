@@ -94,7 +94,7 @@
                            Placeholder="@GetTimeInputPlaceholder()"
                            Disabled="@(TaskMetadata.InitializationInProgres)"
                            Value="@timeStringValue"
-                           ValueChanged="@OnTimeStringChanged"
+                           ValueChanged="@(async (e) => await OnTimeStringChanged(e))"
                            ClearIncomplete="true"
                            ShowMaskOnFocus="true" />
 
@@ -145,7 +145,7 @@
                             ElementId="@(GetElementIdByOperation(ParamOption.Key))"
                             SelectedValue="@ParamValue.Value!.EnumValue!.StringValue"
                             SelectedValueExpression="@(() => ParamValue.Value!.EnumValue!.StringValue)"
-                            SelectedValueChanged="@((value) => (OnStringEnumValueChanged(value)))">
+                            SelectedValueChanged="@(async (value) => await OnStringEnumValueChanged(value))">
                         <ChildContent>
                             <SelectItem Value="string.Empty">
                                 @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
@@ -282,27 +282,25 @@
         return -1;
     }
 
-    private Task OnStringEnumValueChanged(string? newValue)
+    private async Task OnStringEnumValueChanged(string? newValue)
     {
         if (ParamValue.Value?.EnumValue is not null)
         {
             ParamValue.Value.EnumValue.StringValue = newValue;
         }
 
-        uiService.CallRequestRefresh();
-        return System.Threading.Tasks.Task.CompletedTask;
+        await uiService.CallRequestRefreshAsync();
     }
 
 
-    private Task OnTimeStringChanged(string? newValue)
+    private async Task OnTimeStringChanged(string? newValue)
     {
         timeStringValue = newValue;
         if (ParamValue.Value is not null)
         {
             ParamValue.Value.IntValue = ConvertTimeStringToSeconds(timeStringValue);
         }
-        uiService.CallRequestRefresh();
-        return System.Threading.Tasks.Task.CompletedTask;
+        await uiService.CallRequestRefreshAsync();
     }
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");

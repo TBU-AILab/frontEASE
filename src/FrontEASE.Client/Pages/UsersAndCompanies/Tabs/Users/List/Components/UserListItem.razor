@@ -9,12 +9,14 @@
 </Column>
 
 @code {
-    protected override async Task OnInitializedAsync()
+    private async Task RefreshViewAsync()
     {
-        uiService.RefreshRequested += RefreshView;
-        await base.OnInitializedAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void RefreshView()
-    { StateHasChanged(); }
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshViewAsync;
+        await base.OnInitializedAsync();
+    }
 }

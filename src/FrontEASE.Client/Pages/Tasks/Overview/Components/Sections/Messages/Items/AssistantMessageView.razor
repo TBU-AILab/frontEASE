@@ -1,12 +1,12 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject IUIService uiService
-@inject AppSettings appSettings
 @inject IUIManager uiManager
+@inject AppSettings appSettings
 
 <Container Fluid>
     <Row>
         <Column ColumnSize="ColumnSize.Is8.OnWidescreen.Is10.OnMobile" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
-            <Card Border="Border.Rounded" Class="cursor-pointer border-custom-light" @onclick="SelectMessageSolution">
+            <Card Border="Border.Rounded" Class="cursor-pointer border-custom-light" @onclick="(async () => await SelectMessageSolution())">
                 <MessageViewHeader />
 
                 <CardBody Border="Border.Is0"
@@ -47,11 +47,11 @@
     [CascadingParameter]
     public TaskMessageDto Message { get; set; } = new();
 
-    private void SelectMessageSolution()
+    private async Task SelectMessageSolution()
     {
         TaskMetadata.SelectedMessageID =
         TaskMetadata.SelectedMessageID == Message.ID ? null : Message.ID;
 
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 }

@@ -21,7 +21,7 @@
                                         <Fields>
                                             @if (flags.IsReadonly)
                                             {
-                                                <TaskModuleParamLabel ParamOption="@paramOption"/>
+                                                <TaskModuleParamLabel ParamOption="@paramOption" />
                                             }
                                             else
                                             {
@@ -77,7 +77,7 @@
                               Name="IconName.MinusCircle"
                               IconSize="IconSize.Default"
                               IconStyle="IconStyle.Solid"
-                              Clicked="(() => RemoveListParameter(listParam))" />
+                              Clicked="(async() => await RemoveListParameter(listParam))" />
                     </Tooltip>
                 }
             </Column>
@@ -111,12 +111,14 @@
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
 
-    private void RefreshView()
-    { StateHasChanged(); }
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
         await base.OnInitializedAsync();
     }
 

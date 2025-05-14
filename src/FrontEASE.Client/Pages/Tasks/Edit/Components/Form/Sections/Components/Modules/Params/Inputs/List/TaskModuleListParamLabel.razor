@@ -1,17 +1,11 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIService uIService
+@inject IUIService uiService
 @inject IMapper mapper
 
-<Field ColumnSize="ColumnSize.IsFull">
+<Field ColumnSize="ColumnSize.Is10.OnWidescreen.Is11.OnFullHD">
     <FieldLabel For="@(GetElementIdByOperation(ParamOption!.Key))" RequiredIndicator>
         @ParameterName
     </FieldLabel>
-    <Div>
-        <Divider Class="divider-main bg-custom-light"
-                 Shadow="Shadow.Small"
-                 Style="height:2px !important;"
-                 Margin="Margin.Is0.FromTop" />
-    </Div>
 </Field>
 
 <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD"
@@ -19,9 +13,6 @@
        Class="align-self-center"
        Padding="Padding.Is0.FromEnd.Is0.FromStart"
        Margin="Margin.Is2.FromTop">
-    <FieldLabel>
-        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
-    </FieldLabel>
     <Div>
         @if (ContainsDescription)
         {
@@ -41,11 +32,10 @@
                   Name="IconName.PlusCircle"
                   IconSize="IconSize.Default"
                   IconStyle="IconStyle.Solid"
-                  Clicked="(() => AddListParameter(ParamValue))" />
+                  Clicked="(async () => await AddListParameter(ParamValue))" />
         </Tooltip>
     </Div>
 </Field>
-}
 
 <Divider Class="divider-main bg-custom-light"
          Shadow="Shadow.Small"
@@ -77,7 +67,7 @@
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, Task.ID.ToString());
 
-    private void AddListParameter(TaskModuleParameterDto parameter)
+    private async Task AddListParameter(TaskModuleParameterDto parameter)
     {
         var newListParam = new TaskModuleParameterListOptionParamsDto();
         foreach (var param in ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems ?? [])
@@ -96,7 +86,7 @@
         }
 
         parameter.Value!.ListValue!.ParameterValues.Add(newListParam);
-        uIService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 
 

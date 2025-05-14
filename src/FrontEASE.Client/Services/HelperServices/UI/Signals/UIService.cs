@@ -16,8 +16,19 @@ namespace FrontEASE.Client.Services.HelperServices.UI.Signals
 
         #region UI Events
 
-        public event Action? RefreshRequested;
-        public void CallRequestRefresh() => RefreshRequested?.Invoke();
+        public event Func<Task>? RefreshRequested;
+
+        public async Task CallRequestRefreshAsync()
+        {
+            if (RefreshRequested != null)
+            {
+                var invocationList = RefreshRequested.GetInvocationList();
+                var tasks = invocationList
+                    .Cast<Func<Task>>()
+                    .Select(handler => handler.Invoke());
+                await Task.WhenAll(tasks);
+            }
+        }
 
         #endregion
 
@@ -32,7 +43,7 @@ namespace FrontEASE.Client.Services.HelperServices.UI.Signals
                 {
                     _uiManager.HandleUIPreferencesStateChange(preferences);
                     _uiManager.InitPreferences(preferences);
-                    CallRequestRefresh();
+                    await CallRequestRefreshAsync();
                 }
             }
         }

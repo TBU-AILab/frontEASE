@@ -50,14 +50,14 @@
         try
         {
             await dataLoader.LoadFiles(args, ModuleModel.Files);
-            uiService.CallRequestRefresh();
+            await uiService.CallRequestRefreshAsync();
         }
         catch (Exception)
         {
             var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}")}: {args.Files?.FirstOrDefault()?.Name}";
         }
         fileLoadInProgress = false;
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<GlobalPreferenceCorePackageDto>(elementBase, Operation, null);

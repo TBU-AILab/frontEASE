@@ -5,7 +5,7 @@
 @inject IMapper mapper
 @inject Blazored.Toast.Services.IToastService toastService
 
-<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
+<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
     @if (EditModal.Visible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
@@ -57,14 +57,16 @@
     private bool updateInProgress = false;
     private bool isModalVisible = false;
 
-    protected override async Task OnInitializedAsync()
+    private async Task RefreshViewAsync()
     {
-        uiService.RefreshRequested += RefreshView;
-        await base.OnInitializedAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
-    private void RefreshView()
-    { StateHasChanged(); }
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshViewAsync;
+        await base.OnInitializedAsync();
+    }
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
@@ -104,7 +106,7 @@
         }
 
         updateInProgress = false;
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 
     private Task HideModal()

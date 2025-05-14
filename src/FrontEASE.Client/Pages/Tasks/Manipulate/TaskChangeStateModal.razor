@@ -5,7 +5,7 @@
 @inject Blazored.Toast.Services.IToastService toastService
 
 <CascadingValue Value="Operation">
-    <Modal @ref="@ChangeStateModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
+    <Modal @ref="@ChangeStateModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
         @if (isModalVisible)
         {
             <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
@@ -104,7 +104,7 @@
                 var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.StateChange}")}: {task.Name}";
                 toastService.ShowSuccess(message);
             }
-            uiService.CallRequestRefresh();
+            await uiService.CallRequestRefreshAsync();
         }
 
         await HideModal();

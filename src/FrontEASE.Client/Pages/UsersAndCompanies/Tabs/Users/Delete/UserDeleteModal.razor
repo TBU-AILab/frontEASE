@@ -4,7 +4,7 @@
 @inject Blazored.Toast.Services.IToastService toastService
 @inject IUIManager uiManager
 
-<Modal @ref="@DeleteModal" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
+<Modal @ref="@DeleteModal" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async(e) => await HandleKeyDown(e))">
     @if (isModalVisible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
@@ -79,7 +79,7 @@
             Users.Remove(User);
             var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {User.Role} ({User.Email})";
             toastService.ShowSuccess(message);
-            uiService.CallRequestRefresh();
+            await uiService.CallRequestRefreshAsync();
         }
 
         await HideModal();

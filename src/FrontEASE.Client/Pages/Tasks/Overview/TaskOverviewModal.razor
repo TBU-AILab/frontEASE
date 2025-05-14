@@ -7,7 +7,7 @@
 @inject AppSettings appSettings
 
 <CascadingValue Value="Operation">
-    <Modal @ref="@Modal" Closing="@OnModalClosing" @bind-Visible="@isModalVisible" Class="modal-dialog-extrawide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
+    <Modal @ref="@Modal" Closing="@(async(e) => await OnModalClosing(e))" @bind-Visible="@isModalVisible" Class="modal-dialog-extrawide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
         @if (isModalVisible)
         {
             @if (TaskMetadata.ReloadInProgress)
@@ -142,7 +142,7 @@
                 if (Task.State == TaskState.RUN)
                 {
                     TaskMetadata.ReloadInProgress = true;
-                    uiService.CallRequestRefresh();
+                    await uiService.CallRequestRefreshAsync();
 
                     var taskInfoNew = await taskApiService.LoadTask(TaskInfo.ID);
                     if (taskInfoNew is not null)
@@ -151,7 +151,7 @@
                     }
 
                     TaskMetadata.ReloadInProgress = false;
-                    uiService.CallRequestRefresh();
+                    await uiService.CallRequestRefreshAsync();
                 }
                 await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(appSettings.PageSettings!.Tasks!.Timers!.SingleTaskStateRefetchIntervalSeconds), cancellationToken);
             }

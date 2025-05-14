@@ -6,7 +6,7 @@
 @inject Blazored.Toast.Services.IToastService toastService
 
 <CascadingValue Value="Operation">
-    <Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@OnModalClosing" Class="modal-dialog-wide" Border="Border.Rounded">
+    <Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@(async (e) => await OnModalClosing(e))" Class="modal-dialog-wide" Border="Border.Rounded">
         @if (isModalVisible)
         {
             @if (TaskMetadata.InitializationInProgres)
@@ -134,7 +134,7 @@
                 {
                     if (!token.IsCancellationRequested)
                     {
-                        uiService.CallRequestRefresh();
+                        await uiService.CallRequestRefreshAsync();
 
                         var updated = await taskApiService.RefreshTaskOptions(Task.ID, Task);
                         if (updated is not null && !token.IsCancellationRequested)
@@ -150,7 +150,7 @@
             finally
             {
                 TaskMetadata.InitializationInProgres = false;
-                uiService.CallRequestRefresh();
+                await uiService.CallRequestRefreshAsync();
             }
         }
     }
@@ -186,6 +186,6 @@
         }
 
         isTaskLoading = false;
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 }

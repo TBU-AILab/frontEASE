@@ -105,7 +105,7 @@
                 { toastService.ShowSuccess(message); }
 
                 await Modal.Hide();
-                uiService.CallRequestRefresh();
+                await uiService.CallRequestRefreshAsync();
             }
         }
 

@@ -52,9 +52,14 @@ else
 
     private bool isInitialized = false;
 
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
         if (!isInitialized)
         {
             var loadPreferencesTask = Task.CompletedTask;
@@ -65,9 +70,6 @@ else
         await base.OnInitializedAsync();
         isInitialized = true;
     }
-
-    private void RefreshView()
-    { StateHasChanged(); }
 
     private async Task LoadPreferences()
     {
@@ -98,6 +100,6 @@ else
         }
 
         updateInProgress = false;
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 }

@@ -6,7 +6,7 @@
 @inject IUIManager uiManager
 @inject AppSettings appSettings
 
-<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
+<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async(e) => await HandleKeyDown(e))">
     @if (EditModal.Visible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
@@ -73,14 +73,17 @@
     private bool updateInProgress = false;
     private bool isModalVisible = false;
 
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
         await base.OnInitializedAsync();
     }
 
-    private void RefreshView()
-    { StateHasChanged(); }
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
@@ -115,7 +118,7 @@
         }
 
         updateInProgress = false;
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 
     private Task HideModal()

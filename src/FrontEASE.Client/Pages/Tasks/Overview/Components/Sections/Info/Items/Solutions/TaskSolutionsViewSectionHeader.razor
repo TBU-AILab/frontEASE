@@ -18,7 +18,7 @@
                 }
                 else
                 {
-                    <Icon Name="IconName.Download" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@(() => DownloadSolutionArchiveFull())" Class="main-action-icon main-action-icon-info" />
+                    <Icon Name="IconName.Download" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@(async () => await DownloadSolutionArchiveFull())" Class="main-action-icon main-action-icon-info" />
                 }
             </Div>
         </Div>

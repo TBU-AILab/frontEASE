@@ -10,7 +10,7 @@
         </Div>
 
         <Div Display="Display.InlineBlock" Float="Float.End" Class="full-height">
-            <Icon Name="IconName.PlusCircle" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@ShowAddModal" Class="float-right main-action-icon main-action-icon-primary" />
+            <Icon Name="IconName.PlusCircle" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@(async () => await ShowAddModal())" Class="float-right main-action-icon main-action-icon-primary" />
         </Div>
     </Column>
 </Row>

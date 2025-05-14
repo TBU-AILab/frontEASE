@@ -108,7 +108,7 @@
                                       Name="IconName.MinusCircle"
                                       IconSize="IconSize.Default"
                                       IconStyle="IconStyle.Solid"
-                                      Clicked="@((e) => RemoveModule(e, module))" />
+                                      Clicked="@(async(e) => await RemoveModule(e, module))" />
                             </Tooltip>
                         }
                     </Column>

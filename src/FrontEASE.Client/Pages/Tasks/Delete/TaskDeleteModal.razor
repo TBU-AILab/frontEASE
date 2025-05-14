@@ -6,7 +6,7 @@
 
 <CascadingValue Value="Operation">
 
-    <Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
+    <Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
         @if (isModalVisible)
         {
             <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
@@ -102,7 +102,7 @@
             }
 
             deletingInProgress = false;
-            uiService.CallRequestRefresh();
+            await uiService.CallRequestRefreshAsync();
         }
         await HideModal();
     }

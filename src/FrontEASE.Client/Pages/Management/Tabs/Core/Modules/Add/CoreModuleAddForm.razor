@@ -8,11 +8,11 @@
 
 <Row Background="@uiManager.Theme.BackgroundOptions.Primary">
     <Column ColumnSize="ColumnSize.Is12" Margin="Margin.Is2.FromBottom" Padding="Padding.Is0">
-        <Icon Name="@(isFormCollapsed ? IconName.PlusCircle : IconName.MinusCircle)" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@ChangeCollapseState" Class="float-right main-action-icon main-action-icon-primary" />
+        <Icon Name="@(isFormCollapsed ? IconName.PlusCircle : IconName.MinusCircle)" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="ChangeCollapseState" Class="float-right main-action-icon main-action-icon-primary" />
     </Column>
 
     <Column ColumnSize="ColumnSize.Is12" Display="@(isFormCollapsed ? Display.None : Display.Block)" Margin="Margin.Is2.FromTop.Is4.FromBottom">
-        <Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="HandleKeyDown">
+        <Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="@(async (e) => await HandleKeyDown(e))">
             <CascadingValue Value="ModuleModel">
                 <CoreModuleDataFormSection Operation="DataOperation.INSERT" FullWidthFields="false" />
             </CascadingValue>
@@ -44,12 +44,14 @@
     private bool isFormCollapsed = true;
     private bool addInProgress = false;
 
-    private void RefreshView()
-    { StateHasChanged(); }
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
         await base.OnInitializedAsync();
     }
 
@@ -92,7 +94,7 @@
         }
 
         addInProgress = false;
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 
     private async Task LoadTaskModuleOptions()

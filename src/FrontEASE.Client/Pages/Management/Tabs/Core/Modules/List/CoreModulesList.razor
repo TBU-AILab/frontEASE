@@ -50,9 +50,14 @@ else
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<GlobalPreferencesDto>(elementBase, Operation, null);
 
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
 
         if (!isInitialized)
         {
@@ -64,9 +69,6 @@ else
         await base.OnInitializedAsync();
         isInitialized = true;
     }
-
-    private void RefreshView()
-    { StateHasChanged(); }
 
     private async Task LoadTaskModuleOptions()
     {

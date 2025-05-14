@@ -21,11 +21,11 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.ShortName), PropertyDisplayResourceType.FIELD)))
                     </FieldLabel>
                     <Select TValue="string"
-                    Disabled="@(TaskMetadata.InitializationInProgres)"
-                    SelectedValue="@Module.ShortName"
-                    SelectedValueExpression="@(() => Module.ShortName)"
-                    SelectedValueChanged="@((value) => SelectionChanged(value))"
-                    ElementId="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName)))">
+                            Disabled="@(TaskMetadata.InitializationInProgres)"
+                            SelectedValue="@Module.ShortName"
+                            SelectedValueExpression="@(() => Module.ShortName)"
+                            SelectedValueChanged="@(async (value) => await SelectionChanged(value))"
+                            ElementId="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName)))">
                         <ChildContent>
                             <SelectItem Value="string.Empty">
                                 @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
@@ -94,10 +94,10 @@
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ModuleID.ToString()}");
 
-    private void SelectionChanged(string value)
+    private async Task SelectionChanged(string value)
     {
         var sourceModule = ModuleOptions.FirstOrDefault(x => x.ShortName == value);
         taskManipulationService.SwapSelectedModule(sourceModule, Module);
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 }
