@@ -50,7 +50,6 @@ else
     private Validations Validations = new();
     private bool updateInProgress = false;
 
-    private bool isPreferencesLoading = false;
     private bool isInitialized = false;
 
     protected override async Task OnInitializedAsync()
@@ -59,12 +58,9 @@ else
         if (!isInitialized)
         {
             var loadPreferencesTask = Task.CompletedTask;
-
-            isPreferencesLoading = true;
             loadPreferencesTask = LoadPreferences();
 
             await Task.WhenAll(loadPreferencesTask);
-            isPreferencesLoading = false;
         }
         await base.OnInitializedAsync();
         isInitialized = true;

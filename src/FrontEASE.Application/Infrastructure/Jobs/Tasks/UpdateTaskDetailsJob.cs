@@ -14,14 +14,13 @@ using Hangfire.States;
 
 namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 {
-    public class UpdateTaskDetailsJob : IJob
+    public class UpdateTaskDetailsJob : JobBase, IJob
     {
         private readonly IMapper _mapper;
         private readonly ICoreConnector _coreService;
         private readonly ITaskRepository _taskRepository;
-        private readonly IJobLogRepository _jobLogRepository;
 
-        private readonly string _jobName;
+        public string JobName { get; init; }
 
         public UpdateTaskDetailsJob(
             IMapper mapper,
@@ -29,27 +28,15 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             ITaskRepository taskRepository,
             IJobLogRepository jobLogRepository,
             AppSettings appSettings)
+            : base(jobLogRepository)
         {
             _mapper = mapper;
             _coreService = coreService;
             _taskRepository = taskRepository;
-            _jobLogRepository = jobLogRepository;
 
-            _jobName = appSettings.HangfireSettings!.Jobs!.UpdateTaskDetailsJob!.CronName!;
+            JobName = appSettings.HangfireSettings!.Jobs!.UpdateTaskDetailsJob!.CronName!;
         }
 
-        private async Task InsertJobLog(DateTime dateStart, DateTime dateEnd, bool success)
-        {
-            var log = new JobLog()
-            {
-                DateStart = dateStart,
-                DateEnd = dateEnd,
-                Success = success,
-                JobName = _jobName,
-            };
-
-            await _jobLogRepository.Insert(log);
-        }
 
         private async Task ExecuteStrayItemsCleanup(PerformContext context, JobLog? lastExecutedLog)
         {
@@ -67,11 +54,13 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 
         public async Task Execute(PerformContext context)
         {
-            var checkID = SentrySdk.CaptureCheckIn(_jobName, CheckInStatus.InProgress);
-            var lastExecutedLog = await _jobLogRepository.LoadLastSuccessful(_jobName);
+            var currentExecutionStart = DateTime.UtcNow;
+            var log = await InsertJobLog(JobName, currentExecutionStart, null, false);
+            var checkID = SentrySdk.CaptureCheckIn(JobName, CheckInStatus.InProgress);
+
+            var lastExecutedLog = await _jobLogRepository.LoadLastSuccessful(JobName);
             context.WriteLine($"Last successful execution:{(lastExecutedLog is null ? "N/A" : $"{lastExecutedLog.DateStart} - {lastExecutedLog.DateEnd}")}");
 
-            var currentExecutionStart = DateTime.UtcNow;
             await ExecuteStrayItemsCleanup(context, lastExecutedLog);
 
             try
@@ -122,19 +111,17 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                     await _taskRepository.SaveChangesAsync();
                 }
 
+                await UpdateJobLog(log, DateTime.UtcNow, true);
                 context.WriteLine($"{nameof(UpdateTaskDetailsJob)} SUCCESS.");
-
-                await InsertJobLog(currentExecutionStart, DateTime.UtcNow, true);
-                SentrySdk.CaptureCheckIn(_jobName, CheckInStatus.Ok, checkID);
+                SentrySdk.CaptureCheckIn(JobName, CheckInStatus.Ok, checkID);
             }
             catch (Exception ex)
             {
+                await UpdateJobLog(log, DateTime.UtcNow, false);
                 context.SetTextColor(ConsoleTextColor.Red);
                 context.WriteLine($"{nameof(UpdateTaskDetailsJob)} FAILED: {ex.Message}");
                 new BackgroundJobClient().ChangeState(context.BackgroundJob.Id, new FailedState(ex));
-
-                await InsertJobLog(currentExecutionStart, DateTime.UtcNow, false);
-                SentrySdk.CaptureCheckIn(_jobName, CheckInStatus.Error, checkID);
+                SentrySdk.CaptureCheckIn(JobName, CheckInStatus.Error, checkID);
             }
         }
     }

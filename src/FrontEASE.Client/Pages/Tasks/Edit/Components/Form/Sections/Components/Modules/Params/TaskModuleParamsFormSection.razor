@@ -34,7 +34,7 @@
                                     }
                                     else
                                     {
-                                        <TaskModuleParamLabel ParamOption="@paramOption" ParamValue="@paramValue" />
+                                        <TaskModuleParamLabel ParamOption="@paramOption"/>
                                     }
                                 </Fields>
                             }
@@ -84,7 +84,7 @@
 
     private void SetParameterValueBaseIfNeeded(TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption)
     {
-        if (parameterValue is null)
+        if (parameterValue is null && Module is not null)
         {
             parameterValue = new()
                 {

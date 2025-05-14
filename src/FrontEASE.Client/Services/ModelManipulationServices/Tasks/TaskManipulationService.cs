@@ -104,22 +104,22 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 
         public void CleanCompaniesInfo(TaskDto task) => task.MemberGroups.Clear();
 
-        public (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto parameter)
+        public (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto? parameter)
         {
-            var defaultValuePresent = parameter.Default is not null && parameter.Readonly != true &&
+            var defaultValuePresent = parameter?.Default is not null && parameter.Readonly != true &&
                                       (!string.IsNullOrWhiteSpace(parameter.Default?.StringValue) ||
                                        parameter.Default?.FloatValue is not null ||
                                        parameter.Default?.IntValue is not null ||
                                        parameter.Default?.BoolValue is not null ||
                                        !string.IsNullOrWhiteSpace(parameter.Default?.EnumValue?.StringValue));
 
-            var defaultValue = parameter.Default switch
+            var defaultValue = parameter?.Default switch
             {
                 { StringValue.Length: > 0 } => parameter.Default.StringValue,
                 { FloatValue: not null } => parameter.Default.FloatValue?.ToString(),
                 { IntValue: not null } => parameter.Default.IntValue?.ToString(),
                 { BoolValue: not null } => parameter.Default.BoolValue?.ToString(),
-                { EnumValue.StringValue.Length: > 0 } => parameter.Default.EnumValue.StringValue,
+                { EnumValue.StringValue.Length: > 0 } => parameter.Default.EnumValue?.StringValue,
                 _ => null
             };
 
@@ -161,10 +161,10 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             }
         }
 
-        public bool CheckDescriptionPresent(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramValue)
+        public bool CheckDescriptionPresent(TaskModuleParameterNoValidationDto? paramOption, TaskModuleParameterDto paramValue)
         {
-            return (!string.IsNullOrWhiteSpace(paramOption.Description) ||
-                (paramOption.EnumDescriptions?.Count > 0 && !string.IsNullOrWhiteSpace(paramValue.Value!.EnumValue?.StringValue))) && paramOption.Readonly != true;
+            return (!string.IsNullOrWhiteSpace(paramOption?.Description) ||
+                (paramOption?.EnumDescriptions?.Count > 0 && !string.IsNullOrWhiteSpace(paramValue.Value!.EnumValue?.StringValue))) && paramOption?.Readonly != true;
         }
 
         public bool RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam, TaskModuleParameterDto paramValue)

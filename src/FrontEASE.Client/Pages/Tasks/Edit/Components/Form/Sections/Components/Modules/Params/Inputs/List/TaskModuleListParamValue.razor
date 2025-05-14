@@ -1,4 +1,5 @@
-﻿@inject IResourceHandler resourceHandler
+﻿@inject IUIService uiService
+@inject IResourceHandler resourceHandler
 @inject ITaskManipulationService taskManipulationService
 
 @foreach (var listParam in ParamValue.Value!.ListValue!.ParameterValues)
@@ -20,7 +21,7 @@
                                         <Fields>
                                             @if (flags.IsReadonly)
                                             {
-                                                <TaskModuleParamLabel ParamOption="@paramOption" ParamValue="@paramVal" />
+                                                <TaskModuleParamLabel ParamOption="@paramOption"/>
                                             }
                                             else
                                             {
@@ -108,6 +109,16 @@
 
     [Parameter]
     public TaskModuleParameterDto ParamValue { get; set; } = new();
+
+
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        await base.OnInitializedAsync();
+    }
 
     private ListParamFlags GetListParamFlags(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal)
     {

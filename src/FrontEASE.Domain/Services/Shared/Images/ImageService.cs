@@ -6,8 +6,8 @@ namespace FrontEASE.Domain.Services.Shared.Images
 {
     public class ImageService : IImageService
     {
-        private readonly IHostingEnvironment _webHostEnvironment;
-        public ImageService(IHostingEnvironment webHostEnvironment)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public ImageService(IWebHostEnvironment webHostEnvironment)
         {
             _webHostEnvironment = webHostEnvironment;
         }

@@ -88,6 +88,15 @@
     [Parameter]
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
+    private void RefreshView()
+    { StateHasChanged(); }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshView;
+        await base.OnInitializedAsync();
+    }
+
     private Guid ParameterID = Guid.NewGuid();
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");

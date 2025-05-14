@@ -4,6 +4,6 @@
     {
         new public const string BaseUrl = $"{ControllerConstants.BaseUrl}/core";
 
-        new public const string Module = "module";
+        public const string Module = "module";
     }
 }

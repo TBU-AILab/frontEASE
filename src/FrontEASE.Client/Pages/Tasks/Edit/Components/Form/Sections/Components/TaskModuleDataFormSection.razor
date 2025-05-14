@@ -1,6 +1,6 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject ITaskManipulationService taskManipulationService
-@inject IUIManager uiManager
+@inject IUIService uiService
 
 <Row Margin="Margin.Is4.FromBottom">
     <Container Fluid>
@@ -98,5 +98,6 @@
     {
         var sourceModule = ModuleOptions.FirstOrDefault(x => x.ShortName == value);
         taskManipulationService.SwapSelectedModule(sourceModule, Module);
+        uiService.CallRequestRefresh();
     }
 }

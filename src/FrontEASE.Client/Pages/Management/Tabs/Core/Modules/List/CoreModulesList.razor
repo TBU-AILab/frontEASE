@@ -47,7 +47,6 @@ else
     public IList<TaskModuleNoValidationDto> TaskModules { get; set; } = [];
 
     private bool isInitialized = false;
-    private bool isModulesLoading;
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<GlobalPreferencesDto>(elementBase, Operation, null);
 
@@ -58,11 +57,9 @@ else
         if (!isInitialized)
         {
             var loadModulesTask = Task.CompletedTask;
-            isModulesLoading = true;
             loadModulesTask = LoadTaskModuleOptions();
 
             await Task.WhenAll(loadModulesTask);
-            isModulesLoading = false;
         }
         await base.OnInitializedAsync();
         isInitialized = true;

@@ -1,6 +1,4 @@
 ﻿using FrontEASE.Domain.Entities.Base.Tracked;
-using FrontEASE.Domain.Entities.Base.Tracked;
-using FrontEASE.Domain.Entities.Management.Tokens;
 
 namespace FrontEASE.Domain.Entities.Management.Tokens.Connectors
 {

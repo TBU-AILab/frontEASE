@@ -4,6 +4,6 @@ namespace FrontEASE.Client.Infrastructure.Settings.AppSettings.Libraries
 {
     public class LibrarySettings
     {
-        public BlazoriseSettings Blazorise { get; set; }
+        public BlazoriseSettings? Blazorise { get; set; }
     }
 }

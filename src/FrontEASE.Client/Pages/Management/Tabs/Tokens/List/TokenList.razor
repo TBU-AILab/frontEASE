@@ -43,8 +43,6 @@ else
     [CascadingParameter]
     public IList<TaskModuleNoValidationDto> ConnectorTypes { get; set; } = [];
 
-    private bool isTypelistsLoading = false;
-    private bool isPreferencesLoading = false;
     private bool isInitialized = false;
 
     protected override async Task OnInitializedAsync()
@@ -57,15 +55,12 @@ else
 
             if (!(ConnectorTypes?.Any() == true))
             {
-                isTypelistsLoading = true;
                 loadTypelistsTask = LoadTypelists();
             }
 
-            isPreferencesLoading = true;
             loadPreferencesTask = LoadPreferences();
 
             await Task.WhenAll(loadTypelistsTask, loadPreferencesTask);
-            isTypelistsLoading = isPreferencesLoading = false;
         }
         await base.OnInitializedAsync();
         isInitialized = true;

@@ -8,7 +8,7 @@
     IsListParam = parameterType == ParameterType.LIST;
     IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(ParamOption, ParamValue);
     (IsDefaultPresent, var defaultValue) = taskManipulationService.ExtractDefaultValue(ParamOption);
-    SkipLabel = parameterType == ParameterType.ENUM && ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
+    SkipLabel = parameterType == ParameterType.ENUM && ParamOption?.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
     var parameterName = ParamOption?.LongName ?? ParamValue.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
 }
 

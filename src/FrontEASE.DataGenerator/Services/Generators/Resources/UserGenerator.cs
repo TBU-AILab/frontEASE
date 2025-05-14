@@ -2,10 +2,6 @@
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Infrastructure.Data;
 using FrontEASE.Infrastructure.Data.Configuration.Shared.Users.Defaults;
-using FrontEASE.DataGenerator.Infrastructure.Attributes;
-using FrontEASE.DataGenerator.Services.Generators;
-using FrontEASE.Infrastructure.Data.Configuration.Shared.Users.Defaults;
-using FrontEASE.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

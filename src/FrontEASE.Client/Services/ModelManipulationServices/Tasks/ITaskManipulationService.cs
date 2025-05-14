@@ -27,9 +27,9 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
         void PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions);
         void PrepareTaskFilter(TaskFilterActionRequestDto filter);
 
-        (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto parameter);
+        (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto? parameter);
         void FillParamDefaultValue(TaskModuleParameterDto parameter, string? defaultValue);
-        bool CheckDescriptionPresent(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramValue);
+        bool CheckDescriptionPresent(TaskModuleParameterNoValidationDto? paramOption, TaskModuleParameterDto paramValue);
         bool RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam, TaskModuleParameterDto paramValue);
         TaskModuleParameterNoValidationDto? GetListValueParamOption(string shortName, TaskModuleParameterNoValidationDto paramOption);
     }

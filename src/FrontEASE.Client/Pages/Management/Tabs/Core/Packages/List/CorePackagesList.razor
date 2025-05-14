@@ -107,7 +107,6 @@ else
     public bool FullWidthFields { get; set; }
 
     private bool isInitialized = false;
-    private bool isPreferencesLoading;
     private bool isSystemPackagesCollapsed;
     private bool isAddonsPackagesCollapsed;
 
@@ -122,11 +121,8 @@ else
         if (!isInitialized)
         {
             var loadPreferencesTask = Task.CompletedTask;
-            isPreferencesLoading = true;
             loadPreferencesTask = LoadGlobalPreferences();
-
             await Task.WhenAll(loadPreferencesTask);
-            isPreferencesLoading = false;
         }
         await base.OnInitializedAsync();
         isInitialized = true;
