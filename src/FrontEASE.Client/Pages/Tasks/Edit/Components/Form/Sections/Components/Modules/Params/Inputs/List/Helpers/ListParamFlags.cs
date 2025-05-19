@@ -2,7 +2,7 @@
 
 namespace FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs.List.Helpers
 {
-    internal class ListParamFlags
+    public class ListParamFlags
     {
         public ParameterType? ListParamType { get; set; }
         public string? ListDefaultValue { get; set; }

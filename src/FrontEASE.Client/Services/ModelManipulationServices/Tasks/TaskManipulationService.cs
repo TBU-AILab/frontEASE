@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs.List.Helpers;
+using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params.Helpers;
 using FrontEASE.Shared.Data.DTOs.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
@@ -10,17 +12,22 @@ using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks.Config;
 using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.Parameters;
+using FrontEASE.Shared.Infrastructure.Constants.UI.Generic;
+using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Tasks;
 using FrontEASE.Shared.Infrastructure.Utils.Helpers.Tasks;
+using FrontEASE.Shared.Services.Resources;
 
 namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 {
     public class TaskManipulationService : ITaskManipulationService
     {
         private readonly IMapper _mapper;
+        private readonly IResourceHandler resourceHandler;
 
-        public TaskManipulationService(IMapper mapper)
+        public TaskManipulationService(IMapper mapper, IResourceHandler resourceHandler)
         {
             _mapper = mapper;
+            this.resourceHandler = resourceHandler;
         }
 
         public void AddTaskRepeatedMessageItem(TaskDto task) => task.Config.RepeatedMessage.RepeatedMessageItems.Add(new());
@@ -185,5 +192,65 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 
         public TaskModuleParameterNoValidationDto? GetListValueParamOption(string shortName, TaskModuleParameterNoValidationDto paramOption) =>
             paramOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems?.FirstOrDefault(x => x.ShortName == shortName);
+
+
+        public TaskModuleParamFlags GetParamFlags(TaskModuleDto? module, TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramValue)
+        {
+            var flags = new TaskModuleParamFlags
+            {
+                ParamType = DynamicParamUtils.GetParameterType(paramOption.Type),
+                IsDescriptionPresent = CheckDescriptionPresent(paramOption, paramValue)
+            };
+            (flags.IsDefaultPresent, flags.ParamDefaultValue) = ExtractDefaultValue(paramOption);
+            flags.SkipLabel = flags.ParamType == ParameterType.ENUM && paramOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
+            flags.ParamName = paramOption.LongName ?? paramOption.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
+
+            flags.IsListParam = flags.ParamType == ParameterType.LIST;
+            flags.IsTokenSelector = module?.PackageType == ModuleType.LLM_CONNECTOR && paramOption.ShortName?.Contains(TaskMetadataConstants.Token) == true;
+            flags.IsSpecialCaseParam = flags.IsListParam || flags.IsTokenSelector;
+
+            flags.InternalDescription = string.Empty;
+            if (!string.IsNullOrWhiteSpace(paramValue.Value?.EnumValue?.StringValue))
+            {
+                var indexOfSelected = paramOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == paramValue?.Value?.EnumValue?.StringValue);
+                if (indexOfSelected >= 0)
+                {
+                    flags.InternalDescription = paramOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+                }
+            }
+
+            flags.DisplayActions = ((flags.IsDescriptionPresent && !flags.SkipLabel) || flags.IsDefaultPresent) && !flags.IsSpecialCaseParam;
+            return flags;
+        }
+
+        public ListParamFlags GetListParamFlags(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal)
+        {
+            var flags = new ListParamFlags()
+            {
+                IsDescriptionPresent = CheckDescriptionPresent(paramOption, paramVal),
+                ListParamType = DynamicParamUtils.GetParameterType(paramOption.Type),
+                IsReadonly = paramOption.Readonly == true
+            };
+
+            flags.SkipListLabel = flags.ListParamType == ParameterType.ENUM && paramOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
+            (flags.IsListDefaultPresent, flags.ListDefaultValue) = ExtractDefaultValue(paramOption);
+            flags.DisplayActions = flags.IsListDefaultPresent || (flags.IsDescriptionPresent && !flags.SkipListLabel);
+
+            return flags;
+        }
+
+        public string GetListParamInternalDescription(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal)
+        {
+            var internalDescription = string.Empty;
+            if (!string.IsNullOrWhiteSpace(paramVal.Value?.EnumValue?.StringValue))
+            {
+                var indexOfSelected = paramOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == paramVal?.Value?.EnumValue?.StringValue);
+                if (indexOfSelected >= 0)
+                {
+                    internalDescription = paramOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+                }
+            }
+            return internalDescription;
+        }
     }
 }
