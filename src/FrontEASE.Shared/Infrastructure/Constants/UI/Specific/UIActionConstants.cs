@@ -25,5 +25,6 @@
         public const string Download = "Download";
         public const string Import = "Import";
         public const string Add = "Add";
+        public const string Remove = "Remove";
     }
 }

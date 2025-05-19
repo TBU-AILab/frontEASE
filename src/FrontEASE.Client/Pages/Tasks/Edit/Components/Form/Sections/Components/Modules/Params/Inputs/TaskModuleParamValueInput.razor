@@ -1,0 +1,307 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+
+@{
+    var parameterType = DynamicParamUtils.GetParameterType(ParamOption.Type);
+    var parameterName = ParamOption.LongName ?? ParamOption.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
+}
+
+@switch (parameterType)
+{
+    case ParameterType.MARKDOWN:
+        <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+            @if (!SkipLabel)
+            {
+                <FieldLabel For="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))" RequiredIndicator="@(ParamOption.Required == true)">
+                    @parameterName
+                </FieldLabel>
+            }
+
+            @if (!TaskMetadata.InitializationInProgres)
+            {
+                <Markdown UploadImage="false"
+                          NativeSpellcheck="false"
+                          SpellChecker="false"
+                          @bind-Value="@ParamValue.Value!.StringValue"
+                          Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)" />
+            }
+        </Field>
+        break;
+
+
+    case ParameterType.STR:
+        <Validation>
+            <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!SkipLabel)
+                {
+                    <FieldLabel For="@(GetElementIdByOperation(ParamValue.Key))" RequiredIndicator="@(ParamOption.Required == true)">
+                        @parameterName
+                    </FieldLabel>
+                }
+
+                <MemoEdit ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                          Disabled="@(TaskMetadata.InitializationInProgres)"
+                          @bind-Text="@ParamValue.Value!.StringValue"
+                          Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)"
+                          Rows="2" AutoSize="true">
+                    <Feedback>
+                        <ValidationError Multiline="true" />
+                    </Feedback>
+                </MemoEdit>
+            </Field>
+        </Validation>
+        break;
+
+    case ParameterType.INT:
+        <Validation>
+            <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!SkipLabel)
+                {
+                    <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
+                        @parameterName
+                    </FieldLabel>
+                }
+
+                <NumericEdit TValue="int?"
+                             ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                             Disabled="@(TaskMetadata.InitializationInProgres)"
+                             @bind-Value="@ParamValue.Value!.IntValue"
+                             Placeholder="@(ParamOption.Default?.IntValue?.ToString() ?? 0.ToString())"
+                             Min="@(ParamOption.MinValue is float intMin ? (int)intMin : int.MinValue)"
+                             Max="@(ParamOption.MaxValue is float intMax ? (int)intMax : int.MaxValue)">
+                    <Feedback>
+                        <ValidationError Multiline="true" />
+                    </Feedback>
+                </NumericEdit>
+            </Field>
+        </Validation>
+        break;
+
+
+    case ParameterType.TIME:
+        <Validation @ref="timeValidationComponent" Validator="@ValidateTimeParameter">
+            <Field ColumnSize="@(DisplayActions ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!SkipLabel)
+                {
+                    <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
+                        @parameterName
+                    </FieldLabel>
+                }
+                <InputMask @ref="timeInputMask"
+                           ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                           Mask="99:99:99"
+                           MaskPlaceholder="_"
+                           Placeholder="@GetTimeInputPlaceholder()"
+                           Disabled="@(TaskMetadata.InitializationInProgres)"
+                           Value="@timeStringValue"
+                           ValueChanged="@(async (e) => await OnTimeStringChanged(e))"
+                           ClearIncomplete="true"
+                           ShowMaskOnFocus="true" />
+
+                <ValidationError Multiline="true" />
+            </Field>
+        </Validation>
+        break;
+
+    case ParameterType.FLOAT:
+        <Validation>
+            <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!SkipLabel)
+                {
+                    <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
+                        @parameterName
+                    </FieldLabel>
+                }
+
+                <NumericEdit TValue="float?"
+                             ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                             Disabled="@(TaskMetadata.InitializationInProgres)"
+                             @bind-Value="@ParamValue.Value!.FloatValue"
+                             Placeholder="@(ParamOption.Default?.FloatValue?.ToString() ?? 0.0.ToString())"
+                             Min="@(ParamOption.MinValue is float floatMin ? floatMin : float.MinValue)"
+                             Max="@(ParamOption.MaxValue is float floatMax ? floatMax : float.MaxValue)">
+                    <Feedback>
+                        <ValidationError Multiline="true" />
+                    </Feedback>
+                </NumericEdit>
+            </Field>
+        </Validation>
+        break;
+
+    case ParameterType.ENUM:
+        @if (!string.IsNullOrWhiteSpace(ParamOption.EnumOptions?.FirstOrDefault()?.StringValue))
+        {
+            <Validation>
+                <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                    @if (!SkipLabel)
+                    {
+                        <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
+                            @parameterName
+                        </FieldLabel>
+                    }
+
+                    <Select TValue="string"
+                            Disabled="@(TaskMetadata.InitializationInProgres)"
+                            ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                            SelectedValue="@ParamValue.Value!.EnumValue!.StringValue"
+                            SelectedValueExpression="@(() => ParamValue.Value!.EnumValue!.StringValue)"
+                            SelectedValueChanged="@(async (value) => await OnStringEnumValueChanged(value))">
+                        <ChildContent>
+                            <SelectItem Value="string.Empty">
+                                @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
+                            </SelectItem>
+                            @foreach (var enumOption in ParamOption.EnumOptions)
+                            {
+                                var longName = (string?)null;
+                                var longNameIndex = ParamOption.EnumOptions.Select(x => x.StringValue).ToList().FindIndex(x => x == enumOption.StringValue);
+                                @if (ParamOption.EnumLongNames?.Count > 0)
+                                {
+                                    longName = ParamOption.EnumLongNames?.ElementAtOrDefault(longNameIndex);
+                                }
+
+                                <SelectItem Value="@(enumOption.StringValue)">
+                                    @(longName ?? enumOption.StringValue)
+                                </SelectItem>
+                            }
+                        </ChildContent>
+                        <Feedback>
+                            <ValidationError Multiline="true" />
+                        </Feedback>
+                    </Select>
+                </Field>
+            </Validation>
+        }
+        else if (ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null)
+        {
+            var moduleType = ParamOption.EnumOptions.Select(x => x.ModuleValue?.PackageType).FirstOrDefault(x => x.HasValue);
+            var moduleOptions = ParamOption.EnumOptions.Select(x => x.ModuleValue).ToList();
+
+            if (moduleType is not null)
+            {
+                ParamValue.Value!.EnumValue!.ModuleValue ??= new() { PackageType = moduleType.Value };
+                <TaskModuleDataFormSection ModuleOptions="@moduleOptions" Module="@ParamValue.Value!.EnumValue!.ModuleValue" ModuleName="@parameterName" />
+            }
+        }
+        break;
+
+    case ParameterType.BOOL:
+        <Validation>
+            <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!SkipLabel)
+                {
+                    <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
+                        @parameterName
+                    </FieldLabel>
+                }
+
+                <Check TValue="bool?"
+                       ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                       Disabled="@(TaskMetadata.InitializationInProgres)"
+                       @bind-Checked="@ParamValue.Value!.BoolValue">
+                    <Feedback>
+                        <ValidationError Multiline="true" />
+                    </Feedback>
+                </Check>
+            </Field>
+        </Validation>
+        break;
+}
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+
+    [CascadingParameter]
+    public DataOperation Operation { get; set; }
+
+    [Parameter]
+    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
+
+    [Parameter]
+    public TaskModuleParameterDto ParamValue { get; set; } = new();
+
+    [Parameter]
+    public Guid? ParameterID { get; set; }
+
+    [Parameter]
+    public bool SkipLabel { get; set; }
+
+    [Parameter]
+    public bool DisplayActions { get; set; }
+
+    private string? timeStringValue;
+    private InputMask? timeInputMask;
+    private Validation? timeValidationComponent;
+
+    public TaskModuleParamValueInput() => ParameterID ??= Guid.NewGuid();
+
+    private void ValidateTimeParameter(ValidatorEventArgs args) => ParameterTimeValidator.ValidateTimeParameter(args, ParamValue, resourceHandler);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (DynamicParamUtils.GetParameterType(ParamOption.Type) == ParameterType.TIME)
+        {
+            timeStringValue = ParameterTimeHelper.ConvertSecondsToTimeString(ParamValue.Value?.IntValue);
+        }
+        await base.OnParametersSetAsync();
+    }
+
+    private string GetTimeInputPlaceholder()
+    {
+        if (ParamOption.Default?.IntValue is not null && ParamOption.Default.IntValue.Value != -1)
+        {
+            return ParameterTimeHelper.ConvertSecondsToTimeString(ParamOption.Default.IntValue) ?? string.Empty;
+        }
+        return string.Empty;
+    }
+
+    private int? ConvertTimeStringToSeconds(string? timeString)
+    {
+        const string maskPattern = "__:__:__";
+        if (string.IsNullOrWhiteSpace(timeString) || timeString == maskPattern)
+        {
+            return null;
+        }
+
+        var parts = timeString.Split(':');
+        if (parts.Length == 3)
+        {
+            if (int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out int hours) &&
+                int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int minutes) &&
+                int.TryParse(parts[2], NumberStyles.Integer, CultureInfo.InvariantCulture, out int seconds))
+            {
+                if (hours >= 0 && hours <= 99 && minutes >= 0 && minutes <= 59 && seconds >= 0 && seconds <= 59)
+                {
+                    return (hours * 3600) + (minutes * 60) + seconds;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private async Task OnStringEnumValueChanged(string? newValue)
+    {
+        if (ParamValue.Value?.EnumValue is not null)
+        {
+            ParamValue.Value.EnumValue.StringValue = newValue;
+        }
+
+        await uiService.CallRequestRefreshAsync();
+    }
+
+
+    private async Task OnTimeStringChanged(string? newValue)
+    {
+        timeStringValue = newValue;
+        if (ParamValue.Value is not null)
+        {
+            ParamValue.Value.IntValue = ConvertTimeStringToSeconds(timeStringValue);
+        }
+        await uiService.CallRequestRefreshAsync();
+    }
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
+}

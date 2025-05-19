@@ -124,6 +124,7 @@ namespace FrontEASE.Server.Controllers
         /// </summary>
         /// <param name="httpStatusCode">HTTP return code.</param>
         /// <param name="result">Result to send back to FE.</param>
+        /// <param name="action">Action name to be used in HTTP created response.</param>
         /// <returns>HTTP action result.</returns>
         protected IActionResult GetHttpResult(HttpStatusCode httpStatusCode, object? result = null, string? action = null)
         {

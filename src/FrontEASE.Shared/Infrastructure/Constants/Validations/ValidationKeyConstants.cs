@@ -21,5 +21,6 @@ namespace FrontEASE.Shared.Infrastructure.Constants.Validations
         public const string ParameterOneOfRequiredKey = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ParameterOneOfRequired}";
         public const string ParameterOneOfEnumValuesKey = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ParameterOneOfEnumValues}";
         public const string ParameterNumericRangeKey = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ParameterNumericRange}";
+        public const string ParameterTimeFormatKey = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ParameterTimeFormat}";
     }
 }

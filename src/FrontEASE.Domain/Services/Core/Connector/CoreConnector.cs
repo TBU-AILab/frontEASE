@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FrontEASE.DataContracts.Converters.Tasks.Parameters;
 using FrontEASE.DataContracts.Models.Core.Errors;
 using FrontEASE.DataContracts.Models.Core.Packages;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
@@ -7,7 +8,6 @@ using FrontEASE.DataContracts.Models.Core.Tasks.Info;
 using FrontEASE.Domain.Entities.Management.Core.Packages;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Infrastructure.Settings.App;
-using FrontEASE.Domain.Repositories.Shared.Resources;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -31,9 +31,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
         public CoreConnector(
             AppSettings appSettings,
             HttpClient httpClient,
-            IMapper mapper,
-            ITaskRepository taskRepository,
-            IResourceRepository resourceRepository)
+            IMapper mapper)
         {
             _mapper = mapper;
             _appSettings = appSettings;
@@ -45,8 +43,10 @@ namespace FrontEASE.Domain.Services.Core.Connector
             {
                 PropertyNameCaseInsensitive = true,
                 ReadCommentHandling = JsonCommentHandling.Skip,
-                MaxDepth = 64
+                MaxDepth = 64,
             };
+
+            _serializerOptions.Converters.Add(new TaskModuleParameterCoreDtoConverter());
         }
 
 
@@ -362,7 +362,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
-                var modules = await response.Content.ReadFromJsonAsync<IList<TaskModuleCoreDto>>();
+                var modules = await response.Content.ReadFromJsonAsync<IList<TaskModuleCoreDto>>(_serializerOptions);
                 return modules ?? [];
             }
             else
@@ -382,7 +382,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
-                var packages = await response.Content.ReadFromJsonAsync<IList<CorePackageCoreDto>>();
+                var packages = await response.Content.ReadFromJsonAsync<IList<CorePackageCoreDto>>(_serializerOptions);
                 return packages ?? [];
             }
             else
@@ -464,7 +464,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             {
                 foreach (var detail in validationError.Detail)
                 {
-                    string loc = detail.Loc != null && detail.Loc.Count > 0 ? string.Join(" > ", detail.Loc) : string.Empty;
+                    string loc = detail.Loc is not null && detail.Loc.Count > 0 ? string.Join(" > ", detail.Loc) : string.Empty;
                     messages.Add(!string.IsNullOrEmpty(loc) ? detail.Msg : $"{loc}: {detail.Msg}");
                 }
             }

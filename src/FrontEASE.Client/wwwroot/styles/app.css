@@ -215,10 +215,6 @@ code {
     border-color: var(--b-theme-primary);
 }
 
-
-
-
-
 /* TEMPLATE OPTIONS */
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -429,6 +425,11 @@ a, .btn-link {
     border-color: var(--b-theme-background-info) !important;
 }
 
+.alignment-center{
+    justify-items: center;
+    align-items: center;
+    justify-content: center;
+}
 
 /* CUSTOM CLASSES - SHARED */
 
@@ -437,9 +438,21 @@ a, .btn-link {
 }
 
 .vertical-divider {
-    width: 1px;
+    width: 2px;
+    background-color: var(--b-theme-background-light);
+    opacity: 1;
+    align-self: stretch;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.divider-icon-column {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     height: 100%;
-    background-color: var(--b-theme-light);
+    gap: 8px;
 }
 
 .datagrid-item-image {
@@ -908,4 +921,12 @@ nav.navbar {
     100% {
         box-shadow: 0 0 6px var(--b-theme-warning), 0 0 10px var(--b-theme-warning);
     }
+}
+
+
+/* Tasks */
+.action-icon-section-full-length {
+    align-items: center;
+    text-align: center;
+    justify-content: center;
 }

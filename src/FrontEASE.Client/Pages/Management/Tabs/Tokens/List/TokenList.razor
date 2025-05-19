@@ -43,13 +43,16 @@ else
     [CascadingParameter]
     public IList<TaskModuleNoValidationDto> ConnectorTypes { get; set; } = [];
 
-    private bool isTypelistsLoading = false;
-    private bool isPreferencesLoading = false;
     private bool isInitialized = false;
+
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
         if (!isInitialized)
         {
             var loadTypelistsTask = Task.CompletedTask;
@@ -57,22 +60,16 @@ else
 
             if (!(ConnectorTypes?.Any() == true))
             {
-                isTypelistsLoading = true;
                 loadTypelistsTask = LoadTypelists();
             }
 
-            isPreferencesLoading = true;
             loadPreferencesTask = LoadPreferences();
 
             await Task.WhenAll(loadTypelistsTask, loadPreferencesTask);
-            isTypelistsLoading = isPreferencesLoading = false;
         }
         await base.OnInitializedAsync();
         isInitialized = true;
     }
-
-    private void RefreshView()
-    { StateHasChanged(); }
 
     private async Task LoadPreferences()
     {

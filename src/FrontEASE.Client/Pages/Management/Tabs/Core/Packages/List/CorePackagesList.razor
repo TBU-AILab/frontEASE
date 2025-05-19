@@ -107,7 +107,6 @@ else
     public bool FullWidthFields { get; set; }
 
     private bool isInitialized = false;
-    private bool isPreferencesLoading;
     private bool isSystemPackagesCollapsed;
     private bool isAddonsPackagesCollapsed;
 
@@ -116,17 +115,19 @@ else
     private void ChangeCollapseStateSystem() => isSystemPackagesCollapsed = !isSystemPackagesCollapsed;
     private void ChangeCollapseStateAddons() => isAddonsPackagesCollapsed = !isAddonsPackagesCollapsed;
 
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
         if (!isInitialized)
         {
             var loadPreferencesTask = Task.CompletedTask;
-            isPreferencesLoading = true;
             loadPreferencesTask = LoadGlobalPreferences();
-
             await Task.WhenAll(loadPreferencesTask);
-            isPreferencesLoading = false;
         }
         await base.OnInitializedAsync();
         isInitialized = true;
@@ -134,9 +135,6 @@ else
         isSystemPackagesCollapsed = true;
         isAddonsPackagesCollapsed = false;
     }
-
-    private void RefreshView()
-    { StateHasChanged(); }
 
     private async Task LoadGlobalPreferences()
     {

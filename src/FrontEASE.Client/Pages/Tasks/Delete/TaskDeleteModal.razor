@@ -2,51 +2,59 @@
 @inject IUIService uiService
 @inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 
-<Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
-    @if (isModalVisible)
-    {
-        <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
+<CascadingValue Value="Operation">
 
-            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")} ({string.Join(", ", AffectedTasks.Select(x => string.IsNullOrWhiteSpace(x.Name) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : x.Name))})")" />
+    <Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
+        @if (isModalVisible)
+        {
+            <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
 
-            <ModalBody Margin="Margin.Is3.FromTop">
-                <Row>
-                    <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
-                        <Text Class="font-large">
-                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(TaskDto)}.{UIConstants.Question}")
-                        </Text>
-                    </Column>
-                </Row>
-                <Row Margin="Margin.Is4.FromTop">
-                    <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile">
-                        <Button Clicked="@DeleteTask" Color="Color.Danger" Class="btn btn-sized button full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
-                            @if (deletingInProgress)
-                            {
-                                <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" TextSize="TextSize.Medium" />
-                            }
-                            else
-                            {
-                                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}")
-                            }
-                        </Button>
-                    </Column>
-                    <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile">
-                        <Button Clicked="@HideModal" Class="btn btn-sized button full-width text-custom-primary" TextWeight="TextWeight.Bold" Border="Border.Is1.Rounded">
-                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}")
-                        </Button>
-                    </Column>
-                </Row>
-            </ModalBody>
-        </ModalContent>
-    }
-</Modal>
+                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")} ({string.Join(", ", AffectedTasks.Select(x => string.IsNullOrWhiteSpace(x.Name) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : x.Name))})")" />
+
+                <ModalBody Margin="Margin.Is3.FromTop">
+                    <Row>
+                        <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
+                            <Text Class="font-large">
+                                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(TaskDto)}.{UIConstants.Question}")
+                            </Text>
+                        </Column>
+                    </Row>
+                    <Row Margin="Margin.Is4.FromTop">
+                        <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile">
+                            <Button Clicked="@DeleteTask" Color="Color.Danger" Class="btn btn-sized button full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
+                                @if (deletingInProgress)
+                                {
+                                    <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" TextSize="TextSize.Medium" />
+                                }
+                                else
+                                {
+                                    @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}")
+                                }
+                            </Button>
+                        </Column>
+                        <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile">
+                            <Button Clicked="@HideModal" Class="btn btn-sized button full-width text-custom-primary" TextWeight="TextWeight.Bold" Border="Border.Is1.Rounded">
+                                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}")
+                            </Button>
+                        </Column>
+                    </Row>
+                </ModalBody>
+            </ModalContent>
+        }
+    </Modal>
+</CascadingValue>
 
 @code {
     [CascadingParameter]
     public ObservableCollection<TaskInfoDto> Tasks { get; set; } = [];
+
+    [CascadingParameter]
+    public IList<TaskInfoDto> SelectedTasks { get; set; } = [];
+
+    [Parameter]
+    public DataOperation Operation { get; set; }
 
     public IList<TaskInfoDto> AffectedTasks { get; set; } = [];
 
@@ -56,7 +64,7 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await DeleteTask();
@@ -78,16 +86,24 @@
 
         if (deleteResult)
         {
-            foreach (var task in AffectedTasks)
+            var toRemoveFromSelected = SelectedTasks.Where(st => AffectedTasks.Any(at => at.ID == st.ID)).ToList();
+            var toRemoveFromTasks = Tasks.Where(t => AffectedTasks.Any(at => at.ID == t.ID)).ToList();
+
+            foreach (var task in toRemoveFromSelected)
+            {
+                SelectedTasks.Remove(task);
+            }
+            foreach (var task in toRemoveFromTasks)
             {
                 Tasks.Remove(task);
+
                 var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {task.Name}";
                 toastService.ShowSuccess(message);
             }
-            uiService.CallRequestRefresh();
-        }
 
-        deletingInProgress = false;
+            deletingInProgress = false;
+            await uiService.CallRequestRefreshAsync();
+        }
         await HideModal();
     }
 

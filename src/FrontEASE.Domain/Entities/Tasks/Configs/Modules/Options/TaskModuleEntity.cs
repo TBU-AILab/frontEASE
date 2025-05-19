@@ -1,6 +1,6 @@
 ﻿using FrontEASE.Domain.Entities.Base.Tracked;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters;
-using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum;
 using FrontEASE.Shared.Data.Enums.Tasks.Config;
 
 namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options
@@ -18,8 +18,8 @@ namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options
 
         #region Navigation
 
-        public Guid TaskConfigID { get; set; }
-        public TaskConfig TaskConfig { get; set; }
+        public Guid? TaskConfigID { get; set; }
+        public TaskConfig? TaskConfig { get; set; }
 
         public TaskModuleParameterEnumValueEntity ParameterEnumValue { get; set; }
 

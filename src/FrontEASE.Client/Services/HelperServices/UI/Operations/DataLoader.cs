@@ -53,10 +53,20 @@ namespace FrontEASE.Client.Services.HelperServices.UI.Operations
 
         private async Task<byte[]> ReadFileData(IFileEntry file)
         {
-            var buffer = new byte[SizeConstants.FiveMegabytes];
-            using var bufferedStream = new BufferedStream(file.OpenReadStream(long.MaxValue), SizeConstants.FiveMegabytes);
-            await bufferedStream.ReadAsync(buffer.AsMemory(0, SizeConstants.FiveMegabytes));
-            return buffer.Take((int)file.Size).ToArray();
+            var fileSize = (int)file.Size;
+            var buffer = new byte[fileSize];
+            using var bufferedStream = new BufferedStream(file.OpenReadStream(file.Size), SizeConstants.FiveMegabytes);
+            var totalRead = 0;
+            while (totalRead < fileSize)
+            {
+                int bytesRead = await bufferedStream.ReadAsync(buffer.AsMemory(totalRead, fileSize - totalRead));
+                if (bytesRead == 0)
+                {
+                    break;
+                }
+                totalRead += bytesRead;
+            }
+            return buffer;
         }
     }
 }

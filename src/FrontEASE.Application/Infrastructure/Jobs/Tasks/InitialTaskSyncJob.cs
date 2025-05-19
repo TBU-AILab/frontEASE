@@ -6,25 +6,18 @@ using FrontEASE.Domain.Entities.Tasks.Configs;
 using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Domain.Infrastructure.Settings.App;
+using FrontEASE.Domain.Repositories.Jobs;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Domain.Repositories.Users;
-using FrontEASE.Application.Infrastructure.Jobs;
-using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
-using FrontEASE.Domain.DataQueries.Tasks;
-using FrontEASE.Domain.Entities.Tasks.Configs;
-using FrontEASE.Domain.Entities.Tasks.Messages;
-using FrontEASE.Domain.Entities.Tasks.Solutions;
-using FrontEASE.Domain.Repositories.Tasks;
-using FrontEASE.Domain.Repositories.Users;
+using FrontEASE.Domain.Services.Core.Connector;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.Server;
 using Hangfire.States;
-using FrontEASE.Domain.Services.Core.Connector;
 
 namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 {
-    public class InitialTaskSyncJob : IJob
+    public class InitialTaskSyncJob : JobBase, IJob
     {
         private readonly AppSettings _appSettings;
         private readonly IMapper _mapper;
@@ -32,18 +25,24 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
         private readonly ICoreConnector _coreService;
         private readonly ITaskRepository _taskRepository;
 
+        public string JobName { get; init; }
+
         public InitialTaskSyncJob(
             IMapper mapper,
             ICoreConnector coreService,
             ITaskRepository taskRepository,
             IUserRepository userRepository,
+            IJobLogRepository jobLogRepository,
             AppSettings appSettings)
+            : base(jobLogRepository)
         {
             _appSettings = appSettings;
             _mapper = mapper;
             _userRepository = userRepository;
             _coreService = coreService;
             _taskRepository = taskRepository;
+
+            JobName = appSettings.HangfireSettings!.Jobs!.InitialTaskSyncJob!.CronName!;
         }
 
 
@@ -114,6 +113,10 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 
         public async Task Execute(PerformContext context)
         {
+            var currentExecutionStart = DateTime.UtcNow;
+            var log = await InsertJobLog(JobName, currentExecutionStart, null, false);
+            var checkID = SentrySdk.CaptureCheckIn(JobName, CheckInStatus.InProgress);
+
             try
             {
                 var coreTaskData = (await _coreService.GetTasksFullData()).Where(x => x.TaskInfo?.ID is not null).ToList();
@@ -141,10 +144,13 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                 {
                     await _taskRepository.SaveChangesAsync();
                 }
+
+                await UpdateJobLog(log, DateTime.UtcNow, true);
                 context.WriteLine($"{nameof(InitialTaskSyncJob)} SUCCESS.");
             }
             catch (Exception ex)
             {
+                await UpdateJobLog(log, DateTime.UtcNow, false);
                 context.SetTextColor(ConsoleTextColor.Red);
                 context.WriteLine($"{nameof(InitialTaskSyncJob)} FAILED: {ex.Message}");
                 new BackgroundJobClient().ChangeState(context.BackgroundJob.Id, new FailedState(ex));

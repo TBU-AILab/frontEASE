@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject IMapper mapper
 @inject IUIManager uiManager
 
@@ -15,7 +14,7 @@
 
     @if (!isFilterCollapsed)
     {
-        <Column ColumnSize="ColumnSize.IsFull" @onkeydown="HandleKeyDown">
+        <Column ColumnSize="ColumnSize.IsFull" @onkeydown="@(async (e) => await HandleKeyDown(e))">
             <Container Fluid Margin="Margin.Is3.FromTop.Is3.FromBottom">
                 <Row>
                     <Column ColumnSize="ColumnSize.IsFull">

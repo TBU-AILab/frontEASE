@@ -4,8 +4,9 @@
     {
         #region UI Events
 
-        event Action RefreshRequested;
-        void CallRequestRefresh();
+        event Func<Task>? RefreshRequested;
+
+        Task CallRequestRefreshAsync();
 
         #endregion
 

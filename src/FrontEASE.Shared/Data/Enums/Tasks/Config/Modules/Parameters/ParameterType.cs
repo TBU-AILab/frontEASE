@@ -38,6 +38,16 @@
         /// <summary>
         /// Markdown
         /// </summary>
-        MARKDOWN
+        MARKDOWN,
+
+        /// <summary>
+        /// List
+        /// </summary>
+        LIST,
+
+        /// <summary>
+        /// Time
+        /// </summary>
+        TIME
     }
 }

@@ -3,11 +3,10 @@
 @inject IMapper mapper
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 @inject IUIManager uiManager
 
-<Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" @onkeydown="HandleKeyDown">
+<Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" @onkeydown="@(async (e) => await HandleKeyDown(e))">
     @if (isModalVisible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
@@ -59,7 +58,7 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await DeleteToken();
@@ -85,7 +84,7 @@
             var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {Token.Token} ({string.Join(", ", Token.ConnectorTypes.Select(x => x.ConnectorType))})";
             toastService.ShowSuccess(message);
 
-            uiService.CallRequestRefresh();
+            await uiService.CallRequestRefreshAsync();
             await HideModal();
         }
 

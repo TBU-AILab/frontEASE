@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using FrontEASE.Application.AppServices.Companies;
 using FrontEASE.Application.AppServices.Files;
 using FrontEASE.Application.AppServices.Management;
@@ -25,6 +25,8 @@ using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values;
+using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values.Enum;
+using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values.List;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.RepeatedMessage;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Messages;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Shared;
@@ -34,6 +36,7 @@ using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Infrastructure.Settings.Connection;
 using FrontEASE.Domain.Repositories.Companies;
+using FrontEASE.Domain.Repositories.Jobs;
 using FrontEASE.Domain.Repositories.Management;
 using FrontEASE.Domain.Repositories.Shared.Resources;
 using FrontEASE.Domain.Repositories.Tasks;
@@ -53,6 +56,7 @@ using FrontEASE.Domain.Services.Users;
 using FrontEASE.Infrastructure.Data;
 using FrontEASE.Infrastructure.HealthChecks;
 using FrontEASE.Infrastructure.Repositories.Companies;
+using FrontEASE.Infrastructure.Repositories.Jobs;
 using FrontEASE.Infrastructure.Repositories.Management;
 using FrontEASE.Infrastructure.Repositories.Shared.Resources;
 using FrontEASE.Infrastructure.Repositories.Tasks;
@@ -345,7 +349,7 @@ void SetupSwaggerGen()
 {
     builder.Services.AddSwaggerGen(options =>
     {
-        options.SwaggerDoc("v1", new OpenApiInfo { Title = "FrontEASE - Effortless Algorithmic Solution Evolution (FE)", Version = "01.04.2025" });
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "FrontEASE - Effortless Algorithmic Solution Evolution (FE)", Version = DateTime.UtcNow.ToString("dd.MM.yyyy") });
         options.DescribeAllParametersInCamelCase();
         options.SupportNonNullableReferenceTypes();
 
@@ -445,6 +449,8 @@ void SetupMappings()
         mc.AddProfile(new TaskModuleParameterMappingProfile());
         mc.AddProfile(new TaskModuleParameterValueMappingProfile());
         mc.AddProfile(new TaskModuleParameterEnumOptionMappingProfile());
+        mc.AddProfile(new TaskModuleParameterListOptionMappingProfile());
+        mc.AddProfile(new TaskModuleParameterListOptionParamsMappingProfile());
 
         mc.AddProfile(new TaskFilterActionRequestMappingProfile());
     });
@@ -460,6 +466,7 @@ void SetupRepositories()
     builder!.Services.AddTransient<IUserRepository, UserRepository>();
     builder!.Services.AddTransient<ITaskRepository, TaskRepository>();
     builder!.Services.AddTransient<IManagementRepository, ManagementRepository>();
+    builder!.Services.AddTransient<IJobLogRepository, JobLogRepository>();
 }
 
 void SetupServices()

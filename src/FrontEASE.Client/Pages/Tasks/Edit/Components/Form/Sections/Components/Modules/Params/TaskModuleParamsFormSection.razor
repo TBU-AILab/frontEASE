@@ -14,41 +14,35 @@
         </Column>
 
 
-            <Column ColumnSize="ColumnSize.IsFull">
-                <Container Fluid>
-                    <Row>
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Container Fluid>
+                <Row>
+                    <Container Fluid Margin="Margin.Is3.FromTop">
+                        <Row Padding="Padding.Is0">
 
-                        <Container Fluid Margin="Margin.Is3.FromTop">
-                            <Row Padding="Padding.Is0">
+                            @foreach (var paramOption in AvailableParams.OrderBy(x => x.Readonly))
+                            {
+                                var paramValue = Module?.Parameters?.SingleOrDefault(x => x.ShortName == paramOption.ShortName);
+                                var paramType = DynamicParamUtils.GetParameterType(paramOption.Type);
 
-                                @foreach (var ParamOption in AvailableParams.OrderBy(x => x.Readonly))
-                                {
-                                    var ParamValue = Module.Parameters?.SingleOrDefault(x => x.ShortName == ParamOption.ShortName);
-                                    var paramType = DynamicParamUtils.GetParameterType(ParamOption.Type);
+                                paramValue = paramOption.Readonly == true ? InitializeReadonlyParamValue(paramValue, paramOption) : InitializeParamValue(paramValue, paramOption, paramType!.Value);
 
-                                    ParamValue = ParamOption.Readonly == true ? InitializeReadonlyParamValue(ParamValue, ParamOption) : InitializeParamValue(ParamValue, ParamOption, paramType!.Value);
-
-                                    <Fields>
-                                        <CascadingValue Value="ParamOption">
-                                            <CascadingValue Value="ParamValue">
-                                                @if (ParamOption.Readonly != true)
-                                                {
-                                                    <TaskModuleParamValue />
-                                                }
-                                                else
-                                                {
-                                                    <TaskModuleParamLabel />
-                                                }
-                                            </CascadingValue>
-                                        </CascadingValue>
-
-                                    </Fields>
-                                }
-                            </Row>
-                        </Container>
-                    </Row>
-                </Container>
-            </Column>
+                                <Fields>
+                                    @if (paramOption.Readonly != true)
+                                    {
+                                        <TaskModuleParamValue Module="@Module" ParamOption="@paramOption" ParamValue="@paramValue" />
+                                    }
+                                    else
+                                    {
+                                        <TaskModuleParamLabel ParamOption="@paramOption"/>
+                                    }
+                                </Fields>
+                            }
+                        </Row>
+                    </Container>
+                </Row>
+            </Container>
+        </Column>
     </Row>
 }
 
@@ -56,11 +50,11 @@
     [CascadingParameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
-    public TaskModuleDto Module { get; set; } = new();
+    [Parameter]
+    public TaskModuleDto? Module { get; set; }
 
     [Parameter]
-    public IList<TaskModuleParameterNoValidationDto> AvailableParams { get; set; } = null!;
+    public IList<TaskModuleParameterNoValidationDto> AvailableParams { get; set; } = [];
 
 
     private TaskModuleParameterDto InitializeParamValue(TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption, ParameterType parameterType)
@@ -70,6 +64,7 @@
         parameterValue!.Value ??= new();
         parameterValue.Value.Metadata = mapper.Map<TaskModuleParameterNoValidationMetadataDto>(parameterOption);
 
+        parameterValue.Value.ListValue ??= parameterType == ParameterType.LIST ? new() : null;
         parameterValue.Value.EnumValue ??= parameterType == ParameterType.ENUM ? new() : null;
         if (parameterValue.Value.EnumValue is not null)
         {
@@ -89,7 +84,7 @@
 
     private void SetParameterValueBaseIfNeeded(TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption)
     {
-        if (parameterValue is null)
+        if (parameterValue is null && Module is not null)
         {
             parameterValue = new()
                 {

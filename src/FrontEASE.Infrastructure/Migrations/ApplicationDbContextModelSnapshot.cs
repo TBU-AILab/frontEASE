@@ -17,7 +17,7 @@ namespace FrontEASE.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.3")
+                .HasAnnotation("ProductVersion", "9.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -112,6 +112,34 @@ namespace FrontEASE.Infrastructure.Migrations
                         .HasDatabaseName("IX_Company_IsDeleted");
 
                     b.ToTable("Companies", "Auth");
+                });
+
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Jobs.JobLog", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid ()");
+
+                    b.Property<DateTime?>("DateEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DateStart")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("JobName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Success")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("JobName", "Success", "DateStart")
+                        .HasDatabaseName("IX_JobLog_JobName_Success_DateStart");
+
+                    b.ToTable("JobExecutions", "App");
                 });
 
             modelBuilder.Entity("FrontEASE.Domain.Entities.Management.General.UserPreferenceGeneralOptions", b =>
@@ -389,7 +417,7 @@ namespace FrontEASE.Infrastructure.Migrations
                     b.ToTable("Users", "Auth");
                 });
 
-            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.TaskModuleParameterEnumValueEntity", b =>
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum.TaskModuleParameterEnumValueEntity", b =>
                 {
                     b.Property<Guid>("ID")
                         .ValueGeneratedOnAdd()
@@ -410,6 +438,35 @@ namespace FrontEASE.Infrastructure.Migrations
                     b.ToTable("TaskModuleParameterEnumValues", "Data");
                 });
 
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List.TaskModuleParameterListValueEntity", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid ()");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("TaskModuleParameterListValues", "Data");
+                });
+
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List.TaskModuleParameterListValueItemEntity", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid ()");
+
+                    b.Property<Guid?>("ListParamValueID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("ListParamValueID");
+
+                    b.ToTable("TaskModuleParameterListValueItems", "Data");
+                });
+
             modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.TaskModuleParameterEntity", b =>
                 {
                     b.Property<Guid>("ID")
@@ -421,7 +478,10 @@ namespace FrontEASE.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("ModuleID")
+                    b.Property<Guid?>("ListValueID")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ModuleID")
                         .HasColumnType("uuid");
 
                     b.Property<string>("ShortName")
@@ -436,6 +496,8 @@ namespace FrontEASE.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("ListValueID");
 
                     b.HasIndex("ModuleID");
 
@@ -464,12 +526,18 @@ namespace FrontEASE.Infrastructure.Migrations
                     b.Property<int?>("IntValue")
                         .HasColumnType("integer");
 
+                    b.Property<Guid?>("ListValueID")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("StringValue")
                         .HasColumnType("text");
 
                     b.HasKey("ID");
 
                     b.HasIndex("EnumValueID")
+                        .IsUnique();
+
+                    b.HasIndex("ListValueID")
                         .IsUnique();
 
                     b.ToTable("TaskModuleParameterValues", "Data");
@@ -489,7 +557,7 @@ namespace FrontEASE.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("TaskConfigID")
+                    b.Property<Guid?>("TaskConfigID")
                         .HasColumnType("uuid");
 
                     b.HasKey("ID");
@@ -958,26 +1026,41 @@ namespace FrontEASE.Infrastructure.Migrations
                     b.Navigation("UserPreferences");
                 });
 
-            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.TaskModuleParameterEnumValueEntity", b =>
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum.TaskModuleParameterEnumValueEntity", b =>
                 {
                     b.HasOne("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.TaskModuleEntity", "ModuleValue")
                         .WithOne("ParameterEnumValue")
-                        .HasForeignKey("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.TaskModuleParameterEnumValueEntity", "ModuleValueID");
+                        .HasForeignKey("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum.TaskModuleParameterEnumValueEntity", "ModuleValueID");
 
                     b.Navigation("ModuleValue");
                 });
 
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List.TaskModuleParameterListValueItemEntity", b =>
+                {
+                    b.HasOne("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List.TaskModuleParameterListValueEntity", "ListParamValue")
+                        .WithMany("ParameterValues")
+                        .HasForeignKey("ListParamValueID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("ListParamValue");
+                });
+
             modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.TaskModuleParameterEntity", b =>
                 {
+                    b.HasOne("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List.TaskModuleParameterListValueItemEntity", "ListValue")
+                        .WithMany("ParameterItems")
+                        .HasForeignKey("ListValueID");
+
                     b.HasOne("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.TaskModuleEntity", "Module")
                         .WithMany("Parameters")
                         .HasForeignKey("ModuleID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values.TaskModuleParameterValueEntity", "Value")
                         .WithOne("Parameter")
                         .HasForeignKey("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.TaskModuleParameterEntity", "ValueID");
+
+                    b.Navigation("ListValue");
 
                     b.Navigation("Module");
 
@@ -986,11 +1069,17 @@ namespace FrontEASE.Infrastructure.Migrations
 
             modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values.TaskModuleParameterValueEntity", b =>
                 {
-                    b.HasOne("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.TaskModuleParameterEnumValueEntity", "EnumValue")
+                    b.HasOne("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum.TaskModuleParameterEnumValueEntity", "EnumValue")
                         .WithOne("ParameterValue")
                         .HasForeignKey("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values.TaskModuleParameterValueEntity", "EnumValueID");
 
+                    b.HasOne("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List.TaskModuleParameterListValueEntity", "ListValue")
+                        .WithOne("ParameterValue")
+                        .HasForeignKey("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values.TaskModuleParameterValueEntity", "ListValueID");
+
                     b.Navigation("EnumValue");
+
+                    b.Navigation("ListValue");
                 });
 
             modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.TaskModuleEntity", b =>
@@ -998,8 +1087,7 @@ namespace FrontEASE.Infrastructure.Migrations
                     b.HasOne("FrontEASE.Domain.Entities.Tasks.Configs.TaskConfig", "TaskConfig")
                         .WithMany("Modules")
                         .HasForeignKey("TaskConfigID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("TaskConfig");
                 });
@@ -1147,10 +1235,23 @@ namespace FrontEASE.Infrastructure.Migrations
                     b.Navigation("UserRole");
                 });
 
-            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.TaskModuleParameterEnumValueEntity", b =>
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum.TaskModuleParameterEnumValueEntity", b =>
                 {
                     b.Navigation("ParameterValue")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List.TaskModuleParameterListValueEntity", b =>
+                {
+                    b.Navigation("ParameterValue")
+                        .IsRequired();
+
+                    b.Navigation("ParameterValues");
+                });
+
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List.TaskModuleParameterListValueItemEntity", b =>
+                {
+                    b.Navigation("ParameterItems");
                 });
 
             modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values.TaskModuleParameterValueEntity", b =>

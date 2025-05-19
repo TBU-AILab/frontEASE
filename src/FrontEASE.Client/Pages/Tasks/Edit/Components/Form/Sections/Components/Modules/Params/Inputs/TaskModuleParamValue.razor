@@ -1,0 +1,129 @@
+﻿@inject IResourceHandler resourceHandler
+@inject ITaskManipulationService taskManipulationService
+@inject IUIService uiService
+@inject IMapper mapper
+
+@{
+    var flags = GetParamFlags();
+}
+
+@if (flags.ParamType is not null)
+{
+    @if (flags.IsTokenSelector)
+    {
+        <TaskModuleParamValueTokenSelector Module="@Module" ParamOption="@ParamOption" ParamValue="@ParamValue" ParamName="@flags.ParamName" />
+    }
+    else if (flags.IsListParam)
+    {
+        <TaskModuleListParamLabel ParamOption="@ParamOption" ParamValue="@ParamValue" ParameterName="@flags.ParamName" />
+        <TaskModuleListParamValue ParamOption="@ParamOption" ParamValue="@ParamValue" />
+    }
+    else
+    {
+        <TaskModuleParamValueInput ParameterID="@ParameterID" SkipLabel="@flags.SkipLabel" ParamOption="@ParamOption" ParamValue="@ParamValue" DisplayActions="@flags.DisplayActions" />
+    }
+}
+
+@if (flags.DisplayActions)
+{
+    <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+        <FieldLabel>
+            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
+        </FieldLabel>
+        <Div>
+            @if (flags.IsDescriptionPresent)
+            {
+                <Tooltip Multiline="true" Text="@(ParamOption!.Description ?? flags.InternalDescription)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                    <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                </Tooltip>
+            }
+            @if (flags.IsDefaultPresent && !TaskMetadata.InitializationInProgres)
+            {
+                <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{flags.ParamDefaultValue}\"")" Display="Display.InlineBlock">
+                    <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => taskManipulationService.FillParamDefaultValue(ParamValue, flags.ParamDefaultValue))" />
+                </Tooltip>
+            }
+        </Div>
+    </Field>
+}
+
+@if (flags.ParamType == ParameterType.MARKDOWN)
+{
+    <Validation>
+        <Field ColumnSize="@(flags.DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)" Class="input-validation-only">
+
+            <MemoEdit ElementId="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))"
+            Disabled="@(TaskMetadata.InitializationInProgres)"
+            @bind-Text="@ParamValue.Value!.StringValue"
+            Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </MemoEdit>
+        </Field>
+    </Validation>
+}
+
+@code {
+
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+
+    [CascadingParameter]
+    public DataOperation Operation { get; set; }
+
+
+    [Parameter]
+    public TaskModuleDto? Module { get; set; }
+
+    [Parameter]
+    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
+
+    [Parameter]
+    public TaskModuleParameterDto ParamValue { get; set; } = new();
+
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshViewAsync;
+        await base.OnInitializedAsync();
+    }
+
+    private Guid ParameterID = Guid.NewGuid();
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
+
+    private TaskModuleParamFlags GetParamFlags()
+    {
+        var flags = new TaskModuleParamFlags();
+        flags.ParamType = DynamicParamUtils.GetParameterType(ParamOption.Type);
+        flags.IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(ParamOption, ParamValue);
+        (flags.IsDefaultPresent, flags.ParamDefaultValue) = taskManipulationService.ExtractDefaultValue(ParamOption);
+        flags.SkipLabel = flags.ParamType == ParameterType.ENUM && ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
+        flags.ParamName = ParamOption.LongName ?? ParamOption.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
+
+        flags.IsListParam = flags.ParamType == ParameterType.LIST;
+        flags.IsTokenSelector = Module?.PackageType == ModuleType.LLM_CONNECTOR && ParamOption.ShortName?.Contains(TaskMetadataConstants.Token) == true;
+        flags.IsSpecialCaseParam = flags.IsListParam || flags.IsTokenSelector;
+
+        flags.InternalDescription = string.Empty;
+        if (!string.IsNullOrWhiteSpace(ParamValue.Value?.EnumValue?.StringValue))
+        {
+            var indexOfSelected = ParamOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == ParamValue?.Value?.EnumValue?.StringValue);
+            if (indexOfSelected >= 0)
+            {
+                flags.InternalDescription = ParamOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+            }
+        }
+
+        flags.DisplayActions = ((flags.IsDescriptionPresent && !flags.SkipLabel) || flags.IsDefaultPresent) && !flags.IsSpecialCaseParam;
+        return flags;
+    }
+}

@@ -4,13 +4,12 @@
 @inject IUIService uiService
 @inject IManagementApiService managementApiService
 @inject IMapper mapper
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navManager
 
-<Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="HandleKeyDown">
+<Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="(async (e) => await HandleKeyDown(e))">
     <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="LoginModel" ValidateOnLoad="false">
         <Fields>
             <Validation>
@@ -79,7 +78,7 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await Login();

@@ -4,7 +4,7 @@
 @inject IUIManager uiManager
 
 <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
-    <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Padding="Padding.Is2" Border="Border.Rounded" Shadow="Shadow.Small">
+    <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@(async () => await ChangeCollapseState())" Padding="Padding.Is2" Border="Border.Rounded" Shadow="Shadow.Small">
         <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
             <Text TextWeight="TextWeight.Bold" Class="text-custom-primary text-center">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Address), PropertyDisplayResourceType.FIELD)))
@@ -145,27 +145,29 @@
 
     private bool isSectionCollapsed = false;
 
-    private void RefreshView()
-    { StateHasChanged(); }
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
-        SetInitialCollapse();
+        uiService.RefreshRequested += RefreshViewAsync;
+        await SetInitialCollapse();
         await base.OnInitializedAsync();
     }
 
-    private void SetInitialCollapse()
+    private async Task SetInitialCollapse()
     {
         if(CompanyModel.Address is null)
         {
-            ChangeCollapseState();
+            await ChangeCollapseState();
         }
     }
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<AddressDto>(elementBase, Operation, CompanyModel.ID?.ToString());
 
-    private void ChangeCollapseState()
+    private async Task ChangeCollapseState()
     {
         isSectionCollapsed = !isSectionCollapsed;
 
@@ -174,6 +176,6 @@
         else
         { companyManipulationService.InitAddressInfo(CompanyModel); }
 
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 }

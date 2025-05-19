@@ -1,8 +1,6 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using FrontEASE.Domain.Services.Users;
-using FrontEASE.Infrastructure.Data;
 using FrontEASE.Server.Infrastructure.Overrides.Auth.Models;
 using Microsoft.AspNetCore.Authentication.BearerToken;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,7 +8,6 @@ using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
@@ -36,6 +33,9 @@ public static class IdentityApiEndpointRouteBuilderExtensions
     /// The <see cref="IEndpointRouteBuilder"/> to add the identity endpoints to.
     /// Call <see cref="EndpointRouteBuilderExtensions.MapGroup(IEndpointRouteBuilder, string)"/> to add a prefix to all the endpoints.
     /// </param>
+    /// <param name="configureOptions"> 
+    /// The options used for identity endpoints configuration.
+    /// </param>   
     /// <returns>An <see cref="IEndpointConventionBuilder"/> to further customize the added endpoints.</returns>
     public static IEndpointConventionBuilder MapIdentityApiFilterable<TUser>(this IEndpointRouteBuilder endpoints, IdentityApiEndpointRouteBuilderOptions configureOptions)
         where TUser : class, new()

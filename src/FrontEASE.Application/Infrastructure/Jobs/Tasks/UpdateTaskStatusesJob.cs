@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FrontEASE.Domain.DataQueries.Tasks;
 using FrontEASE.Domain.Infrastructure.Settings.App;
+using FrontEASE.Domain.Repositories.Jobs;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Domain.Services.Core.Connector;
 using FrontEASE.Shared.Data.Enums.Tasks;
@@ -11,30 +12,34 @@ using Hangfire.States;
 
 namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 {
-    public class UpdateTaskStatusesJob : IJob
+    public class UpdateTaskStatusesJob : JobBase, IJob
     {
         private readonly IMapper _mapper;
         private readonly ICoreConnector _coreService;
         private readonly ITaskRepository _taskRepository;
 
-        private readonly string _jobName;
+        public string JobName { get; init; }
 
         public UpdateTaskStatusesJob(
             IMapper mapper,
             ICoreConnector coreService,
             ITaskRepository taskRepository,
+            IJobLogRepository jobLogRepository,
             AppSettings appSettings)
+            : base(jobLogRepository)
         {
             _mapper = mapper;
             _coreService = coreService;
             _taskRepository = taskRepository;
 
-            _jobName = appSettings.HangfireSettings!.Jobs!.UpdateTaskStatusesJob!.CronName!;
+            JobName = appSettings.HangfireSettings!.Jobs!.UpdateTaskStatusesJob!.CronName!;
         }
 
         public async Task Execute(PerformContext context)
         {
-            var checkID = SentrySdk.CaptureCheckIn(_jobName, CheckInStatus.InProgress);
+            var currentExecutionStart = DateTime.UtcNow;
+            var log = await InsertJobLog(JobName, currentExecutionStart, null, false);
+            var checkID = SentrySdk.CaptureCheckIn(JobName, CheckInStatus.InProgress);
 
             try
             {
@@ -64,15 +69,17 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                     await _taskRepository.SaveChangesAsync();
                 }
 
+                await UpdateJobLog(log, DateTime.UtcNow, true);
                 context.WriteLine($"{nameof(UpdateTaskStatusesJob)} SUCCESS.");
-                SentrySdk.CaptureCheckIn(_jobName, CheckInStatus.Ok);
+                SentrySdk.CaptureCheckIn(JobName, CheckInStatus.Ok);
             }
             catch (Exception ex)
             {
+                await UpdateJobLog(log, DateTime.UtcNow, false);
                 context.SetTextColor(ConsoleTextColor.Red);
                 context.WriteLine($"{nameof(UpdateTaskStatusesJob)} FAILED: {ex.Message}");
                 new BackgroundJobClient().ChangeState(context.BackgroundJob.Id, new FailedState(ex));
-                SentrySdk.CaptureCheckIn(_jobName, CheckInStatus.Error);
+                SentrySdk.CaptureCheckIn(JobName, CheckInStatus.Error);
             }
         }
     }

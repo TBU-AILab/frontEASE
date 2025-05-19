@@ -21,6 +21,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Para
 
             builder.HasOne(e => e.EnumValue)
                 .WithOne(e => e.ParameterValue);
+
+            builder.HasOne(e => e.ListValue)
+                .WithOne(e => e.ParameterValue);
         }
     }
 }

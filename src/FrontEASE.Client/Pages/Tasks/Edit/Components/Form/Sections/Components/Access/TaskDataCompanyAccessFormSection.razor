@@ -5,7 +5,7 @@
 @inject AppSettings appSettings
 
 <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
-    <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Padding="Padding.Is2">
+    <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@(async () => await ChangeCollapseState())" Padding="Padding.Is2">
         <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
             <Text TextWeight="TextWeight.Bold" Class="text-center">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.MemberGroups), PropertyDisplayResourceType.FIELD)))
@@ -102,24 +102,26 @@
     private List<CompanyDto> selectedCompanies = [];
     private bool isSectionCollapsed = false;
 
-    private void RefreshView()
-    { StateHasChanged(); }
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
 
-        SetInitialCollapse();
+        await SetInitialCollapse();
         SetInitialData();
 
         await base.OnInitializedAsync();
     }
 
-    private void SetInitialCollapse()
+    private async Task SetInitialCollapse()
     {
         if (!(Task.MemberGroups?.Count > 0))
         {
-            ChangeCollapseState();
+            await ChangeCollapseState();
         }
     }
 
@@ -156,14 +158,14 @@
         }
     }
 
-    private void ChangeCollapseState()
+    private async Task ChangeCollapseState()
     {
         isSectionCollapsed = !isSectionCollapsed;
 
         if (!isSectionCollapsed)
         { taskManipulationService.CleanCompaniesInfo(Task); }
 
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 
     private string? GetMemberGroupImageUrl(Guid groupID)

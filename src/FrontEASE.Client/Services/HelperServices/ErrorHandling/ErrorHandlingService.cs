@@ -88,17 +88,19 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                         var state = await _authStateProvider.GetAuthenticationStateAsync();
                         if (state.User.Identity?.IsAuthenticated != true)
                         {
-                            _authStateProvider.Logout();
+                            uiMessageBody = _resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Error}.{httpResponse.StatusCode}.{UIStateConstants.TokenExpiration}.{UIStateConstants.Explanation}");
+                            messageLevel = ToastLevel.Info;
 
-                            var loginRoute = _resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}");
+                            _authStateProvider.Logout();
                             _uiManager.ChangeTheme(ThemeDefaults.GetThemeDefaults(ColorScheme.LIGHT));
+                            var loginRoute = _resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}");
                             _navManager.NavigateTo(loginRoute);
                         }
                         else
                         {
                             var responseMessage = await httpResponse.Content.ReadFromJsonAsync<UnauthorizedResultDto>();
-                            uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                             uiMessageBody = msgBody;
+                            uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                             messageLevel = ToastLevel.Warning;
                         }
                     }
@@ -114,15 +116,14 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                     break;
             }
 
-            await VisualizeException(uiMessageTitle ?? "N/A", uiMessageBody, messageLevel);
+            await VisualizeException(uiMessageTitle ?? _resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}"), uiMessageBody, messageLevel);
         }
 
         private async Task VisualizeException(string title, string body, ToastLevel level)
         {
-            await Console.Out.WriteLineAsync(title);
-            await Console.Out.WriteLineAsync(body);
-
+            await Console.Out.WriteLineAsync($"{title}{Environment.NewLine}{body}");
             var content = string.IsNullOrWhiteSpace(title) ? $"{body}" : $"{title.ToUpper()} : {body}";
+
             switch (level)
             {
                 case ToastLevel.Error:

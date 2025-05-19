@@ -1,0 +1,107 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IUIService uiService
+@inject IMapper mapper
+
+<Field ColumnSize="ColumnSize.Is10.OnWidescreen.Is11.OnFullHD">
+    <FieldLabel For="@(GetElementIdByOperation(ParamOption!.Key))" RequiredIndicator>
+        @ParameterName
+    </FieldLabel>
+</Field>
+
+<Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD"
+       TextAlignment="TextAlignment.Center"
+       Class="align-self-center"
+       Padding="Padding.Is0.FromEnd.Is0.FromStart"
+       Margin="Margin.Is2.FromTop">
+    <Div>
+        @if (ContainsDescription)
+        {
+            <Tooltip Multiline="true"
+                     Text="@(ParamOption?.Description)"
+                     Display="Display.InlineBlock"
+                     Margin="Padding.Is2.FromEnd"
+                     Placement="TooltipPlacement.Top">
+                <Icon Class="action-icon-sm action-icon-info"
+                      Name="IconName.InfoCircle"
+                      IconSize="IconSize.Default"
+                      IconStyle="IconStyle.Solid" />
+            </Tooltip>
+        }
+        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+            <Icon Class="action-icon-sm action-icon-success"
+                  Name="IconName.PlusCircle"
+                  IconSize="IconSize.Default"
+                  IconStyle="IconStyle.Solid"
+                  Clicked="(async () => await AddListParameter(ParamValue))" />
+        </Tooltip>
+    </Div>
+</Field>
+
+<Divider Class="divider-main bg-custom-light"
+         Shadow="Shadow.Small"
+         Style="height:2px !important;"
+         Margin="Margin.Is0.FromTop" />
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+
+    [CascadingParameter]
+    public DataOperation Operation { get; set; }
+
+
+    [Parameter]
+    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
+
+    [Parameter]
+    public TaskModuleParameterDto ParamValue { get; set; } = new();
+
+    [Parameter]
+    public string ParameterName { get; set; } = string.Empty;
+
+
+    private bool ContainsDescription => !string.IsNullOrWhiteSpace(ParamOption.Description);
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, Task.ID.ToString());
+
+    private async Task AddListParameter(TaskModuleParameterDto parameter)
+    {
+        var newListParam = new TaskModuleParameterListOptionParamsDto();
+        foreach (var param in ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems ?? [])
+        {
+            var mappedParam = mapper.Map<TaskModuleParameterDto>(param);
+            newListParam.ParameterItems.Add(mappedParam);
+        }
+        foreach (var paramItem in newListParam.ParameterItems)
+        {
+            var paramType = DynamicParamUtils.GetParameterType(paramItem.Type);
+            var paramOption = ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems?.SingleOrDefault(x => x.Key == paramItem.Key);
+            if (paramType is not null && paramOption is not null)
+            {
+                InitializeParamValue(paramItem, paramOption, paramType.Value);
+            }
+        }
+
+        parameter.Value!.ListValue!.ParameterValues.Add(newListParam);
+        await uiService.CallRequestRefreshAsync();
+    }
+
+
+    private TaskModuleParameterDto InitializeParamValue(TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption, ParameterType parameterType)
+    {
+        parameterValue!.Value ??= new();
+        parameterValue.Value.Metadata = mapper.Map<TaskModuleParameterNoValidationMetadataDto>(parameterOption);
+
+        parameterValue.Value.ListValue ??= parameterType == ParameterType.LIST ? new() : null;
+        parameterValue.Value.EnumValue ??= parameterType == ParameterType.ENUM ? new() : null;
+        if (parameterValue.Value.EnumValue is not null)
+        {
+            parameterValue.Value.EnumValue.Metadata = parameterValue.Value.Metadata;
+        }
+
+        return parameterValue;
+    }
+}

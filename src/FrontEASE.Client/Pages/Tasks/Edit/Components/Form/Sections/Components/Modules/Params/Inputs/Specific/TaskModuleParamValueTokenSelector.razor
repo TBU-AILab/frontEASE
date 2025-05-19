@@ -1,0 +1,102 @@
+﻿@inject IResourceHandler resourceHandler
+
+@{
+    var matchingTokens = Options.TokenOptions.Where(x => x.ConnectorTypes.Any(z => z.ConnectorType == Module?.ShortName))?.ToList() ?? [];
+    var selectedToken = matchingTokens.SingleOrDefault(x => x.Token == ParamValue.Value?.StringValue);
+    var displayActions = !string.IsNullOrWhiteSpace(selectedToken?.Description) || !string.IsNullOrWhiteSpace(ParamOption?.Description);
+
+    if (matchingTokens.Count > 0 && !string.IsNullOrWhiteSpace(ParamValue.Value?.StringValue) && selectedToken is null)
+    {
+        ParamValue.Value!.StringValue = string.Empty;
+    }
+}
+
+
+<Validation>
+    <Field ColumnSize="@(displayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+
+        <FieldLabel For="@(GetElementIdByOperation(ParamOption!.Key))" RequiredIndicator>
+            @ParamName
+        </FieldLabel>
+
+        @if (matchingTokens?.Count > 0)
+        {
+            <Select TValue="string"
+                    Disabled="@(TaskMetadata.InitializationInProgres)"
+                    ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                    @bind-SelectedValue="@ParamValue.Value!.StringValue">
+                <ChildContent>
+                    <SelectItem Value="string.Empty">
+                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
+                    </SelectItem>
+                    @foreach (var tokenOption in matchingTokens!)
+                    {
+                        <SelectItem Value="@(tokenOption.Token)">
+                            @($"{tokenOption.Name} ({new string(tokenOption.Token.Take(3).ToArray())} ... {new string(tokenOption.Token.TakeLast(3).ToArray())})")
+                        </SelectItem>
+                    }
+                </ChildContent>
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </Select>
+        }
+        else
+        {
+            <MemoEdit ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                      Disabled="@(TaskMetadata.InitializationInProgres)"
+                      @bind-Text="@ParamValue.Value!.StringValue"
+                      Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </MemoEdit>
+        }
+    </Field>
+</Validation>
+
+@if (displayActions)
+{
+    <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+        <FieldLabel>
+            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Info}"))
+        </FieldLabel>
+        <Div>
+            <Tooltip Multiline="true" Text="@(selectedToken?.Description ?? ParamOption?.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+            </Tooltip>
+        </Div>
+    </Field>
+}
+
+
+@code {
+    [CascadingParameter]
+    public UserPreferencesDto Options { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+
+    [CascadingParameter]
+    public DataOperation Operation { get; set; }
+
+
+
+    [Parameter]
+    public TaskModuleDto? Module { get; set; } = null;
+
+    [Parameter]
+    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
+
+    [Parameter]
+    public TaskModuleParameterDto ParamValue { get; set; } = new();
+
+    [Parameter]
+    public string ParamName { get; set; } = string.Empty;
+
+    private Guid ParameterID = Guid.NewGuid();
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
+}

@@ -40,12 +40,14 @@ else
     private bool isUsersLoading = false;
     private bool isInitialized = false;
 
-    private void RefreshView()
-    { StateHasChanged(); }
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
         if (!isInitialized && !(Users?.Count > 0 == true))
         {
             isUsersLoading = true;

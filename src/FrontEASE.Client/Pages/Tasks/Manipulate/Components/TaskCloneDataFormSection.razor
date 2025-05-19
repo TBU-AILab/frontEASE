@@ -4,13 +4,13 @@
 
 <Fields>
     <Validation>
-        <Field ColumnSize="ColumnSize.IsFull">
+        <Field ColumnSize="ColumnSize.Is11.OnWidescreen.Is10">
             <FieldLabel For="@(GetElementIdByOperation(nameof(TaskDuplicateActionRequestDto.Name)))" RequiredIndicator>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
             <TextEdit ElementId="@(GetElementIdByOperation(nameof(TaskDuplicateActionRequestDto.Name)))"
                       Role="TextRole.Text"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                      Placeholder="@(string.IsNullOrWhiteSpace(TaskInfo.Name) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)) : TaskInfo.Name )"
                       @bind-Text="@CloneModel.Name">
                 <Feedback>
                     <ValidationError Multiline="true" />
@@ -18,6 +18,12 @@
             </TextEdit>
         </Field>
     </Validation>
+
+    <Field ColumnSize="ColumnSize.Is1.OnWidescreen.Is2">
+        <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{(string.IsNullOrWhiteSpace(TaskInfo.Name) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)) : TaskInfo.Name)}\"")" Display="Display.InlineBlock">
+            <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => FillDefaultName())" />
+        </Tooltip>
+    </Field>
 
     <Column ColumnSize="ColumnSize.IsFull">
         <Container Fluid>
@@ -30,8 +36,7 @@
                     <Validation>
                         <Field Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.Is2.OnWidescreen">
 
-                            <NumericEdit @bind-Value="@CloneModel.Copies"
-                                         Step="1" Min="1" Max="32">
+                            <NumericEdit @bind-Value="@CloneModel.Copies" Step="1" Min="1" Max="32">
                                 <Feedback>
                                     <ValidationError Multiline="true" />
                                 </Feedback>
@@ -59,15 +64,25 @@
 </Fields>
 
 @code {
+    [CascadingParameter]
+    public TaskInfoDto TaskInfo { get; set; } = new();
 
     [CascadingParameter]
     public TaskDuplicateActionRequestDto CloneModel { get; set; } = new();
 
-    [Parameter]
+    [CascadingParameter]
     public DataOperation Operation { get; set; }
 
     [Parameter]
     public bool FullWidthFields { get; set; }
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<UserPreferenceTokenOptionDto>(elementBase, Operation, null);
+
+    private void FillDefaultName()
+    {
+        var defaultValue = string.IsNullOrWhiteSpace(TaskInfo.Name) ?
+            resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)) : TaskInfo.Name;
+    
+        CloneModel.Name = defaultValue;
+    }
 }

@@ -176,49 +176,49 @@
                     @if (runnableTaskStates.Contains(context.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Run}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-success" Name="IconName.Play" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowChangeStateModal(new List<TaskInfoDto>(){context}, TaskState.RUN))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-success" Name="IconName.Play" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>(){context}, TaskState.RUN))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
                     @if (pauseableTaskStates.Contains(context.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Pause}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-warning" Name="IconName.Pause" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowChangeStateModal(new List<TaskInfoDto>(){context}, TaskState.PAUSED))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-warning" Name="IconName.Pause" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>(){context}, TaskState.PAUSED))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
                     @if (stoppableTaskStates.Contains(context.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Stop}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-danger" Name="IconName.Stop" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowChangeStateModal(new List<TaskInfoDto>(){context}, TaskState.STOP))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-danger" Name="IconName.Stop" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>(){context}, TaskState.STOP))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
                     @if (overviewTaskStates.Contains(context.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-info" Name="IconName.Search" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowOverviewModal(context))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-info" Name="IconName.Search" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowOverviewModal(context))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
                     @if (editableTaskStates.Contains(context.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowEditModal(context))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowEditModal(context))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
                     @if (cloneableTaskStates.Contains(context.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-primary" Name="IconName.Copy" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowCloneModal(context))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-primary" Name="IconName.Copy" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowCloneModal(context))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
                     @if (deletableTaskStates.Contains(context.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowDeleteModal(new List<TaskInfoDto>(){context}))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowDeleteModal(new List<TaskInfoDto>(){context}))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
@@ -230,11 +230,13 @@
 </Column>
 
 <CascadingValue Value="TaskInfo">
-    <TaskEditModal @ref="EditModal" Operation="DataOperation.UPDATE" />
-    <TaskOverviewModal @ref="OverviewModal" />
-    <TaskDeleteModal @ref="DeleteModal" />
-    <TaskChangeStateModal @ref="ChangeStateModal" />
-    <TaskCloneModal @ref="CloneModal" />
+    <CascadingValue Value="SelectedTasks">
+        <TaskEditModal @ref="EditModal" Operation="DataOperation.UPDATE" />
+        <TaskChangeStateModal @ref="ChangeStateModal" Operation="DataOperation.UPDATE" />
+        <TaskCloneModal @ref="CloneModal" Operation="DataOperation.UPDATE" />
+        <TaskOverviewModal @ref="OverviewModal" Operation="DataOperation.READ" />
+        <TaskDeleteModal @ref="DeleteModal" Operation="DataOperation.DELETE" />
+    </CascadingValue>
 </CascadingValue>
 
 
@@ -267,27 +269,28 @@
     private TaskInfoDto TaskInfo = new();
 
     private DataGrid<TaskInfoDto> TaskInfoGrid { get; set; } = new();
-    private readonly List<int> TaskInfoGridPageSizeOptions = new List<int>() { 10, 20, 50, 100, 250 };
+    private readonly IList<int> TaskInfoGridPageSizeOptions = new List<int>() { 10, 20, 50, 100, 250 };
 
     private string selectedStateFilter = string.Empty;
     private string selectedEmailFilter = string.Empty;
     private string selectedDateCreatedFilter = string.Empty;
 
-    private bool IsBulkRunEnabled => SelectedTasks.Count > 0 && SelectedTasks.All(task => runnableTaskStates.Contains(task.State));
-    private bool IsBulkPauseEnabled => SelectedTasks.Count > 0 && SelectedTasks.All(task => pauseableTaskStates.Contains(task.State));
-    private bool IsBulkStopEnabled => SelectedTasks.Count > 0 && SelectedTasks.All(task => stoppableTaskStates.Contains(task.State));
-    private bool isBulkDeleteEnabled => SelectedTasks.Count > 0 && SelectedTasks.All(task => deletableTaskStates.Contains(task.State));
+    private bool IsBulkRunEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => runnableTaskStates.Contains(task.State));
+    private bool IsBulkPauseEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => pauseableTaskStates.Contains(task.State));
+    private bool IsBulkStopEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => stoppableTaskStates.Contains(task.State));
+    private bool isBulkDeleteEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => deletableTaskStates.Contains(task.State));
     private bool isBulkActionEnabled => isBulkDeleteEnabled || IsBulkPauseEnabled || IsBulkRunEnabled || IsBulkStopEnabled;
 
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
         await base.OnInitializedAsync();
     }
-
-    private void RefreshView()
-    { StateHasChanged(); }
 
     private async Task ShowOverviewModal(TaskInfoDto taskInfo)
     {

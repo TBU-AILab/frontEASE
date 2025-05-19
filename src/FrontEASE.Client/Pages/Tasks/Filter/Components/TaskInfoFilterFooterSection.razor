@@ -2,7 +2,6 @@
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
-@inject IShortcutKeyDictionary shortcutDictionary
 
 <Fields Margin="Margin.Is5.FromTop">
     <Field ColumnSize="ColumnSize.Is3.OnWidescreen">
@@ -46,26 +45,26 @@
 
     public async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await FilterTasks();
                 break;
             case ShortcutKeys.ESCAPE:
-                ResetModel();
+                await ResetModel();
                 break;
             default:
                 break;
         }
     }
 
-    private void ResetModel()
+    private async Task ResetModel()
     {
         resetInProgress = true;
         mapper.Map(new TaskFilterActionRequestDto(), Filter);
         resetInProgress = false;
 
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 
     private async Task FilterTasks()
@@ -82,7 +81,7 @@
             }
         }
 
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
         filteringInProgress = false;
     }
 }

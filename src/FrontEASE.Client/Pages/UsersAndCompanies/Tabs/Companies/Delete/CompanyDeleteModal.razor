@@ -1,11 +1,10 @@
 ﻿@inject ICompanyApiService companyApiService
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 @inject IUIManager uiManager
 
-<Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
+<Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async(e) => await HandleKeyDown(e))">
     @if (isModalVisible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
@@ -58,7 +57,7 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await DeleteCompany();
@@ -81,7 +80,7 @@
             Companies.Remove(Company);
             var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {Company.Name}{(string.IsNullOrWhiteSpace(Company.NameAbbreviation) ? string.Empty : $" ({Company.NameAbbreviation})")}";
             toastService.ShowSuccess(message);
-            uiService.CallRequestRefresh();
+            await uiService.CallRequestRefreshAsync();
         }
 
         await HideModal();

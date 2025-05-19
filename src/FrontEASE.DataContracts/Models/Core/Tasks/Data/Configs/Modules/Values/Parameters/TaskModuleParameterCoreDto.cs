@@ -1,4 +1,4 @@
-﻿using FrontEASE.DataContracts.Converters.Tasks.Parameters;
+﻿using FrontEASE.DataContracts.Constants;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.Parameters.Options;
 using System.Text.Json.Serialization;
 
@@ -12,41 +12,40 @@ namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.
             Type = string.Empty;
         }
 
-        [JsonPropertyName("short_name")]
+        [JsonPropertyName(ParameterDtoConstants.ShortName)]
         public string ShortName { get; set; }
 
-        [JsonPropertyName("long_name")]
+        [JsonPropertyName(ParameterDtoConstants.LongName)]
         public string? LongName { get; set; }
 
-        [JsonPropertyName("description")]
+        [JsonPropertyName(ParameterDtoConstants.Description)]
         public string? Description { get; set; }
 
-        [JsonPropertyName("type")]
+        [JsonPropertyName(ParameterDtoConstants.Type)]
         public string Type { get; set; }
 
-        [JsonPropertyName("min_value")]
+        [JsonPropertyName(ParameterDtoConstants.MinValue)]
         public float? MinValue { get; set; }
 
-        [JsonPropertyName("max_value")]
+        [JsonPropertyName(ParameterDtoConstants.MaxValue)]
         public float? MaxValue { get; set; }
 
-        [JsonPropertyName("enum_descriptions")]
+        [JsonPropertyName(ParameterDtoConstants.EnumDescriptions)]
         public IList<string>? EnumDescriptions { get; set; }
 
-        [JsonPropertyName("enum_long_names")]
+        [JsonPropertyName(ParameterDtoConstants.EnumLongNames)]
         public IList<string>? EnumLongNames { get; set; }
 
-        [JsonPropertyName("enum_options")]
+        [JsonPropertyName(ParameterDtoConstants.EnumOptions)]
         public IList<TaskModuleParameterEnumOptionCoreDto>? EnumOptions { get; set; }
 
-        [JsonPropertyName("default")]
-        [JsonConverter(typeof(TaskModuleParameterValueConverter))]
+        [JsonPropertyName(ParameterDtoConstants.Default)]
         public TaskModuleParameterValueCoreDto? Default { get; set; }
 
-        [JsonPropertyName("readonly")]
+        [JsonPropertyName(ParameterDtoConstants.Readonly)]
         public bool? Readonly { get; set; }
 
-        [JsonPropertyName("required")]
+        [JsonPropertyName(ParameterDtoConstants.Required)]
         public bool? Required { get; set; }
     }
 }

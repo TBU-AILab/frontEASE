@@ -49,18 +49,19 @@
 @code {
     private CorePreferencesManagementType managementTypeSelected = CorePreferencesManagementType.PACKAGES;
 
-    private void RefreshView()
-    { StateHasChanged(); }
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
         await base.OnInitializedAsync();
     }
 
-    private Task OnSelectedTabChanged(string name)
+    private void OnSelectedTabChanged(string name)
     {
         managementTypeSelected = (CorePreferencesManagementType)Enum.Parse(typeof(CorePreferencesManagementType), name);
-        return Task.CompletedTask;
     }
 }

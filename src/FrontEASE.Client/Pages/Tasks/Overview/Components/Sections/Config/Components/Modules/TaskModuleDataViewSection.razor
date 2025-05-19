@@ -41,9 +41,7 @@
             <Container Fluid>
                 @if (!string.IsNullOrWhiteSpace(Module.ShortName))
                 {
-                    <CascadingValue Value="Module">
-                        <TaskModuleParamsViewSection AvailableParams="@TaskModuleData?.Parameters" />
-                    </CascadingValue>
+                    <TaskModuleParamsViewSection AvailableParams="@TaskModuleData?.Parameters" Module="Module" />
                 }
             </Container>
         </Column>

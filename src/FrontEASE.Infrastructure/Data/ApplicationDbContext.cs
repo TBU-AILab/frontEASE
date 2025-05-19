@@ -1,5 +1,6 @@
 ﻿using FrontEASE.Domain.Entities.Base.Tracked;
 using FrontEASE.Domain.Entities.Companies;
+using FrontEASE.Domain.Entities.Jobs;
 using FrontEASE.Domain.Entities.Management;
 using FrontEASE.Domain.Entities.Management.General;
 using FrontEASE.Domain.Entities.Management.Tokens;
@@ -13,12 +14,14 @@ using FrontEASE.Domain.Entities.Tasks.Configs;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters;
-using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.RepeatedMessage;
 using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Infrastructure.Data.Configuration.Companies;
+using FrontEASE.Infrastructure.Data.Configuration.Jobs;
 using FrontEASE.Infrastructure.Data.Configuration.Management;
 using FrontEASE.Infrastructure.Data.Configuration.Management.Modules;
 using FrontEASE.Infrastructure.Data.Configuration.Management.Modules.Connectors;
@@ -32,6 +35,8 @@ using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.Values;
+using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.Values.Enums;
+using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.Values.List;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.RepeatedMessage;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Runs;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -43,6 +48,9 @@ namespace FrontEASE.Infrastructure.Data
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         { }
+
+        /* App Control */
+        public DbSet<JobLog> JobExecutions { get; set; }
 
         /* App Data */
         public DbSet<CountryCode> CountryCodes { get; set; }
@@ -72,6 +80,8 @@ namespace FrontEASE.Infrastructure.Data
         public DbSet<TaskModuleParameterEntity> TaskModuleParameters { get; set; }
         public DbSet<TaskModuleParameterValueEntity> TaskModuleParameterValues { get; set; }
         public DbSet<TaskModuleParameterEnumValueEntity> TaskModuleParameterValueEnumValues { get; set; }
+        public DbSet<TaskModuleParameterListValueEntity> TaskModuleParameterValueListValues { get; set; }
+        public DbSet<TaskModuleParameterListValueItemEntity> TaskModuleParameterValueListValueItems { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -82,6 +92,8 @@ namespace FrontEASE.Infrastructure.Data
 
         private void ApplyCustomConfigurations(ModelBuilder builder)
         {
+            builder.ApplyConfiguration(new JobLogConfiguration());
+
             builder.ApplyConfiguration(new CountryCodeConfiguration());
             builder.ApplyConfiguration(new ResourceConfiguration());
             builder.ApplyConfiguration(new AddressConfiguration());
@@ -106,6 +118,8 @@ namespace FrontEASE.Infrastructure.Data
             builder.ApplyConfiguration(new TaskModuleParameterConfiguration());
             builder.ApplyConfiguration(new TaskModuleParameterValueConfiguration());
             builder.ApplyConfiguration(new TaskModuleParameterEnumValueConfiguration());
+            builder.ApplyConfiguration(new TaskModuleParameterListValueConfiguration());
+            builder.ApplyConfiguration(new TaskModuleParameterListValueItemConfiguration());
         }
 
         private void HandleTrackedEntitiesBase()

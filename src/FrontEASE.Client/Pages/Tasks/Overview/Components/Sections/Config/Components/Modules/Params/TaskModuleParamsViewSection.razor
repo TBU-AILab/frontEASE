@@ -22,19 +22,13 @@
                         <Container Fluid Margin="Margin.Is3.FromTop">
                             <Row Padding="Padding.Is0" Flex="Flex.ReverseRow">
 
-                                @foreach (var ParamValue in Module.Parameters)
+                                @foreach (var paramValue in Module.Parameters)
                                 {
-                                    if (ParamValue.Value is not null)
+                                    if (paramValue.Value is not null)
                                     {
-                                        var ParamOption = AvailableParams.SingleOrDefault(x => x.ShortName == ParamValue.ShortName);
-
+                                        var paramOption = AvailableParams.SingleOrDefault(x => x.ShortName == paramValue.ShortName);
                                         <Fields>
-                                            <CascadingValue Value="ParamOption">
-                                                <CascadingValue Value="ParamValue">
-                                                    <TaskModuleParamValueView />
-                                                </CascadingValue>
-                                            </CascadingValue>
-
+                                            <TaskModuleParamValueView ParamOption="paramOption" ParamValue="paramValue" Module="Module" />
                                         </Fields>
                                     }
                                 }
@@ -51,7 +45,7 @@
     [CascadingParameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskModuleDto Module { get; set; } = new();
 
     [Parameter]

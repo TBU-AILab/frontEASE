@@ -24,6 +24,6 @@ namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs
         public string? SystemMessage { get; set; }
 
         [JsonPropertyName("initial_message")]
-        public string InitialMessage { get; set; }
+        public string? InitialMessage { get; set; }
     }
 }

@@ -3,7 +3,6 @@ using FrontEASE.Domain.DataQueries.Tasks;
 using FrontEASE.Domain.Entities.Companies;
 using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
-using FrontEASE.Domain.Entities.Tasks.Configs;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Repositories.Companies;
@@ -54,14 +53,12 @@ namespace FrontEASE.Domain.Services.Tasks
         public async Task<Entities.Tasks.Task> Load(Guid id)
         {
             var task = await _taskRepository.Load(id, GetFullQuery()) ?? throw new NotFoundException();
-            SortConnectedModules(task);
             return task;
         }
 
         public async Task<IList<Entities.Tasks.Task>> Load(IList<Guid> ids)
         {
             var tasks = await _taskRepository.Load(ids, GetFullQuery()) ?? throw new NotFoundException();
-            foreach (var task in tasks) { SortConnectedModules(task); }
             return tasks;
         }
 
@@ -100,11 +97,9 @@ namespace FrontEASE.Domain.Services.Tasks
 
             _mapper.Map(task, updated);
             UpdateConnectedEntities(updated, task, connectedEntities);
-            UpdateConnectedModules(updated);
             await _coreService.HandleTaskInit(updated);
 
             updated = await _taskRepository.Update(updated);
-            SortConnectedModules(updated);
             return updated;
         }
 
@@ -120,7 +115,6 @@ namespace FrontEASE.Domain.Services.Tasks
 
                 var connectedEntities = await SelectConnectedEntities(task);
                 UpdateConnectedEntities(newTask, task, connectedEntities);
-                UpdateConnectedModules(newTask);
                 CleanTaskRunData(newTask);
 
                 duplicates.Add(newTask);
@@ -191,55 +185,7 @@ namespace FrontEASE.Domain.Services.Tasks
             task.Messages.Clear();
             task.Solutions.Clear();
         }
-
-        private void UpdateConnectedModules(Entities.Tasks.Task updatedTask)
-        {
-            void UpdateModule(TaskModuleEntity module, Guid taskConfigID, TaskConfig taskConfig)
-            {
-                module.TaskConfigID = taskConfigID;
-                module.TaskConfig = taskConfig;
-
-                foreach (var parameter in module.Parameters)
-                {
-                    var enumVal = parameter?.Value?.EnumValue;
-                    if (enumVal?.ModuleValue is not null)
-                    {
-                        UpdateModule(enumVal.ModuleValue, taskConfigID, taskConfig);
-                    }
-                }
-            }
-
-            foreach (var module in updatedTask.Config.Modules)
-            {
-                UpdateModule(module, updatedTask.Config.ID, updatedTask.Config);
-            }
-        }
-
-        private void SortConnectedModules(Entities.Tasks.Task task)
-        {
-            var sorted = new List<TaskModuleEntity>();
-            var nestedIDs = new List<Guid>();
-
-            foreach (var module in task.Config.Modules)
-            {
-                var paramsWithModuleVal = module.Parameters?.Select(x => x?.Value)?.Select(x => x?.EnumValue)?.Where(x => x?.ModuleValueID is not null)?.ToList() ?? [];
-                foreach (var nestedModuleParam in paramsWithModuleVal)
-                {
-                    var moduleID = nestedModuleParam!.ModuleValueID;
-                    nestedIDs.Add(moduleID!.Value);
-
-                    var matchedModule = task.Config.Modules.SingleOrDefault(x => x.ID == moduleID);
-                    nestedModuleParam.ModuleValue = matchedModule;
-                }
-            }
-
-            if (nestedIDs.Count > 0)
-            {
-                var nestedModules = task.Config.Modules.Where(x => nestedIDs.Contains(x.ID));
-                task.Config.Modules = task.Config.Modules.Except(nestedModules).ToList();
-            }
-        }
-
+        
         #endregion
     }
 }

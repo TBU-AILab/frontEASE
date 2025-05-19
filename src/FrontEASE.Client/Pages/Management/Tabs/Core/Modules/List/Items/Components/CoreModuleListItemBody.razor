@@ -1,0 +1,44 @@
+﻿@inject IUIManager uiManager
+@inject IResourceHandler resourceHandler
+
+<Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary">
+    <CardBody>
+        <Container Fluid Shadow="Shadow.Small">
+            <Row>
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text Padding="Padding.Is2" Border="Border.Rounded" Background="Background.Light" TextWeight="TextWeight.Bold">
+                        @(resourceHandler.GetResource(((ModuleType)Module.PackageType).GetEnumResourceValue()))
+                    </Text>
+                </Column>
+
+                <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is2.FromTop">
+                    <Text>
+                        @Module.LongName
+                    </Text>
+                    @if (!string.IsNullOrWhiteSpace(Module.ShortName))
+                    {
+                        <Span TextWeight="TextWeight.Bold">
+                            @($" ({Module.LongName})")
+                        </Span>
+                    }
+                </Column>
+
+                <Divider Class="divider-main bg-custom-light" Shadow="Shadow.Small" Style="height: 2px !important;" Margin="Margin.Is2.FromTop" />
+
+                @if (!string.IsNullOrWhiteSpace(Module.Description))
+                {
+                    <Column ColumnSize="ColumnSize.IsFull">
+                        <Text Italic="true">
+                            @Module.Description
+                        </Text>
+                    </Column>
+                }
+            </Row>
+        </Container>
+    </CardBody>
+</Row>
+
+@code {
+    [CascadingParameter]
+    public TaskModuleNoValidationDto Module { get; set; } = new();
+}

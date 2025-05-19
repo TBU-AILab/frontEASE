@@ -2,6 +2,9 @@
 {
     public static class TableConstants
     {
+        /* Control */
+        public const string JobExecutions = "JobExecutions";
+
         /* App */
         public const string Resources = "Resources";
         public const string CountryCodes = "CountryCodes";
@@ -29,5 +32,7 @@
         public const string TaskModuleParameters = "TaskModuleParameters";
         public const string TaskModuleParameterValues = "TaskModuleParameterValues";
         public const string TaskModuleParameterEnumValues = "TaskModuleParameterEnumValues";
+        public const string TaskModuleParameterListValues = "TaskModuleParameterListValues";
+        public const string TaskModuleParameterListValueItems = "TaskModuleParameterListValueItems";
     }
 }

@@ -3,11 +3,10 @@
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
 @inject IUIManager uiManager
-@inject IShortcutKeyDictionary shortcutDictionary
 @inject Blazored.Toast.Services.IToastService toastService
 @inject AppSettings appSettings
 
-<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="HandleKeyDown">
+<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
     @if (EditModal.Visible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
@@ -73,7 +72,7 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        switch (shortcutDictionary.GetEnumForm(e.Key))
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
                 await EditUser();
@@ -103,7 +102,7 @@
             }
         }
         updateInProgress = false;
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 
     private Task HideModal()

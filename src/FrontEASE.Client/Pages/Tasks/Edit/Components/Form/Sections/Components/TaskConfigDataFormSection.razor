@@ -43,6 +43,8 @@
                             @if (!TaskMetadata.InitializationInProgres)
                             {
                                 <Markdown Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                          NativeSpellcheck="false"
+                                          SpellChecker="false"
                                           UploadImage="false"
                                           @bind-Value="@Task.Config.SystemMessage" />
                             }
@@ -74,6 +76,8 @@
                             @if (!TaskMetadata.InitializationInProgres)
                             {
                                 <Markdown Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                          NativeSpellcheck="false"
+                                          SpellChecker="false"
                                           UploadImage="false"
                                           @bind-Value="@Task.Config.InitMessage" />
                             }

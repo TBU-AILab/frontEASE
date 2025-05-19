@@ -58,18 +58,19 @@
 
     private UserCompanyManagementType managementTypeSelected = UserCompanyManagementType.USERS;
 
-    private void RefreshView()
-    { StateHasChanged(); }
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        uiService.RefreshRequested += RefreshView;
+        uiService.RefreshRequested += RefreshViewAsync;
         await base.OnInitializedAsync();
     }
 
-    private Task OnSelectedTabChanged(string name)
+    private void OnSelectedTabChanged(string name)
     {
         managementTypeSelected = (UserCompanyManagementType)Enum.Parse(typeof(UserCompanyManagementType), name);
-        return Task.CompletedTask;
     }
 }

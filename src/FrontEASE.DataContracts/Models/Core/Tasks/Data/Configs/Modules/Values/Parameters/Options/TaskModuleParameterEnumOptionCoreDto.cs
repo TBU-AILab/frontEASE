@@ -7,6 +7,6 @@ namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.
     public class TaskModuleParameterEnumOptionCoreDto : ICoreDto
     {
         public string? StringValue { get; set; }
-        public TaskModuleCoreDto ModuleValue { get; set; }
+        public TaskModuleCoreDto? ModuleValue { get; set; }
     }
 }

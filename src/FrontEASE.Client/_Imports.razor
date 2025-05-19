@@ -48,6 +48,7 @@
 @using System.Net
 @using System.Threading
 @using System.Web
+@using System.Globalization
 
 @* Blazor and Auth *@
 @using FrontEASE.Client.Infrastructure.Settings.AppSettings
@@ -101,7 +102,11 @@
 @using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Access
 @using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules
 @using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params
-@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Specific
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs.List
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs.List.Helpers
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs.Specific
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs.Specific.Helpers
 @using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.RepeatedMessage
 @using FrontEASE.Client.Pages.Tasks.List
 @using FrontEASE.Client.Pages.Tasks.List.Components
@@ -118,6 +123,7 @@
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Items
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params.Helpers
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.RepeatedMessage
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Info
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Info.Items
@@ -136,6 +142,9 @@
 @using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters
 @using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Metadata
 @using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.Enum
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List
+@using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List.Params
 @using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Values
 @using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage
 @using FrontEASE.Shared.Data.DTOs.Tasks.Data.Messages
@@ -184,6 +193,8 @@
 @using FrontEASE.Client.Pages.Management.Tabs.Core.Modules
 @using FrontEASE.Client.Pages.Management.Tabs.Core.Modules.Add
 @using FrontEASE.Client.Pages.Management.Tabs.Core.Modules.List
+@using FrontEASE.Client.Pages.Management.Tabs.Core.Modules.List.Items
+@using FrontEASE.Client.Pages.Management.Tabs.Core.Modules.List.Items.Components
 @using FrontEASE.Client.Pages.Management.Tabs.Core.Modules.Shared
 @using FrontEASE.Client.Pages.Management.Tabs.Core.Packages.Add
 @using FrontEASE.Client.Pages.Management.Tabs.Core.Packages.List

@@ -1,5 +1,6 @@
 ﻿using FrontEASE.Domain.Entities.Base.Tracked;
-using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.Enum;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Options.List;
 
 namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Values
 {
@@ -16,6 +17,9 @@ namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Val
 
         public Guid? EnumValueID { get; set; }
         public TaskModuleParameterEnumValueEntity? EnumValue { get; set; }
+
+        public Guid? ListValueID { get; set; }
+        public TaskModuleParameterListValueEntity? ListValue { get; set; }
 
         #endregion
 

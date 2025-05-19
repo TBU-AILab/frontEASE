@@ -1,21 +1,21 @@
-﻿@inject IResourceHandler resourceHandler
+﻿@inject ITaskManipulationService taskManipulationService
+@inject IResourceHandler resourceHandler
 @inject IUIService uiService
 @inject IMapper mapper
 
 @{
     var parameterType = DynamicParamUtils.GetParameterType(ParamValue.Type);
-    IsDescriptionPresent = (!string.IsNullOrWhiteSpace(ParamOption?.Description) || (ParamOption?.EnumDescriptions?.Count > 0 && !string.IsNullOrWhiteSpace(ParamValue.Value!.EnumValue?.StringValue))) && ParamOption.Readonly != true;
-    (IsDefaultPresent, var defaultValue) = ExtractDefaultValue(ParamOption);
-
+    IsListParam = parameterType == ParameterType.LIST;
+    IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(ParamOption, ParamValue);
+    (IsDefaultPresent, var defaultValue) = taskManipulationService.ExtractDefaultValue(ParamOption);
+    SkipLabel = parameterType == ParameterType.ENUM && ParamOption?.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
     var parameterName = ParamOption?.LongName ?? ParamValue.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
-    var skipLabel = parameterType == ParameterType.ENUM && ParamOption?.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
 }
-
 
 @if (parameterType is not null)
 {
     <Field ColumnSize="@(DisplayActions ? ColumnSize.Is10.OnWidescreen : ColumnSize.IsFull)" Padding="Padding.Is1.FromTop">
-        @if (!skipLabel)
+        @if (!SkipLabel)
         {
             <Text>
                 @($"{parameterName}: ")
@@ -39,6 +39,12 @@
             case ParameterType.INT:
                 <Span TextWeight="TextWeight.Bold" Class="fst-italic">
                     @($" {ParamValue.Value!.IntValue}")
+                </Span>
+                break;
+
+            case ParameterType.TIME:
+                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                    @($"{ParameterTimeHelper.FormatTimeValueForDisplay(ParamValue.Value?.IntValue, resourceHandler)}")
                 </Span>
                 break;
 
@@ -83,6 +89,38 @@
                     }
                 </Span>
                 break;
+
+
+            case ParameterType.LIST:
+                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                    @if (!(ParamValue.Value!.ListValue?.ParameterValues.Count > 0))
+                    {
+                        @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
+                    }
+                </Span>
+
+                <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Style="@($"height: 2px !important;")" />
+                <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Style="@($"height: 2px !important;")" />
+
+                foreach (var listItem in ParamValue.Value!.ListValue!.ParameterValues)
+                {
+                    @foreach (var paramItem in listItem.ParameterItems)
+                    {
+                        if (paramItem.Value is not null)
+                        {
+                            var paramOption = ParamOption?.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems.SingleOrDefault(x => x.ShortName == paramItem.ShortName);
+                            if (paramOption is not null)
+                            {
+                                <Fields>
+                                    <TaskModuleParamValueView Module="null" ParamOption="paramOption" ParamValue="paramItem" />
+                                </Fields>
+                            }
+                        }
+                    }
+
+                    <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Style="@($"height: 2px !important;")" />
+                }
+                break;
         }
     </Field>
 }
@@ -120,44 +158,19 @@
     [CascadingParameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskModuleDto Module { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskModuleParameterNoValidationDto? ParamOption { get; set; } = null;
 
-    [CascadingParameter]
+    [Parameter]
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
+    private bool SkipLabel { get; set; }
     private bool IsDescriptionPresent { get; set; }
     private bool IsDefaultPresent { get; set; }
+    private bool IsListParam { get; set; }
 
-    private bool DisplayActions => IsDescriptionPresent || IsDefaultPresent;
-
-    public static (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto? parameter)
-    {
-        if (parameter is null)
-        {
-            return (false, null);
-        }
-
-        var defaultValuePresent = parameter.Default is not null && parameter.Readonly != true &&
-                                  (!string.IsNullOrWhiteSpace(parameter.Default?.StringValue) ||
-                                   parameter.Default?.FloatValue is not null ||
-                                   parameter.Default?.IntValue is not null ||
-                                   parameter.Default?.BoolValue is not null ||
-                                   !string.IsNullOrWhiteSpace(parameter.Default?.EnumValue?.StringValue));
-
-        var defaultValue = parameter.Default switch
-        {
-            { StringValue: { Length: > 0 } } => parameter.Default.StringValue,
-            { FloatValue: not null } => parameter.Default.FloatValue?.ToString(),
-            { IntValue: not null } => parameter.Default.IntValue?.ToString(),
-            { BoolValue: not null } => parameter.Default.BoolValue?.ToString(),
-            { EnumValue.StringValue: { Length: > 0 } } => parameter.Default.EnumValue.StringValue,
-            _ => null
-        };
-
-        return (defaultValuePresent, defaultValue);
-    }
+    private bool DisplayActions => ((IsDescriptionPresent && !SkipLabel) || IsDefaultPresent) && !IsListParam;
 }

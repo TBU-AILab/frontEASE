@@ -3,9 +3,14 @@ using FrontEASE.Shared.Data.DTOs.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.Enum;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List.Params;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks.Config;
+using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.Parameters;
+using FrontEASE.Shared.Infrastructure.Utils.Helpers.Tasks;
 
 namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 {
@@ -98,5 +103,87 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
         }
 
         public void CleanCompaniesInfo(TaskDto task) => task.MemberGroups.Clear();
+
+        public (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto? parameter)
+        {
+            var defaultValuePresent = parameter?.Default is not null && parameter.Readonly != true &&
+                                      (!string.IsNullOrWhiteSpace(parameter.Default?.StringValue) ||
+                                       parameter.Default?.FloatValue is not null ||
+                                       parameter.Default?.IntValue is not null ||
+                                       parameter.Default?.BoolValue is not null ||
+                                       !string.IsNullOrWhiteSpace(parameter.Default?.EnumValue?.StringValue));
+
+            var defaultValue = parameter?.Default switch
+            {
+                { StringValue.Length: > 0 } => parameter.Default.StringValue,
+                { FloatValue: not null } => parameter.Default.FloatValue?.ToString(),
+                { IntValue: not null } => parameter.Default.IntValue?.ToString(),
+                { BoolValue: not null } => parameter.Default.BoolValue?.ToString(),
+                { EnumValue.StringValue.Length: > 0 } => parameter.Default.EnumValue?.StringValue,
+                _ => null
+            };
+
+            return (defaultValuePresent, defaultValue);
+        }
+
+        public void FillParamDefaultValue(TaskModuleParameterDto parameter, string? defaultValue)
+        {
+            var parameterType = DynamicParamUtils.GetParameterType(parameter.Type);
+            if (parameterType is null || string.IsNullOrWhiteSpace(defaultValue)) { return; }
+
+            switch (parameterType)
+            {
+                case ParameterType.INT:
+                case ParameterType.TIME:
+                    parameter.Value!.IntValue = int.Parse(defaultValue);
+                    break;
+
+                case ParameterType.FLOAT:
+                    parameter.Value!.FloatValue = float.Parse(defaultValue);
+                    break;
+
+                case ParameterType.STR:
+                case ParameterType.MARKDOWN:
+                    parameter.Value!.StringValue = defaultValue;
+                    break;
+
+                case ParameterType.BOOL:
+                    parameter.Value!.BoolValue = bool.Parse(defaultValue);
+                    break;
+
+                case ParameterType.ENUM:
+                    var enumVal = new TaskModuleParameterEnumOptionDto() { StringValue = defaultValue };
+                    _mapper.Map(enumVal, parameter.Value!.EnumValue);
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public bool CheckDescriptionPresent(TaskModuleParameterNoValidationDto? paramOption, TaskModuleParameterDto paramValue)
+        {
+            return (!string.IsNullOrWhiteSpace(paramOption?.Description) ||
+                (paramOption?.EnumDescriptions?.Count > 0 && !string.IsNullOrWhiteSpace(paramValue.Value!.EnumValue?.StringValue))) && paramOption?.Readonly != true;
+        }
+
+        public bool RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam, TaskModuleParameterDto paramValue)
+        {
+            var refreshOptions = false;
+            foreach (var presentParam in listParam.ParameterItems)
+            {
+                var type = DynamicParamUtils.GetParameterType(presentParam.Type);
+                if (type == ParameterType.ENUM && !string.IsNullOrWhiteSpace(presentParam.Value?.EnumValue?.ModuleValue?.ShortName))
+                {
+                    refreshOptions = true;
+                }
+            }
+            paramValue.Value!.ListValue!.ParameterValues.Remove(listParam);
+            return refreshOptions;
+        }
+
+
+        public TaskModuleParameterNoValidationDto? GetListValueParamOption(string shortName, TaskModuleParameterNoValidationDto paramOption) =>
+            paramOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems?.FirstOrDefault(x => x.ShortName == shortName);
     }
 }

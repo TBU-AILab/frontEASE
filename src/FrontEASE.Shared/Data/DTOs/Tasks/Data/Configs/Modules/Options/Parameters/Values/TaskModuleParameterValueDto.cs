@@ -1,5 +1,6 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Metadata;
-using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.Enum;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List;
 using FrontEASE.Shared.Infrastructure.Attributes;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific.FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
@@ -25,6 +26,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
         [Resource($"{nameof(TaskModuleParameterValueDto)}.{nameof(IntValue)}")]
         [ParameterPropertyFilledValidation<TaskModuleParameterValueDto>]
         [ParameterNumericRangeValidation(true)]
+        [ParameterTimeValidation]
         public int? IntValue { get; set; }
 
         /// <summary>
@@ -48,6 +50,13 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
         [Resource($"{nameof(TaskModuleParameterValueDto)}.{nameof(EnumValue)}")]
         [ParameterPropertyFilledValidation<TaskModuleParameterValueDto>]
         public TaskModuleParameterEnumOptionDto? EnumValue { get; set; }
+
+        /// <summary>
+        /// Parameter - list module value
+        /// </summary>
+        [Resource($"{nameof(TaskModuleParameterValueDto)}.{nameof(ListValue)}")]
+        [ParameterPropertyFilledValidation<TaskModuleParameterValueDto>]
+        public TaskModuleParameterListOptionDto? ListValue { get; set; }
 
         #endregion
 

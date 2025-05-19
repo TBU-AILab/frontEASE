@@ -10,6 +10,7 @@ namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values
         public int? IntValue { get; set; }
         public string? StringValue { get; set; }
         public bool? BoolValue { get; set; }
+        public TaskModuleParameterListOptionCoreDto? ListValue { get; set; }
         public TaskModuleParameterEnumOptionCoreDto? EnumValue { get; set; }
 
         #endregion

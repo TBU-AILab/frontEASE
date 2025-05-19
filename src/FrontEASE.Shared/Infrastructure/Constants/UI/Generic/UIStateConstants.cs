@@ -13,5 +13,7 @@
         public const string ActionSuccess = "ActionSuccess";
         public const string ActionFail = "ActionFail";
 
+        public const string TokenExpiration = "TokenExpiration";
+
     }
 }

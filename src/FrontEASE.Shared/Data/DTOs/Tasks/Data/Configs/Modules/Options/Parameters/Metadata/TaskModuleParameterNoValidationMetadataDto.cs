@@ -1,4 +1,4 @@
-﻿using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options;
+﻿using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.Enum;
 using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.Parameters;
 
 namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Metadata
@@ -21,7 +21,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
         /// <summary>
         /// Is parameter required
         /// </summary>
-        public bool Required { get; set; }
+        public bool? Required { get; set; }
 
         /// <summary>
         /// Parameter is readonly

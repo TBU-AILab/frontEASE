@@ -93,7 +93,7 @@
         try
         {
             await dataLoader.LoadImage(args, destination);
-            uiService.CallRequestRefresh();
+            await uiService.CallRequestRefreshAsync();
         }
         catch (Exception)
         {

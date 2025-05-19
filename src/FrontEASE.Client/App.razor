@@ -59,7 +59,6 @@ else
 
 @code {
     private bool isInitialized = false;
-    private bool isUserLoaded = false;
 
     private ApplicationUserDto LoggedUser = new();
     private UserPreferencesDto Options = new();
@@ -71,7 +70,7 @@ else
         await base.OnInitializedAsync();
 
         isInitialized = true;
-        uiService.CallRequestRefresh();
+        await uiService.CallRequestRefreshAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
