@@ -1,6 +1,5 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
-using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Results;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks;
@@ -10,6 +9,7 @@ namespace FrontEASE.Application.AppServices.Tasks
     public interface ITaskAppService
     {
         Task<TaskDto> Load(Guid id);
+        Task<TaskDto> LoadSimple(Guid id);
         Task<TaskDto> Refresh(TaskDto task);
         Task<IList<TaskInfoDto>> LoadAll(TaskFilterActionRequestDto? filter);
         Task<IList<TaskStatusDto>> LoadAllStatuses();

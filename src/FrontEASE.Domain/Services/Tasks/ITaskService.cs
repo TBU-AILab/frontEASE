@@ -7,6 +7,7 @@ namespace FrontEASE.Domain.Services.Tasks
     public interface ITaskService
     {
         Task<Entities.Tasks.Task> Load(Guid id);
+        Task<Entities.Tasks.Task> LoadSimple(Guid id);
         Task<IList<Entities.Tasks.Task>> Load(IList<Guid> ids);
         Task<IList<TaskModule>> RefreshOptions(Entities.Tasks.Task task);
         Task<IList<Entities.Tasks.Task>> LoadAll(Guid? userID, TaskFilterActionRequest? filter);

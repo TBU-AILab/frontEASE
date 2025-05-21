@@ -104,6 +104,31 @@ namespace FrontEASE.Server.Controllers.User
         }
 
         /// <summary>
+        /// Loads simple info about individual task.
+        /// </summary>
+        /// <param name="id">Task identifier.</param>
+        /// <returns>Task DTO model.</returns>
+        [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}/{TasksControllerConstants.SimpleMode}")]
+        [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> LoadTaskSimple([Required, FromRoute] Guid id)
+        {
+            IActionResult result;
+            try
+            {
+                var response = await _taskAppService.LoadSimple(id);
+                result = GetHttpResult(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
+
+
+        /// <summary>
         /// Refreshes task options for selected task.
         /// </summary>
         /// <param name="task">Task model.</param>

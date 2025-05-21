@@ -2,10 +2,15 @@
 
 <Row Class="bg-custom-primary text-custom-primary">
     <Column ColumnSize="ColumnSize.Is12">
-        <Div TextAlignment="TextAlignment.Center" Margin="Margin.Is5.FromTop.Is5.FromBottom">
+        <Div TextAlignment="TextAlignment.Center" Margin="@(Margins ?? Margin.Is5.FromTop.Is5.FromBottom)">
             <Div Class="spinner-border">
                 <Anchor Class="visually-hidden"/>
             </Div>
         </Div>
     </Column>
 </Row>
+
+@code{
+    [Parameter]
+    public IFluentSpacing? Margins { get; set; }
+}

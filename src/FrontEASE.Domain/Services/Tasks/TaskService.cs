@@ -50,9 +50,28 @@ namespace FrontEASE.Domain.Services.Tasks
             return query;
         }
 
+        private TasksQuery GetBaseQuery()
+        {
+            var query = new TasksQuery()
+            {
+                IncludeMembers = true,
+                LoadConfig = true,
+                LoadConfigRepeatedMessage = true,
+                LoadMessages = true,
+                LoadSolutions = true,
+            };
+            return query;
+        }
+
         public async Task<Entities.Tasks.Task> Load(Guid id)
         {
             var task = await _taskRepository.Load(id, GetFullQuery()) ?? throw new NotFoundException();
+            return task;
+        }
+
+        public async Task<Entities.Tasks.Task> LoadSimple(Guid id)
+        {
+            var task = await _taskRepository.Load(id, GetBaseQuery()) ?? throw new NotFoundException();
             return task;
         }
 
@@ -128,7 +147,7 @@ namespace FrontEASE.Domain.Services.Tasks
         public async Task Delete(IList<Entities.Tasks.Task> tasks)
         {
             var runningTasks = tasks.Where(x => x.State == TaskState.RUN).ToList();
-            if(runningTasks.Count > 0)
+            if (runningTasks.Count > 0)
             {
                 await ChangeState(runningTasks, TaskState.BREAK);
             }
@@ -185,7 +204,7 @@ namespace FrontEASE.Domain.Services.Tasks
             task.Messages.Clear();
             task.Solutions.Clear();
         }
-        
+
         #endregion
     }
 }

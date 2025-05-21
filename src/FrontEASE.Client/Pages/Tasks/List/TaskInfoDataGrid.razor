@@ -80,6 +80,26 @@
               Class="text-custom-primary border-custom-light"
               Responsive>
         <DataGridColumns>
+
+            <DataGridColumn TItem="TaskInfoDto" Caption="@(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Info}"))" Sortable="false" Filterable="false">
+                <DisplayTemplate>
+                    <Span Style="position: relative;">
+                        <Icon Class="action-icon action-icon-info"
+                              Name="IconName.InfoCircle"
+                              IconSize="IconSize.Large"
+                              IconStyle="IconStyle.Solid"
+                              MouseOver="@((async(e) => await OnInfoMouseOver(context, e)))"
+                              MouseOut="@((async() => await OnInfoMouseOut()))" />
+                        @if (hoveredTask == context)
+                        {
+                            <Div Position="Position.Fixed" Style="@($"{cardPositionStyle}; pointer-events: none;")" Class="top-layer">
+                                <TaskGridItemInfoCard TaskInfo="@context" />
+                            </Div>
+                        }
+                    </Span>
+                </DisplayTemplate>
+            </DataGridColumn>
+
             <DataGridColumn Field="@nameof(TaskInfoDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
 
             <DataGridColumn Field="@nameof(TaskInfoDto.DateCreated)"
@@ -114,7 +134,7 @@
                             Sortable="false"
                             CustomFilter="@OnAuthorEmailCustomFilter">
                 <FilterTemplate>
-                    <TextEdit Text="@selectedEmailFilter" TextChanged="@( value => {selectedEmailFilter = value;context.TriggerFilterChange(selectedEmailFilter);})" />
+                    <TextEdit Text="@selectedEmailFilter" TextChanged="@(value => { selectedEmailFilter = value; context.TriggerFilterChange(selectedEmailFilter); })" />
                 </FilterTemplate>
                 <DisplayTemplate>
                     <Container Fluid>
@@ -170,27 +190,27 @@
                 </DisplayTemplate>
             </DataGridColumn>
 
-            <DataGridColumn TItem="TaskInfoDto" Caption="@string.Empty" Sortable="false" Filterable="false">
+            <DataGridColumn TItem="TaskInfoDto" Caption="@(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))" Sortable="false" Filterable="false">
                 <DisplayTemplate>
 
                     @if (runnableTaskStates.Contains(context.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Run}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-success" Name="IconName.Play" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>(){context}, TaskState.RUN))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-success" Name="IconName.Play" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context }, TaskState.RUN))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
                     @if (pauseableTaskStates.Contains(context.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Pause}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-warning" Name="IconName.Pause" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>(){context}, TaskState.PAUSED))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-warning" Name="IconName.Pause" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context }, TaskState.PAUSED))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
                     @if (stoppableTaskStates.Contains(context.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Stop}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-danger" Name="IconName.Stop" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>(){context}, TaskState.STOP))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-danger" Name="IconName.Stop" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context }, TaskState.STOP))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
@@ -218,7 +238,7 @@
                     @if (deletableTaskStates.Contains(context.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowDeleteModal(new List<TaskInfoDto>(){context}))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowDeleteModal(new List<TaskInfoDto>() { context }))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
@@ -252,6 +272,9 @@
 
     private IList<TaskInfoDto> SelectedTasks = [];
 
+    private TaskInfoDto? hoveredTask;
+    private string cardPositionStyle = string.Empty;
+
     private readonly IList<TaskState> runnableTaskStates = new List<TaskState>() { TaskState.INIT, TaskState.PAUSED };
     private readonly IList<TaskState> pauseableTaskStates = new List<TaskState>() { TaskState.RUN };
     private readonly IList<TaskState> stoppableTaskStates = new List<TaskState>() { TaskState.RUN };
@@ -280,6 +303,19 @@
     private bool IsBulkStopEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => stoppableTaskStates.Contains(task.State));
     private bool isBulkDeleteEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => deletableTaskStates.Contains(task.State));
     private bool isBulkActionEnabled => isBulkDeleteEnabled || IsBulkPauseEnabled || IsBulkRunEnabled || IsBulkStopEnabled;
+
+    private async Task OnInfoMouseOver(TaskInfoDto task, MouseEventArgs e)
+    {
+        hoveredTask = task;
+        cardPositionStyle = $"left: {e.ClientX}px; top: {e.ClientY - 80}px;";
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task OnInfoMouseOut()
+    {
+        hoveredTask = null;
+        await InvokeAsync(StateHasChanged);
+    }
 
     private async Task RefreshViewAsync()
     {

@@ -15,7 +15,7 @@ namespace FrontEASE.Domain.Entities.Tasks.Configs
             AvailableModules = [];
 
             Name = string.Empty;
-            InitMessage = string.Empty;
+            InitialMessage = string.Empty;
         }
 
         #region Navigation
@@ -36,7 +36,7 @@ namespace FrontEASE.Domain.Entities.Tasks.Configs
         public bool FeedbackFromSolution { get; set; }
         public int MaxContextSize { get; set; }
         public string? SystemMessage { get; set; }
-        public string InitMessage { get; set; }
+        public string InitialMessage { get; set; }
 
         #endregion
     }

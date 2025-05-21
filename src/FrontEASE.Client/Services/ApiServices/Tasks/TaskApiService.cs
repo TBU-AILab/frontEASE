@@ -29,9 +29,12 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
 
         #region Load
 
-        public async Task<TaskDto?> LoadTask(Guid taskID)
+        public async Task<TaskDto?> LoadTask(Guid taskID, bool simple)
         {
-            var url = $"{TasksControllerConstants.BaseUrl}/{taskID}";
+            var url = simple ?
+                $"{TasksControllerConstants.BaseUrl}/{taskID}/{TasksControllerConstants.SimpleMode}" :
+                $"{TasksControllerConstants.BaseUrl}/{taskID}";
+
             var response = await _client.GetAsync(url);
             if (response.StatusCode != HttpStatusCode.OK)
             {

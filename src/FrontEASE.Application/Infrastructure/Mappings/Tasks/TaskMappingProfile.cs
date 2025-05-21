@@ -54,7 +54,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
                 .ForMember(x => x.FeedbackFromSolution, cd => cd.MapFrom(map => map.Config.FeedbackFromSolution))
                 .ForMember(x => x.MaxContextSize, cd => cd.MapFrom(map => map.Config.MaxContextSize))
                 .ForMember(x => x.SystemMessage, cd => cd.MapFrom(map => map.Config.SystemMessage))
-                .ForMember(x => x.InitialMessage, cd => cd.MapFrom(map => map.Config.InitMessage))
+                .ForMember(x => x.InitialMessage, cd => cd.MapFrom(map => map.Config.InitialMessage))
 
                 .ForMember(x => x.RepeatedMessage, cd => cd.MapFrom(map => map.Config.RepeatedMessage))
                 .ForMember(x => x.Modules, cd => cd.MapFrom(map => map.Config.Modules))
@@ -65,7 +65,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
                 .ForMember(x => x.FeedbackFromSolution, cd => cd.MapFrom(map => map.Config.FeedbackFromSolution))
                 .ForMember(x => x.MaxContextSize, cd => cd.MapFrom(map => map.Config.MaxContextSize))
                 .ForMember(x => x.SystemMessage, cd => cd.MapFrom(map => map.Config.SystemMessage))
-                .ForMember(x => x.InitialMessage, cd => cd.MapFrom(map => map.Config.InitMessage))
+                .ForMember(x => x.InitialMessage, cd => cd.MapFrom(map => map.Config.InitialMessage))
 
                 .ForMember(x => x.Author, cd => cd.MapFrom(map => map.Members.Single(x => x.Id == map.AuthorID.ToString()).Email))
                 .ForMember(x => x.RepeatedMessage, cd => cd.MapFrom(map => map.Config.RepeatedMessage))
