@@ -48,6 +48,13 @@ namespace FrontEASE.Application.AppServices.Tasks
             return taskDto;
         }
 
+        public async Task<TaskDto> LoadSimple(Guid id)
+        {
+            var taskEntity = await _taskService.LoadSimple(id);
+            var taskDto = _mapper.Map<TaskDto>(taskEntity);
+            return taskDto;
+        }
+
         public async Task<TaskDto> Refresh(TaskDto task)
         {
             var taskEntity = _mapper.Map<Domain.Entities.Tasks.Task>(task);

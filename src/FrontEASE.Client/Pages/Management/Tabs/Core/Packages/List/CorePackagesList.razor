@@ -44,7 +44,7 @@ else
                                 @foreach (var Package in GlobalPreferences.CorePackages.Where(x => !x.System))
                                 {
                                     <Column ColumnSize="ColumnSize.Is3.OnWidescreen.Is4.OnTablet">
-                                        <CascadingValue Value="@Package">
+                                        <CascadingValue Value="@Package" >
                                             <CorePackageListItem />
                                         </CascadingValue>
                                     </Column>
@@ -83,7 +83,7 @@ else
                             @foreach (var Package in GlobalPreferences.CorePackages.Where(x => x.System))
                             {
                                 <Column ColumnSize="ColumnSize.Is3.OnWidescreen.Is4.OnTablet">
-                                    <CascadingValue Value="@Package">
+                                    <CascadingValue Value="@Package" >
                                         <CorePackageListItem />
                                     </CascadingValue>
                                 </Column>

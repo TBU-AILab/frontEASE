@@ -368,6 +368,10 @@ a, .btn-link {
     padding: 0 !important;
 }
 
+.top-layer {
+    z-index: 1500 !important;
+}
+
 .rounded-top-right-1 {
     border-top-right-radius: var(--bs-border-radius) !important;
 }

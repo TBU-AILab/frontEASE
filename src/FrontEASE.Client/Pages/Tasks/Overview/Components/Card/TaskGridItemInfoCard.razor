@@ -1,0 +1,55 @@
+﻿@inject IMapper mapper
+@inject IUIService uiService
+@inject ITaskApiService taskApiService
+
+<Container Fluid Class="border-custom-light">
+    <Row>
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Card Margin="Margin.Is3.FromBottom" Border="Border.Is2.Rounded" Overflow="Overflow.Hidden" Class="border-custom-light">
+                @if (isTaskInfoLoading)
+                {
+                    <ContentLoadSpinner Margins="Margin.Is3" />
+                }
+                else
+                {
+                    <Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary">
+                        <CascadingValue Value="@TaskData">
+                            <TaskGridItemInfoCardHeader />
+                            <TaskGridItemInfoCardBody />
+                        </CascadingValue>
+                    </Row>
+                }
+
+            </Card>
+        </Column>
+    </Row>
+</Container>
+
+@code {
+    [Parameter]
+    public TaskInfoDto TaskInfo { get; set; } = new();
+
+    private bool isTaskInfoLoading;
+    private TaskDto TaskData = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var loadTaskInfoTask = Task.CompletedTask;
+
+        isTaskInfoLoading = true;
+        loadTaskInfoTask = LoadTask();
+
+        await Task.WhenAll(loadTaskInfoTask);
+        isTaskInfoLoading = false;
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LoadTask()
+    {
+        var loaded = await taskApiService.LoadTask(TaskInfo.ID, true);
+        if (loaded is not null)
+        {
+            mapper.Map(loaded, TaskData);
+        }
+    }
+}

@@ -1,4 +1,5 @@
 ﻿using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
+using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using System.Text.Json.Serialization;
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Info
@@ -13,5 +14,8 @@ namespace FrontEASE.DataContracts.Models.Core.Tasks.Info
 
         [JsonPropertyName("task_config")]
         public TaskConfigFullCoreDto? TaskConfig { get; set; }
+
+        [JsonPropertyName("task_modules")]
+        public IList<TaskModuleCoreDto>? TaskModules { get; set; }
     }
 }

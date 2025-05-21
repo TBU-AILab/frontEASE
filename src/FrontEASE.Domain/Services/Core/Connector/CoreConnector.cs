@@ -8,7 +8,6 @@ using FrontEASE.DataContracts.Models.Core.Tasks.Info;
 using FrontEASE.Domain.Entities.Management.Core.Packages;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Infrastructure.Settings.App;
-using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;

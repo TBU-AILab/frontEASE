@@ -26,7 +26,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs
             AvailableModules = [];
 
             Name = string.Empty;
-            InitMessage = string.Empty;
+            InitialMessage = string.Empty;
             SystemMessage = string.Empty;
 
             MaxContextSize = 100;
@@ -132,10 +132,10 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs
         /// <summary>
         /// Preset - initial user message
         /// </summary>
-        [Resource($"{nameof(TaskConfigDto)}.{nameof(InitMessage)}")]
+        [Resource($"{nameof(TaskConfigDto)}.{nameof(InitialMessage)}")]
         [RequiredValidation<TaskConfigDto>]
         [StringLengthValidation(4, 8192)]
-        public string InitMessage { get; set; }
+        public string InitialMessage { get; set; }
 
         #endregion
     }

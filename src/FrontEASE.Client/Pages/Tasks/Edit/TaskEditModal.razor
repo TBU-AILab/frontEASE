@@ -5,7 +5,7 @@
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
 
-<CascadingValue Value="Operation">
+<CascadingValue Value="Operation" >
     <Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@(async (e) => await OnModalClosing(e))" Class="modal-dialog-wide" Border="Border.Rounded">
         @if (isModalVisible)
         {
@@ -21,9 +21,9 @@
                 }
                 else
                 {
-                    <CascadingValue Value="Task">
-                        <CascadingValue Value="TaskMetadata">
-                            <CascadingValue Value="Modal">
+                    <CascadingValue Value="Task" >
+                        <CascadingValue Value="TaskMetadata" >
+                            <CascadingValue Value="Modal" >
 
                                 <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}{(string.IsNullOrWhiteSpace(Task.Config?.Name) ? string.Empty : $" - {Task.Config.Name}")}")" />
 
@@ -36,7 +36,7 @@
                                                              ValidateOnLoad="false"
                                                              EditContext="EditContext"
                                                              HandlerType="ValidationHandlerType.DataAnnotation">
-                                                    <CascadingValue Value="EditContext">
+                                                    <CascadingValue Value="EditContext" >
                                                         <CascadingValue Value="Validations">
                                                             <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
                                                                 <TaskSubitemsDataFormSection />
@@ -178,7 +178,7 @@
         }
         else
         {
-            var opened = await taskApiService.LoadTask(TaskInfo.ID);
+            var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
             if (opened is not null)
             {
                 mapper.Map(opened, Task);
