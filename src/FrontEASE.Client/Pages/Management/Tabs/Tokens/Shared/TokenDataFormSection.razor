@@ -4,7 +4,7 @@
 
 <Fields>
     <Validation>
-        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
+        <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6.OnWidescreen)">
             <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Name)))" RequiredIndicator>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
@@ -20,7 +20,7 @@
     </Validation>
 
     <Validation>
-        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
+        <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6.OnWidescreen)">
             <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Token)))" RequiredIndicator>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
@@ -78,12 +78,11 @@
 </Fields>
 
 @code {
-
-    [CascadingParameter]
-    public UserPreferenceTokenOptionDto TokenModel { get; set; } = new();
-
     [CascadingParameter]
     public IList<TaskModuleNoValidationDto> ConnectorTypes { get; set; } = [];
+
+    [Parameter]
+    public UserPreferenceTokenOptionDto TokenModel { get; set; } = new();
 
     [Parameter]
     public DataOperation Operation { get; set; }

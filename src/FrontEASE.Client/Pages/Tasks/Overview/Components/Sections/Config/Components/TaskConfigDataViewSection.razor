@@ -26,14 +26,14 @@
                     </Column>
                 }
 
-                @if (!string.IsNullOrEmpty(Task.Config.InitMessage))
+                @if (!string.IsNullOrEmpty(Task.Config.InitialMessage))
                 {
                     <Column ColumnSize="ColumnSize.IsFull">
                         <Text>
-                            @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.FIELD))):
+                            @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitialMessage), PropertyDisplayResourceType.FIELD))):
                         </Text>
                         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                            @($" \"{Task.Config.InitMessage}\"")
+                            @($" \"{Task.Config.InitialMessage}\"")
                         </Span>
                     </Column>
                 }

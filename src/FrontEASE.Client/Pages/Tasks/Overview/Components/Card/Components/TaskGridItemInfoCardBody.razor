@@ -1,0 +1,38 @@
+﻿@inject IResourceHandler resourceHandler
+
+<Container Fluid>
+    <Row Class="gx-0 margin-background-offset-top-1">
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Text>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.CurrentIteration), PropertyDisplayResourceType.FIELD))):
+            </Text>
+            <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Info">
+                @($" {TaskData.CurrentIteration}")
+            </Span>
+        </Column>
+
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Text>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsValid), PropertyDisplayResourceType.FIELD))):
+            </Text>
+            <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Success">
+                @($" {TaskData.IterationsValid}")
+            </Span>
+        </Column>
+
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Text>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsInvalidConsecutive), PropertyDisplayResourceType.FIELD))):
+            </Text>
+            <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Danger">
+                @($" {TaskData.IterationsInvalidConsecutive}")
+            </Span>
+        </Column>
+    </Row>
+</Container>
+
+
+@code {
+    [CascadingParameter]
+    public TaskDto TaskData { get; set; } = new();
+}

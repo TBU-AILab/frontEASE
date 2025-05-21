@@ -9,7 +9,7 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
     public interface ITaskApiService
     {
         #region Load
-        Task<TaskDto?> LoadTask(Guid taskID);
+        Task<TaskDto?> LoadTask(Guid taskID, bool simple);
         Task<IList<TaskInfoDto>> LoadTaskInfos(TaskFilterActionRequestDto? filter);
         Task<IList<TaskStatusDto>> LoadTaskStatuses();
         #endregion

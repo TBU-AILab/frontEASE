@@ -19,8 +19,8 @@ else
             @foreach (var Module in TaskModules.OrderBy(x => x.PackageType))
             {
                 <Column ColumnSize="ColumnSize.Is3.OnWidescreen.Is4.OnTablet">
-                    <CascadingValue Value="@Module">
-                        <CoreModuleListItem />
+                    <CascadingValue Value="@Module" >
+                        <CoreModuleListItem/>
                     </CascadingValue>
                 </Column>
             }

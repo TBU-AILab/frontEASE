@@ -12,6 +12,7 @@
         public const string EnumLongNames = "enum_long_names";
         public const string EnumOptions = "enum_options";
         public const string Default = "default";
+        public const string Value = "value";
         public const string Readonly = "readonly";
         public const string Required = "required";
     }

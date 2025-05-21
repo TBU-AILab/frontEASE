@@ -157,7 +157,7 @@
 
     private async Task FillInitMessageValue()
     {
-        Task.Config.InitMessage = ParamOption.Default?.StringValue ?? string.Empty;
+        Task.Config.InitialMessage = ParamOption.Default?.StringValue ?? string.Empty;
         await uiService.CallRequestRefreshAsync();
     }
 

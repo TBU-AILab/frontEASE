@@ -406,7 +406,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Tests), PropertyDisplayResourceType.FIELD), Value = "Tests" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.StoppingConditions), PropertyDisplayResourceType.FIELD), Value = "Stopping conditions" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.RepeatedMessage), PropertyDisplayResourceType.FIELD), Value = "Repeated message" },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.FIELD), Value = "Initial message" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitialMessage), PropertyDisplayResourceType.FIELD), Value = "Initial message" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.FIELD), Value = "System message" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.FeedbackFromSolution), PropertyDisplayResourceType.FIELD), Value = "Get feedback from solution" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD), Value = "Max. context size (messages)" },
@@ -545,7 +545,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* TaskConfigDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "Name" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is system message" },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitMessage), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is initial message" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitialMessage), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is initial message" },
 
                 /* TaskConfigRepeatedMessageItemDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.PLACEHOLDER), Value = "This is repeating message" },

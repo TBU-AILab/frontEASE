@@ -122,7 +122,7 @@
         await ResetCancellationToken();
         await ModalShow();
 
-        var opened = await taskApiService.LoadTask(TaskInfo.ID);
+        var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
         if (opened is not null)
         {
             mapper.Map(opened, Task);
@@ -144,7 +144,7 @@
                     TaskMetadata.ReloadInProgress = true;
                     await uiService.CallRequestRefreshAsync();
 
-                    var taskInfoNew = await taskApiService.LoadTask(TaskInfo.ID);
+                    var taskInfoNew = await taskApiService.LoadTask(TaskInfo.ID, false);
                     if (taskInfoNew is not null)
                     {
                         mapper.Map(taskInfoNew, Task);

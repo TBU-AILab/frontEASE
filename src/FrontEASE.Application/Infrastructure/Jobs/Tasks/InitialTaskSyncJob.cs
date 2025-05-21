@@ -77,7 +77,16 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 
                     matchingTask.Messages = _mapper.Map<IList<TaskMessage>>(coreTask.TaskData?.Messages);
                     matchingTask.Solutions = _mapper.Map<IList<TaskSolution>>(coreTask.TaskData?.Solutions);
+
+                    coreTask.TaskConfig?.Modules?.Clear();
                     matchingTask.Config = _mapper.Map<TaskConfig>(coreTask.TaskConfig);
+
+                    var author = authorsMatching.FirstOrDefault(x => x.Email!.Equals(coreTask.TaskConfig?.Author, StringComparison.InvariantCultureIgnoreCase)) ?? superadmins.FirstOrDefault();
+                    matchingTask.AuthorID = Guid.Parse(author!.Id);
+                    if (!matchingTask.Members.Any(x => x.Id == author!.Id))
+                    {
+                        matchingTask.Members.Add(author);
+                    }
                 }
             }
         }
@@ -85,7 +94,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
         private async Task InsertTasksMissingInDatabase(IList<TaskFullCoreDto> coreTaskData, IList<TaskModuleCoreDto> moduleOptions)
         {
             var taskIDsInDatabase = (await _taskRepository.LoadAllWhere(null, new TasksQuery())).Select(x => x.ID).ToList();
-            var tasksToAdd = coreTaskData.Where(x => !taskIDsInDatabase.Contains(x.TaskInfo!.ID!.Value));
+            var tasksToAdd = coreTaskData.Where(x => !taskIDsInDatabase.Contains(x.TaskInfo!.ID!.Value)).ToList();
 
             var authorsToBind = tasksToAdd.Select(x => x.TaskConfig?.Author?.ToUpper()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
             var superadmins = await _userRepository.LoadWhere(x => x.UserRole!.RoleId == _appSettings!.AuthSettings!.Defaults!.Roles!.SuperadminGuid.ToString());
@@ -98,10 +107,11 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                 var newTask = _mapper.Map<Domain.Entities.Tasks.Task>(task.TaskInfo);
                 newTask.Messages = _mapper.Map<IList<TaskMessage>>(task.TaskData?.Messages);
                 newTask.Solutions = _mapper.Map<IList<TaskSolution>>(task.TaskData?.Solutions);
+
                 newTask.Config = _mapper.Map<TaskConfig>(task.TaskConfig);
+                newTask.Config.Modules.Clear();
 
                 var author = authorsMatching.FirstOrDefault(x => x.Email!.Equals(task.TaskConfig?.Author, StringComparison.InvariantCultureIgnoreCase)) ?? superadmins.FirstOrDefault();
-
                 newTask.AuthorID = Guid.Parse(author!.Id);
                 newTask.Members.Add(author);
 

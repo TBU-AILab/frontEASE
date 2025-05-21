@@ -12,8 +12,8 @@
 @if (isInitialized)
 {
     <ThemeProvider Theme="@uiManager.Theme">
-        <CascadingValue Value="LoggedUser">
-            <CascadingValue Value="Options">
+        <CascadingValue Value="LoggedUser" >
+            <CascadingValue Value="Options" >
                 <Router AppAssembly="@typeof(App).Assembly">
 
                     <Found Context="routeData">

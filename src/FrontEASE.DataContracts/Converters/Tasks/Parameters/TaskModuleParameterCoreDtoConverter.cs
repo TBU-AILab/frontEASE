@@ -109,6 +109,64 @@ namespace FrontEASE.DataContracts.Converters.Tasks.Parameters
                 dto.Default = defaultDto;
             }
 
+
+            //if (root.TryGetProperty(ParameterDtoConstants.Value, out JsonElement valueElement))
+            //{
+            //    var valueDto = new TaskModuleParameterValueCoreDto();
+            //    if (valueElement.ValueKind == JsonValueKind.Null)
+            //    {
+            //        valueDto = null;
+            //    }
+            //    else if (valueElement.ValueKind == JsonValueKind.Number)
+            //    {
+            //        if (valueElement.TryGetInt32(out int intValue))
+            //        {
+            //            valueDto.IntValue = intValue;
+            //        }
+            //        else if (valueElement.TryGetDouble(out double doubleValue))
+            //        {
+            //            valueDto.FloatValue = (float)doubleValue;
+            //        }
+            //    }
+            //    else if (valueElement.ValueKind == JsonValueKind.String)
+            //    {
+            //        valueDto.StringValue = valueElement.GetString();
+            //    }
+            //    else if (valueElement.ValueKind == JsonValueKind.True ||
+            //             valueElement.ValueKind == JsonValueKind.False)
+            //    {
+            //        valueDto.BoolValue = valueElement.GetBoolean();
+            //    }
+            //    else if (valueElement.ValueKind == JsonValueKind.Array)
+            //    {
+            //        var listOption = new TaskModuleParameterListOptionCoreDto();
+            //        foreach (var item in valueElement.EnumerateArray())
+            //        {
+            //            var listItem = new Dictionary<string, TaskModuleParameterCoreDto>();
+            //            foreach (var property in item.EnumerateObject())
+            //            {
+            //                var parameter = JsonSerializer.Deserialize<TaskModuleParameterCoreDto>(property.Value.GetRawText(), options);
+            //                if (parameter is not null)
+            //                {
+            //                    listItem[property.Name] = parameter;
+            //                }
+            //            }
+            //            if (listItem.Count > 0)
+            //            {
+            //                listOption.ParameterValues.Add(listItem);
+            //            }
+            //        }
+            //        valueDto.ListValue = listOption.ParameterValues.Count > 0 ? listOption : null;
+            //    }
+            //    else if (valueElement.ValueKind == JsonValueKind.Object)
+            //    {
+            //        valueDto.EnumValue = JsonSerializer.Deserialize<TaskModuleParameterEnumOptionCoreDto>(valueElement.GetRawText(), options);
+            //    }
+
+            //    dto.Value = valueDto;
+            //}
+
+
             if (root.TryGetProperty(ParameterDtoConstants.Readonly, out JsonElement readonlyElement) &&
                 (readonlyElement.ValueKind == JsonValueKind.True ||
                  readonlyElement.ValueKind == JsonValueKind.False))
@@ -195,10 +253,44 @@ namespace FrontEASE.DataContracts.Converters.Tasks.Parameters
                     writer.WriteNullValue();
                 }
             }
-            else
-            {
-                writer.WriteNullValue();
-            }
+
+            //writer.WritePropertyName(ParameterDtoConstants.Value);
+            //if (dto.Value is not null)
+            //{
+            //    if (dto.Value.FloatValue.HasValue)
+            //    {
+            //        writer.WriteNumberValue(dto.Value.FloatValue.Value);
+            //    }
+            //    else if (dto.Value.IntValue.HasValue)
+            //    {
+            //        writer.WriteNumberValue(dto.Value.IntValue.Value);
+            //    }
+            //    else if (!string.IsNullOrEmpty(dto.Value.StringValue))
+            //    {
+            //        writer.WriteStringValue(dto.Value.StringValue);
+            //    }
+            //    else if (dto.Value.BoolValue.HasValue)
+            //    {
+            //        writer.WriteBooleanValue(dto.Value.BoolValue.Value);
+            //    }
+            //    else if (dto.Value.ListValue is not null)
+            //    {
+            //        JsonSerializer.Serialize(writer, dto.Value.ListValue.ParameterValues, options);
+            //    }
+            //    else if (dto.Value.EnumValue is not null)
+            //    {
+            //        JsonSerializer.Serialize(writer, dto.Value.EnumValue, options);
+            //    }
+            //    else
+            //    {
+            //        writer.WriteNullValue();
+            //    }
+            //}
+
+            //else
+            //{
+            //    writer.WriteNullValue();
+            //}
 
             if (dto.Readonly.HasValue)
                 writer.WriteBoolean(ParameterDtoConstants.Readonly, dto.Readonly.Value);
