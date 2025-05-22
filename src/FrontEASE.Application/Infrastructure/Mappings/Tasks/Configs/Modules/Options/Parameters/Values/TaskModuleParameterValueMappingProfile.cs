@@ -35,6 +35,11 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Op
                 .ForMember(x => x.EnumValue, cd => cd.MapFrom(map => map.EnumValue))
                 .ForMember(x => x.ListValue, cd => cd.MapFrom(map => map.ListValue))
                 .ReverseMap();
+
+            CreateMap<TaskModuleParameterValueEntity, TaskModuleParameterValue>()
+                .ForMember(x => x.EnumValue, cd => cd.MapFrom(map => map.EnumValue))
+                .ForMember(x => x.ListValue, cd => cd.MapFrom(map => map.ListValue))
+                .ReverseMap();
         }
 
         private void CreateMapsEntities()

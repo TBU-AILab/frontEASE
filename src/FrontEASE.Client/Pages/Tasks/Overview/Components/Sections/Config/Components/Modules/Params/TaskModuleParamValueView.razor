@@ -22,106 +22,116 @@
             </Text>
         }
 
-        @switch (parameterType)
+        @if(ParamValue.Value is not null)
         {
-            case ParameterType.STR:
-                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                    @($" {ParamValue.Value!.StringValue}")
-                </Span>
-                break;
-
-            case ParameterType.MARKDOWN:
-                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                    @($" {(MarkupString)Markdig.Markdown.ToHtml(ParamValue.Value!.StringValue ?? string.Empty)}")
-                </Span>
-                break;
-
-            case ParameterType.INT:
-                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                    @($" {ParamValue.Value!.IntValue}")
-                </Span>
-                break;
-
-            case ParameterType.TIME:
-                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                    @($"{ParameterTimeHelper.FormatTimeValueForDisplay(ParamValue.Value?.IntValue, resourceHandler)}")
-                </Span>
-                break;
-
-            case ParameterType.FLOAT:
-                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                    @($" {Math.Round((decimal)ParamValue.Value!.FloatValue!, 4)}")
-                </Span>
-                break;
-
-            case ParameterType.ENUM:
-                @if (!string.IsNullOrWhiteSpace(ParamValue.Value!.EnumValue?.StringValue))
-                {
-                    var longName = (string?)null;
-                    var longNameIndex = ParamOption?.EnumOptions?.Select(x => x.StringValue).ToList().FindIndex(x => x == ParamValue!.Value!.EnumValue!.StringValue);
-                    @if (ParamOption?.EnumLongNames?.Count > 0 && longNameIndex >= 0)
-                    {
-                        longName = ParamOption.EnumLongNames?.ElementAtOrDefault(longNameIndex.Value);
-                    }
-
+            @switch (parameterType)
+            {
+                case ParameterType.STR:
                     <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                        @(longName ?? ParamValue.Value!.EnumValue!.StringValue)
+                        @($" {ParamValue.Value!.StringValue}")
                     </Span>
-                }
-                else if (ParamValue.Value!.EnumValue?.ModuleValue is not null)
-                {
-                    var moduleType = ParamValue.Value!.EnumValue?.ModuleValue.PackageType;
-                    var moduleOptions = ParamOption?.EnumOptions?.Select(x => x.ModuleValue).ToList();
+                    break;
 
-                    <TaskModuleDataViewSection ModuleOptions="@moduleOptions" Module="@ParamValue.Value!.EnumValue!.ModuleValue" ModuleName="@parameterName" />
-                }
-                break;
+                case ParameterType.MARKDOWN:
+                    <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                        @($" {(MarkupString)Markdig.Markdown.ToHtml(ParamValue.Value!.StringValue ?? string.Empty)}")
+                    </Span>
+                    break;
 
-            case ParameterType.BOOL:
-                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                    @if (ParamValue.Value!.BoolValue is null)
+                case ParameterType.INT:
+                    <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                        @($" {ParamValue.Value!.IntValue}")
+                    </Span>
+                    break;
+
+                case ParameterType.TIME:
+                    <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                        @($"{ParameterTimeHelper.FormatTimeValueForDisplay(ParamValue.Value?.IntValue, resourceHandler)}")
+                    </Span>
+                    break;
+
+                case ParameterType.FLOAT:
+                    <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                        @($" {Math.Round((decimal)ParamValue.Value!.FloatValue!, 4)}")
+                    </Span>
+                    break;
+
+                case ParameterType.ENUM:
+                    @if (!string.IsNullOrWhiteSpace(ParamValue.Value!.EnumValue?.StringValue))
                     {
-                        @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
-                    }
-                    else
-                    {
-                        @(ParamValue.Value!.BoolValue!.Value ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))
-                    }
-                </Span>
-                break;
-
-
-            case ParameterType.LIST:
-                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                    @if (!(ParamValue.Value!.ListValue?.ParameterValues.Count > 0))
-                    {
-                        @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
-                    }
-                </Span>
-
-                <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Style="@($"height: 2px !important;")" />
-                <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Style="@($"height: 2px !important;")" />
-
-                foreach (var listItem in ParamValue.Value!.ListValue!.ParameterValues)
-                {
-                    @foreach (var paramItem in listItem.ParameterItems)
-                    {
-                        if (paramItem.Value is not null)
+                        var longName = (string?)null;
+                        var longNameIndex = ParamOption?.EnumOptions?.Select(x => x.StringValue).ToList().FindIndex(x => x == ParamValue!.Value!.EnumValue!.StringValue);
+                        @if (ParamOption?.EnumLongNames?.Count > 0 && longNameIndex >= 0)
                         {
-                            var paramOption = ParamOption?.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems.SingleOrDefault(x => x.ShortName == paramItem.ShortName);
-                            if (paramOption is not null)
+                            longName = ParamOption.EnumLongNames?.ElementAtOrDefault(longNameIndex.Value);
+                        }
+
+                        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                            @(longName ?? ParamValue.Value!.EnumValue!.StringValue)
+                        </Span>
+                    }
+                    else if (ParamValue.Value!.EnumValue?.ModuleValue is not null)
+                    {
+                        var moduleType = ParamValue.Value!.EnumValue?.ModuleValue.PackageType;
+                        var moduleOptions = ParamOption?.EnumOptions?.Select(x => x.ModuleValue).ToList();
+
+                        <TaskModuleDataViewSection ModuleOptions="@moduleOptions" Module="@ParamValue.Value!.EnumValue!.ModuleValue" ModuleName="@parameterName" />
+                    }
+                    break;
+
+                case ParameterType.BOOL:
+                    <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                        @if (ParamValue.Value!.BoolValue is null)
+                        {
+                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
+                        }
+                        else
+                        {
+                            @(ParamValue.Value!.BoolValue!.Value ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))
+                        }
+                    </Span>
+                    break;
+
+
+                case ParameterType.LIST:
+                    <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                        @if (!(ParamValue.Value!.ListValue?.ParameterValues.Count > 0))
+                        {
+                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
+                        }
+                    </Span>
+
+                    <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small"/>
+                    <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small"/>
+
+                    foreach (var listItem in ParamValue.Value!.ListValue!.ParameterValues)
+                    {
+                        @foreach (var paramItem in listItem.ParameterItems)
+                        {
+                            if (paramItem.Value is not null)
                             {
-                                <Fields>
-                                    <TaskModuleParamValueView Module="null" ParamOption="paramOption" ParamValue="paramItem" />
-                                </Fields>
+                                var paramOption = ParamOption?.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems.SingleOrDefault(x => x.ShortName == paramItem.ShortName);
+                                if (paramOption is not null)
+                                {
+                                    <Fields>
+                                        <TaskModuleParamValueView Module="null" ParamOption="paramOption" ParamValue="paramItem" />
+                                    </Fields>
+                                }
                             }
                         }
-                    }
 
-                    <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Style="@($"height: 2px !important;")" />
-                }
-                break;
+                        <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small"/>
+                    }
+                    break;
+            }
         }
+        else
+        {
+            <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
+            </Span>
+        }
+     
     </Field>
 }
 

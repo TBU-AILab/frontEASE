@@ -8,7 +8,7 @@
         <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<TaskMessageDto>()))" />
     </Container>
 
-    <Divider Class="divider-section bg-custom-light" Style="@($"height: 2px !important;")" Shadow="Shadow.Small" />
+    <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
 
     <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
         <Row>
@@ -24,10 +24,10 @@
                                     <SystemMessageView />
                                     break;
                                 case MessageRole.USER:
-                                    <UserMessageView />
+                                    <UserMessageView IsFullWidth="false"/>
                                     break;
                                 case MessageRole.AI:
-                                    <AssistantMessageView />
+                                    <AssistantMessageView IsSelectable="true" IsFullWidth="false"/>
                                     break;
                             }
                         </Column>

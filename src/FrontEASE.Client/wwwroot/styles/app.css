@@ -429,7 +429,7 @@ a, .btn-link {
     border-color: var(--b-theme-background-info) !important;
 }
 
-.alignment-center{
+.alignment-center {
     justify-items: center;
     align-items: center;
     justify-content: center;
@@ -611,12 +611,26 @@ a, .btn-link {
     border-top: 0 !important;
 }
 
+.divider-main-thin {
+    height: 4px !important;
+    opacity: 1;
+    border-top: 0 !important;
+}
+
 .divider-main-shortened {
     width: 98%;
     margin-left: 1%;
     height: 4px !important;
     opacity: 1;
     border-top: 0 !important;
+}
+
+.divider-section {
+    width: 98%;
+    margin-left: 1%;
+    height: 2px !important;
+    border-top: 0 !important;
+    opacity: 1;
 }
 
 .btn-sized {
@@ -656,14 +670,6 @@ a, .btn-link {
 
 .picker-small {
     max-width: 6rem;
-}
-
-.divider-section {
-    width: 98%;
-    margin-left: 1%;
-    height: 2px !important;
-    border-top: 0 !important;
-    opacity: 1;
 }
 
 .checkbox-container {

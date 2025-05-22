@@ -5,8 +5,8 @@
 
 <Container Fluid>
     <Row>
-        <Column ColumnSize="ColumnSize.Is8.OnWidescreen.Is10.OnMobile" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
-            <Card Border="Border.Rounded" Class="cursor-pointer border-custom-light" @onclick="(async () => await SelectMessageSolution())">
+        <Column ColumnSize="@(IsFullWidth ? ColumnSize.IsFull : ColumnSize.Is8.OnWidescreen.Is10.OnMobile)" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
+            <Card Border="Border.Rounded" Class="@($"{(IsSelectable ? "cursor-pointer" : string.Empty)} border-custom-light")" @onclick="(async () => await SelectMessageSolution())">
                 <MessageViewHeader />
 
                 <CardBody Border="Border.Is0"
@@ -42,16 +42,29 @@
     public TaskDto Task { get; set; } = new();
 
     [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
     [CascadingParameter]
     public TaskMessageDto Message { get; set; } = new();
 
+    [Parameter]
+    public bool IsSelectable { get; set; }
+
+    [Parameter]
+    public bool IsFullWidth { get; set; }
+
     private async Task SelectMessageSolution()
     {
-        TaskMetadata.SelectedMessageID =
-        TaskMetadata.SelectedMessageID == Message.ID ? null : Message.ID;
+        if (!IsSelectable)
+        {
+            return;
+        }
+        else
+        {
+            TaskMetadata.SelectedMessageID =
+            TaskMetadata.SelectedMessageID == Message.ID ? null : Message.ID;
 
-        await uiService.CallRequestRefreshAsync();
+            await uiService.CallRequestRefreshAsync();
+        }
     }
 }

@@ -3,6 +3,7 @@ using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using FrontEASE.DataContracts.Models.Core.Tasks.Info;
 using FrontEASE.Domain.DataQueries.Tasks;
 using FrontEASE.Domain.Entities.Tasks.Configs;
+using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
 using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Domain.Infrastructure.Settings.App;
@@ -46,33 +47,43 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
         }
 
 
-        private async Task DeleteTasksMissingInCore(IList<Guid> coreTaskIDs)
+        private async Task DeleteTasksMissingInCore(PerformContext context, IEnumerable<Guid> coreTaskIDs)
         {
-            var tasksToDelete = await _taskRepository.LoadAllWhere(x => !x.IsDeleted && !coreTaskIDs.Contains(x.ID), new TasksQuery());
+            context.WriteLine($"Delete executing...");
+
+            var tasksToDelete = await _taskRepository.LoadAllWhere(x => !coreTaskIDs.Contains(x.ID), new TasksQuery());
             await _taskRepository.DeleteRange(tasksToDelete, true, false);
+
+            context.WriteLine($"Deleted {tasksToDelete.Count} items from the database.");
         }
 
-        private async Task UpdateTasksExistingInBoth(IList<TaskFullCoreDto> coreTaskData, IList<Guid> coreTaskIDs, IList<TaskModuleCoreDto> moduleOptions)
+        private async Task UpdateTasksExistingInBoth(PerformContext context, IList<TaskFullCoreDto> coreTaskData, IEnumerable<Guid> coreTaskIDs, IList<TaskModuleCoreDto> moduleOptions)
         {
+            context.WriteLine($"Update executing...");
+
             var query = new TasksQuery()
             {
                 LoadConfig = true,
                 LoadConfigModules = true,
                 LoadConfigRepeatedMessage = true,
                 LoadMessages = true,
-                LoadSolutions = true
+                LoadSolutions = true,
+                IncludeMembers = true,
             };
+
             var existingTasks = await _taskRepository.LoadAllWhere(x => !x.IsDeleted && coreTaskIDs.Contains(x.ID), query);
-            var authorsToBind = coreTaskData.Select(x => x.TaskConfig?.Author?.ToUpper()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+            var authorsToBind = coreTaskData.Select(x => x.TaskConfig?.Author?.ToUpper()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct();
             var superadmins = await _userRepository.LoadWhere(x => x.UserRole!.RoleId == _appSettings!.AuthSettings!.Defaults!.Roles!.SuperadminGuid.ToString());
             var authorsMatching = await _userRepository.LoadWhere(x => !string.IsNullOrWhiteSpace(x.Email) && authorsToBind.Contains(x.Email.ToUpper()));
 
+            var updatesPerformed = 0;
             foreach (var coreTask in coreTaskData)
             {
                 var taskId = coreTask.TaskInfo!.ID!.Value;
                 var matchingTask = existingTasks.FirstOrDefault(x => x.ID == taskId);
                 if (matchingTask is not null)
                 {
+                    ++updatesPerformed;
                     _mapper.Map(coreTask.TaskInfo, matchingTask);
 
                     matchingTask.Messages = _mapper.Map<IList<TaskMessage>>(coreTask.TaskData?.Messages);
@@ -80,6 +91,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 
                     coreTask.TaskConfig?.Modules?.Clear();
                     matchingTask.Config = _mapper.Map<TaskConfig>(coreTask.TaskConfig);
+                    matchingTask.Config.Modules = _mapper.Map<IList<TaskModuleEntity>>(_mapper.Map<IList<TaskModule>>(coreTask.TaskModules));
 
                     var author = authorsMatching.FirstOrDefault(x => x.Email!.Equals(coreTask.TaskConfig?.Author, StringComparison.InvariantCultureIgnoreCase)) ?? superadmins.FirstOrDefault();
                     matchingTask.AuthorID = Guid.Parse(author!.Id);
@@ -89,29 +101,34 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                     }
                 }
             }
+
+            context.WriteLine($"Updated {updatesPerformed} matching items.");
         }
 
-        private async Task InsertTasksMissingInDatabase(IList<TaskFullCoreDto> coreTaskData, IList<TaskModuleCoreDto> moduleOptions)
+        private async Task InsertTasksMissingInDatabase(PerformContext context, IList<TaskFullCoreDto> coreTaskData, IList<TaskModuleCoreDto> moduleOptions)
         {
-            var taskIDsInDatabase = (await _taskRepository.LoadAllWhere(null, new TasksQuery())).Select(x => x.ID).ToList();
-            var tasksToAdd = coreTaskData.Where(x => !taskIDsInDatabase.Contains(x.TaskInfo!.ID!.Value)).ToList();
+            context.WriteLine($"Insert executing...");
 
-            var authorsToBind = tasksToAdd.Select(x => x.TaskConfig?.Author?.ToUpper()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+            var taskIDsInDatabase = (await _taskRepository.LoadAllWhere(null, new TasksQuery())).Select(x => x.ID);
+            var tasksToAdd = coreTaskData.Where(x => !taskIDsInDatabase.Contains(x.TaskInfo!.ID!.Value));
+
+            var authorsToBind = tasksToAdd.Select(x => x.TaskConfig?.Author?.ToUpper()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct();
             var superadmins = await _userRepository.LoadWhere(x => x.UserRole!.RoleId == _appSettings!.AuthSettings!.Defaults!.Roles!.SuperadminGuid.ToString());
             var authorsMatching = await _userRepository.LoadWhere(x => !string.IsNullOrWhiteSpace(x.Email) && authorsToBind.Contains(x.Email.ToUpper()));
 
             /* TODO - mapping */
             var tasksForInsertion = new List<Domain.Entities.Tasks.Task>();
-            foreach (var task in tasksToAdd)
+            foreach (var coreTask in tasksToAdd)
             {
-                var newTask = _mapper.Map<Domain.Entities.Tasks.Task>(task.TaskInfo);
-                newTask.Messages = _mapper.Map<IList<TaskMessage>>(task.TaskData?.Messages);
-                newTask.Solutions = _mapper.Map<IList<TaskSolution>>(task.TaskData?.Solutions);
+                var newTask = _mapper.Map<Domain.Entities.Tasks.Task>(coreTask.TaskInfo);
+                newTask.Messages = _mapper.Map<IList<TaskMessage>>(coreTask.TaskData?.Messages);
+                newTask.Solutions = _mapper.Map<IList<TaskSolution>>(coreTask.TaskData?.Solutions);
 
-                newTask.Config = _mapper.Map<TaskConfig>(task.TaskConfig);
-                newTask.Config.Modules.Clear();
+                coreTask.TaskConfig?.Modules?.Clear();
+                newTask.Config = _mapper.Map<TaskConfig>(coreTask.TaskConfig);
+                newTask.Config.Modules = _mapper.Map<IList<TaskModuleEntity>>(_mapper.Map<IList<TaskModule>>(coreTask.TaskModules));
 
-                var author = authorsMatching.FirstOrDefault(x => x.Email!.Equals(task.TaskConfig?.Author, StringComparison.InvariantCultureIgnoreCase)) ?? superadmins.FirstOrDefault();
+                var author = authorsMatching.FirstOrDefault(x => x.Email!.Equals(coreTask.TaskConfig?.Author, StringComparison.InvariantCultureIgnoreCase)) ?? superadmins.FirstOrDefault();
                 newTask.AuthorID = Guid.Parse(author!.Id);
                 newTask.Members.Add(author);
 
@@ -119,6 +136,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             }
 
             await _taskRepository.InsertRange(tasksForInsertion, false);
+            context.WriteLine($"Inserted {tasksForInsertion.Count} items into the database.");
         }
 
         public async Task Execute(PerformContext context)
@@ -131,22 +149,21 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             {
                 var coreTaskData = (await _coreService.GetTasksFullData()).Where(x => x.TaskInfo?.ID is not null).ToList();
                 var coreTaskOptions = await _coreService.GetModuleTypes();
-                var coreTaskIDs = coreTaskData.Select(x => x.TaskInfo!.ID!.Value).Distinct().ToList();
+                var coreTaskIDs = coreTaskData.Select(x => x.TaskInfo!.ID!.Value).Distinct();
                 var databaseTaskCount = await _taskRepository.LoadTaskCount();
 
                 context.WriteLine($"Syncing {coreTaskData.Count} items from Core with {databaseTaskCount} items in the database.");
-
-                bool updatePerformed = false;
+                var updatePerformed = false;
                 if (databaseTaskCount != 0)
                 {
-                    await DeleteTasksMissingInCore(coreTaskIDs);
+                    await DeleteTasksMissingInCore(context, coreTaskIDs);
                     updatePerformed = true;
                 }
 
                 if (coreTaskData.Count != 0)
                 {
-                    //await UpdateTasksExistingInBoth(coreTaskData, coreTaskIDs, coreTaskOptions);
-                    await InsertTasksMissingInDatabase(coreTaskData, coreTaskOptions);
+                    await UpdateTasksExistingInBoth(context, coreTaskData, coreTaskIDs, coreTaskOptions);
+                    await InsertTasksMissingInDatabase(context, coreTaskData, coreTaskOptions);
                     updatePerformed = true;
                 }
 

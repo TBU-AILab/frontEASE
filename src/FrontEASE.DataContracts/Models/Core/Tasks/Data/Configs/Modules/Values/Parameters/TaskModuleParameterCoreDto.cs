@@ -42,8 +42,8 @@ namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.
         [JsonPropertyName(ParameterDtoConstants.Default)]
         public TaskModuleParameterValueCoreDto? Default { get; set; }
 
-        //[JsonPropertyName(ParameterDtoConstants.Value)]
-        //public TaskModuleParameterValueCoreDto? Value { get; set; }
+        [JsonPropertyName(ParameterDtoConstants.Value)]
+        public TaskModuleParameterValueCoreDto? Value { get; set; }
 
         [JsonPropertyName(ParameterDtoConstants.Readonly)]
         public bool? Readonly { get; set; }

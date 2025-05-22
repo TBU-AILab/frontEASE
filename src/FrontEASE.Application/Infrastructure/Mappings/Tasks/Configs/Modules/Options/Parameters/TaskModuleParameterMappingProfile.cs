@@ -27,6 +27,10 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Op
                 .ForMember(x => x.Default, cd => cd.MapFrom(map => map.Default))
                 .ReverseMap();
 
+            CreateMap<TaskModuleParameter, TaskModuleParameterEntity>()
+                .ForMember(x => x.Value, cd => cd.MapFrom(map => map.Value))
+                .ReverseMap();
+
             CreateMap<TaskModuleParameterEntity, TaskModuleParameterDto>()
                 .ForMember(x => x.Value, cd => cd.MapFrom(map => map.Value))
                 .ReverseMap();
@@ -60,6 +64,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Op
                 .ForMember(x => x.EnumLongNames, cd => cd.MapFrom(map => map.EnumLongNames))
                 .ForMember(x => x.EnumOptions, cd => cd.MapFrom(map => map.EnumOptions))
                 .ForMember(x => x.Default, cd => cd.MapFrom(map => map.Default))
+                .ForMember(x => x.Value, cd => cd.MapFrom(map => map.Value))
                 .ReverseMap();
         }
     }
