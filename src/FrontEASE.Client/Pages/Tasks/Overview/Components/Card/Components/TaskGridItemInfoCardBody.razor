@@ -1,8 +1,8 @@
 ﻿@inject IResourceHandler resourceHandler
 
 <Container Fluid>
-    <Row Class="gx-0 margin-background-offset-top-1">
-        <Column ColumnSize="ColumnSize.IsFull">
+    <Row Class="gx-0 margin-background-offset-top-1" Margin="Margin.Is2.FromTop">
+        <Column ColumnSize="ColumnSize.Is4.OnDesktop">
             <Text>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.CurrentIteration), PropertyDisplayResourceType.FIELD))):
             </Text>
@@ -11,7 +11,7 @@
             </Span>
         </Column>
 
-        <Column ColumnSize="ColumnSize.IsFull">
+        <Column ColumnSize="ColumnSize.Is4.OnDesktop">
             <Text>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsValid), PropertyDisplayResourceType.FIELD))):
             </Text>
@@ -20,7 +20,7 @@
             </Span>
         </Column>
 
-        <Column ColumnSize="ColumnSize.IsFull">
+        <Column ColumnSize="ColumnSize.Is4.OnDesktop">
             <Text>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsInvalidConsecutive), PropertyDisplayResourceType.FIELD))):
             </Text>
@@ -28,6 +28,35 @@
                 @($" {TaskData.IterationsInvalidConsecutive}")
             </Span>
         </Column>
+
+        @{
+            var Message = GetLastMessage();
+        }
+        @if (Message is not null)
+        {
+            <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" />
+
+            <Column ColumnSize="ColumnSize.IsFull">
+                <Text>
+                    Last Message:
+                </Text>
+            </Column>
+            <CascadingValue Value="Message">
+                @switch (Message.Role)
+                {
+                    case MessageRole.SYSTEM:
+                        <SystemMessageView/>
+                        break;
+                    case MessageRole.USER:
+                        <UserMessageView IsFullWidth="true"/>
+                        break;
+                    case MessageRole.AI:
+                        <AssistantMessageView IsSelectable="true" IsFullWidth="true"/>
+                        break;
+                }
+            </CascadingValue>
+        }
+
     </Row>
 </Container>
 
@@ -35,4 +64,16 @@
 @code {
     [CascadingParameter]
     public TaskDto TaskData { get; set; } = new();
+
+    private TaskMessageDto? GetLastMessage()
+    {
+        var messagesOrdered = TaskData.Messages.OrderByDescending(x => x.DateCreated);
+
+        var lastAiMessage = messagesOrdered.FirstOrDefault(x => x.Role == MessageRole.AI);
+        var lastSystemMessage = messagesOrdered.FirstOrDefault(x => x.Role == MessageRole.SYSTEM);
+        var lastUserMessage = messagesOrdered.FirstOrDefault(x => x.Role == MessageRole.USER);
+
+        var lastMessage = lastAiMessage ?? lastUserMessage ?? lastSystemMessage;
+        return lastMessage;
+    }
 }

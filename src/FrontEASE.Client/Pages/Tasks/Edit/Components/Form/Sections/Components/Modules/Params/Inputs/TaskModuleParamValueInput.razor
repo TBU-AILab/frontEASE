@@ -1,4 +1,6 @@
-﻿@inject IResourceHandler resourceHandler
+﻿@inject ITaskManipulationService taskManipulationService
+@inject IResourceHandler resourceHandler
+@inject IMapper mapper
 @inject IUIService uiService
 
 @{
@@ -9,8 +11,8 @@
 @switch (parameterType)
 {
     case ParameterType.MARKDOWN:
-        <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-            @if (!SkipLabel)
+        <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+            @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
             {
                 <FieldLabel For="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))" RequiredIndicator="@(ParamOption.Required == true)">
                     @parameterName
@@ -31,8 +33,8 @@
 
     case ParameterType.STR:
         <Validation>
-            <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                @if (!SkipLabel)
+            <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
                 {
                     <FieldLabel For="@(GetElementIdByOperation(ParamValue.Key))" RequiredIndicator="@(ParamOption.Required == true)">
                         @parameterName
@@ -54,8 +56,8 @@
 
     case ParameterType.INT:
         <Validation>
-            <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                @if (!SkipLabel)
+            <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
                 {
                     <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
                         @parameterName
@@ -80,8 +82,8 @@
 
     case ParameterType.TIME:
         <Validation @ref="timeValidationComponent" Validator="@ValidateTimeParameter">
-            <Field ColumnSize="@(DisplayActions ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                @if (!SkipLabel)
+            <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
                 {
                     <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
                         @parameterName
@@ -105,8 +107,8 @@
 
     case ParameterType.FLOAT:
         <Validation>
-            <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                @if (!SkipLabel)
+            <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
                 {
                     <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
                         @parameterName
@@ -132,8 +134,8 @@
         @if (!string.IsNullOrWhiteSpace(ParamOption.EnumOptions?.FirstOrDefault()?.StringValue))
         {
             <Validation>
-                <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                    @if (!SkipLabel)
+                <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                    @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
                     {
                         <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
                             @parameterName
@@ -186,8 +188,8 @@
 
     case ParameterType.BOOL:
         <Validation>
-            <Field ColumnSize="@(DisplayActions ?  ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                @if (!SkipLabel)
+            <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
                 {
                     <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
                         @parameterName
@@ -218,6 +220,15 @@
     public DataOperation Operation { get; set; }
 
     [Parameter]
+    public TaskModuleDto? Module { get; set; } = null;
+
+    [Parameter]
+    public TaskModuleParamFlags? Flags { get; set; } = null;
+
+    [Parameter]
+    public ListParamFlags? ListFlags { get; set; } = null;
+
+    [Parameter]
     public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
 
     [Parameter]
@@ -225,12 +236,6 @@
 
     [Parameter]
     public Guid? ParameterID { get; set; }
-
-    [Parameter]
-    public bool SkipLabel { get; set; }
-
-    [Parameter]
-    public bool DisplayActions { get; set; }
 
     private string? timeStringValue;
     private InputMask? timeInputMask;
@@ -288,8 +293,7 @@
         {
             ParamValue.Value.EnumValue.StringValue = newValue;
         }
-
-        await uiService.CallRequestRefreshAsync();
+        await RefreshFlags();
     }
 
 
@@ -299,6 +303,21 @@
         if (ParamValue.Value is not null)
         {
             ParamValue.Value.IntValue = ConvertTimeStringToSeconds(timeStringValue);
+        }
+        await RefreshFlags();
+    }
+
+    private async Task RefreshFlags()
+    {
+        if (Flags is not null)
+        {
+            var flags = taskManipulationService.GetParamFlags(Module, ParamOption, ParamValue);
+            mapper.Map(flags, Flags);
+        }
+        else if (ListFlags is not null)
+        {
+            var listFlags = taskManipulationService.GetListParamFlags(ParamOption, ParamValue);
+            mapper.Map(listFlags, ListFlags);
         }
         await uiService.CallRequestRefreshAsync();
     }

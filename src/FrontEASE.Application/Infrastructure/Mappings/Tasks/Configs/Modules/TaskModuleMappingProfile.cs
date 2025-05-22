@@ -29,6 +29,9 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules
             CreateMap<TaskModuleEntity, TaskModuleDto>()
                 .ForMember(x => x.Parameters, cd => cd.MapFrom(map => map.Parameters))
                 .ReverseMap();
+            CreateMap<TaskModule, TaskModuleEntity>()
+                .ForMember(x => x.Parameters, cd => cd.MapFrom(map => map.Parameters))
+                .ReverseMap();
             CreateMap<TaskModuleEntity, TaskModuleNoValidationDto>()
                 .ForMember(x => x.Parameters, cd => cd.MapFrom(map => map.Parameters))
                 .ReverseMap();
@@ -41,7 +44,6 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules
 
             CreateMap<TaskModuleEntity, TaskModuleEntity>()
                 .ForMember(x => x.Parameters, cd => cd.MapFrom(map => map.Parameters))
-
                 .ForMember(x => x.ID, cd => cd.Ignore())
                 .ForMember(x => x.TaskConfig, cd => cd.Ignore())
                 .ForMember(x => x.TaskConfigID, cd => cd.Ignore())
@@ -52,6 +54,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules
         {
             CreateMap<TaskModuleParameterValue, TaskModuleParameterCoreDto>()
                 .ForMember(dto => dto.Default, opt => opt.MapFrom(src => src))
+                .ForMember(dto => dto.Value, opt => opt.MapFrom(src => src))
                 .ReverseMap();
 
             CreateMap<TaskModule, TaskModuleCoreDto>()
@@ -80,6 +83,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules
                             EnumLongNames = kvp.Value.EnumLongNames,
                             EnumOptions = kvp.Value.EnumOptions?.Select(opt => context.Mapper.Map<TaskModuleParameterEnumOption>(opt))?.ToList() ?? [],
                             Default = kvp.Value.Default is not null ? context.Mapper.Map<TaskModuleParameterValue>(kvp.Value.Default) : null,
+                            Value = kvp.Value.Value is not null ? context.Mapper.Map<TaskModuleParameterValue>(kvp.Value.Value) : null,
                             Readonly = kvp.Value.Readonly,
                             Required = kvp.Value.Required
                         }).ToList())

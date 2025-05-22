@@ -12,7 +12,7 @@
             <TaskSolutionsViewSectionHeader />
         </Container>
 
-        <Divider Class="divider-section bg-custom-light" Style="@($"height: 2px !important;")" Shadow="Shadow.Small" />
+        <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
 
         <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is1.FromTop">
 
@@ -61,14 +61,16 @@
                                     @if (solutionDownloadsOngoing.Contains(solution.ID))
                                     {
                                         <Span TextAlignment="TextAlignment.End">
-                                            <SpinnerButton TextColor="TextColor.Info" SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}"))" TextSize="TextSize.Medium" />
+                                            <SpinnerButton TextColor="TextColor.Info" SmallControlSpinner="true" TextSize="TextSize.Medium" />
                                         </Span>
                                     }
                                     else
                                     {
                                         if (!solutionDownloadsOngoing.Contains(solution.ID))
                                         {
-                                            <Icon Class="action-icon action-icon-info" Name="IconName.Download" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => DownloadSolutionArchive(solution))" />
+                                            <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                                                <Icon Class="action-icon action-icon-info" Name="IconName.Download" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => DownloadSolutionArchive(solution))" />
+                                            </Tooltip>
                                         }
                                     }
                                 </Column>

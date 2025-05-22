@@ -12,7 +12,7 @@
                     var paramOption = taskManipulationService.GetListValueParamOption(paramVal.ShortName, ParamOption);
                     if (paramOption is not null)
                     {
-                        var flags = GetListParamFlags(paramOption, paramVal);
+                        var flags = taskManipulationService.GetListParamFlags(paramOption, paramVal);
                         if (flags.ListParamType is not null)
                         {
                             <Container Fluid>
@@ -25,11 +25,11 @@
                                             }
                                             else
                                             {
-                                                <TaskModuleParamValueInput SkipLabel="@flags.SkipListLabel" ParamOption="@paramOption" ParamValue="@paramVal" DisplayActions="@flags.DisplayActions" />
+                                                <TaskModuleParamValueInput ListFlags="@flags" ParamOption="@paramOption" ParamValue="@paramVal" />
 
                                                 @if (flags.DisplayActions)
                                                 {
-                                                    var internalDescription = GetListParamInternalDescription(paramOption, paramVal);
+                                                    var internalDescription = taskManipulationService.GetListParamInternalDescription(paramOption, paramVal);
                                                     <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
                                                         <FieldLabel>
                                                             @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
@@ -120,36 +120,6 @@
     {
         uiService.RefreshRequested += RefreshViewAsync;
         await base.OnInitializedAsync();
-    }
-
-    private ListParamFlags GetListParamFlags(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal)
-    {
-        var flags = new ListParamFlags()
-            {
-                IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(paramOption, paramVal),
-                ListParamType = DynamicParamUtils.GetParameterType(paramOption.Type),
-                IsReadonly = paramOption.Readonly == true
-            };
-
-        flags.SkipListLabel = flags.ListParamType == ParameterType.ENUM && paramOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
-        (flags.IsListDefaultPresent, flags.ListDefaultValue) = taskManipulationService.ExtractDefaultValue(paramOption);
-        flags.DisplayActions = flags.IsListDefaultPresent || (flags.IsDescriptionPresent && !flags.SkipListLabel);
-
-        return flags;
-    }
-
-    private string GetListParamInternalDescription(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal)
-    {
-        var internalDescription = string.Empty;
-        if (!string.IsNullOrWhiteSpace(paramVal.Value?.EnumValue?.StringValue))
-        {
-            var indexOfSelected = paramOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == paramVal?.Value?.EnumValue?.StringValue);
-            if (indexOfSelected >= 0)
-            {
-                internalDescription = paramOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
-            }
-        }
-        return internalDescription;
     }
 
     private Task RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam)

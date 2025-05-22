@@ -33,6 +33,10 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Op
             CreateMap<TaskModuleParameterEnumValueEntity, TaskModuleParameterEnumOptionNoValidationDto>()
                 .ForMember(x => x.ModuleValue, cd => cd.MapFrom(map => map.ModuleValue))
                 .ReverseMap();
+
+            CreateMap<TaskModuleParameterEnumValueEntity, TaskModuleParameterEnumOption>()
+                .ForMember(x => x.ModuleValue, cd => cd.MapFrom(map => map.ModuleValue))
+                .ReverseMap();
         }
 
         private void CreateMapsEntities()

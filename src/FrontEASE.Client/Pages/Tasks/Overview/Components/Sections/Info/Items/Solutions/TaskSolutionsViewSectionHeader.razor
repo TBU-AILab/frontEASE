@@ -14,11 +14,13 @@
             <Div Margin="Margin.IsAuto.FromStart">
                 @if (fullDownloadOngoing)
                 {
-                    <SpinnerButton TextColor="TextColor.Info" SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}"))" TextSize="TextSize.Medium" />
+                    <SpinnerButton TextColor="TextColor.Info" SmallControlSpinner="true" TextSize="TextSize.Medium" />
                 }
                 else
                 {
-                    <Icon Name="IconName.Download" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@(async () => await DownloadSolutionArchiveFull())" Class="main-action-icon main-action-icon-info" />
+                    <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}")} {resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Solutions), PropertyDisplayResourceType.FIELD))}")" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                        <Icon Name="IconName.Download" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@(async () => await DownloadSolutionArchiveFull())" Class="main-action-icon main-action-icon-info" />
+                    </Tooltip>
                 }
             </Div>
         </Div>

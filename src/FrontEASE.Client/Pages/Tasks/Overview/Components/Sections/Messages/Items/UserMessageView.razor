@@ -2,7 +2,7 @@
 
 <Container Fluid>
     <Row>
-        <Column ColumnSize="ColumnSize.Is8.OnWidescreen.Is4.WithOffset.OnWidescreen.Is10.OnMobile.Is2.WithOffset.OnMobile" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
+        <Column ColumnSize="@(IsFullWidth ? ColumnSize.IsFull : ColumnSize.Is8.OnWidescreen.Is4.WithOffset.OnWidescreen.Is10.OnMobile.Is2.WithOffset.OnMobile)" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
             <Card Border="Border.Rounded" Class="border-custom-light">
                 <MessageViewHeader />
 
@@ -20,4 +20,7 @@
 @code {
     [CascadingParameter]
     public TaskMessageDto Message { get; set; } = new();
+
+    [Parameter]
+    public bool IsFullWidth { get; set; }
 }

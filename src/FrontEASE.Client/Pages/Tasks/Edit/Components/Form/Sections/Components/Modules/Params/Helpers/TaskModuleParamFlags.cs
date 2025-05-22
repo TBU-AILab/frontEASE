@@ -2,7 +2,7 @@
 
 namespace FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params.Helpers
 {
-    internal class TaskModuleParamFlags
+    public class TaskModuleParamFlags
     {
         public ParameterType? ParamType { get; set; }
         public string? ParamName { get; set; }

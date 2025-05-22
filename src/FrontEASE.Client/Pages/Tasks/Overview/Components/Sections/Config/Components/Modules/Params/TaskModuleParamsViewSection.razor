@@ -24,13 +24,10 @@
 
                                 @foreach (var paramValue in Module.Parameters)
                                 {
-                                    if (paramValue.Value is not null)
-                                    {
-                                        var paramOption = AvailableParams.SingleOrDefault(x => x.ShortName == paramValue.ShortName);
-                                        <Fields>
-                                            <TaskModuleParamValueView ParamOption="paramOption" ParamValue="paramValue" Module="Module" />
-                                        </Fields>
-                                    }
+                                    var paramOption = AvailableParams.SingleOrDefault(x => x.ShortName == paramValue.ShortName);
+                                    <Fields>
+                                        <TaskModuleParamValueView ParamOption="paramOption" ParamValue="paramValue" Module="Module" />
+                                    </Fields>
                                 }
                             </Row>
                         </Container>

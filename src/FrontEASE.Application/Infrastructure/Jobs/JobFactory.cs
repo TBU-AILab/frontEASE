@@ -22,3 +22,4 @@ namespace FrontEASE.Application.Infrastructure.Jobs
         }
     }
 }
+ 

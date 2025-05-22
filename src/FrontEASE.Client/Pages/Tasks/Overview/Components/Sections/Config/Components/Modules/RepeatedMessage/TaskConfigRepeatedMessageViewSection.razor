@@ -20,7 +20,7 @@
         </Span>
     </Column>
 
-    <Divider Class="divider-subsection bg-custom-light" Style="@($"height: 2px !important;")" Shadow="Shadow.Small" />
+    <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
 
     @foreach (var messageItem in Task.Config.RepeatedMessage.RepeatedMessageItems)
     {
@@ -44,7 +44,7 @@
 
         @if (messageItem != Task.Config.RepeatedMessage.RepeatedMessageItems.LastOrDefault())
         {
-            <Divider Class="divider-subsection bg-custom-light" Style="@($"height: 2px !important;")" Shadow="Shadow.Small" />
+            <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
         }
     }
 
