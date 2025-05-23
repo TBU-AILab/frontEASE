@@ -1,0 +1,113 @@
+﻿@inject IResourceHandler resourceHandler
+@inject IFileApiService fileApiService
+@inject IUIService uiService
+@inject Blazored.Toast.Services.IToastService toastService
+
+<Container Fluid
+           Class="@($"{(IsSelectable ? "cursor-pointer" : string.Empty)} {(TaskMetadata.SelectedMessageID == Solution.TaskMessageID ? "border-custom-info" : "border-custom-light")}")"
+           Border="@(TaskMetadata.SelectedMessageID == Solution.TaskMessageID ? Border.Is2.Rounded : Border.Is1.Rounded)"
+           @onclick="(async () => await SelectMessageSolution(Solution))"
+           Shadow="Shadow.Small"
+           Margin="Margin.Is2.FromTop"
+           Padding="Padding.Is2.FromBottom.Is2.FromTop">
+    <Row>
+
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Text>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Fitness), PropertyDisplayResourceType.FIELD))):
+            </Text>
+            <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Success">
+                @($" {Solution.Fitness}")
+            </Span>
+        </Column>
+
+        @if (!string.IsNullOrEmpty(Solution.Feedback))
+        {
+            <Column ColumnSize="ColumnSize.IsFull">
+                <Text>
+                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Feedback), PropertyDisplayResourceType.FIELD))):
+                </Text>
+                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                    @($" \"{Solution.Feedback} \"")
+                </Span>
+            </Column>
+        }
+
+        @if (IsSelectable)
+        {
+            <Column ColumnSize="ColumnSize.IsFull">
+                <Text Margin="Margin.Is2.FromEnd">
+                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}"))
+                </Text>
+                @if (SolutionDownloadsOngoing.Contains(Solution.ID))
+                {
+                    <Span TextAlignment="TextAlignment.End">
+                        <SpinnerButton TextColor="TextColor.Info" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                    </Span>
+                }
+                else
+                {
+                    if (!SolutionDownloadsOngoing.Contains(Solution.ID))
+                    {
+                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                            <Icon Class="action-icon action-icon-info" Name="IconName.Download" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => DownloadSolutionArchive(Solution))" @onclick:stopPropagation="true" />
+                        </Tooltip>
+                    }
+                }
+            </Column>
+        }
+    </Row>
+
+    @if (Solution.Metadata.Count > 0 && IsSelectable)
+    {
+        <DictionaryExpander Dictionary="@Solution.Metadata" DisplayName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Metadata), PropertyDisplayResourceType.FIELD)))" MarginParam="Margin.Is2.FromTop.Is2.FromBottom.Is1.FromStart.Is1.FromEnd" />
+    }
+</Container>
+
+
+@code {
+    [CascadingParameter]
+    public TaskDto Task { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+
+    [CascadingParameter]
+    public TaskSolutionDto Solution { get; set; } = new();
+
+    [Parameter]
+    public IList<Guid> SolutionDownloadsOngoing { get; set; } = [];
+
+    [Parameter]
+    public bool IsSelectable { get; set; }
+
+    public async Task DownloadSolutionArchive(TaskSolutionDto solution)
+    {
+        SolutionDownloadsOngoing.Add(solution.ID);
+
+        var archiveName = $"{Task.Config.Name}_${solution.ID}";
+        var fileSaved = await fileApiService.DownloadDirectory(archiveName, solution.ID, FileSpecification.TASK_SOLUTION_ARCHIVE);
+        if (!fileSaved)
+        {
+            var message = ($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}")} ({archiveName})");
+            toastService.ShowError(message);
+        }
+
+        SolutionDownloadsOngoing.Remove(solution.ID);
+    }
+
+    private async Task SelectMessageSolution(TaskSolutionDto solution)
+    {
+        if (!IsSelectable)
+        {
+            return;
+        }
+        else
+        {
+            TaskMetadata.SelectedMessageID =
+            TaskMetadata.SelectedMessageID == solution.TaskMessageID ? null : solution.TaskMessageID;
+
+            await uiService.CallRequestRefreshAsync();
+        }
+    }
+}

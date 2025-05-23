@@ -940,3 +940,8 @@ nav.navbar {
     text-align: center;
     justify-content: center;
 }
+
+.thumbnail-message-image {
+    max-width: 250px;
+    max-height: 250px;
+}

@@ -397,6 +397,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsValid), PropertyDisplayResourceType.FIELD), Value = "Valid iterations" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsInvalidConsecutive), PropertyDisplayResourceType.FIELD), Value = "Invalid consecutive iterations" },
 
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Solutions), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Last}", Value = "Last solution" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Messages), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Last}", Value = "Last message" },
+
                 /* TaskConfigDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Connector), PropertyDisplayResourceType.FIELD), Value = "Connector" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Evaluator), PropertyDisplayResourceType.FIELD), Value = "Evaluator" },

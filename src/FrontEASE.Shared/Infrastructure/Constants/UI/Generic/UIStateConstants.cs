@@ -15,5 +15,6 @@
 
         public const string TokenExpiration = "TokenExpiration";
 
+        public const string Last = "Last";
     }
 }
