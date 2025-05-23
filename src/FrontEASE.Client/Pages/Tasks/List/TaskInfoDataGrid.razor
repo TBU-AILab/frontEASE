@@ -92,7 +92,7 @@
                               MouseOut="@((async() => await OnInfoMouseOut()))" />
                         @if (hoveredTask == context)
                         {
-                            <Div Position="Position.Fixed" Style="@($"{cardPositionStyle}; pointer-events: none;")" Class="top-layer">
+                            <Div Position="Position.Fixed" Style="@($"{cardPositionStyle}; pointer-events: none;")" Class="top-layer" Width="Width.Is33.OnDesktop.Is50.OnWidescreen">
                                 <TaskGridItemInfoCard TaskInfo="@context" />
                             </Div>
                         }

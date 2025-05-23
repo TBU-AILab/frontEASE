@@ -5,7 +5,7 @@
 
 <Container Fluid>
     <Row>
-        <Column ColumnSize="@(IsFullWidth ? ColumnSize.IsFull : ColumnSize.Is8.OnWidescreen.Is10.OnMobile)" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
+        <Column ColumnSize="@(IsFullWidth? ColumnSize.IsFull: ColumnSize.Is8.OnWidescreen.Is10.OnMobile)" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
             <Card Border="Border.Rounded" Class="@($"{(IsSelectable ? "cursor-pointer" : string.Empty)} border-custom-light")" @onclick="(async () => await SelectMessageSolution())">
                 <MessageViewHeader />
 
@@ -25,7 +25,9 @@
                         @if (urlMetadata is not null)
                         {
                             <Divider Class="divider-section" Background="Background.Primary" Shadow="Shadow.Small" />
-                            <Image Fluid Source=@($"{appSettings!.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/{urlMetadata.Value}") Text="@urlMetadata.Value" Loading />
+                            <Div TextAlignment="TextAlignment.Center">
+                                <Image Fluid Class="@(IsThumbnail ? "thumbnail-message-image" : string.Empty)" Source=@($"{appSettings!.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/{urlMetadata.Value}") Text="@urlMetadata.Value" Loading />
+                            </Div>
                         }
                     }
 
@@ -49,6 +51,9 @@
 
     [Parameter]
     public bool IsSelectable { get; set; }
+
+    [Parameter]
+    public bool IsThumbnail { get; set; }
 
     [Parameter]
     public bool IsFullWidth { get; set; }

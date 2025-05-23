@@ -1,10 +1,4 @@
-﻿@inject IUIService uiService
-@inject IResourceHandler resourceHandler
-@inject IFileApiService fileApiService
-@inject Blazored.Toast.Services.IToastService toastService
-@inject IUIManager uiManager
-
-@if (Task.Solutions.Count > 0)
+﻿@if (Task.Solutions.Count > 0)
 {
     <Row>
 
@@ -22,65 +16,11 @@
                         var messageIDs = Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
                         var solutionsOrdered = Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
                     }
-                    @foreach (var solution in solutionsOrdered)
+                    @foreach (var Solution in solutionsOrdered)
                     {
-                        <Container Fluid
-                                   Class="@($"cursor-pointer {(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? "border-custom-info" : "border-custom-light")}")"
-                                   Border="@(TaskMetadata.SelectedMessageID == solution.TaskMessageID ? Border.Is2.Rounded : Border.Is1.Rounded)"
-                                   @onclick="(async () => await SelectMessageSolution(solution))"
-                                   Shadow="Shadow.Small"
-                                   Margin="Margin.Is2.FromTop"
-                                   Padding="Padding.Is2.FromBottom.Is2.FromTop">
-                            <Row>
-
-                                <Column ColumnSize="ColumnSize.IsFull">
-                                    <Text>
-                                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Fitness), PropertyDisplayResourceType.FIELD))):
-                                    </Text>
-                                    <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Success">
-                                        @($" {solution.Fitness}")
-                                    </Span>
-                                </Column>
-
-                                @if (!string.IsNullOrEmpty(solution.Feedback))
-                                {
-                                    <Column ColumnSize="ColumnSize.IsFull">
-                                        <Text>
-                                            @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Feedback), PropertyDisplayResourceType.FIELD))):
-                                        </Text>
-                                        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                                            @($" \"{solution.Feedback} \"")
-                                        </Span>
-                                    </Column>
-                                }
-
-                                <Column ColumnSize="ColumnSize.IsFull">
-                                    <Text Margin="Margin.Is2.FromEnd">
-                                        @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}"))
-                                    </Text>
-                                    @if (solutionDownloadsOngoing.Contains(solution.ID))
-                                    {
-                                        <Span TextAlignment="TextAlignment.End">
-                                            <SpinnerButton TextColor="TextColor.Info" SmallControlSpinner="true" TextSize="TextSize.Medium" />
-                                        </Span>
-                                    }
-                                    else
-                                    {
-                                        if (!solutionDownloadsOngoing.Contains(solution.ID))
-                                        {
-                                            <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
-                                                <Icon Class="action-icon action-icon-info" Name="IconName.Download" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => DownloadSolutionArchive(solution))" />
-                                            </Tooltip>
-                                        }
-                                    }
-                                </Column>
-                            </Row>
-
-                            @if (solution.Metadata.Count > 0)
-                            {
-                                <DictionaryExpander Dictionary="@solution.Metadata" DisplayName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Metadata), PropertyDisplayResourceType.FIELD)))" MarginParam="Margin.Is2.FromTop.Is2.FromBottom.Is1.FromStart.Is1.FromEnd" />
-                            }
-                        </Container>
+                        <CascadingValue Value="@Solution">
+                            <TaskSolutionItemView IsSelectable="true" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
+                        </CascadingValue>
                     }
                 </Row>
             </Container>
@@ -95,28 +35,5 @@
     [CascadingParameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
 
-    private IList<Guid> solutionDownloadsOngoing = [];
-
-    public async Task DownloadSolutionArchive(TaskSolutionDto solution)
-    {
-        solutionDownloadsOngoing.Add(solution.ID);
-
-        var archiveName = $"{Task.Config.Name}_${solution.ID}";
-        var fileSaved = await fileApiService.DownloadDirectory(archiveName, solution.ID, FileSpecification.TASK_SOLUTION_ARCHIVE);
-        if (!fileSaved)
-        {
-            var message = ($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}")} ({archiveName})");
-            toastService.ShowError(message);
-        }
-
-        solutionDownloadsOngoing.Remove(solution.ID);
-    }
-
-    private async Task SelectMessageSolution(TaskSolutionDto solution)
-    {
-        TaskMetadata.SelectedMessageID =
-        TaskMetadata.SelectedMessageID == solution.TaskMessageID ? null : solution.TaskMessageID;
-
-        await uiService.CallRequestRefreshAsync();
-    }
+    private IList<Guid> SolutionDownloadsOngoing = [];
 }

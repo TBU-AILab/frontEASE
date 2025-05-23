@@ -1,7 +1,7 @@
 ﻿@inject IResourceHandler resourceHandler
 
 <Container Fluid>
-    <Row Class="gx-0 margin-background-offset-top-1" Margin="Margin.Is2.FromTop">
+    <Row Class="gx-0 margin-background-offset-top-1" Margin="Margin.Is2.FromTop.Is2.FromBottom">
         <Column ColumnSize="ColumnSize.Is4.OnDesktop">
             <Text>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.CurrentIteration), PropertyDisplayResourceType.FIELD))):
@@ -31,32 +31,49 @@
 
         @{
             var Message = GetLastMessage();
+            var Solution = GetMessageAssociatedSolution(Message);
         }
-        @if (Message is not null)
+        @if (Message is not null || Solution is not null)
         {
-            <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" />
+            @if (Message is not null)
+            {
+                <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" />
 
-            <Column ColumnSize="ColumnSize.IsFull">
-                <Text>
-                    Last Message:
-                </Text>
-            </Column>
-            <CascadingValue Value="Message">
-                @switch (Message.Role)
-                {
-                    case MessageRole.SYSTEM:
-                        <SystemMessageView/>
-                        break;
-                    case MessageRole.USER:
-                        <UserMessageView IsFullWidth="true"/>
-                        break;
-                    case MessageRole.AI:
-                        <AssistantMessageView IsSelectable="true" IsFullWidth="true"/>
-                        break;
-                }
-            </CascadingValue>
+                <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is2.FromBottom">
+                    <Text TextWeight="TextWeight.Bold" Class="mb-1">
+                        @($"{resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Messages), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Last}")}:")
+                    </Text>
+                    <CascadingValue Value="Message">
+                        @switch (Message.Role)
+                        {
+                            case MessageRole.SYSTEM:
+                                <SystemMessageView />
+                                break;
+                            case MessageRole.USER:
+                                <UserMessageView IsFullWidth="true" />
+                                break;
+                            case MessageRole.AI:
+                                <AssistantMessageView IsThumbnail="true" IsSelectable="true" IsFullWidth="true" />
+                                break;
+                        }
+                    </CascadingValue>
+                </Column>
+            }
+
+            @if (Solution is not null)
+            {
+                <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" />
+
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text TextWeight="TextWeight.Bold" Class="mb-1">
+                        @($"{resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Solutions), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Last}")}:")
+                    </Text>
+                    <CascadingValue Value="Solution">
+                        <TaskSolutionItemView IsSelectable="false" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
+                    </CascadingValue>
+                </Column>
+            }
         }
-
     </Row>
 </Container>
 
@@ -64,6 +81,8 @@
 @code {
     [CascadingParameter]
     public TaskDto TaskData { get; set; } = new();
+
+    private IList<Guid> SolutionDownloadsOngoing = [];
 
     private TaskMessageDto? GetLastMessage()
     {
@@ -75,5 +94,18 @@
 
         var lastMessage = lastAiMessage ?? lastUserMessage ?? lastSystemMessage;
         return lastMessage;
+    }
+
+    private TaskSolutionDto? GetMessageAssociatedSolution(TaskMessageDto? message)
+    {
+        if (message is null)
+        {
+            return null;
+        }
+        else
+        {
+            var solution = TaskData.Solutions.SingleOrDefault(x => x.TaskMessageID == message.ID);
+            return solution;
+        }
     }
 }
