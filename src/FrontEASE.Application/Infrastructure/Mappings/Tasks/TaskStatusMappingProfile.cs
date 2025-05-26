@@ -21,9 +21,15 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
                 .ForMember(x => x.Solutions, opt => opt.Ignore())
                 .ForMember(x => x.Members, opt => opt.Ignore())
                 .ForMember(x => x.MemberGroups, opt => opt.Ignore())
-
                 .ForMember(x => x.AuthorID, opt => opt.Ignore())
                 .ForMember(x => x.IsDeleted, opt => opt.Ignore())
+                .AfterMap((src, dest) =>
+                {
+                    if (dest.Config is not null)
+                    {
+                        dest.Config.Name = src.Name ?? string.Empty;
+                    }
+                })
                 .ReverseMap();
         }
     }

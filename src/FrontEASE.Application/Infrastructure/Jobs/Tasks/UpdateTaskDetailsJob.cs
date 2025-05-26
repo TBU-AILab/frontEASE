@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using FrontEASE.Domain.DataQueries.Tasks;
-using FrontEASE.Domain.Entities.Jobs;
 using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Repositories.Jobs;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Domain.Services.Core.Connector;
+using FrontEASE.Shared.Data.Enums.Tasks;
+using FrontEASE.Shared.Infrastructure.Utils.Extensions;
 using Hangfire;
 using Hangfire.Console;
 using Hangfire.Server;
@@ -37,21 +38,6 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             JobName = appSettings.HangfireSettings!.Jobs!.UpdateTaskDetailsJob!.CronName!;
         }
 
-
-        private async Task ExecuteStrayItemsCleanup(PerformContext context, JobLog? lastExecutedLog)
-        {
-            context.WriteLine($"Pre-check and cleanup running...");
-
-            var messages = lastExecutedLog is null ? await _taskRepository.LoadAllMessagesWhere(null) : await _taskRepository.LoadAllMessagesWhere(x => x.DateCreated > lastExecutedLog.DateStart);
-            var solutions = messages!.Select(x => x.TaskSolution)?.ToList() ?? [];
-
-            await _taskRepository.DeleteRange(messages!, false);
-            await _taskRepository.DeleteRange(solutions!, false);
-            await _taskRepository.SaveChangesAsync();
-
-            context.WriteLine($"Pre-check and cleanup done.");
-        }
-
         public async Task Execute(PerformContext context)
         {
             var currentExecutionStart = DateTime.UtcNow;
@@ -61,67 +47,75 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             var lastExecutedLog = await _jobLogRepository.LoadLastSuccessful(JobName);
             context.WriteLine($"Last successful execution:{(lastExecutedLog is null ? "N/A" : $"{lastExecutedLog.DateStart} - {lastExecutedLog.DateEnd}")}");
 
-            await ExecuteStrayItemsCleanup(context, lastExecutedLog);
-
+            await using var transaction = await _taskRepository.BeginTransactionAsync();
             try
             {
-                var newTaskData = await _coreService.GetTaskRunData(lastExecutedLog?.DateStart);
-                if (newTaskData.Count > 0)
+                var queryDetailsCheck = new TasksQuery()
                 {
-                    context.WriteLine($"Checking messages, runs, solutions for: {newTaskData.Count} items.");
-                    var taskIDs = newTaskData.Select(x => x.ID);
+                    LoadSolutions = true,
+                    LoadMessages = true
+                };
+                var tasksForDataSync = await _taskRepository.LoadAllWhere(x => !x.IsDeleted && x.State == TaskState.RUN, queryDetailsCheck);
+                var tasksForDataSyncIDs = tasksForDataSync.Select(x => x.ID).ToList();
 
-                    var query = new TasksQuery()
+                context.WriteLine($"Checking info, statuses, messages and solutions for: {tasksForDataSync.Count} items.");
+
+                if (tasksForDataSync.Count > 0)
+                {
+                    var infoResults = await _coreService.GetTaskStates(tasksForDataSyncIDs);
+                    var dataResults = await _coreService.GetTaskRunData(tasksForDataSyncIDs, null);
+
+                    foreach (var taskStateInfo in infoResults)
                     {
-                        LoadSolutions = true,
-                        LoadMessages = true
-                    };
-
-                    var tasks = await _taskRepository.LoadAllWhere(x => !x.IsDeleted && taskIDs.Contains(x.ID), query);
-
-                    foreach (var newTaskInfo in newTaskData)
-                    {
-                        var matchingTask = tasks.SingleOrDefault(x => x.ID == newTaskInfo.ID);
+                        var matchingTask = tasksForDataSync.SingleOrDefault(x => x.ID == taskStateInfo.ID);
                         if (matchingTask is not null)
                         {
-                            var messages = _mapper.Map<IList<TaskMessage>>(newTaskInfo.Messages);
-                            var solutions = _mapper.Map<IList<TaskSolution>>(newTaskInfo.Solutions);
-                            context.WriteLine($"Task {matchingTask.ID} - Messages: {messages.Count} | Solutions: {solutions.Count}.");
+                            context.WriteLine($"Mapping state for task: {matchingTask.ID}.");
+                            _mapper.Map(taskStateInfo, matchingTask);
 
-                            foreach (var message in messages)
+                            if (matchingTask.State != taskStateInfo.State)
                             {
-                                if (!matchingTask.Messages.Any(x => x.ID == message.ID))
-                                {
-                                    message.TaskID = matchingTask.ID;
-                                    message.Task = matchingTask;
-                                    matchingTask.Messages.Add(message);
-                                }
+                                context.WriteLine($"Task {matchingTask.ID} - Change state: {matchingTask.State} --> {taskStateInfo.State}.");
                             }
-                            foreach (var solution in solutions)
-                            {
-                                if (!matchingTask.Solutions.Any(x => x.ID == solution.ID))
-                                {
-                                    solution.TaskID = matchingTask.ID;
-                                    solution.Task = matchingTask;
-                                    matchingTask.Solutions.Add(solution);
-                                }
-                            }
+                        }
+                    }
+
+                    foreach (var taskDataInfo in dataResults)
+                    {
+                        var matchingTask = tasksForDataSync.SingleOrDefault(x => x.ID == taskDataInfo.ID);
+                        if (matchingTask is not null)
+                        {
+                            var presentSolutions = matchingTask.Solutions.Select(x => x.TaskMessageID);
+                            var presentMessages = matchingTask.Messages.Select(x => x.ID);
+
+                            var missingSolutions = taskDataInfo.Solutions.Where(x => !presentSolutions.Contains(x.TaskMessageID)).ToList();
+                            var missingMessages = taskDataInfo.Messages.Where(x => !presentMessages.Contains(x.ID)).ToList();
+
+                            context.WriteLine($"Mapping {missingSolutions.Count} new solutions and {missingMessages.Count} new messages for task: {matchingTask.ID}.");
+                            var messagesToBeAdded = _mapper.Map<IList<TaskMessage>>(missingMessages);
+                            var solutionsToBeAdded = _mapper.Map<IList<TaskSolution>>(missingSolutions);
+
+                            matchingTask.Messages.AddRange(messagesToBeAdded);
+                            matchingTask.Solutions.AddRange(solutionsToBeAdded);
                         }
                     }
                     await _taskRepository.SaveChangesAsync();
                 }
 
                 await UpdateJobLog(log, DateTime.UtcNow, true);
-                context.WriteLine($"{nameof(UpdateTaskDetailsJob)} SUCCESS.");
-                SentrySdk.CaptureCheckIn(JobName, CheckInStatus.Ok, checkID);
+                context.WriteLine($"{JobName} SUCCESS.");
+                SentrySdk.CaptureCheckIn(JobName, CheckInStatus.Ok);
+
+                await transaction.CommitAsync();
             }
             catch (Exception ex)
             {
                 await UpdateJobLog(log, DateTime.UtcNow, false);
                 context.SetTextColor(ConsoleTextColor.Red);
-                context.WriteLine($"{nameof(UpdateTaskDetailsJob)} FAILED: {ex.Message}");
+                context.WriteLine($"{JobName} FAILED: {ex.Message}");
                 new BackgroundJobClient().ChangeState(context.BackgroundJob.Id, new FailedState(ex));
                 SentrySdk.CaptureCheckIn(JobName, CheckInStatus.Error, checkID);
+                throw;
             }
         }
     }

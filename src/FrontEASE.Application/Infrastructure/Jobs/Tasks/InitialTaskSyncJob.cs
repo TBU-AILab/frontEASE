@@ -116,7 +116,6 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             var superadmins = await _userRepository.LoadWhere(x => x.UserRole!.RoleId == _appSettings!.AuthSettings!.Defaults!.Roles!.SuperadminGuid.ToString());
             var authorsMatching = await _userRepository.LoadWhere(x => !string.IsNullOrWhiteSpace(x.Email) && authorsToBind.Contains(x.Email.ToUpper()));
 
-            /* TODO - mapping */
             var tasksForInsertion = new List<Domain.Entities.Tasks.Task>();
             foreach (var coreTask in tasksToAdd)
             {
@@ -144,6 +143,8 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             var currentExecutionStart = DateTime.UtcNow;
             var log = await InsertJobLog(JobName, currentExecutionStart, null, false);
             var checkID = SentrySdk.CaptureCheckIn(JobName, CheckInStatus.InProgress);
+
+            await using var transaction = await _taskRepository.BeginTransactionAsync();
 
             try
             {
@@ -173,14 +174,17 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                 }
 
                 await UpdateJobLog(log, DateTime.UtcNow, true);
-                context.WriteLine($"{nameof(InitialTaskSyncJob)} SUCCESS.");
+                context.WriteLine($"{JobName} SUCCESS.");
+
+                await transaction.CommitAsync();
             }
             catch (Exception ex)
             {
                 await UpdateJobLog(log, DateTime.UtcNow, false);
                 context.SetTextColor(ConsoleTextColor.Red);
-                context.WriteLine($"{nameof(InitialTaskSyncJob)} FAILED: {ex.Message}");
+                context.WriteLine($"{JobName} FAILED: {ex.Message}");
                 new BackgroundJobClient().ChangeState(context.BackgroundJob.Id, new FailedState(ex));
+                throw;
             }
         }
     }

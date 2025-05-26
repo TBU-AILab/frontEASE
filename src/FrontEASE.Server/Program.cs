@@ -508,7 +508,6 @@ void SetupHttpClients()
 
 void SetupJobServices()
 {
-    builder!.Services.AddTransient<UpdateTaskStatusesJob>();
     builder!.Services.AddTransient<UpdateTaskDetailsJob>();
     builder!.Services.AddTransient<InitialTaskSyncJob>();
 }

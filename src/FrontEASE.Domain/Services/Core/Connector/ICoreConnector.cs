@@ -22,8 +22,8 @@ namespace FrontEASE.Domain.Services.Core.Connector
 
         Task<IList<TaskInfoCoreDto>> GetTaskInfos();
         Task<IList<TaskFullCoreDto>> GetTasksFullData();
-        Task<IList<TaskInfoCoreDto>> GetTaskStates();
-        Task<IList<TaskDynamicInfoCoreDto>> GetTaskRunData(DateTime? dateFrom);
+        Task<IList<TaskInfoCoreDto>> GetTaskStates(IList<Guid>? taskIDs);
+        Task<IList<TaskDynamicInfoCoreDto>> GetTaskRunData(IList<Guid>? taskIDs, DateTime? dateFrom);
 
         Task<IList<TaskModuleCoreDto>> GetModuleTypes();
 
