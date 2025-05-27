@@ -200,7 +200,7 @@
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
             <MemoEdit Rows="2"
-                      ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.Name)))"
+                      ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.MessagesContent)))"
                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.PLACEHOLDER)))"
                       @bind-Text="@Filter.MessagesContent">
                 <Feedback>

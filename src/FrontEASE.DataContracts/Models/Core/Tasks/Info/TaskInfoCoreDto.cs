@@ -8,6 +8,9 @@ namespace FrontEASE.DataContracts.Models.Core.Tasks.Info
         [JsonPropertyName("id")]
         public Guid? ID { get; set; }
 
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+
         [JsonPropertyName("state")]
         public TaskState? State { get; set; }
 

@@ -27,6 +27,8 @@ namespace FrontEASE.Domain.Services.Core.Connector
 
         private readonly JsonSerializerOptions _serializerOptions;
 
+        private const string TASK_IDS_PARAM_NAME = "task_ids";
+
         public CoreConnector(
             AppSettings appSettings,
             HttpClient httpClient,
@@ -317,9 +319,17 @@ namespace FrontEASE.Domain.Services.Core.Connector
             }
         }
 
-        public async Task<IList<TaskInfoCoreDto>> GetTaskStates()
+        public async Task<IList<TaskInfoCoreDto>> GetTaskStates(IList<Guid>? taskIds)
         {
-            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/status");
+            var baseUrl = $"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/status";
+            var url = baseUrl;
+
+            if (taskIds != null && taskIds.Count > 0)
+            {
+                var query = string.Join("&", taskIds.Select(id => $"{TASK_IDS_PARAM_NAME}={Uri.EscapeDataString(id.ToString())}"));
+                url = $"{baseUrl}?{query}";
+            }
+
             var response = await _httpClient.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
@@ -334,13 +344,23 @@ namespace FrontEASE.Domain.Services.Core.Connector
             }
         }
 
-        public async Task<IList<TaskDynamicInfoCoreDto>> GetTaskRunData(DateTime? dateFrom)
+        public async Task<IList<TaskDynamicInfoCoreDto>> GetTaskRunData(IList<Guid>? taskIDs, DateTime? dateFrom)
         {
-            var urlBase = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/data");
-            var urlParam = dateFrom.HasValue ? $"?{nameof(dateFrom)}={Uri.EscapeDataString(dateFrom.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"))}" : string.Empty;
-            var fullUrl = $"{urlBase}{urlParam}";
+            var baseUrl = $"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/data";
+            var queryParams = new List<string>();
 
-            var response = await _httpClient.GetAsync(fullUrl);
+            if (dateFrom.HasValue)
+            {
+                queryParams.Add($"{nameof(dateFrom)}={Uri.EscapeDataString(dateFrom.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"))}");
+            }
+
+            if (taskIDs?.Count > 0)
+            {
+                queryParams.AddRange(taskIDs.Select(id => $"{TASK_IDS_PARAM_NAME}={Uri.EscapeDataString(id.ToString())}"));
+            }
+
+            var url = queryParams.Count > 0 ? $"{baseUrl}?{string.Join("&", queryParams)}" : baseUrl;
+            var response = await _httpClient.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 var runData = await response.Content.ReadFromJsonAsync<IList<TaskDynamicInfoCoreDto>>(_serializerOptions);
@@ -349,7 +369,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             else
             {
                 var failResult = await response.Content.ReadAsStringAsync();
-                throw new ApplicationException($"{nameof(GetTaskRunData)} - Call to {fullUrl} failed - Exception: {failResult}");
+                throw new ApplicationException($"{nameof(GetTaskRunData)} - Call to {url} failed - Exception: {failResult}");
             }
         }
 

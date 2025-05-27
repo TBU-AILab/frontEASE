@@ -58,7 +58,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
         {
             var messagesQuery = predicate is not null ? _context.TaskMessages.Include(x => x.TaskSolution).Where(predicate) : _context.TaskMessages;
             return await messagesQuery.ToListAsync();
-        }  
+        }
 
         public async Task<IList<Domain.Entities.Tasks.Task>> LoadAllWhere(Expression<Func<Domain.Entities.Tasks.Task, bool>>? predicate, TasksQuery query)
         {
@@ -131,7 +131,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             var utcDateUpdatedFrom = filter.DateUpdatedFrom.HasValue ? DateTime.SpecifyKind(filter.DateUpdatedFrom.Value.Date, DateTimeKind.Utc) : (DateTime?)null;
             var utcDateUpdatedTo = filter.DateUpdatedTo.HasValue ? DateTime.SpecifyKind(filter.DateUpdatedTo.Value.Date.AddDays(1), DateTimeKind.Utc) : (DateTime?)null;
 
-            if (string.IsNullOrWhiteSpace(filter.MessagesContent))
+            if (!string.IsNullOrWhiteSpace(filter.MessagesContent))
             {
                 tasksQuery = tasksQuery.Include(x => x.Messages);
             }
@@ -139,12 +139,12 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             tasksQuery = tasksQuery
                 .Where(x =>
                     (string.IsNullOrWhiteSpace(filter.Name) || EF.Functions.ILike(x.Config.Name, $"%{filter.Name}%")) &&
-                    (string.IsNullOrWhiteSpace(filter.MessagesContent) || x.Messages.Any(e => EF.Functions.ILike(e.Content, $"%{filter.Name}%"))) &&
+                    (string.IsNullOrWhiteSpace(filter.MessagesContent) || x.Messages.Any(e => EF.Functions.ILike(e.Content, $"%{filter.MessagesContent}%"))) &&
                     (filter.State == null || !filter.State.Any() || filter.State.Contains(x.State)) &&
                     (utcDateCreatedFrom == null || x.DateCreated >= utcDateCreatedFrom.Value) &&
-                    (utcDateCreatedTo == null || x.DateCreated < utcDateCreatedTo.Value) &&
+                    (utcDateCreatedTo == null || x.DateCreated <= utcDateCreatedTo.Value) &&
                     (utcDateUpdatedFrom == null || (x.DateUpdated != null && x.DateUpdated >= utcDateUpdatedFrom.Value)) &&
-                    (utcDateUpdatedTo == null || (x.DateUpdated != null && x.DateUpdated < utcDateUpdatedTo.Value))
+                    (utcDateUpdatedTo == null || (x.DateUpdated != null && x.DateUpdated <= utcDateUpdatedTo.Value))
                 );
 
             return tasksQuery;
