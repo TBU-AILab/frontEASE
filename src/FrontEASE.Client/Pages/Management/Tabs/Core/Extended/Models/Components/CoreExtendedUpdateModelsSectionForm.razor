@@ -1,0 +1,47 @@
+﻿@inject IResourceHandler resourceHandler
+@inject ICoreApiService coreApiService
+@inject Blazored.Toast.Services.IToastService toastService
+
+<Column ColumnSize="ColumnSize.IsFull" Display="Display.Block" Margin="Margin.Is2.FromTop.Is4.FromBottom">
+    <Form Margin="Margin.Is4.FromTop" Class="text-form-size">
+        <Fields>
+            <Row>
+                <Column ColumnSize="ColumnSize.Is9.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                    <FieldLabel>
+                        @(resourceHandler.GetResource($"{AttributeExtensions.GetCollectionResourceValue<GlobalPreferencesDto>()}.{UIStateConstants.Explanation}"))
+                    </FieldLabel>
+                </Column>
+                <Column ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                    <Button Color="Color.Primary" Clicked="@UpdateModels" Class="btn button btn-sized full-width" Disabled="@(updateInProgress)" TextWeight="TextWeight.Bold">
+                        @if (updateInProgress)
+                        {
+                            <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                        }
+                        else
+                        {
+                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}"))
+                        }
+                    </Button>
+                </Column>
+            </Row>
+        </Fields>
+    </Form>
+</Column>
+
+@code {
+    private bool updateInProgress = false;
+
+    public async Task UpdateModels()
+    {
+        updateInProgress = true;
+
+        var result = await coreApiService.UpdateCoreModels();
+        if (result)
+        {
+            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")}";
+            toastService.ShowSuccess(message);
+        }
+
+        updateInProgress = false;
+    }
+}

@@ -12,13 +12,15 @@ namespace FrontEASE.Domain.Services.Core.Connector
         Task HandleTaskCreate(Entities.Tasks.Task task);
         Task HandleTaskInit(Entities.Tasks.Task task);
         Task HandleTaskDuplicate(IList<Entities.Tasks.Task> tasks, Guid origTaskID, string baseName, int copies);
-        Task HandleTaskDelete(IList<Entities.Tasks.Task> tasks);
+        Task<bool> HandleTaskDelete(IList<Entities.Tasks.Task> tasks);
         Task RefreshTaskOptions(Entities.Tasks.Task task);
         Task ChangeTaskState(IList<Entities.Tasks.Task> tasks, TaskState state);
 
         Task<FileStreamResult> DownloadTaskFull(Guid taskID);
         Task<FileStreamResult> DownloadTaskSolution(Guid taskID, Guid messageID);
-        Task HandleModuleImport(Entities.Shared.Files.File moduleFile);
+        Task ImportModule(Entities.Shared.Files.File moduleFile);
+        Task<bool> DeleteModule(string shortName);
+        Task<bool> UpdateModels();
 
         Task<IList<TaskInfoCoreDto>> GetTaskInfos();
         Task<IList<TaskFullCoreDto>> GetTasksFullData();

@@ -14,5 +14,10 @@
         /// Dynamic modules management
         /// </summary>
         MODULES,
+
+        /// <summary>
+        /// Extended core functionality
+        /// </summary>
+        EXTENDED
     }
 }

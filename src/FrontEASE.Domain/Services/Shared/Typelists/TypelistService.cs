@@ -19,9 +19,14 @@ namespace FrontEASE.Domain.Services.Shared.Typelists
             _coreService = coreService;
         }
 
-        public async Task<IList<TaskModule>> LoadModuleTypes()
+        public async Task<IList<TaskModule>> LoadModuleTypes(bool withCacheRefresh)
         {
-            var values = (IList<TaskModule>?)_memoryCache.Get(CacheNameConstants.TypelistModuleTypes);
+            var values = (IList<TaskModule>?)null;
+            if (!withCacheRefresh)
+            {
+                values = (IList<TaskModule>?)_memoryCache.Get(CacheNameConstants.TypelistModuleTypes);
+            }
+
             if (values is null)
             {
                 var types = await _coreService.GetModuleTypes();

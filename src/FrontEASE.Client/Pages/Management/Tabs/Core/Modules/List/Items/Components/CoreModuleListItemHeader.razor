@@ -6,18 +6,15 @@
 <Row Class="gx-0 margin-background-offset-top-1">
     <CardHeader Display="Display.Flex" Border="Border.RoundedZero" Class="text-custom-primary bg-custom-secondary" Padding="Padding.Is2.FromEnd.Is2.FromStart">
         <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.End" Class="align-self-center">
-            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await RemoveModule())" />
+            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowDeleteModal())" />
         </Column>
     </CardHeader>
 </Row>
 
-@code {
-    [CascadingParameter]
-    public TaskModuleNoValidationDto Module { get; set; } = new();
+<ModuleDeleteModal @ref="@deleteModal"></ModuleDeleteModal>
 
-    private Task RemoveModule()
-    {
-        toastService.ShowWarning("Ti takú prijebem, že sa z toho poserieš!");
-        return Task.CompletedTask;
-    }
+@code {
+    private ModuleDeleteModal deleteModal { get; set; } = new();
+
+    private Task ShowDeleteModal() => deleteModal.ShowModal();
 }

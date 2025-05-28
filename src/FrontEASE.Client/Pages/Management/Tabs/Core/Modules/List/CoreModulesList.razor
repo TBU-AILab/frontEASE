@@ -19,8 +19,8 @@ else
             @foreach (var Module in TaskModules.OrderBy(x => x.PackageType))
             {
                 <Column ColumnSize="ColumnSize.Is3.OnWidescreen.Is4.OnTablet">
-                    <CascadingValue Value="@Module" >
-                        <CoreModuleListItem/>
+                    <CascadingValue Value="@Module">
+                        <CoreModuleListItem />
                     </CascadingValue>
                 </Column>
             }
@@ -37,18 +37,10 @@ else
 }
 
 @code {
-    [Parameter]
-    public bool FullWidthFields { get; set; }
-
-    [Parameter]
-    public DataOperation Operation { get; set; } = DataOperation.READ;
-
     [CascadingParameter]
     public IList<TaskModuleNoValidationDto> TaskModules { get; set; } = [];
 
     private bool isInitialized = false;
-
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<GlobalPreferencesDto>(elementBase, Operation, null);
 
     private async Task RefreshViewAsync()
     {
