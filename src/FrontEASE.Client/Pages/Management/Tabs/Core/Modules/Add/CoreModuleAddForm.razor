@@ -71,7 +71,7 @@
 
         if (ModuleModel.Files.All(x => x.Content.Length > 0))
         {
-            var resultData = await coreApiService.ImportTaskModules(ModuleModel);
+            var resultData = await coreApiService.ImportTaskCoreModules(ModuleModel);
             foreach (var result in resultData)
             {
                 var file = ModuleModel.Files.First(x => string.Equals(x.Name, result.Name, StringComparison.InvariantCultureIgnoreCase));

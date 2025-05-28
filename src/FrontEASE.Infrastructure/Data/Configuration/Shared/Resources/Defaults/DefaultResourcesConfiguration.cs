@@ -157,6 +157,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetCollectionResourceValue<UserPreferenceTokenOptionDto>(), Value = "Connection Tokens" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetCollectionResourceValue<GlobalPreferenceCorePackageDto>(), Value = "Core Packages" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetCollectionResourceValue<GlobalPreferenceCoreModuleDto>(), Value = "Core Modules" },
+
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetCollectionResourceValue<GlobalPreferencesDto>()}.{UIStateConstants.Text}", Value = "Large Language Models" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetCollectionResourceValue<GlobalPreferencesDto>()}.{UIStateConstants.Explanation}", Value = "Update the versions of Large Language Models used by the EASE Core." },
             ];
         }
 
@@ -199,6 +202,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
 
                 /* TaskModuleDto */
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(TaskModuleDto)}.{UIElementConstants.Collection}", Value="No modules have been found." },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(TaskModuleDto)}.{UIConstants.Question}", Value="Do you really wish to permanently delete this module?" },
 
                 /* TaskDto */
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(TaskDto)}.{UIElementConstants.Collection}", Value="No tasks have been found." },
@@ -284,6 +288,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* CorePreferencesManagementType */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = CorePreferencesManagementType.PACKAGES.GetEnumResourceValue(), Value = "Packages" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = CorePreferencesManagementType.MODULES.GetEnumResourceValue(), Value = "Modules" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = CorePreferencesManagementType.EXTENDED.GetEnumResourceValue(), Value = "Extended" },
 
                 /* UserRole */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserRole.USER.GetEnumResourceValue(), Value = "User" },

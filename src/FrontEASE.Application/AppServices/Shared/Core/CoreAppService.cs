@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FrontEASE.Domain.Services.Core;
+using FrontEASE.Domain.Services.Shared.Typelists;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Modules;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Results;
 
@@ -8,11 +9,13 @@ namespace FrontEASE.Application.AppServices.Shared.Core
     public class CoreAppService : ICoreAppService
     {
         private readonly ICoreService _coreService;
+        private readonly ITypelistService _typelistService;
         private readonly IMapper _mapper;
 
-        public CoreAppService(ICoreService coreService, IMapper mapper)
+        public CoreAppService(ICoreService coreService, ITypelistService typelistService, IMapper mapper)
         {
             _coreService = coreService;
+            _typelistService = typelistService;
             _mapper = mapper;
         }
 
@@ -38,7 +41,21 @@ namespace FrontEASE.Application.AppServices.Shared.Core
                 }
                 resultList.Add(result);
             }
+
+            if (resultList.Any(r => r.Success))
+            {
+                await _typelistService.LoadModuleTypes(true);
+            }
+
             return resultList;
         }
+
+        public async Task DeleteModule(string shortName)
+        {
+            await _coreService.DeleteCoreModule(shortName);
+            await _typelistService.LoadModuleTypes(true);
+        }
+
+        public async Task UpdateModels() => await _coreService.UpdateCoreModels();
     }
 }

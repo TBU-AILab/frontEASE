@@ -50,8 +50,37 @@ namespace FrontEASE.Domain.Services.Core.Connector
             _serializerOptions.Converters.Add(new TaskModuleParameterCoreDtoConverter());
         }
 
+        public async Task<bool> UpdateModels()
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/update-models");
+            var response = await _httpClient.PostAsync(url, null);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(UpdateModels)} - Call FAILED - Exception: {failResult}");
+            }
+        }
 
-        public async Task HandleModuleImport(Entities.Shared.Files.File moduleFile)
+        public async Task<bool> DeleteModule(string shortName)
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/delete/{shortName}");
+            var response = await _httpClient.DeleteAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync();
+                throw new ApplicationException($"{nameof(DeleteModule)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+        public async Task ImportModule(Entities.Shared.Files.File moduleFile)
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/import");
 
@@ -64,7 +93,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             if (!response.IsSuccessStatusCode)
             {
                 var failResult = await response.Content.ReadAsStringAsync();
-                throw new ApplicationException($"{nameof(HandleModuleImport)} - Call FAILED - Exception: {failResult}");
+                throw new ApplicationException($"{nameof(ImportModule)} - Call FAILED - Exception: {failResult}");
             }
         }
 
@@ -158,7 +187,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             }
         }
 
-        public async Task HandleTaskDelete(IList<Entities.Tasks.Task> tasks)
+        public async Task<bool> HandleTaskDelete(IList<Entities.Tasks.Task> tasks)
         {
             var taskIDs = tasks.Select(x => x.ID).ToList();
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/batch/delete");
@@ -174,6 +203,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
                 var failResult = await response.Content.ReadAsStringAsync();
                 throw new ApplicationException($"{nameof(HandleTaskDelete)} - Call FAILED - Exception: {failResult}");
             }
+            return true;
         }
 
         public async Task RefreshTaskOptions(Entities.Tasks.Task task)

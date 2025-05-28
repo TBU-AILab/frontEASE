@@ -1,0 +1,6 @@
+﻿@inject IResourceHandler resourceHandler
+
+<FormSectionHeader DisplayText="@(resourceHandler.GetResource($"{AttributeExtensions.GetCollectionResourceValue<GlobalPreferencesDto>()}.{UIStateConstants.Text}"))" />
+<Divider Class="divider-main-thin bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is0.FromTop" />
+
+<CoreExtendedUpdateModelsSectionForm/>

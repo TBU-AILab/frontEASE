@@ -16,7 +16,7 @@ namespace FrontEASE.Client.Services.ApiServices.Shared.Core
             IErrorHandlingService errorHandlingService) : base(client, mapper, errorHandlingService)
         { }
 
-        public async Task<IList<ModuleImportBulkActionResultDto>> ImportTaskModules(GlobalPreferenceCoreModuleDto modules)
+        public async Task<IList<ModuleImportBulkActionResultDto>> ImportTaskCoreModules(GlobalPreferenceCoreModuleDto modules)
         {
             var url = $"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Module}";
             var response = await _client.PostAsJsonAsync(url, modules);
@@ -26,6 +26,31 @@ namespace FrontEASE.Client.Services.ApiServices.Shared.Core
                 return [];
             }
             return await response.Content.ReadFromJsonAsync<IList<ModuleImportBulkActionResultDto>>() ?? [];
+        }
+
+
+        public async Task<bool> DeleteTaskCoreModule(string moduleName)
+        {
+            var url = $"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Module}/{moduleName}";
+            var response = await _client.DeleteAsync(url);
+            if (response.StatusCode != HttpStatusCode.NoContent)
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> UpdateCoreModels()
+        {
+            var url = $"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Models}";
+            var response = await _client.PatchAsync(url, null);
+            if (response.StatusCode != HttpStatusCode.NoContent)
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return false;
+            }
+            return true;
         }
     }
 }
