@@ -129,7 +129,6 @@ namespace FrontEASE.Domain.Services.Tasks
             {
                 var newTask = new Entities.Tasks.Task();
                 _mapper.Map(task, newTask);
-                newTask.Config.Name = string.IsNullOrWhiteSpace(baseName) ? $"{task.Config.Name}_{i + 1}" : $"{baseName}_{i + 1}";
                 newTask.AuthorID = task.AuthorID;
 
                 var connectedEntities = await SelectConnectedEntities(task);
