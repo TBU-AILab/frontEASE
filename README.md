@@ -78,6 +78,10 @@ frontEASE/
     # If true, the database will be deleted and re-created with the seed data
     # If false, the database will be used as is
     SEED_DB="false" # optional, defaults to false
+   
+    # Set these to the URL that matches server where the backend runs on if its not the local machine from which you access it
+    API_BASE_URL="http://localhost:4000"
+    PYTHON_BASE_URL="http://localhost:8086"
     ```
 
 3. **Compose docker containers**
