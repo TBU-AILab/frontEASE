@@ -20,4 +20,8 @@ ENV ASPNETCORE_URLS=http://+:5235
 COPY dev-docker-entrypoint.sh .
 RUN chmod +x ./dev-docker-entrypoint.sh
 
-CMD dotnet run --project ./src/FrontEASE.Client/ --urls "http://*:5235"
+# COPY and RUN the url replacement script
+COPY docker-set-urls.sh .
+RUN chmod +x ./docker-set-urls.sh
+
+CMD ["/bin/bash", "-c", "/app/docker-set-urls.sh && dotnet run --project ./src/FrontEASE.Client/ --urls \"http://*:5235\""]

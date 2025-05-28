@@ -11,6 +11,7 @@ RUN dotnet restore ./src/FrontEASE.Client/FrontEASE.Client.csproj
 # Copy the remaining source code
 COPY . .
 
+
 RUN dotnet publish -c Release -o out
 
 # Phase 2: Serve
@@ -21,8 +22,14 @@ RUN rm -rf *
 COPY --from=build /app/out/wwwroot/ .
 
 # Replace 'nginx' with the actual user if needed
-RUN chown -R nginx:nginx /usr/share/nginx/html 
+RUN chown -R nginx:nginx /usr/share/nginx/html
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Copy the replacement and entrypoint scripts
+COPY docker-set-urls.sh /app/docker-set-urls.sh
+COPY client-entrypoint.sh /app/client-entrypoint.sh
+RUN chmod +x /app/docker-set-urls.sh /app/client-entrypoint.sh
+
+ENTRYPOINT ["/app/client-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
