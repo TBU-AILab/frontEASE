@@ -14,9 +14,9 @@ namespace FrontEASE.Application.AppServices.Files
             _fileService = fileService;
         }
 
-        public async Task<FileStreamResult> GetDirectory(Guid identifier, FileSpecification type)
+        public async Task<FileStreamResult> GetDirectory(Guid identifier, FileSpecification type, CancellationToken cancellationToken)
         {
-            var archive = await _fileService.GetArchive(identifier, type) ?? throw new NotFoundException();
+            var archive = await _fileService.GetArchive(identifier, type, cancellationToken) ?? throw new NotFoundException();
             archive.Stream!.FileDownloadName = archive.Name;
 
             return archive.Stream;

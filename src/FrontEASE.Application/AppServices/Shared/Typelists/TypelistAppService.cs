@@ -15,9 +15,9 @@ namespace FrontEASE.Application.AppServices.Shared.Typelists
             _typelistService = typelistService;
         }
 
-        public async Task<IList<TaskModuleNoValidationDto>> LoadModuleTypes()
+        public async Task<IList<TaskModuleNoValidationDto>> LoadModuleTypes(CancellationToken cancellationToken)
         {
-            var types = await _typelistService.LoadModuleTypes(false);
+            var types = await _typelistService.LoadModuleTypes(false, cancellationToken);
             var typeDtos = _mapper.Map<IList<TaskModuleNoValidationDto>>(types);
 
             return typeDtos;

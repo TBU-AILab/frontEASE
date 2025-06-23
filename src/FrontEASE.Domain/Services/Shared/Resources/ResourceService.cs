@@ -13,15 +13,15 @@ namespace FrontEASE.Domain.Services.Shared.Resources
             _resourceRepository = resourceRepository;
         }
 
-        public async Task<IList<Resource>> LoadAll(LanguageCode language)
+        public async Task<IList<Resource>> LoadAll(LanguageCode language, CancellationToken cancellationToken)
         {
-            var resources = await _resourceRepository.LoadAll(language);
+            var resources = await _resourceRepository.LoadAll(language, cancellationToken);
             return resources ?? [];
         }
 
-        public async Task<Resource> Load(LanguageCode language, string resourceCode)
+        public async Task<Resource> Load(LanguageCode language, string resourceCode, CancellationToken cancellationToken)
         {
-            var resource = await _resourceRepository.Load(language, resourceCode);
+            var resource = await _resourceRepository.Load(language, resourceCode, cancellationToken);
             return resource ?? new Resource() { ResourceCode = resourceCode, Value = "N/A" };
         }
     }

@@ -12,20 +12,20 @@ namespace FrontEASE.Domain.Services.Shared.Images
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task SaveImage(Image image, Guid identifier)
+        public async Task SaveImage(Image image, Guid identifier, CancellationToken cancellationToken)
         {
             if (image is not null)
             {
-                var path = GetImagePath(image, identifier);
-                var directory = Path.GetDirectoryName(path.Absolute);
+                var (Relative, Absolute) = GetImagePath(image, identifier);
+                var directory = Path.GetDirectoryName(Absolute);
 
                 if (!Directory.Exists(directory)) { Directory.CreateDirectory(directory!); }
-                if (File.Exists(path.Absolute)) { File.Delete(path.Absolute); }
+                if (File.Exists(Absolute)) { File.Delete(Absolute); }
 
                 var imageBytes = Convert.FromBase64String(image.ImageData);
-                await File.WriteAllBytesAsync(path.Absolute, imageBytes);
+                await File.WriteAllBytesAsync(Absolute, imageBytes, cancellationToken);
 
-                image.ImageUrl = path.Relative;
+                image.ImageUrl = Relative;
             }
         }
 

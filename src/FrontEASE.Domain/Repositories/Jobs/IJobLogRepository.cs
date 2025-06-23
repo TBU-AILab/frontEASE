@@ -4,8 +4,7 @@ namespace FrontEASE.Domain.Repositories.Jobs
 {
     public interface IJobLogRepository : IRepository
     {
-        Task<JobLog?> LoadLastSuccessful(string jobName);
-
-        Task<JobLog> Insert(JobLog jobLog);
+        Task<JobLog?> LoadLastSuccessful(string jobName, CancellationToken cancellationToken);
+        Task<JobLog> Insert(JobLog jobLog, CancellationToken cancellationToken);
     }
 }

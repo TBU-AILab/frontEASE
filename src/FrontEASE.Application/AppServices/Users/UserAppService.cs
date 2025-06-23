@@ -42,17 +42,17 @@ namespace FrontEASE.Application.AppServices.Users
             _appSettings = appSettings;
         }
 
-        public async Task<ApplicationUserDto> Load()
+        public async Task<ApplicationUserDto> Load(CancellationToken cancellationToken)
         {
             var userID = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var user = await _userService.Load(Guid.Parse(userID));
+            var user = await _userService.Load(Guid.Parse(userID), cancellationToken);
             var userDto = _mapper.Map<ApplicationUserDto>(user);
             return userDto;
         }
 
-        public async Task<IList<ApplicationUserDto>> LoadAll()
+        public async Task<IList<ApplicationUserDto>> LoadAll(CancellationToken cancellationToken)
         {
-            var userEntities = await _userService.LoadAll();
+            var userEntities = await _userService.LoadAll(cancellationToken);
             var userDtos = _mapper.Map<IList<ApplicationUserDto>>(userEntities);
             foreach (var userEntity in userEntities)
             {
@@ -63,32 +63,32 @@ namespace FrontEASE.Application.AppServices.Users
             return userDtos;
         }
 
-        public async Task<ApplicationUserDto> Create(ApplicationUserDto user)
+        public async Task<ApplicationUserDto> Create(ApplicationUserDto user, CancellationToken cancellationToken)
         {
             var userEntity = _mapper.Map<ApplicationUser>(user);
-            var duplicities = await _userService.LoadDuplicities(userEntity);
+            var duplicities = await _userService.LoadDuplicities(userEntity, cancellationToken);
             if (duplicities.Count > 0)
             {
                 throw new BadRequestException()
                 {
                     InternalExceptionCode = ApiInternalExceptionCode.BAD_REQUEST,
                     Errors = new Dictionary<string, string[]>()
-                    {{nameof(user),new string[] { (await _resourceService.Load(LanguageCode.EN,$"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUser)}.{UIExceptionConstants.UserExists}")).Value}}}
+                    {{nameof(user),new string[] { (await _resourceService.Load(LanguageCode.EN,$"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUser)}.{UIExceptionConstants.UserExists}", cancellationToken)).Value}}}
                 };
             }
 
-            var insertedEntity = await _userService.Create(userEntity, user.Role, user.Password!);
+            var insertedEntity = await _userService.Create(userEntity, user.Role, user.Password!, cancellationToken);
             var insertedDto = _mapper.Map<ApplicationUserDto>(insertedEntity);
             insertedDto.Role = UserRoleGuidToRole(Guid.Parse(insertedEntity.UserRole!.RoleId));
 
             return insertedDto;
         }
 
-        public async Task<ApplicationUserDto> Update(ApplicationUserDto user)
+        public async Task<ApplicationUserDto> Update(ApplicationUserDto user, CancellationToken cancellationToken)
         {
             var userEntity = _mapper.Map<ApplicationUser>(user);
 
-            var newDuplicities = await _userService.LoadDuplicities(userEntity);
+            var newDuplicities = await _userService.LoadDuplicities(userEntity, cancellationToken);
             if (newDuplicities.Count > 0)
             {
                 var isDuplicityOnlyWithSelf = newDuplicities.Count == 1 && newDuplicities.First().Id == userEntity.Id;
@@ -98,18 +98,18 @@ namespace FrontEASE.Application.AppServices.Users
                     {
                         InternalExceptionCode = ApiInternalExceptionCode.BAD_REQUEST,
                         Errors = new Dictionary<string, string[]>()
-                        {{nameof(user),new string[] { (await _resourceService.Load(LanguageCode.EN,$"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUser)}.{UIExceptionConstants.UserExists}")).Value}}}
+                        {{nameof(user),new string[] { (await _resourceService.Load(LanguageCode.EN,$"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUser)}.{UIExceptionConstants.UserExists}", cancellationToken)).Value}}}
                     };
                 }
             }
 
-            var editedUserEntity = await _userService.Load(user.Id!.Value);
+            var editedUserEntity = await _userService.Load(user.Id!.Value, cancellationToken);
 
             if (!string.IsNullOrWhiteSpace(user.Image?.ImageData) && !string.IsNullOrWhiteSpace(editedUserEntity!.Image?.ImageUrl))
             { _imageService.DeleteImage(editedUserEntity.Image); }
 
             _mapper.Map(userEntity, editedUserEntity);
-            editedUserEntity = await _userService.Update(editedUserEntity!, user.Role);
+            editedUserEntity = await _userService.Update(editedUserEntity!, user.Role, cancellationToken);
 
             var editedUserDto = _mapper.Map<ApplicationUserDto>(editedUserEntity);
             editedUserDto.Role = UserRoleGuidToRole(Guid.Parse(editedUserEntity.UserRole!.RoleId));
@@ -118,10 +118,10 @@ namespace FrontEASE.Application.AppServices.Users
             return editedUserDto;
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(Guid id, CancellationToken cancellationToken)
         {
-            var deletedEntity = await _userService.Load(id);
-            await _userService.Delete(deletedEntity!);
+            var deletedEntity = await _userService.Load(id, cancellationToken);
+            await _userService.Delete(deletedEntity!, cancellationToken);
         }
 
         private UserRole UserRoleGuidToRole(Guid roleID)

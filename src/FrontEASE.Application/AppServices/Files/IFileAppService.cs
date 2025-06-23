@@ -5,6 +5,6 @@ namespace FrontEASE.Application.AppServices.Files
 {
     public interface IFileAppService
     {
-        Task<FileStreamResult> GetDirectory(Guid identifier, FileSpecification type);
+        Task<FileStreamResult> GetDirectory(Guid identifier, FileSpecification type, CancellationToken cancellationToken);
     }
 }

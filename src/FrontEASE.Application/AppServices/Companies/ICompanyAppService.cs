@@ -4,10 +4,10 @@ namespace FrontEASE.Application.AppServices.Companies
 {
     public interface ICompanyAppService
     {
-        Task<CompanyDto> Create(CompanyDto company);
-        Task<CompanyDto> Load(Guid id);
-        Task<IList<CompanyDto>> LoadAll();
-        Task<CompanyDto> Update(CompanyDto company);
-        Task Delete(Guid id);
+        Task<CompanyDto> Create(CompanyDto company, CancellationToken cancellationToken);
+        Task<CompanyDto> Load(Guid id, CancellationToken cancellationToken);
+        Task<IList<CompanyDto>> LoadAll(CancellationToken cancellationToken);
+        Task<CompanyDto> Update(CompanyDto company, CancellationToken cancellationToken);
+        Task Delete(Guid id, CancellationToken cancellationToken);
     }
 }

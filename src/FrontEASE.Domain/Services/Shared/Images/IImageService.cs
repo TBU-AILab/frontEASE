@@ -4,7 +4,7 @@ namespace FrontEASE.Domain.Services.Shared.Images
 {
     public interface IImageService
     {
-        Task SaveImage(Image image, Guid identifier);
+        Task SaveImage(Image image, Guid identifier, CancellationToken cancellationToken);
         void DeleteImage(Image image);
     }
 }

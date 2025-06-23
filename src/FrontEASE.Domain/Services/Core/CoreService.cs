@@ -11,8 +11,8 @@ namespace FrontEASE.Domain.Services.Core
             _coreConnector = coreConnector;
         }
 
-        public async Task ImportCoreModule(Entities.Shared.Files.File fileModule) => await _coreConnector.ImportModule(fileModule);
-        public async Task DeleteCoreModule(string name) => await _coreConnector.DeleteModule(name);
-        public async Task UpdateCoreModels() => await _coreConnector.UpdateModels();
+        public async Task ImportCoreModule(Entities.Shared.Files.File fileModule, CancellationToken cancellationToken) => await _coreConnector.ImportModule(fileModule, cancellationToken);
+        public async Task DeleteCoreModule(string name, CancellationToken cancellationToken) => await _coreConnector.DeleteModule(name, cancellationToken);
+        public async Task UpdateCoreModels(CancellationToken cancellationToken) => await _coreConnector.UpdateModels(cancellationToken);
     }
 }

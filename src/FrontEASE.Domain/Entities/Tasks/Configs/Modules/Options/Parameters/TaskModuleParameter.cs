@@ -29,8 +29,8 @@ namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters
         public string? LongName { get; set; }
         public string? Description { get; set; }
         public string Type { get; set; }
-        public float? MinValue { get; set; }
-        public float? MaxValue { get; set; }
+        public double? MinValue { get; set; }
+        public double? MaxValue { get; set; }
         public IList<string>? EnumDescriptions { get; set; }
         public IList<string>? EnumLongNames { get; set; }
         public bool? Readonly { get; set; }

@@ -5,7 +5,7 @@ namespace FrontEASE.Domain.Services.Shared.Resources
 {
     public interface IResourceService
     {
-        Task<Resource> Load(LanguageCode language, string resourceCode);
-        Task<IList<Resource>> LoadAll(LanguageCode language);
+        Task<Resource> Load(LanguageCode language, string resourceCode, CancellationToken cancellationToken);
+        Task<IList<Resource>> LoadAll(LanguageCode language, CancellationToken cancellationToken);
     }
 }

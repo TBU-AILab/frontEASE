@@ -2,15 +2,19 @@
 @inject IResourceHandler resourceHandler
 @inject IUIManager uiManager
 
-<Row Padding="Padding.Is2" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small" Margin="MarginParam" TextOverflow="TextOverflow.Wrap">
-    <Column ColumnSize="ColumnSize.IsFull" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Padding="Padding.Is2" Shadow="Shadow.Small">
-        <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
-            <Text TextWeight="TextWeight.Bold" Class="text-center">
-                @DisplayName
-            </Text>
-        </Div>
-        <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" Class="text-custom-primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
-    </Column>
+<Row Padding="Padding.Is2" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small" Margin="MarginParam" TextOverflow="TextOverflow.Wrap" @onclick:stopPropagation="true">
+
+    <Button Clicked="@ChangeCollapseState" Width="Width.Is100">
+        <Column ColumnSize="ColumnSize.IsFull" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" Padding="Padding.Is2" Shadow="Shadow.Small">
+            <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
+                <Text TextWeight="TextWeight.Bold" Class="text-center" TextColor="TextColor.Primary">
+                    @DisplayName
+                </Text>
+            </Div>
+            <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" Class="text-custom-primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
+        </Column>
+    </Button>
+
 
     @if (!isSectionCollapsed)
     {

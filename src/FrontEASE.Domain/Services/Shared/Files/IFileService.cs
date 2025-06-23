@@ -6,6 +6,6 @@ namespace FrontEASE.Domain.Services.Shared.Files
 {
     public interface IFileService
     {
-        Task<(FileStreamResult? Stream, string? Name)?> GetArchive(Guid identifier, FileSpecification type);
+        Task<(FileStreamResult? Stream, string? Name)?> GetArchive(Guid identifier, FileSpecification type, CancellationToken cancellationToken);
     }
 }

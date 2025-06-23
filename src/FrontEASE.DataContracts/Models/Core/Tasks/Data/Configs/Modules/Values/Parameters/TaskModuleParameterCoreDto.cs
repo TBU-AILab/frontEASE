@@ -25,10 +25,10 @@ namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.Values.
         public string Type { get; set; }
 
         [JsonPropertyName(ParameterDtoConstants.MinValue)]
-        public float? MinValue { get; set; }
+        public double? MinValue { get; set; }
 
         [JsonPropertyName(ParameterDtoConstants.MaxValue)]
-        public float? MaxValue { get; set; }
+        public double? MaxValue { get; set; }
 
         [JsonPropertyName(ParameterDtoConstants.EnumDescriptions)]
         public IList<string>? EnumDescriptions { get; set; }

@@ -16,27 +16,27 @@ namespace FrontEASE.Infrastructure.Repositories.Companies
             _context = context;
         }
 
-        public async Task<IList<Company>> LoadWhere(Expression<Func<Company, bool>> predicate)
+        public async Task<IList<Company>> LoadWhere(Expression<Func<Company, bool>> predicate, CancellationToken cancellationToken)
         {
             var companies = await _context.Companies
                 .Where(predicate)
-                .ToListAsync() ?? [];
+                .ToListAsync(cancellationToken) ?? [];
 
             return companies;
         }
 
-        public async Task<Company?> Load(Guid id)
+        public async Task<Company?> Load(Guid id, CancellationToken cancellationToken)
         {
             var company = await _context.Companies
                 .Include(x => x.Image)
                 .Include(x => x.Users)
                 .Include(x => x.Address)
-                .SingleOrDefaultAsync(x => x.ID == id);
+                .SingleOrDefaultAsync(x => x.ID == id, cancellationToken);
 
             return company;
         }
 
-        public async Task<IList<Company>> LoadAll()
+        public async Task<IList<Company>> LoadAll(CancellationToken cancellationToken)
         {
             var companies = await _context.Companies
                 .AsNoTracking()
@@ -44,34 +44,34 @@ namespace FrontEASE.Infrastructure.Repositories.Companies
                 .Include(x => x.Users)
                 .Include(x => x.Address)
                 .Where(x => !x.IsDeleted)
-                .ToListAsync() ?? [];
+                .ToListAsync(cancellationToken) ?? [];
 
             return companies;
         }
 
-        public async Task<Company> Insert(Company company)
+        public async Task<Company> Insert(Company company, CancellationToken cancellationToken)
         {
-            await _context.Companies.AddAsync(company);
-            await _context.SaveChangesAsync();
+            await _context.Companies.AddAsync(company, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
             return company;
         }
 
-        public async Task<Company> Update(Company company)
+        public async Task<Company> Update(Company company, CancellationToken cancellationToken)
         {
             _context.Companies.Update(company);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return company;
         }
 
-        public async Task Delete(Company company)
+        public async Task Delete(Company company, CancellationToken cancellationToken)
         {
             company.IsDeleted = true;
             _context.Companies.Update(company);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken);
-        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => await _context.Database.BeginTransactionAsync(cancellationToken);
+        public async Task SaveChangesAsync(CancellationToken cancellationToken) => await _context.SaveChangesAsync(cancellationToken);
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken) => await _context.Database.BeginTransactionAsync(cancellationToken);
     }
 }

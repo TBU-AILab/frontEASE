@@ -22,36 +22,39 @@ namespace FrontEASE.Domain.Services.Users
             _appSettings = appSettings;
         }
 
-        public async Task<IList<ApplicationUser>> LoadAll()
+        public async Task<IList<ApplicationUser>> LoadAll(CancellationToken cancellationToken)
         {
-            var users = await _userRepository.LoadAll();
+            var users = await _userRepository.LoadAll(cancellationToken);
             return users;
         }
 
-        public async Task<ApplicationUser?> Load(Guid id)
+        public async Task<ApplicationUser?> Load(Guid id, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.Load(id) ?? throw new NotFoundException();
+            var user = await _userRepository.Load(id, cancellationToken) ?? throw new NotFoundException();
             return user;
         }
 
-        public async Task<ApplicationUser?> Load(string email)
+        public async Task<ApplicationUser?> Load(string email, CancellationToken cancellationToken)
         {
-            var user = (await _userRepository.LoadWhere(u =>
-                u.Email == email)).FirstOrDefault() ?? throw new NotFoundException();
+            var user = (await _userRepository.LoadWhere(u => 
+                u.Email == email,
+                cancellationToken))
+                .FirstOrDefault() ?? throw new NotFoundException();
 
             return user;
         }
 
-        public async Task<IList<ApplicationUser>> LoadDuplicities(ApplicationUser user)
+        public async Task<IList<ApplicationUser>> LoadDuplicities(ApplicationUser user, CancellationToken cancellationToken)
         {
             var users = await _userRepository.LoadWhere(u =>
                 u.Email == user.Email ||
-                u.UserName == user.UserName);
+                u.UserName == user.UserName,
+                cancellationToken);
 
             return users;
         }
 
-        public async Task<ApplicationUser> Create(ApplicationUser user, UserRole role, string password)
+        public async Task<ApplicationUser> Create(ApplicationUser user, UserRole role, string password, CancellationToken cancellationToken)
         {
             var hasher = new PasswordHasher<ApplicationUser>();
             var newUser = new ApplicationUser()
@@ -73,7 +76,7 @@ namespace FrontEASE.Domain.Services.Users
             if (!string.IsNullOrEmpty(user?.Image?.ImageData))
             {
                 user!.Image!.Type = ImageType.USER_PROFILE_PICTURE;
-                await _imageService.SaveImage(newUser!.Image!, Guid.Parse(newUser.Id));
+                await _imageService.SaveImage(newUser!.Image!, Guid.Parse(newUser.Id), cancellationToken);
             }
             else
             {
@@ -83,11 +86,11 @@ namespace FrontEASE.Domain.Services.Users
                 }
             }
 
-            newUser = await _userRepository.Insert(newUser);
+            newUser = await _userRepository.Insert(newUser, cancellationToken);
             return newUser;
         }
 
-        public async Task<ApplicationUser> Update(ApplicationUser user, UserRole role)
+        public async Task<ApplicationUser> Update(ApplicationUser user, UserRole role, CancellationToken cancellationToken)
         {
             user.UserRole = UserRoleToIdentityRole(role);
             user.NormalizedEmail = user.Email!.ToUpperInvariant();
@@ -96,7 +99,7 @@ namespace FrontEASE.Domain.Services.Users
             if (!string.IsNullOrEmpty(user?.Image?.ImageData))
             {
                 user!.Image!.Type = ImageType.USER_PROFILE_PICTURE;
-                await _imageService.SaveImage(user!.Image!, Guid.Parse(user.Id));
+                await _imageService.SaveImage(user!.Image!, Guid.Parse(user.Id), cancellationToken);
             }
             else
             {
@@ -106,13 +109,13 @@ namespace FrontEASE.Domain.Services.Users
                 }
             }
 
-            var updatedUser = await _userRepository.Update(user);
+            var updatedUser = await _userRepository.Update(user, cancellationToken);
             return updatedUser;
         }
 
-        public async Task Delete(ApplicationUser user)
+        public async Task Delete(ApplicationUser user, CancellationToken cancellationToken)
         {
-            await _userRepository.Delete(user);
+            await _userRepository.Delete(user, cancellationToken);
             if (!string.IsNullOrEmpty(user?.Image?.ImageUrl))
             { _imageService.DeleteImage(user?.Image!); }
         }

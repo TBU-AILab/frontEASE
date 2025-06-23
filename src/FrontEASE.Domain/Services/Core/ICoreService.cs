@@ -2,8 +2,8 @@
 {
     public interface ICoreService
     {
-        Task ImportCoreModule(Entities.Shared.Files.File fileModule);
-        Task DeleteCoreModule(string name);
-        Task UpdateCoreModels();
+        Task ImportCoreModule(Entities.Shared.Files.File fileModule, CancellationToken cancellationToken);
+        Task DeleteCoreModule(string name, CancellationToken cancellationToken);
+        Task UpdateCoreModels(CancellationToken cancellationToken);
     }
 }

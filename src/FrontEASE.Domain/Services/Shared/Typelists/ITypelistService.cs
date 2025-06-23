@@ -4,6 +4,6 @@ namespace FrontEASE.Domain.Services.Shared.Typelists
 {
     public interface ITypelistService
     {
-        Task<IList<TaskModule>> LoadModuleTypes(bool withCacheRefresh);
+        Task<IList<TaskModule>> LoadModuleTypes(bool withCacheRefresh, CancellationToken cancellationToken);
     }
 }

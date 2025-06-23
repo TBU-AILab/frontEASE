@@ -32,15 +32,18 @@ namespace FrontEASE.Server.Controllers.Anonymous
         /// <summary>
         /// Gets the directory as a .zip archive.
         /// </summary>
+        /// <param name="id">Directory contextual ID.</param>
+        /// <param name="type">Type of file to be downloaded.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>.ZIP archive of directory.</returns>
         [HttpGet($"{FilesControllerConstants.BaseUrl}/{FilesControllerConstants.Directory}/{FilesControllerConstants.TypeParam}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(FileStreamResult), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetDirectory([FromRoute, Required] Guid id, [FromRoute, Required] FileSpecification type)
+        public async Task<IActionResult> GetDirectory([FromRoute, Required] Guid id, [FromRoute, Required] FileSpecification type, CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _fileAppService.GetDirectory(id, type);
+                var response = await _fileAppService.GetDirectory(id, type, cancellationToken);
                 return response;
             }
             catch (Exception ex)

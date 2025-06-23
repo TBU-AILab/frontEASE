@@ -15,7 +15,7 @@ namespace FrontEASE.Infrastructure.Repositories.Management
             _context = context;
         }
 
-        public async Task<UserPreferences?> Load(Guid id)
+        public async Task<UserPreferences?> Load(Guid id, CancellationToken cancellationToken)
         {
             var query = await _context.Users
                 .Include(x => x.UserPreferences)
@@ -24,19 +24,19 @@ namespace FrontEASE.Infrastructure.Repositories.Management
                 .Include(x => x.UserPreferences)
                     .ThenInclude(x => x.GeneralOptions)
                 .AsSplitQuery()
-                .SingleOrDefaultAsync(x => x.Id == id.ToString());
+                .SingleOrDefaultAsync(x => x.Id == id.ToString(), cancellationToken);
 
             return query?.UserPreferences;
         }
 
-        public async Task<UserPreferences> Update(UserPreferences preferences)
+        public async Task<UserPreferences> Update(UserPreferences preferences, CancellationToken cancellationToken)
         {
             _context.UserPreferences.Update(preferences);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return preferences;
         }
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken);
-        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => await _context.Database.BeginTransactionAsync(cancellationToken);
+        public async Task SaveChangesAsync(CancellationToken cancellationToken) => await _context.SaveChangesAsync(cancellationToken);
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken) => await _context.Database.BeginTransactionAsync(cancellationToken);
     }
 }

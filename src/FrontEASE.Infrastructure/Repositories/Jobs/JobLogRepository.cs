@@ -1,5 +1,4 @@
-﻿using FrontEASE.Domain.Entities.Companies;
-using FrontEASE.Domain.Entities.Jobs;
+﻿using FrontEASE.Domain.Entities.Jobs;
 using FrontEASE.Domain.Repositories.Jobs;
 using FrontEASE.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -16,25 +15,25 @@ namespace FrontEASE.Infrastructure.Repositories.Jobs
             _context = context;
         }
 
-        public async Task<JobLog?> LoadLastSuccessful(string jobName)
+        public async Task<JobLog?> LoadLastSuccessful(string jobName, CancellationToken cancellationToken)
         {
             var query = _context.JobExecutions
                 .Where(x => x.JobName == jobName && x.Success)
                 .OrderByDescending(x => x.DateStart);
 
-            var lastJob = await query.FirstOrDefaultAsync();
+            var lastJob = await query.FirstOrDefaultAsync(cancellationToken);
             return lastJob;
         }
 
-        public async Task<JobLog> Insert(JobLog jobLog)
+        public async Task<JobLog> Insert(JobLog jobLog, CancellationToken cancellationToken)
         {
-            await _context.JobExecutions.AddAsync(jobLog);
-            await _context.SaveChangesAsync();
+            await _context.JobExecutions.AddAsync(jobLog, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
             return jobLog;
         }
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken);
-        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => await _context.Database.BeginTransactionAsync(cancellationToken);
+        public async Task SaveChangesAsync(CancellationToken cancellationToken) => await _context.SaveChangesAsync(cancellationToken);
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken) => await _context.Database.BeginTransactionAsync(cancellationToken);
     }
 }

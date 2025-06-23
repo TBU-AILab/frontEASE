@@ -17,8 +17,8 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
         public string? LongName { get; set; }
         public string? Description { get; set; }
         public string Type { get; set; }
-        public float? MinValue { get; set; }
-        public float? MaxValue { get; set; }
+        public double? MinValue { get; set; }
+        public double? MaxValue { get; set; }
         public IList<string>? EnumDescriptions { get; set; }
         public IList<string>? EnumLongNames { get; set; }
         public IList<TaskModuleParameterEnumOptionNoValidationDto>? EnumOptions { get; set; }

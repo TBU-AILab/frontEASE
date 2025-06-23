@@ -19,7 +19,7 @@ namespace FrontEASE.Application.AppServices.Shared.Core
             _mapper = mapper;
         }
 
-        public async Task<IList<ModuleImportBulkActionResultDto>> ImportModules(GlobalPreferenceCoreModuleDto modulesContent)
+        public async Task<IList<ModuleImportBulkActionResultDto>> ImportModules(GlobalPreferenceCoreModuleDto modulesContent, CancellationToken cancellationToken)
         {
             var resultList = new List<ModuleImportBulkActionResultDto>();
             foreach (var module in modulesContent.Files)
@@ -32,7 +32,7 @@ namespace FrontEASE.Application.AppServices.Shared.Core
                 try
                 {
                     var moduleFile = _mapper.Map<Domain.Entities.Shared.Files.File>(module);
-                    await _coreService.ImportCoreModule(moduleFile);
+                    await _coreService.ImportCoreModule(moduleFile, cancellationToken);
                     result.Success = true;
                 }
                 catch (Exception ex)
@@ -44,18 +44,18 @@ namespace FrontEASE.Application.AppServices.Shared.Core
 
             if (resultList.Any(r => r.Success))
             {
-                await _typelistService.LoadModuleTypes(true);
+                await _typelistService.LoadModuleTypes(true, cancellationToken);
             }
 
             return resultList;
         }
 
-        public async Task DeleteModule(string shortName)
+        public async Task DeleteModule(string shortName, CancellationToken cancellationToken)
         {
-            await _coreService.DeleteCoreModule(shortName);
-            await _typelistService.LoadModuleTypes(true);
+            await _coreService.DeleteCoreModule(shortName, cancellationToken);
+            await _typelistService.LoadModuleTypes(true, cancellationToken);
         }
 
-        public async Task UpdateModels() => await _coreService.UpdateCoreModels();
+        public async Task UpdateModels(CancellationToken cancellationToken) => await _coreService.UpdateCoreModels(cancellationToken);
     }
 }

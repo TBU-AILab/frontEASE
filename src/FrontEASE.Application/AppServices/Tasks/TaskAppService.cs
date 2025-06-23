@@ -37,25 +37,25 @@ namespace FrontEASE.Application.AppServices.Tasks
             _contextAccessor = contextAccessor;
         }
 
-        public async Task<TaskDto> Load(Guid id)
+        public async Task<TaskDto> Load(Guid id, CancellationToken cancellationToken)
         {
-            var taskEntity = await _taskService.Load(id);
+            var taskEntity = await _taskService.Load(id, cancellationToken);
             var taskDto = _mapper.Map<TaskDto>(taskEntity);
 
-            var refreshedOptions = await _taskService.RefreshOptions(taskEntity);
+            var refreshedOptions = await _taskService.RefreshOptions(taskEntity, cancellationToken);
             taskDto.Config.AvailableModules = _mapper.Map<IList<TaskModuleNoValidationDto>>(refreshedOptions);
 
             return taskDto;
         }
 
-        public async Task<TaskDto> LoadSimple(Guid id)
+        public async Task<TaskDto> LoadSimple(Guid id, CancellationToken cancellationToken)
         {
-            var taskEntity = await _taskService.LoadSimple(id);
+            var taskEntity = await _taskService.LoadSimple(id, cancellationToken);
             var taskDto = _mapper.Map<TaskDto>(taskEntity);
             return taskDto;
         }
 
-        public async Task<TaskDto> Refresh(TaskDto task)
+        public async Task<TaskDto> Refresh(TaskDto task, CancellationToken cancellationToken)
         {
             var taskEntity = _mapper.Map<Domain.Entities.Tasks.Task>(task);
 
@@ -69,78 +69,78 @@ namespace FrontEASE.Application.AppServices.Tasks
             }
             taskEntity.Config.Modules = [.. taskEntity.Config.Modules.Except(emptyModules)];
 
-            var refreshedOptions = await _taskService.RefreshOptions(taskEntity);
+            var refreshedOptions = await _taskService.RefreshOptions(taskEntity, cancellationToken);
             task.Config.AvailableModules = _mapper.Map<IList<TaskModuleNoValidationDto>>(refreshedOptions);
             return task;
         }
 
-        public async Task<IList<TaskInfoDto>> LoadAll(TaskFilterActionRequestDto? filter)
+        public async Task<IList<TaskInfoDto>> LoadAll(TaskFilterActionRequestDto? filter, CancellationToken cancellationToken)
         {
             var userMail = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
-            var user = await _userService.Load(userMail);
+            var user = await _userService.Load(userMail, cancellationToken);
 
             var appliedFilter = filter is null ? null : _mapper.Map<TaskFilterActionRequest>(filter);
             var taskEntities = (user is not null && user.UserRole?.RoleId == _appSettings.AuthSettings?.Defaults?.Roles?.SuperadminGuid?.ToString()) ?
-                await _taskService.LoadAll(null, appliedFilter) :
-                await _taskService.LoadAllBase(Guid.Parse(user!.Id), appliedFilter);
+                await _taskService.LoadAll(null, appliedFilter, cancellationToken) :
+                await _taskService.LoadAllBase(Guid.Parse(user!.Id), appliedFilter, cancellationToken);
 
             var taskInfoDtos = _mapper.Map<IList<TaskInfoDto>>(taskEntities);
             return taskInfoDtos;
         }
 
 
-        public async Task<IList<TaskStatusDto>> LoadAllStatuses()
+        public async Task<IList<TaskStatusDto>> LoadAllStatuses(CancellationToken cancellationToken)
         {
             var userMail = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
-            var user = await _userService.Load(userMail);
+            var user = await _userService.Load(userMail, cancellationToken);
 
-            var taskEntities = await _taskService.LoadAllBase(Guid.Parse(user!.Id), null);
+            var taskEntities = await _taskService.LoadAllBase(Guid.Parse(user!.Id), null, cancellationToken);
             var taskStatusDtos = _mapper.Map<IList<TaskStatusDto>>(taskEntities);
             return taskStatusDtos;
         }
 
-        public async Task<TaskDto> Update(TaskDto task)
+        public async Task<TaskDto> Update(TaskDto task, CancellationToken cancellationToken)
         {
             var taskEntity = _mapper.Map<Domain.Entities.Tasks.Task>(task);
 
-            taskEntity = await _taskService.Update(taskEntity);
+            taskEntity = await _taskService.Update(taskEntity, cancellationToken);
             var updatedDto = _mapper.Map<TaskDto>(taskEntity);
             return updatedDto;
         }
 
-        public async Task<TaskDto> Create()
+        public async Task<TaskDto> Create(CancellationToken cancellationToken)
         {
             var insertedEntity = new Domain.Entities.Tasks.Task();
 
             var userMail = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
-            var user = await _userService.Load(userMail);
+            var user = await _userService.Load(userMail, cancellationToken);
             insertedEntity.AuthorID = Guid.Parse(user!.Id);
 
-            insertedEntity = await _taskService.Create(insertedEntity);
-            await _taskService.RefreshOptions(insertedEntity);
+            insertedEntity = await _taskService.Create(insertedEntity, cancellationToken);
+            await _taskService.RefreshOptions(insertedEntity, cancellationToken);
 
             var insertedDto = _mapper.Map<TaskDto>(insertedEntity);
             return insertedDto;
         }
 
-        public async Task<IList<TaskDto>> Duplicate(Guid id, TaskDuplicateActionRequestDto request)
+        public async Task<IList<TaskDto>> Duplicate(Guid id, TaskDuplicateActionRequestDto request, CancellationToken cancellationToken)
         {
-            var duplicatedEntity = await _taskService.Load(id);
-            var duplicates = await _taskService.Duplicate(duplicatedEntity, request.Name, request.Copies);
+            var duplicatedEntity = await _taskService.Load(id, cancellationToken);
+            var duplicates = await _taskService.Duplicate(duplicatedEntity, request.Name, request.Copies, cancellationToken);
             var duplicatesDto = _mapper.Map<IList<TaskDto>>(duplicates);
             return duplicatesDto;
         }
 
-        public async Task Delete(IList<Guid> ids)
+        public async Task Delete(IList<Guid> ids, CancellationToken cancellationToken)
         {
-            var deletedEntities = await _taskService.Load(ids);
-            await _taskService.Delete(deletedEntities);
+            var deletedEntities = await _taskService.Load(ids, cancellationToken);
+            await _taskService.Delete(deletedEntities, cancellationToken);
         }
 
-        public async Task ChangeState(IList<Guid> ids, TaskState state)
+        public async Task ChangeState(IList<Guid> ids, TaskState state, CancellationToken cancellationToken)
         {
-            var modifiedEntities = await _taskService.Load(ids);
-            await _taskService.ChangeState(modifiedEntities!, state);
+            var modifiedEntities = await _taskService.Load(ids, cancellationToken);
+            await _taskService.ChangeState(modifiedEntities!, state, cancellationToken);
         }
     }
 }

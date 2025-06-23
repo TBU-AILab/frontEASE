@@ -31,15 +31,17 @@ namespace FrontEASE.Server.Controllers.Anonymous
         /// <summary>
         /// Gets list of text resources (translations) from API.
         /// </summary>
+        /// <param name="language">The language code.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>List of resources.</returns>
         [HttpGet($"{ResourcesControllerConstants.BaseUrl}/{ControllerConstants.All}")]
         [ProducesResponseType(typeof(IList<ResourceDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetResources([FromQuery, Required] LanguageCode language)
+        public async Task<IActionResult> GetResources([FromQuery, Required] LanguageCode language, CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _resourceAppService.LoadAll(language);
+                var response = await _resourceAppService.LoadAll(language, cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)

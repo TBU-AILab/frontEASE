@@ -249,7 +249,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules
             return value switch
             {
                 int intVal => new TaskModuleParameterValue { IntValue = intVal },
-                float floatVal => new TaskModuleParameterValue { FloatValue = floatVal },
+                double floatVal => new TaskModuleParameterValue { FloatValue = floatVal },
                 bool boolVal => new TaskModuleParameterValue { BoolValue = boolVal },
                 _ => null
             };
@@ -285,7 +285,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules
             return value switch
             {
                 int intVal => new TaskModuleParameterValueEntity { IntValue = intVal },
-                float floatVal => new TaskModuleParameterValueEntity { FloatValue = floatVal },
+                double floatVal => new TaskModuleParameterValueEntity { FloatValue = floatVal },
                 bool boolVal => new TaskModuleParameterValueEntity { BoolValue = boolVal },
                 _ => null
             };

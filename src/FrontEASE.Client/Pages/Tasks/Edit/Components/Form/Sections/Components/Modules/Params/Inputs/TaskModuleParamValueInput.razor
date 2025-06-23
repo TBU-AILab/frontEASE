@@ -69,8 +69,8 @@
                              Disabled="@(TaskMetadata.InitializationInProgres)"
                              @bind-Value="@ParamValue.Value!.IntValue"
                              Placeholder="@(ParamOption.Default?.IntValue?.ToString() ?? 0.ToString())"
-                             Min="@(ParamOption.MinValue is float intMin ? (int)intMin : int.MinValue)"
-                             Max="@(ParamOption.MaxValue is float intMax ? (int)intMax : int.MaxValue)">
+                             Min="@(ParamOption.MinValue is double intMin ? (int)intMin : int.MinValue)"
+                             Max="@(ParamOption.MaxValue is double intMax ? (int)intMax : int.MaxValue)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -115,13 +115,13 @@
                     </FieldLabel>
                 }
 
-                <NumericEdit TValue="float?"
+                <NumericEdit TValue="double?"
                              ElementId="@(GetElementIdByOperation(ParamOption.Key))"
                              Disabled="@(TaskMetadata.InitializationInProgres)"
                              @bind-Value="@ParamValue.Value!.FloatValue"
                              Placeholder="@(ParamOption.Default?.FloatValue?.ToString() ?? 0.0.ToString())"
-                             Min="@(ParamOption.MinValue is float floatMin ? floatMin : float.MinValue)"
-                             Max="@(ParamOption.MaxValue is float floatMax ? floatMax : float.MaxValue)">
+                             Min="@(ParamOption.MinValue is double floatMin ? floatMin : double.MinValue)"
+                             Max="@(ParamOption.MaxValue is double floatMax ? floatMax : double.MaxValue)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
