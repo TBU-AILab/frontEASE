@@ -33,8 +33,8 @@ namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific
                 if (_nullable && (value is null || string.IsNullOrEmpty(value.ToString())))
                 { return ValidationResult.Success!; }
 
-                var minValue = dto.Metadata.MinValue ?? (integerTypes.Contains(dto.Metadata.Type) ? int.MinValue : float.MinValue);
-                var maxValue = dto.Metadata.MaxValue ?? (integerTypes.Contains(dto.Metadata.Type) ? int.MaxValue : float.MaxValue);
+                var minValue = dto.Metadata.MinValue ?? (integerTypes.Contains(dto.Metadata.Type) ? int.MinValue : double.MinValue);
+                var maxValue = dto.Metadata.MaxValue ?? (integerTypes.Contains(dto.Metadata.Type) ? int.MaxValue : double.MaxValue);
 
                 if (value is double doubleValue && (doubleValue < minValue || doubleValue > maxValue) ||
                     value is int intValue && (intValue < minValue || intValue > maxValue))

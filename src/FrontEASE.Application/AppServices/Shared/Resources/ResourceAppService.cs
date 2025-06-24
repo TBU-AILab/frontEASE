@@ -18,9 +18,9 @@ namespace FrontEASE.Application.AppServices.Shared.Resources
             _mapper = mapper;
         }
 
-        public async Task<IList<ResourceDto>> LoadAll(LanguageCode language)
+        public async Task<IList<ResourceDto>> LoadAll(LanguageCode language, CancellationToken cancellationToken)
         {
-            var resources = await _resourceService.LoadAll(language);
+            var resources = await _resourceService.LoadAll(language, cancellationToken);
             return _mapper.Map<IList<ResourceDto>>(resources);
         }
     }

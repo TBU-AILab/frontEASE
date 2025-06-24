@@ -5,12 +5,12 @@ namespace FrontEASE.Domain.Services.Users
 {
     public interface IUserService
     {
-        Task<IList<ApplicationUser>> LoadDuplicities(ApplicationUser user);
-        Task<IList<ApplicationUser>> LoadAll();
-        Task<ApplicationUser?> Load(Guid id);
-        Task<ApplicationUser?> Load(string email);
-        Task<ApplicationUser> Create(ApplicationUser user, UserRole role, string password);
-        Task<ApplicationUser> Update(ApplicationUser user, UserRole role);
-        Task Delete(ApplicationUser user);
+        Task<IList<ApplicationUser>> LoadDuplicities(ApplicationUser user, CancellationToken cancellationToken);
+        Task<IList<ApplicationUser>> LoadAll(CancellationToken cancellationToken);
+        Task<ApplicationUser?> Load(Guid id, CancellationToken cancellationToken);
+        Task<ApplicationUser?> Load(string email, CancellationToken cancellationToken);
+        Task<ApplicationUser> Create(ApplicationUser user, UserRole role, string password, CancellationToken cancellationToken);
+        Task<ApplicationUser> Update(ApplicationUser user, UserRole role, CancellationToken cancellationToken);
+        Task Delete(ApplicationUser user, CancellationToken cancellationToken);
     }
 }

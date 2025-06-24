@@ -38,15 +38,16 @@ namespace FrontEASE.Server.Controllers.User
         /// Gets list of task overview models.
         /// </summary>
         /// <param name="filter"> The applied filter.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>List of (shortened) task models.</returns>
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}")]
         [ProducesResponseType(typeof(IList<TaskInfoDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetTasks([FromQuery] TaskFilterActionRequestDto? filter)
+        public async Task<IActionResult> GetTasks([FromQuery] TaskFilterActionRequestDto? filter, CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _taskAppService.LoadAll(filter);
+                var response = await _taskAppService.LoadAll(filter, cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -60,15 +61,16 @@ namespace FrontEASE.Server.Controllers.User
         /// <summary>
         /// Gets list of task statuses.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>List of (minimalistic) task status models.</returns>
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}/{TasksControllerConstants.StateParam}")]
         [ProducesResponseType(typeof(IList<TaskStatusDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetTaskStatuses()
+        public async Task<IActionResult> GetTaskStatuses(CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _taskAppService.LoadAllStatuses();
+                var response = await _taskAppService.LoadAllStatuses(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -83,16 +85,17 @@ namespace FrontEASE.Server.Controllers.User
         /// Loads detailed info about individual task.
         /// </summary>
         /// <param name="id">Task identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task DTO model.</returns>
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> LoadTask([Required, FromRoute] Guid id)
+        public async Task<IActionResult> LoadTask([Required, FromRoute] Guid id, CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _taskAppService.Load(id);
+                var response = await _taskAppService.Load(id, cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -107,16 +110,17 @@ namespace FrontEASE.Server.Controllers.User
         /// Loads simple info about individual task.
         /// </summary>
         /// <param name="id">Task identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task DTO model.</returns>
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}/{TasksControllerConstants.SimpleMode}")]
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> LoadTaskSimple([Required, FromRoute] Guid id)
+        public async Task<IActionResult> LoadTaskSimple([Required, FromRoute] Guid id, CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _taskAppService.LoadSimple(id);
+                var response = await _taskAppService.LoadSimple(id, cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -132,16 +136,17 @@ namespace FrontEASE.Server.Controllers.User
         /// Refreshes task options for selected task.
         /// </summary>
         /// <param name="task">Task model.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task DTO model.</returns>
         [HttpPatch($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> RefreshTaskOptions([Required, FromBody] TaskDto task)
+        public async Task<IActionResult> RefreshTaskOptions([Required, FromBody] TaskDto task, CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _taskAppService.Refresh(task);
+                var response = await _taskAppService.Refresh(task, cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -164,7 +169,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var createdTask = await _taskAppService.Create();
+                var createdTask = await _taskAppService.Create(CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.Created, createdTask, nameof(CreateTask));
             }
             catch (Exception ex)
@@ -189,7 +194,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var duplicatedTask = await _taskAppService.Duplicate(id, request);
+                var duplicatedTask = await _taskAppService.Duplicate(id, request, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.Created, duplicatedTask, nameof(CloneTask));
             }
             catch (Exception ex)
@@ -215,7 +220,7 @@ namespace FrontEASE.Server.Controllers.User
             try
             {
                 ValidateModel();
-                var updatedTask = await _taskAppService.Update(task);
+                var updatedTask = await _taskAppService.Update(task, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, updatedTask);
             }
             catch (Exception ex)
@@ -239,7 +244,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                await _taskAppService.Delete(taskIDs);
+                await _taskAppService.Delete(taskIDs, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent, null);
             }
             catch (Exception ex)
@@ -263,7 +268,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                await _taskAppService.ChangeState(taskIDs, state);
+                await _taskAppService.ChangeState(taskIDs, state, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent, null);
             }
             catch (Exception ex)

@@ -19,7 +19,7 @@ namespace FrontEASE.Domain.Services.Shared.Typelists
             _coreService = coreService;
         }
 
-        public async Task<IList<TaskModule>> LoadModuleTypes(bool withCacheRefresh)
+        public async Task<IList<TaskModule>> LoadModuleTypes(bool withCacheRefresh, CancellationToken cancellationToken)
         {
             var values = (IList<TaskModule>?)null;
             if (!withCacheRefresh)
@@ -29,7 +29,7 @@ namespace FrontEASE.Domain.Services.Shared.Typelists
 
             if (values is null)
             {
-                var types = await _coreService.GetModuleTypes();
+                var types = await _coreService.GetModuleTypes(cancellationToken);
                 values = _mapper.Map<IList<TaskModule>>(types);
 
                 if (values?.Count > 0)

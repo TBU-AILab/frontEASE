@@ -32,7 +32,7 @@ namespace FrontEASE.Server.Controllers
             if (!_resourceHandler.CheckResourcesInitialized())
             {
                 _resourceHandler.InitLanguage(_appSettings.EnvironmentSettings!.LanguageCode!);
-                var resources = _resourceAppService.LoadAll(_resourceHandler.CurrentLanguage).GetAwaiter().GetResult();
+                var resources = _resourceAppService.LoadAll(_resourceHandler.CurrentLanguage, CancellationToken.None).GetAwaiter().GetResult();
                 _resourceHandler.InitResources(resources);
             }
         }

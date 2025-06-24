@@ -9,28 +9,28 @@ namespace FrontEASE.Domain.Services.Core.Connector
 {
     public interface ICoreConnector
     {
-        Task HandleTaskCreate(Entities.Tasks.Task task);
-        Task HandleTaskInit(Entities.Tasks.Task task);
-        Task HandleTaskDuplicate(IList<Entities.Tasks.Task> tasks, Guid origTaskID, string baseName, int copies);
-        Task<bool> HandleTaskDelete(IList<Entities.Tasks.Task> tasks);
-        Task RefreshTaskOptions(Entities.Tasks.Task task);
-        Task ChangeTaskState(IList<Entities.Tasks.Task> tasks, TaskState state);
+        Task HandleTaskCreate(Entities.Tasks.Task task, CancellationToken cancellationToken);
+        Task HandleTaskInit(Entities.Tasks.Task task, CancellationToken cancellationToken);
+        Task HandleTaskDuplicate(IList<Entities.Tasks.Task> tasks, Guid origTaskID, string baseName, int copies, CancellationToken cancellationToken);
+        Task<bool> HandleTaskDelete(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken);
+        Task RefreshTaskOptions(Entities.Tasks.Task task, CancellationToken cancellationToken);
+        Task ChangeTaskState(IList<Entities.Tasks.Task> tasks, TaskState state, CancellationToken cancellationToken);
 
-        Task<FileStreamResult> DownloadTaskFull(Guid taskID);
-        Task<FileStreamResult> DownloadTaskSolution(Guid taskID, Guid messageID);
-        Task ImportModule(Entities.Shared.Files.File moduleFile);
-        Task<bool> DeleteModule(string shortName);
-        Task<bool> UpdateModels();
+        Task<FileStreamResult> DownloadTaskFull(Guid taskID, CancellationToken cancellationToken);
+        Task<FileStreamResult> DownloadTaskSolution(Guid taskID, Guid messageID, CancellationToken cancellationToken);
+        Task ImportModule(Entities.Shared.Files.File moduleFile, CancellationToken cancellationToken);
+        Task<bool> DeleteModule(string shortName, CancellationToken cancellationToken);
+        Task<bool> UpdateModels(CancellationToken cancellationToken);
 
-        Task<IList<TaskInfoCoreDto>> GetTaskInfos();
-        Task<IList<TaskFullCoreDto>> GetTasksFullData();
-        Task<IList<TaskInfoCoreDto>> GetTaskStates(IList<Guid>? taskIDs);
-        Task<IList<TaskDynamicInfoCoreDto>> GetTaskRunData(IList<Guid>? taskIDs, DateTime? dateFrom);
+        Task<IList<TaskInfoCoreDto>> GetTaskInfos(CancellationToken cancellationToken);
+        Task<IList<TaskFullCoreDto>> GetTasksFullData(CancellationToken cancellationToken);
+        Task<IList<TaskInfoCoreDto>> GetTaskStates(IList<Guid>? taskIDs, CancellationToken cancellationToken);
+        Task<IList<TaskDynamicInfoCoreDto>> GetTaskRunData(IList<Guid>? taskIDs, DateTime? dateFrom, CancellationToken cancellationToken);
 
-        Task<IList<TaskModuleCoreDto>> GetModuleTypes();
+        Task<IList<TaskModuleCoreDto>> GetModuleTypes(CancellationToken cancellationToken);
 
-        Task<IList<CorePackageCoreDto>> GetPackages();
-        Task<bool> DeletePackages(IList<GlobalPreferenceCorePackage> packages);
-        Task<bool> AddPackages(IList<GlobalPreferenceCorePackage> packages);
+        Task<IList<CorePackageCoreDto>> GetPackages(CancellationToken cancellationToken);
+        Task<bool> DeletePackages(IList<GlobalPreferenceCorePackage> packages, CancellationToken cancellationToken);
+        Task<bool> AddPackages(IList<GlobalPreferenceCorePackage> packages, CancellationToken cancellationToken);
     }
 }

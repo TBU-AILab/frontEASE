@@ -9,7 +9,7 @@ namespace FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options.Parameters.Val
 
         public TaskModuleParameterListOption? ListValue { get; set; }
         public TaskModuleParameterEnumOption? EnumValue { get; set; }
-        public float? FloatValue { get; set; }
+        public double? FloatValue { get; set; }
         public int? IntValue { get; set; }
         public string? StringValue { get; set; }
         public bool? BoolValue { get; set; }

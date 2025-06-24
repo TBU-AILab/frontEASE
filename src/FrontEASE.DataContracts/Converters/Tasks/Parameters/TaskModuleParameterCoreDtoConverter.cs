@@ -29,14 +29,31 @@ namespace FrontEASE.DataContracts.Converters.Tasks.Parameters
             var typeString = root.TryGetProperty(ParameterDtoConstants.Type, out var typeElement) ? typeElement.GetString() ?? string.Empty : string.Empty;
             var paramType = DynamicParamUtils.GetParameterType(typeString);
 
+            double? ReadDoubleAllowInfinity(JsonElement element)
+            {
+                if (element.ValueKind == JsonValueKind.Number && element.TryGetDouble(out var num))
+                    return num;
+                if (element.ValueKind == JsonValueKind.String)
+                {
+                    var str = element.GetString();
+                    if (string.Equals(str, "Infinity", StringComparison.OrdinalIgnoreCase))
+                        return double.PositiveInfinity;
+                    if (string.Equals(str, "-Infinity", StringComparison.OrdinalIgnoreCase))
+                        return double.NegativeInfinity;
+                    if (string.Equals(str, "NaN", StringComparison.OrdinalIgnoreCase))
+                        return double.NaN;
+                }
+                return null;
+            }
+
             var dto = new TaskModuleParameterCoreDto
             {
                 ShortName = root.TryGetProperty(ParameterDtoConstants.ShortName, out var shortNameElement) ? shortNameElement.GetString() ?? string.Empty : string.Empty,
                 LongName = root.TryGetProperty(ParameterDtoConstants.LongName, out var longNameElement) ? longNameElement.GetString() : null,
                 Description = root.TryGetProperty(ParameterDtoConstants.Description, out var descriptionElement) ? descriptionElement.GetString() : null,
                 Type = typeString,
-                MinValue = root.TryGetProperty(ParameterDtoConstants.MinValue, out var minValueElement) && minValueElement.ValueKind == JsonValueKind.Number && minValueElement.TryGetSingle(out var minValue) ? minValue : null,
-                MaxValue = root.TryGetProperty(ParameterDtoConstants.MaxValue, out var maxValueElement) && maxValueElement.ValueKind == JsonValueKind.Number && maxValueElement.TryGetSingle(out var maxValue) ? maxValue : null,
+                MinValue = root.TryGetProperty(ParameterDtoConstants.MinValue, out var minValueElement) ? ReadDoubleAllowInfinity(minValueElement) : null,
+                MaxValue = root.TryGetProperty(ParameterDtoConstants.MaxValue, out var maxValueElement) ? ReadDoubleAllowInfinity(maxValueElement) : null,
                 EnumDescriptions = root.TryGetProperty(ParameterDtoConstants.EnumDescriptions, out var enumDescriptionsElement) ? JsonSerializer.Deserialize<IList<string>>(enumDescriptionsElement.GetRawText(), options) : null,
                 EnumLongNames = root.TryGetProperty(ParameterDtoConstants.EnumLongNames, out var enumLongNamesElement) ? JsonSerializer.Deserialize<IList<string>>(enumLongNamesElement.GetRawText(), options) : null,
                 EnumOptions = root.TryGetProperty(ParameterDtoConstants.EnumOptions, out var enumOptionsElement) ? JsonSerializer.Deserialize<IList<TaskModuleParameterEnumOptionCoreDto>>(enumOptionsElement.GetRawText(), options) : null,
@@ -67,13 +84,19 @@ namespace FrontEASE.DataContracts.Converters.Tasks.Parameters
                     }
                     break;
                 case ParameterType.FLOAT:
-                    if (element.TryGetSingle(out var floatValue))
+                    if (element.ValueKind == JsonValueKind.Number && element.TryGetDouble(out var doubleValue))
                     {
-                        valueDto.FloatValue = floatValue;
+                        valueDto.FloatValue = doubleValue;
                     }
-                    else if (element.TryGetDouble(out var doubleValue))
+                    else if (element.ValueKind == JsonValueKind.String)
                     {
-                        valueDto.FloatValue = (float)doubleValue;
+                        var str = element.GetString();
+                        if (string.Equals(str, "Infinity", StringComparison.OrdinalIgnoreCase))
+                            valueDto.FloatValue = double.PositiveInfinity;
+                        else if (string.Equals(str, "-Infinity", StringComparison.OrdinalIgnoreCase))
+                            valueDto.FloatValue = double.NegativeInfinity;
+                        else if (string.Equals(str, "NaN", StringComparison.OrdinalIgnoreCase))
+                            valueDto.FloatValue = double.NaN;
                     }
                     break;
                 case ParameterType.STR:

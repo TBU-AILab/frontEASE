@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 
-namespace FrontEASE.Server.Controllers.Superadmin
+namespace FrontEASE.Server.Controllers.Admin
 {
     /// <summary>
     /// Controller for user management.
@@ -34,15 +34,16 @@ namespace FrontEASE.Server.Controllers.Superadmin
         /// <summary>
         /// Gets user by ID
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
         [HttpGet($"{UsersControllerConstants.BaseUrl}")]
         [ProducesResponseType(typeof(ApplicationUserDto), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetUser()
+        public async Task<IActionResult> GetUser(CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _userAppService.Load();
+                var response = await _userAppService.Load(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -56,15 +57,16 @@ namespace FrontEASE.Server.Controllers.Superadmin
         /// <summary>
         /// Gets list of users visible to logged admin.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>List of users.</returns>
         [HttpGet($"{UsersControllerConstants.BaseUrl}/{ControllerConstants.All}")]
         [ProducesResponseType(typeof(IList<ApplicationUserDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _userAppService.LoadAll();
+                var response = await _userAppService.LoadAll(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -90,7 +92,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
             try
             {
                 ValidateModel();
-                var response = await _userAppService.Create(user);
+                var response = await _userAppService.Create(user, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.Created, response, nameof(InsertUser));
             }
             catch (Exception ex)
@@ -117,7 +119,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
             try
             {
                 ValidateModel();
-                var updatedUser = await _userAppService.Update(user);
+                var updatedUser = await _userAppService.Update(user, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, updatedUser);
             }
             catch (Exception ex)
@@ -142,7 +144,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
             IActionResult result;
             try
             {
-                await _userAppService.Delete(id);
+                await _userAppService.Delete(id, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent, null);
             }
             catch (Exception ex)

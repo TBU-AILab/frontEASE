@@ -4,9 +4,9 @@ namespace FrontEASE.Domain.Services.Management
 {
     public interface IManagementService
     {
-        Task<UserPreferences> Load(Guid id);
-        Task<GlobalPreferences> LoadGlobal();
-        Task<UserPreferences> Update(Guid id, UserPreferences preferences);
-        Task<GlobalPreferences> UpdateGlobal(GlobalPreferences preferences);
+        Task<UserPreferences> Load(Guid id, CancellationToken cancellationToken);
+        Task<GlobalPreferences> LoadGlobal(CancellationToken cancellationToken);
+        Task<UserPreferences> Update(Guid id, UserPreferences preferences, CancellationToken cancellationToken);
+        Task<GlobalPreferences> UpdateGlobal(GlobalPreferences preferences, CancellationToken cancellationToken);
     }
 }

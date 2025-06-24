@@ -26,45 +26,45 @@ namespace FrontEASE.Application.AppServices.Management
             _managementService = managementService;
         }
 
-        public async Task<UserPreferencesDto> Load()
+        public async Task<UserPreferencesDto> Load(CancellationToken cancellationToken)
         {
-            var id = await GetUserID();
+            var id = await GetUserID(cancellationToken);
 
-            var preferencesEntity = await _managementService.Load(id);
+            var preferencesEntity = await _managementService.Load(id, cancellationToken);
             var preferencesDto = _mapper.Map<UserPreferencesDto>(preferencesEntity);
             return preferencesDto;
         }
 
-        public async Task<GlobalPreferencesDto> LoadGlobal()
+        public async Task<GlobalPreferencesDto> LoadGlobal(CancellationToken cancellationToken)
         {
-            var globalPreferences = await _managementService.LoadGlobal();
+            var globalPreferences = await _managementService.LoadGlobal(cancellationToken);
             var preferencesDto = _mapper.Map<GlobalPreferencesDto>(globalPreferences);
             return preferencesDto;
         }
 
-        public async Task<UserPreferencesDto> Update(UserPreferencesDto preferences)
+        public async Task<UserPreferencesDto> Update(UserPreferencesDto preferences, CancellationToken cancellationToken)
         {
-            var id = await GetUserID();
+            var id = await GetUserID(cancellationToken);
             var preferencesEntity = _mapper.Map<UserPreferences>(preferences);
 
-            var updated = await _managementService.Update(id, preferencesEntity);
+            var updated = await _managementService.Update(id, preferencesEntity, cancellationToken);
             var updatedDto = _mapper.Map<UserPreferencesDto>(updated);
             return updatedDto;
         }
 
-        public async Task<GlobalPreferencesDto> UpdateGlobal(GlobalPreferencesDto globalPreferences)
+        public async Task<GlobalPreferencesDto> UpdateGlobal(GlobalPreferencesDto globalPreferences, CancellationToken cancellationToken)
         {
             var preferencesEntity = _mapper.Map<GlobalPreferences>(globalPreferences);
 
-            var updated = await _managementService.UpdateGlobal(preferencesEntity);
+            var updated = await _managementService.UpdateGlobal(preferencesEntity, cancellationToken);
             var updatedDto = _mapper.Map<GlobalPreferencesDto>(updated);
             return updatedDto;
         }
 
-        private async Task<Guid> GetUserID()
+        private async Task<Guid> GetUserID(CancellationToken cancellationToken)
         {
             var userMail = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
-            var user = await _userService.Load(userMail);
+            var user = await _userService.Load(userMail, cancellationToken);
 
             return Guid.Parse(user!.Id);
         }

@@ -18,7 +18,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
         [Resource($"{nameof(TaskModuleParameterValueDto)}.{nameof(FloatValue)}")]
         [ParameterPropertyFilledValidation<TaskModuleParameterValueDto>]
         [ParameterNumericRangeValidation(true)]
-        public float? FloatValue { get; set; }
+        public double? FloatValue { get; set; }
 
         /// <summary>
         /// Parameter - int value
