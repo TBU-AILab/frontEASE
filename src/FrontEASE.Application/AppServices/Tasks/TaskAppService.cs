@@ -80,9 +80,9 @@ namespace FrontEASE.Application.AppServices.Tasks
             var user = await _userService.Load(userMail);
 
             var appliedFilter = filter is null ? null : _mapper.Map<TaskFilterActionRequest>(filter);
-            var taskEntities = (user is not null && user.UserRole?.RoleId == _appSettings.AuthSettings?.Defaults?.Roles?.SuperadminGuid?.ToString()) ?
+            var taskEntities = user.UserRole?.RoleId == _appSettings.AuthSettings?.Defaults?.Roles?.SuperadminGuid?.ToString() ?
                 await _taskService.LoadAll(null, appliedFilter) :
-                await _taskService.LoadAllBase(Guid.Parse(user!.Id), appliedFilter);
+                await _taskService.LoadAll(Guid.Parse(user!.Id), appliedFilter);
 
             var taskInfoDtos = _mapper.Map<IList<TaskInfoDto>>(taskEntities);
             return taskInfoDtos;
