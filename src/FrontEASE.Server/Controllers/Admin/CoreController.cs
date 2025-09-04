@@ -43,7 +43,7 @@ namespace FrontEASE.Server.Controllers.Admin
             try
             {
                 ValidateModel();
-                var response = await _coreAppService.ImportModules(modulesContent);
+                var response = await _coreAppService.ImportModules(modulesContent, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -66,7 +66,7 @@ namespace FrontEASE.Server.Controllers.Admin
             IActionResult result;
             try
             {
-                await _coreAppService.DeleteModule(name);
+                await _coreAppService.DeleteModule(name, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent);
             }
             catch (Exception ex)
@@ -89,7 +89,7 @@ namespace FrontEASE.Server.Controllers.Admin
             IActionResult result;
             try
             {
-                await _coreAppService.UpdateModels();
+                await _coreAppService.UpdateModels(CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent);
             }
             catch (Exception ex)

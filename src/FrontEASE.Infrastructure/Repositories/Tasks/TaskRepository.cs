@@ -54,26 +54,26 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
         }
 
 
-        public async Task<IList<TaskMessage>> LoadAllMessagesWhere(Expression<Func<TaskMessage, bool>>? predicate)
+        public async Task<IList<TaskMessage>> LoadAllMessagesWhere(Expression<Func<TaskMessage, bool>>? predicate, CancellationToken cancellationToken)
         {
             var messagesQuery = predicate is not null ? _context.TaskMessages.Include(x => x.TaskSolution).Where(predicate) : _context.TaskMessages;
-            return await messagesQuery.ToListAsync();
+            return await messagesQuery.ToListAsync(cancellationToken);
         }
 
-        public async Task<IList<Domain.Entities.Tasks.Task>> LoadAllWhere(Expression<Func<Domain.Entities.Tasks.Task, bool>>? predicate, TasksQuery query)
+        public async Task<IList<Domain.Entities.Tasks.Task>> LoadAllWhere(Expression<Func<Domain.Entities.Tasks.Task, bool>>? predicate, TasksQuery query, CancellationToken cancellationToken)
         {
             var tasksQuery = ComposeQuery(query);
             if (predicate is not null)
             {
                 tasksQuery = tasksQuery.Where(predicate);
             }
-            var tasks = await tasksQuery.ToListAsync() ?? [];
-            await LoadTaskNestedModules(query, tasks);
+            var tasks = await tasksQuery.ToListAsync(cancellationToken) ?? [];
+            await LoadTaskNestedModules(query, tasks, cancellationToken);
 
             return tasks;
         }
 
-        private async Task LoadTaskNestedModules(TasksQuery query, IList<Domain.Entities.Tasks.Task> tasks)
+        private async Task LoadTaskNestedModules(TasksQuery query, IList<Domain.Entities.Tasks.Task> tasks, CancellationToken cancellationToken)
         {
             if (query.LoadConfig && query.LoadConfigModules)
             {
@@ -89,9 +89,9 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
                                 {
                                     if (param.Value is null && param.ValueID.HasValue)
                                     {
-                                        await _context.Entry(param).Reference(p => p.Value).LoadAsync();
+                                        await _context.Entry(param).Reference(p => p.Value).LoadAsync(cancellationToken);
                                     }
-                                    await LoadModuleParameterValueRecursivelyAsync(param.Value);
+                                    await LoadModuleParameterValueRecursivelyAsync(param.Value, cancellationToken);
                                 }
                             }
                         }
@@ -100,29 +100,29 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             }
         }
 
-        public async Task<Domain.Entities.Tasks.Task?> Load(Guid id, TasksQuery query)
+        public async Task<Domain.Entities.Tasks.Task?> Load(Guid id, TasksQuery query, CancellationToken cancellationToken)
         {
             var taskQuery = ComposeQuery(query);
-            var task = await taskQuery.SingleOrDefaultAsync(x => x.ID == id);
+            var task = await taskQuery.SingleOrDefaultAsync(x => x.ID == id, cancellationToken);
 
             if (task is not null)
             {
-                await LoadTaskNestedModules(query, [task]);
+                await LoadTaskNestedModules(query, [task], cancellationToken);
             }
 
             return task;
         }
 
-        public async Task<IList<Domain.Entities.Tasks.Task>> Load(IList<Guid> ids, TasksQuery query)
+        public async Task<IList<Domain.Entities.Tasks.Task>> Load(IList<Guid> ids, TasksQuery query, CancellationToken cancellationToken)
         {
             var taskQuery = ComposeQuery(query);
-            var tasks = await taskQuery.Where(x => ids.Contains(x.ID)).ToListAsync() ?? [];
-            await LoadTaskNestedModules(query, tasks);
+            var tasks = await taskQuery.Where(x => ids.Contains(x.ID)).ToListAsync(cancellationToken) ?? [];
+            await LoadTaskNestedModules(query, tasks, cancellationToken);
             return tasks;
         }
 
 
-        public async Task<int> LoadTaskCount() => await _context.Tasks.CountAsync();
+        public async Task<int> LoadTaskCount(CancellationToken cancellationToken) => await _context.Tasks.CountAsync(cancellationToken);
 
         private static IQueryable<Domain.Entities.Tasks.Task> GetFilterQuery(IQueryable<Domain.Entities.Tasks.Task> tasksQuery, TaskFilterActionRequest filter)
         {
@@ -150,7 +150,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             return tasksQuery;
         }
 
-        public async Task<IList<Domain.Entities.Tasks.Task>> LoadInfo(Guid? userID = null, TaskFilterActionRequest? filter = null)
+        public async Task<IList<Domain.Entities.Tasks.Task>> LoadInfo(Guid? userID, TaskFilterActionRequest? filter, CancellationToken cancellationToken)
         {
             var tasksQuery = _context.Tasks
                 .AsSplitQuery()
@@ -165,17 +165,17 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             tasksQuery = filter is null ? tasksQuery : GetFilterQuery(tasksQuery, filter);
 
             var tasks = userID is null ?
-                await tasksQuery.ToListAsync() :
+                await tasksQuery.ToListAsync(cancellationToken) :
                 await tasksQuery
                     .Where(x =>
                         x.Members.Any(x => x.Id == userID!.ToString()) ||
                         x.MemberGroups.Any(x => x.Users.Any(x => x.Id == userID!.ToString())))
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
 
             return tasks;
         }
 
-        public async Task<IList<Domain.Entities.Tasks.Task>> LoadInfoBase(Guid? userID = null, TaskFilterActionRequest? filter = null)
+        public async Task<IList<Domain.Entities.Tasks.Task>> LoadInfoBase(Guid? userID, TaskFilterActionRequest? filter, CancellationToken cancellationToken)
         {
             var tasksQuery = _context.Tasks
                 .AsSplitQuery()
@@ -188,73 +188,73 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             tasksQuery = filter is null ? tasksQuery : GetFilterQuery(tasksQuery, filter);
 
             var tasks = userID is null ?
-                await tasksQuery.ToListAsync() :
+                await tasksQuery.ToListAsync(cancellationToken) :
                 await tasksQuery
                     .Where(x =>
                         x.Members.Any(x => x.Id == userID!.ToString()) ||
                         x.MemberGroups.Any(x => x.Users.Any(x => x.Id == userID!.ToString())))
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
 
             return tasks;
         }
 
-        public async Task<Domain.Entities.Tasks.Task> Insert(Domain.Entities.Tasks.Task task)
+        public async Task<Domain.Entities.Tasks.Task> Insert(Domain.Entities.Tasks.Task task, CancellationToken cancellationToken)
         {
-            await _context.Tasks.AddAsync(task);
-            await _context.SaveChangesAsync();
+            await _context.Tasks.AddAsync(task, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
             return task;
         }
 
-        public async Task<IList<Domain.Entities.Tasks.Task>> InsertRange(IList<Domain.Entities.Tasks.Task> tasks, bool saveChanges)
+        public async Task<IList<Domain.Entities.Tasks.Task>> InsertRange(IList<Domain.Entities.Tasks.Task> tasks, bool saveChanges, CancellationToken cancellationToken)
         {
-            await _context.Tasks.AddRangeAsync(tasks);
+            await _context.Tasks.AddRangeAsync(tasks, cancellationToken);
             if (saveChanges)
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
             }
             return tasks;
         }
 
-        public async Task<Domain.Entities.Tasks.Task> Update(Domain.Entities.Tasks.Task task)
+        public async Task<Domain.Entities.Tasks.Task> Update(Domain.Entities.Tasks.Task task, CancellationToken cancellationToken)
         {
             _context.Tasks.Update(task);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return task;
         }
 
-        public async Task<IList<Domain.Entities.Tasks.Task>> UpdateRange(IList<Domain.Entities.Tasks.Task> tasks)
+        public async Task<IList<Domain.Entities.Tasks.Task>> UpdateRange(IList<Domain.Entities.Tasks.Task> tasks, CancellationToken cancellationToken)
         {
             _context.Tasks.UpdateRange(tasks);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return tasks;
         }
 
-        public async Task Delete(Domain.Entities.Tasks.Task task)
+        public async Task Delete(Domain.Entities.Tasks.Task task, CancellationToken cancellationToken)
         {
             task.IsDeleted = true;
             _context.Tasks.Update(task);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task DeleteRange(IList<TaskSolution> solutions, bool saveChanges)
+        public async Task DeleteRange(IList<TaskSolution> solutions, bool saveChanges, CancellationToken cancellationToken)
         {
             _context.TaskSolutions.RemoveRange(solutions);
             if (saveChanges)
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
             }
         }
 
-        public async Task DeleteRange(IList<TaskMessage> messages, bool saveChanges)
+        public async Task DeleteRange(IList<TaskMessage> messages, bool saveChanges, CancellationToken cancellationToken)
         {
             _context.TaskMessages.RemoveRange(messages);
             if (saveChanges)
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
             }
         }
 
-        public async Task DeleteRange(IList<Domain.Entities.Tasks.Task> tasks, bool hardDelete, bool saveChanges)
+        public async Task DeleteRange(IList<Domain.Entities.Tasks.Task> tasks, bool hardDelete, bool saveChanges, CancellationToken cancellationToken)
         {
             if (hardDelete)
             {
@@ -271,11 +271,11 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
 
             if (saveChanges)
             {
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
             }
         }
 
-        private async Task LoadModuleParameterValueRecursivelyAsync(TaskModuleParameterValueEntity? value)
+        private async Task LoadModuleParameterValueRecursivelyAsync(TaskModuleParameterValueEntity? value, CancellationToken cancellationToken)
         {
             if (value is null)
             {
@@ -284,67 +284,67 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
 
             if (value.EnumValue is null && value.EnumValueID.HasValue)
             {
-                await _context.Entry(value).Reference(v => v.EnumValue).LoadAsync();
+                await _context.Entry(value).Reference(v => v.EnumValue).LoadAsync(cancellationToken);
             }
 
             if (value.EnumValue is not null)
             {
                 if (value.EnumValue.ModuleValue is null && value.EnumValue.ModuleValueID.HasValue)
                 {
-                    await _context.Entry(value.EnumValue).Reference(ev => ev.ModuleValue).LoadAsync();
+                    await _context.Entry(value.EnumValue).Reference(ev => ev.ModuleValue).LoadAsync(cancellationToken);
                 }
 
                 if (value.EnumValue.ModuleValue is not null)
                 {
                     if (!_context.Entry(value.EnumValue.ModuleValue).Collection(m => m.Parameters).IsLoaded)
                     {
-                        await _context.Entry(value.EnumValue.ModuleValue).Collection(m => m.Parameters).LoadAsync();
+                        await _context.Entry(value.EnumValue.ModuleValue).Collection(m => m.Parameters).LoadAsync(cancellationToken);
                     }
 
                     foreach (var nestedParam in value.EnumValue.ModuleValue.Parameters)
                     {
                         if (nestedParam.Value is null && nestedParam.ValueID.HasValue)
                         {
-                            await _context.Entry(nestedParam).Reference(p => p.Value).LoadAsync();
+                            await _context.Entry(nestedParam).Reference(p => p.Value).LoadAsync(cancellationToken);
                         }
-                        await LoadModuleParameterValueRecursivelyAsync(nestedParam.Value);
+                        await LoadModuleParameterValueRecursivelyAsync(nestedParam.Value, cancellationToken);
                     }
                 }
             }
 
             if (value.ListValue is null && value.ListValueID.HasValue)
             {
-                await _context.Entry(value).Reference(v => v.ListValue).LoadAsync();
+                await _context.Entry(value).Reference(v => v.ListValue).LoadAsync(cancellationToken);
             }
 
             if (value.ListValue is not null)
             {
                 if (!_context.Entry(value.ListValue).Collection(lv => lv.ParameterValues).IsLoaded)
                 {
-                    await _context.Entry(value.ListValue).Collection(lv => lv.ParameterValues).LoadAsync();
+                    await _context.Entry(value.ListValue).Collection(lv => lv.ParameterValues).LoadAsync(cancellationToken);
                 }
 
                 foreach (var listItem in value.ListValue.ParameterValues)
                 {
                     if (!_context.Entry(listItem).Collection(i => i.ParameterItems).IsLoaded)
                     {
-                        await _context.Entry(listItem).Collection(i => i.ParameterItems).LoadAsync();
+                        await _context.Entry(listItem).Collection(i => i.ParameterItems).LoadAsync(cancellationToken);
                     }
 
                     foreach (var paramInListItem in listItem.ParameterItems)
                     {
                         if (paramInListItem.Value is null && paramInListItem.ValueID.HasValue)
                         {
-                            await _context.Entry(paramInListItem).Reference(p => p.Value).LoadAsync();
+                            await _context.Entry(paramInListItem).Reference(p => p.Value).LoadAsync(cancellationToken);
                         }
-                        await LoadModuleParameterValueRecursivelyAsync(paramInListItem.Value);
+                        await LoadModuleParameterValueRecursivelyAsync(paramInListItem.Value, cancellationToken);
                     }
                 }
             }
         }
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken);
-        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => await _context.Database.BeginTransactionAsync(cancellationToken);
+        public async Task SaveChangesAsync(CancellationToken cancellationToken) => await _context.SaveChangesAsync(cancellationToken);
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken) => await _context.Database.BeginTransactionAsync(cancellationToken);
 
     }
 }

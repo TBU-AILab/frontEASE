@@ -146,7 +146,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
                     break;
 
                 case ParameterType.FLOAT:
-                    parameter.Value!.FloatValue = float.Parse(defaultValue);
+                    parameter.Value!.FloatValue = double.Parse(defaultValue);
                     break;
 
                 case ParameterType.STR:

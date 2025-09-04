@@ -12,16 +12,16 @@ namespace FrontEASE.Application.Infrastructure.Jobs
             _jobLogRepository = jobLogRepository;
         }
 
-        protected async Task<JobLog> UpdateJobLog(JobLog log, DateTime? dateEnd, bool success)
+        protected async Task<JobLog> UpdateJobLog(JobLog log, DateTime? dateEnd, bool success, CancellationToken cancellationToken)
         {
             log.Success = success;
             log.DateEnd = dateEnd;
 
-            await _jobLogRepository.SaveChangesAsync();
+            await _jobLogRepository.SaveChangesAsync(cancellationToken);
             return log;
         }
 
-        protected async Task<JobLog> InsertJobLog(string jobName, DateTime dateStart, DateTime? dateEnd, bool success)
+        protected async Task<JobLog> InsertJobLog(string jobName, DateTime dateStart, DateTime? dateEnd, bool success, CancellationToken cancellationToken)
         {
             var log = new JobLog()
             {
@@ -31,7 +31,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs
                 JobName = jobName,
             };
 
-            return await _jobLogRepository.Insert(log);
+            return await _jobLogRepository.Insert(log, cancellationToken);
         }
     }
 }

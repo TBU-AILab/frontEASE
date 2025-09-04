@@ -5,9 +5,8 @@ namespace FrontEASE.Application.AppServices.Shared.Core
 {
     public interface ICoreAppService
     {
-        Task<IList<ModuleImportBulkActionResultDto>> ImportModules(GlobalPreferenceCoreModuleDto modulesContent);
-        Task DeleteModule(string shortName);
-
-        Task UpdateModels();
+        Task<IList<ModuleImportBulkActionResultDto>> ImportModules(GlobalPreferenceCoreModuleDto modulesContent, CancellationToken cancellationToken);
+        Task DeleteModule(string shortName, CancellationToken cancellationToken);
+        Task UpdateModels(CancellationToken cancellationToken);
     }
 }

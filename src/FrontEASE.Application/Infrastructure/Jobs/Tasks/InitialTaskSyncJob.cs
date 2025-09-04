@@ -47,17 +47,17 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
         }
 
 
-        private async Task DeleteTasksMissingInCore(PerformContext context, IEnumerable<Guid> coreTaskIDs)
+        private async Task DeleteTasksMissingInCore(PerformContext context, IEnumerable<Guid> coreTaskIDs, CancellationToken cancellationToken)
         {
             context.WriteLine($"Delete executing...");
 
-            var tasksToDelete = await _taskRepository.LoadAllWhere(x => !coreTaskIDs.Contains(x.ID), new TasksQuery());
-            await _taskRepository.DeleteRange(tasksToDelete, true, false);
+            var tasksToDelete = await _taskRepository.LoadAllWhere(x => !coreTaskIDs.Contains(x.ID), new TasksQuery(), cancellationToken);
+            await _taskRepository.DeleteRange(tasksToDelete, true, false, cancellationToken);
 
             context.WriteLine($"Deleted {tasksToDelete.Count} items from the database.");
         }
 
-        private async Task UpdateTasksExistingInBoth(PerformContext context, IList<TaskFullCoreDto> coreTaskData, IEnumerable<Guid> coreTaskIDs, IList<TaskModuleCoreDto> moduleOptions)
+        private async Task UpdateTasksExistingInBoth(PerformContext context, IList<TaskFullCoreDto> coreTaskData, IEnumerable<Guid> coreTaskIDs, CancellationToken cancellationToken)
         {
             context.WriteLine($"Update executing...");
 
@@ -71,10 +71,10 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                 IncludeMembers = true,
             };
 
-            var existingTasks = await _taskRepository.LoadAllWhere(x => !x.IsDeleted && coreTaskIDs.Contains(x.ID), query);
+            var existingTasks = await _taskRepository.LoadAllWhere(x => !x.IsDeleted && coreTaskIDs.Contains(x.ID), query, cancellationToken);
             var authorsToBind = coreTaskData.Select(x => x.TaskConfig?.Author?.ToUpper()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct();
-            var superadmins = await _userRepository.LoadWhere(x => x.UserRole!.RoleId == _appSettings!.AuthSettings!.Defaults!.Roles!.SuperadminGuid.ToString());
-            var authorsMatching = await _userRepository.LoadWhere(x => !string.IsNullOrWhiteSpace(x.Email) && authorsToBind.Contains(x.Email.ToUpper()));
+            var superadmins = await _userRepository.LoadWhere(x => x.UserRole!.RoleId == _appSettings!.AuthSettings!.Defaults!.Roles!.SuperadminGuid.ToString(), cancellationToken);
+            var authorsMatching = await _userRepository.LoadWhere(x => !string.IsNullOrWhiteSpace(x.Email) && authorsToBind.Contains(x.Email.ToUpper()), cancellationToken);
 
             var updatesPerformed = 0;
             foreach (var coreTask in coreTaskData)
@@ -105,16 +105,16 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             context.WriteLine($"Updated {updatesPerformed} matching items.");
         }
 
-        private async Task InsertTasksMissingInDatabase(PerformContext context, IList<TaskFullCoreDto> coreTaskData, IList<TaskModuleCoreDto> moduleOptions)
+        private async Task InsertTasksMissingInDatabase(PerformContext context, IList<TaskFullCoreDto> coreTaskData, CancellationToken cancellationToken)
         {
             context.WriteLine($"Insert executing...");
 
-            var taskIDsInDatabase = (await _taskRepository.LoadAllWhere(null, new TasksQuery())).Select(x => x.ID);
+            var taskIDsInDatabase = (await _taskRepository.LoadAllWhere(null, new TasksQuery(), cancellationToken)).Select(x => x.ID);
             var tasksToAdd = coreTaskData.Where(x => !taskIDsInDatabase.Contains(x.TaskInfo!.ID!.Value));
 
             var authorsToBind = tasksToAdd.Select(x => x.TaskConfig?.Author?.ToUpper()).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct();
-            var superadmins = await _userRepository.LoadWhere(x => x.UserRole!.RoleId == _appSettings!.AuthSettings!.Defaults!.Roles!.SuperadminGuid.ToString());
-            var authorsMatching = await _userRepository.LoadWhere(x => !string.IsNullOrWhiteSpace(x.Email) && authorsToBind.Contains(x.Email.ToUpper()));
+            var superadmins = await _userRepository.LoadWhere(x => x.UserRole!.RoleId == _appSettings!.AuthSettings!.Defaults!.Roles!.SuperadminGuid.ToString(), cancellationToken);
+            var authorsMatching = await _userRepository.LoadWhere(x => !string.IsNullOrWhiteSpace(x.Email) && authorsToBind.Contains(x.Email.ToUpper()), cancellationToken);
 
             var tasksForInsertion = new List<Domain.Entities.Tasks.Task>();
             foreach (var coreTask in tasksToAdd)
@@ -134,53 +134,53 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                 tasksForInsertion.Add(newTask);
             }
 
-            await _taskRepository.InsertRange(tasksForInsertion, false);
+            await _taskRepository.InsertRange(tasksForInsertion, false, cancellationToken);
             context.WriteLine($"Inserted {tasksForInsertion.Count} items into the database.");
         }
 
         public async Task Execute(PerformContext context)
         {
             var currentExecutionStart = DateTime.UtcNow;
-            var log = await InsertJobLog(JobName, currentExecutionStart, null, false);
+            var cancellationToken = context.CancellationToken.ShutdownToken;
+            var log = await InsertJobLog(JobName, currentExecutionStart, null, false, cancellationToken);
             var checkID = SentrySdk.CaptureCheckIn(JobName, CheckInStatus.InProgress);
 
-            await using var transaction = await _taskRepository.BeginTransactionAsync();
+            await using var transaction = await _taskRepository.BeginTransactionAsync(cancellationToken);
 
             try
             {
-                var coreTaskData = (await _coreService.GetTasksFullData()).Where(x => x.TaskInfo?.ID is not null).ToList();
-                var coreTaskOptions = await _coreService.GetModuleTypes();
+                var coreTaskData = (await _coreService.GetTasksFullData(cancellationToken)).Where(x => x.TaskInfo?.ID is not null).ToList();
                 var coreTaskIDs = coreTaskData.Select(x => x.TaskInfo!.ID!.Value).Distinct();
-                var databaseTaskCount = await _taskRepository.LoadTaskCount();
+                var databaseTaskCount = await _taskRepository.LoadTaskCount(cancellationToken);
 
                 context.WriteLine($"Syncing {coreTaskData.Count} items from Core with {databaseTaskCount} items in the database.");
                 var updatePerformed = false;
                 if (databaseTaskCount != 0)
                 {
-                    await DeleteTasksMissingInCore(context, coreTaskIDs);
+                    await DeleteTasksMissingInCore(context, coreTaskIDs, cancellationToken);
                     updatePerformed = true;
                 }
 
                 if (coreTaskData.Count != 0)
                 {
-                    await UpdateTasksExistingInBoth(context, coreTaskData, coreTaskIDs, coreTaskOptions);
-                    await InsertTasksMissingInDatabase(context, coreTaskData, coreTaskOptions);
+                    await UpdateTasksExistingInBoth(context, coreTaskData, coreTaskIDs, cancellationToken);
+                    await InsertTasksMissingInDatabase(context, coreTaskData, cancellationToken);
                     updatePerformed = true;
                 }
 
                 if (updatePerformed)
                 {
-                    await _taskRepository.SaveChangesAsync();
+                    await _taskRepository.SaveChangesAsync(cancellationToken);
                 }
 
-                await UpdateJobLog(log, DateTime.UtcNow, true);
+                await UpdateJobLog(log, DateTime.UtcNow, true, cancellationToken);
                 context.WriteLine($"{JobName} SUCCESS.");
 
-                await transaction.CommitAsync();
+                await transaction.CommitAsync(cancellationToken);
             }
             catch (Exception ex)
             {
-                await UpdateJobLog(log, DateTime.UtcNow, false);
+                await UpdateJobLog(log, DateTime.UtcNow, false, cancellationToken);
                 context.SetTextColor(ConsoleTextColor.Red);
                 context.WriteLine($"{JobName} FAILED: {ex.Message}");
                 new BackgroundJobClient().ChangeState(context.BackgroundJob.Id, new FailedState(ex));

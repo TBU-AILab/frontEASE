@@ -33,15 +33,16 @@ namespace FrontEASE.Server.Controllers.Superadmin
         /// <summary>
         /// Gets list of companies.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>List of companies.</returns>
         [HttpGet($"{CompaniesControllerConstants.BaseUrl}/{ControllerConstants.All}")]
         [ProducesResponseType(typeof(IList<CompanyDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetCompanies()
+        public async Task<IActionResult> GetCompanies(CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _companyAppService.LoadAll();
+                var response = await _companyAppService.LoadAll(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -55,16 +56,18 @@ namespace FrontEASE.Server.Controllers.Superadmin
         /// <summary>
         /// Loads detailed info about individual company.
         /// </summary>
+        /// <param name="id">Company identifier.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Company DTO model.</returns>
         [HttpGet($"{CompaniesControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(CompanyDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> LoadCompany([Required, FromRoute] Guid id)
+        public async Task<IActionResult> LoadCompany([Required, FromRoute] Guid id, CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _companyAppService.Load(id);
+                var response = await _companyAppService.Load(id, cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -90,7 +93,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
             try
             {
                 ValidateModel();
-                var createdCompany = await _companyAppService.Create(company);
+                var createdCompany = await _companyAppService.Create(company, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.Created, createdCompany, nameof(CreateCompany));
             }
             catch (Exception ex)
@@ -117,7 +120,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
             try
             {
                 ValidateModel();
-                var updatedCompany = await _companyAppService.Update(company);
+                var updatedCompany = await _companyAppService.Update(company, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, updatedCompany);
             }
             catch (Exception ex)
@@ -141,7 +144,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
             IActionResult result;
             try
             {
-                await _companyAppService.Delete(id);
+                await _companyAppService.Delete(id, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent, null);
             }
             catch (Exception ex)

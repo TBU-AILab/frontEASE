@@ -13,7 +13,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
         /// Parameter - float value
         /// </summary>
         [Resource($"{nameof(TaskModuleParameterValueDto)}.{nameof(FloatValue)}")]
-        public float? FloatValue { get; set; }
+        public double? FloatValue { get; set; }
 
         /// <summary>
         /// Parameter - int value

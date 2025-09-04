@@ -16,28 +16,28 @@ namespace FrontEASE.Infrastructure.Repositories.Shared.Resources
             _context = dataContext;
         }
 
-        public async Task<Resource?> Load(LanguageCode language, string resourceCode)
+        public async Task<Resource?> Load(LanguageCode language, string resourceCode, CancellationToken cancellationToken)
         {
             var resource = await _context.Resources
                 .AsNoTracking()
                 .Where(x =>
                     x.CountryCodeID == language &&
                     x.ResourceCode == resourceCode)
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(cancellationToken);
 
             return resource;
         }
 
-        public async Task<IList<Resource>> LoadAll(LanguageCode language)
+        public async Task<IList<Resource>> LoadAll(LanguageCode language, CancellationToken cancellationToken)
         {
             var resources = await _context.Resources
                 .AsNoTracking()
                 .Where(x => x.CountryCodeID == language)
-            .ToListAsync() ?? [];
+            .ToListAsync(cancellationToken) ?? [];
             return resources;
         }
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken);
-        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default) => await _context.Database.BeginTransactionAsync(cancellationToken);
+        public async Task SaveChangesAsync(CancellationToken cancellationToken) => await _context.SaveChangesAsync(cancellationToken);
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken) => await _context.Database.BeginTransactionAsync(cancellationToken);
     }
 }

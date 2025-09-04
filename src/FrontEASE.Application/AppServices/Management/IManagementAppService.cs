@@ -4,9 +4,9 @@ namespace FrontEASE.Application.AppServices.Management
 {
     public interface IManagementAppService
     {
-        Task<UserPreferencesDto> Load();
-        Task<GlobalPreferencesDto> LoadGlobal();
-        Task<UserPreferencesDto> Update(UserPreferencesDto preferences);
-        Task<GlobalPreferencesDto> UpdateGlobal(GlobalPreferencesDto globalPreferences);
+        Task<UserPreferencesDto> Load(CancellationToken cancellationToken);
+        Task<GlobalPreferencesDto> LoadGlobal(CancellationToken cancellationToken);
+        Task<UserPreferencesDto> Update(UserPreferencesDto preferences, CancellationToken cancellationToken);
+        Task<GlobalPreferencesDto> UpdateGlobal(GlobalPreferencesDto globalPreferences, CancellationToken cancellationToken);
     }
 }

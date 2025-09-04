@@ -36,12 +36,12 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Paramete
         /// <summary>
         /// Mininum value in case of numeric param
         /// </summary>
-        public float? MinValue { get; set; }
+        public double? MinValue { get; set; }
 
         /// <summary>
         /// Maximum value in case of numeric param
         /// </summary>
-        public float? MaxValue { get; set; }
+        public double? MaxValue { get; set; }
 
         /// <summary>
         /// Enum allowed options

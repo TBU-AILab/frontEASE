@@ -30,15 +30,16 @@ namespace FrontEASE.Server.Controllers.Anonymous
         /// <summary>
         /// Gets the module types typelist.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Module dynamic options.</returns>
         [HttpGet($"{TypelistsControllerConstants.BaseUrl}/{TypelistsControllerConstants.ModuleOptions}")]
         [ProducesResponseType(typeof(IList<TaskModuleNoValidationDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetModuleTypes()
+        public async Task<IActionResult> GetModuleTypes(CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _typelistAppService.LoadModuleTypes();
+                var response = await _typelistAppService.LoadModuleTypes(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)

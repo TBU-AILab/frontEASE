@@ -41,13 +41,14 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
         public async Task Execute(PerformContext context)
         {
             var currentExecutionStart = DateTime.UtcNow;
-            var log = await InsertJobLog(JobName, currentExecutionStart, null, false);
+            var cancellationToken = context.CancellationToken.ShutdownToken;
+            var log = await InsertJobLog(JobName, currentExecutionStart, null, false, cancellationToken);
             var checkID = SentrySdk.CaptureCheckIn(JobName, CheckInStatus.InProgress);
 
-            var lastExecutedLog = await _jobLogRepository.LoadLastSuccessful(JobName);
+            var lastExecutedLog = await _jobLogRepository.LoadLastSuccessful(JobName, cancellationToken);
             context.WriteLine($"Last successful execution:{(lastExecutedLog is null ? "N/A" : $"{lastExecutedLog.DateStart} - {lastExecutedLog.DateEnd}")}");
 
-            await using var transaction = await _taskRepository.BeginTransactionAsync();
+            await using var transaction = await _taskRepository.BeginTransactionAsync(cancellationToken);
             try
             {
                 var queryDetailsCheck = new TasksQuery()
@@ -55,15 +56,15 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                     LoadSolutions = true,
                     LoadMessages = true
                 };
-                var tasksForDataSync = await _taskRepository.LoadAllWhere(x => !x.IsDeleted && x.State == TaskState.RUN, queryDetailsCheck);
+                var tasksForDataSync = await _taskRepository.LoadAllWhere(x => !x.IsDeleted && x.State == TaskState.RUN, queryDetailsCheck, cancellationToken);
                 var tasksForDataSyncIDs = tasksForDataSync.Select(x => x.ID).ToList();
 
                 context.WriteLine($"Checking info, statuses, messages and solutions for: {tasksForDataSync.Count} items.");
 
                 if (tasksForDataSync.Count > 0)
                 {
-                    var infoResults = await _coreService.GetTaskStates(tasksForDataSyncIDs);
-                    var dataResults = await _coreService.GetTaskRunData(tasksForDataSyncIDs, null);
+                    var infoResults = await _coreService.GetTaskStates(tasksForDataSyncIDs, cancellationToken);
+                    var dataResults = await _coreService.GetTaskRunData(tasksForDataSyncIDs, null, cancellationToken);
 
                     foreach (var taskStateInfo in infoResults)
                     {
@@ -99,18 +100,18 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                             matchingTask.Solutions.AddRange(solutionsToBeAdded);
                         }
                     }
-                    await _taskRepository.SaveChangesAsync();
+                    await _taskRepository.SaveChangesAsync(cancellationToken);
                 }
 
-                await UpdateJobLog(log, DateTime.UtcNow, true);
+                await UpdateJobLog(log, DateTime.UtcNow, true, cancellationToken);
                 context.WriteLine($"{JobName} SUCCESS.");
                 SentrySdk.CaptureCheckIn(JobName, CheckInStatus.Ok);
 
-                await transaction.CommitAsync();
+                await transaction.CommitAsync(cancellationToken);
             }
             catch (Exception ex)
             {
-                await UpdateJobLog(log, DateTime.UtcNow, false);
+                await UpdateJobLog(log, DateTime.UtcNow, false, cancellationToken);
                 context.SetTextColor(ConsoleTextColor.Red);
                 context.WriteLine($"{JobName} FAILED: {ex.Message}");
                 new BackgroundJobClient().ChangeState(context.BackgroundJob.Id, new FailedState(ex));

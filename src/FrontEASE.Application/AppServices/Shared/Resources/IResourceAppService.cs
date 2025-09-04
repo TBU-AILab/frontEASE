@@ -5,6 +5,6 @@ namespace FrontEASE.Application.AppServices.Shared.Resources
 {
     public interface IResourceAppService
     {
-        Task<IList<ResourceDto>> LoadAll(LanguageCode language);
+        Task<IList<ResourceDto>> LoadAll(LanguageCode language, CancellationToken cancellationToken);
     }
 }

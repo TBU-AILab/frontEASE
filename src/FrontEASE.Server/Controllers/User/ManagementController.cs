@@ -34,16 +34,17 @@ namespace FrontEASE.Server.Controllers.User
         /// <summary>
         /// Loads current user preferences.
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Preferences DTO model.</returns>
         [HttpGet($"{ManagementControllerConstants.BaseUrl}")]
         [ProducesResponseType(typeof(UserPreferencesDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> LoadPreferences()
+        public async Task<IActionResult> LoadPreferences(CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _managementAppService.Load();
+                var response = await _managementAppService.Load(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -57,16 +58,17 @@ namespace FrontEASE.Server.Controllers.User
         /// <summary>
         /// Gets the global preferences
         /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Python package options.</returns>
         [Authorize(Roles = $"{UserRoleNames.AdminRoleName},{UserRoleNames.SuperadminRoleName}")]
         [HttpGet($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Global}")]
         [ProducesResponseType(typeof(GlobalPreferenceCorePackageDto), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> LoadGlobalPreferences()
+        public async Task<IActionResult> LoadGlobalPreferences(CancellationToken cancellationToken)
         {
             IActionResult result;
             try
             {
-                var response = await _managementAppService.LoadGlobal();
+                var response = await _managementAppService.LoadGlobal(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -92,7 +94,7 @@ namespace FrontEASE.Server.Controllers.User
             try
             {
                 ValidateModel();
-                var updatedPreferences = await _managementAppService.Update(preferences);
+                var updatedPreferences = await _managementAppService.Update(preferences, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, updatedPreferences);
             }
             catch (Exception ex)
@@ -119,7 +121,7 @@ namespace FrontEASE.Server.Controllers.User
             try
             {
                 ValidateModel();
-                var updatedPreferences = await _managementAppService.UpdateGlobal(preferences);
+                var updatedPreferences = await _managementAppService.UpdateGlobal(preferences, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, updatedPreferences);
             }
             catch (Exception ex)

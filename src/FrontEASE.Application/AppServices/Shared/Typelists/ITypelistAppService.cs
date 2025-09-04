@@ -4,6 +4,6 @@ namespace FrontEASE.Application.AppServices.Shared.Typelists
 {
     public interface ITypelistAppService
     {
-        Task<IList<TaskModuleNoValidationDto>> LoadModuleTypes();
+        Task<IList<TaskModuleNoValidationDto>> LoadModuleTypes(CancellationToken cancellationToken);
     }
 }

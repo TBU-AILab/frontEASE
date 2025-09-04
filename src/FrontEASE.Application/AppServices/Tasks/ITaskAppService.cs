@@ -8,15 +8,15 @@ namespace FrontEASE.Application.AppServices.Tasks
 {
     public interface ITaskAppService
     {
-        Task<TaskDto> Load(Guid id);
-        Task<TaskDto> LoadSimple(Guid id);
-        Task<TaskDto> Refresh(TaskDto task);
-        Task<IList<TaskInfoDto>> LoadAll(TaskFilterActionRequestDto? filter);
-        Task<IList<TaskStatusDto>> LoadAllStatuses();
-        Task<TaskDto> Create();
-        Task<IList<TaskDto>> Duplicate(Guid id, TaskDuplicateActionRequestDto request);
-        Task<TaskDto> Update(TaskDto task);
-        Task Delete(IList<Guid> ids);
-        Task ChangeState(IList<Guid> ids, TaskState state);
+        Task<TaskDto> Load(Guid id, CancellationToken cancellationToken);
+        Task<TaskDto> LoadSimple(Guid id, CancellationToken cancellationToken);
+        Task<TaskDto> Refresh(TaskDto task, CancellationToken cancellationToken);
+        Task<IList<TaskInfoDto>> LoadAll(TaskFilterActionRequestDto? filter, CancellationToken cancellationToken);
+        Task<IList<TaskStatusDto>> LoadAllStatuses(CancellationToken cancellationToken);
+        Task<TaskDto> Create(CancellationToken cancellationToken);
+        Task<IList<TaskDto>> Duplicate(Guid id, TaskDuplicateActionRequestDto request, CancellationToken cancellationToken);
+        Task<TaskDto> Update(TaskDto task, CancellationToken cancellationToken);
+        Task Delete(IList<Guid> ids, CancellationToken cancellationToken);
+        Task ChangeState(IList<Guid> ids, TaskState state, CancellationToken cancellationToken);
     }
 }
