@@ -81,8 +81,8 @@ namespace FrontEASE.Application.AppServices.Tasks
 
             var appliedFilter = filter is null ? null : _mapper.Map<TaskFilterActionRequest>(filter);
             var taskEntities = user.UserRole?.RoleId == _appSettings.AuthSettings?.Defaults?.Roles?.SuperadminGuid?.ToString() ?
-                await _taskService.LoadAll(null, appliedFilter) :
-                await _taskService.LoadAll(Guid.Parse(user!.Id), appliedFilter);
+                await _taskService.LoadAll(null, appliedFilter, cancellationToken) :
+                await _taskService.LoadAll(Guid.Parse(user!.Id), appliedFilter, cancellationToken);
 
 
             var taskInfoDtos = _mapper.Map<IList<TaskInfoDto>>(taskEntities);
