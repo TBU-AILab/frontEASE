@@ -8,7 +8,7 @@ namespace FrontEASE.Client.Infrastructure.Settings.AppSettings
 {
     public class AppSettings
     {
-        public LibrarySettings? LibrarySettings { get; set; }
+        public LicenseSettings? LicenseSettings { get; set; }
         public PageSettings? PageSettings { get; set; }
         public ApiSettings? ApiSettings { get; set; }
         public IntegrationSettings? IntegrationSettings { get; set; }

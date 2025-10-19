@@ -1,10 +1,8 @@
-using AutoMapper;
 using Blazored.LocalStorage;
 using Blazored.Toast;
 using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
-using FrontEASE.Client;
 using FrontEASE.Client.Infrastructure.Mappings.Companies;
 using FrontEASE.Client.Infrastructure.Mappings.Management;
 using FrontEASE.Client.Infrastructure.Mappings.Management.Core;
@@ -50,13 +48,15 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Caching.Memory;
+using FrontEASE.Client;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-AppSettings? settings = null;
+var settings = (AppSettings?)null;
 
 SetupArchitecture();
+SetupLogging();
 SetupAuth();
 SetupUIEnhancements();
 SetupHelperServices();
@@ -78,53 +78,49 @@ void SetupUIEnhancements()
         options.DebounceInterval = 50;
         options.Debounce = true;
 
-        options.ProductToken = settings!.LibrarySettings!.Blazorise!.ProductToken;
+        options.ProductToken = settings!.LicenseSettings!.Blazorise!.LicenseToken;
     }).AddBootstrap5Providers().AddFontAwesomeIcons();
     builder.Services.AddBlazoredToast();
 }
 
 void SetupMappings()
 {
-    var mappingConfig = new MapperConfiguration(mc =>
+    builder.Services.AddAutoMapper(cfg =>
     {
-        mc.AddProfile(new FileMappingProfile());
-        mc.AddProfile(new ImageMappingProfile());
-        mc.AddProfile(new UserMappingProfile());
-        mc.AddProfile(new CompanyMappingProfile());
-        mc.AddProfile(new AddressMappingProfile());
+        cfg.AddProfile(new FileMappingProfile());
+        cfg.AddProfile(new ImageMappingProfile());
+        cfg.AddProfile(new UserMappingProfile());
+        cfg.AddProfile(new CompanyMappingProfile());
+        cfg.AddProfile(new AddressMappingProfile());
 
-        mc.AddProfile(new UserPreferencesMappingProfile());
-        mc.AddProfile(new UserPreferenceTokenOptionMappingProfile());
-        mc.AddProfile(new UserPreferenceGeneralOptionsMappingProfile());
-        mc.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
-        mc.AddProfile(new GlobalPreferencesMappingProfile());
-        mc.AddProfile(new CorePackageMappingProfile());
-        mc.AddProfile(new CoreModuleMappingProfile());
+        cfg.AddProfile(new UserPreferencesMappingProfile());
+        cfg.AddProfile(new UserPreferenceTokenOptionMappingProfile());
+        cfg.AddProfile(new UserPreferenceGeneralOptionsMappingProfile());
+        cfg.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
+        cfg.AddProfile(new GlobalPreferencesMappingProfile());
+        cfg.AddProfile(new CorePackageMappingProfile());
+        cfg.AddProfile(new CoreModuleMappingProfile());
 
-        mc.AddProfile(new TaskMappingProfile());
-        mc.AddProfile(new TaskStatusMappingProfile());
-        mc.AddProfile(new TaskInfoMappingProfile());
-        mc.AddProfile(new TaskMessageMappingProfile());
-        mc.AddProfile(new TaskSolutionMappingProfile());
-        mc.AddProfile(new TaskConfigMappingProfile());
-        mc.AddProfile(new TaskConfigRepeatedMessageProfile());
-        mc.AddProfile(new TaskConfigRepeatedMessageItemProfile());
-        mc.AddProfile(new TaskKeyValueItemMappingProfile());
-        mc.AddProfile(new TaskModuleMappingProfile());
-        mc.AddProfile(new TaskModuleParameterMappingProfile());
-        mc.AddProfile(new TaskModuleParameterValueMappingProfile());
-        mc.AddProfile(new TaskModuleParameterEnumOptionMappingProfile());
-        mc.AddProfile(new TaskModuleParameterListOptionMappingProfile());
-        mc.AddProfile(new TaskModuleParameterListOptionParamsMappingProfile());
-        mc.AddProfile(new TaskModuleParameterNoValidationMetadataMappingProfile());
+        cfg.AddProfile(new TaskMappingProfile());
+        cfg.AddProfile(new TaskStatusMappingProfile());
+        cfg.AddProfile(new TaskInfoMappingProfile());
+        cfg.AddProfile(new TaskMessageMappingProfile());
+        cfg.AddProfile(new TaskSolutionMappingProfile());
+        cfg.AddProfile(new TaskConfigMappingProfile());
+        cfg.AddProfile(new TaskConfigRepeatedMessageProfile());
+        cfg.AddProfile(new TaskConfigRepeatedMessageItemProfile());
+        cfg.AddProfile(new TaskKeyValueItemMappingProfile());
+        cfg.AddProfile(new TaskModuleMappingProfile());
+        cfg.AddProfile(new TaskModuleParameterMappingProfile());
+        cfg.AddProfile(new TaskModuleParameterValueMappingProfile());
+        cfg.AddProfile(new TaskModuleParameterEnumOptionMappingProfile());
+        cfg.AddProfile(new TaskModuleParameterListOptionMappingProfile());
+        cfg.AddProfile(new TaskModuleParameterListOptionParamsMappingProfile());
+        cfg.AddProfile(new TaskModuleParameterNoValidationMetadataMappingProfile());
 
-        mc.AddProfile(new TaskDuplicateActionRequestMappingProfile());
-        mc.AddProfile(new TaskFilterActionRequestMappingProfile());
-        mc.AddProfile(new TaskMessageMappingProfile());
+        cfg.AddProfile(new TaskDuplicateActionRequestMappingProfile());
+        cfg.AddProfile(new TaskFilterActionRequestMappingProfile());
     });
-
-    IMapper mapper = mappingConfig.CreateMapper();
-    builder.Services.AddSingleton(mapper);
 }
 
 void SetupAuth()
@@ -140,6 +136,11 @@ void SetupArchitecture()
     builder.Services.AddSingleton(settings!);
     builder.Services.AddBlazoredLocalStorage();
     builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(settings!.ApiSettings!.BaseUrl!) });
+}
+
+void SetupLogging()
+{
+    builder.Logging.AddFilter("LuckyPennySoftware.AutoMapper.License", LogLevel.None);
 }
 
 void SetupUtils()

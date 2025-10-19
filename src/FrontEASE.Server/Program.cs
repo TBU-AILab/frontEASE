@@ -299,7 +299,7 @@ void SetupMonitoring()
                 builder
                     .AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .WithHeaders("Content-Type", "Authorization", "sentry-trace", "baggage"); // Add any other needed headers
+                    .WithHeaders("Content-Type", "Authorization", "sentry-trace", "baggage");
             });
         });
 
@@ -422,45 +422,44 @@ void AddIntegrationAPIDtos(SwaggerGenOptions options)
 
 void SetupMappings()
 {
-    var mappingConfig = new MapperConfiguration(mc =>
+    builder.Services.AddAutoMapper(cfg =>
     {
-        mc.AddProfile(new FileMappingProfile());
-        mc.AddProfile(new ResourceMappingProfile());
-        mc.AddProfile(new ImageMappingProfile());
-        mc.AddProfile(new AddressMappingProfile());
-        mc.AddProfile(new CompanyMappingProfile());
-        mc.AddProfile(new UserMappingProfile());
+        cfg.LicenseKey = settings!.LicenseSettings!.Automapper!.LicenseToken;
 
-        mc.AddProfile(new UserPreferencesMappingProfile());
-        mc.AddProfile(new UserPreferencesTokenOptionMappingProfile());
-        mc.AddProfile(new UserPreferencesGeneralOptionsMappingProfile());
-        mc.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
-        mc.AddProfile(new GlobalPreferencesMappingProfile());
-        mc.AddProfile(new CorePackageMappingProfile());
-        mc.AddProfile(new CoreModuleMappingProfile());
+        cfg.AddProfile(new FileMappingProfile());
+        cfg.AddProfile(new ResourceMappingProfile());
+        cfg.AddProfile(new ImageMappingProfile());
+        cfg.AddProfile(new AddressMappingProfile());
+        cfg.AddProfile(new CompanyMappingProfile());
+        cfg.AddProfile(new UserMappingProfile());
 
-        mc.AddProfile(new TaskInfoMappingProfile());
-        mc.AddProfile(new TaskStatusMappingProfile());
-        mc.AddProfile(new TaskMappingProfile());
-        mc.AddProfile(new TaskSolutionMappingProfile());
-        mc.AddProfile(new TaskMessageMappingProfile());
-        mc.AddProfile(new TaskConfigMappingProfile());
-        mc.AddProfile(new TaskConfigRepeatedMessageMappingProfile());
-        mc.AddProfile(new TaskConfigRepeatedMessageItemMappingProfile());
-        mc.AddProfile(new TaskKeyValueItemMappingProfile());
+        cfg.AddProfile(new UserPreferencesMappingProfile());
+        cfg.AddProfile(new UserPreferencesTokenOptionMappingProfile());
+        cfg.AddProfile(new UserPreferencesGeneralOptionsMappingProfile());
+        cfg.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
+        cfg.AddProfile(new GlobalPreferencesMappingProfile());
+        cfg.AddProfile(new CorePackageMappingProfile());
+        cfg.AddProfile(new CoreModuleMappingProfile());
 
-        mc.AddProfile(new TaskModuleMappingProfile());
-        mc.AddProfile(new TaskModuleParameterMappingProfile());
-        mc.AddProfile(new TaskModuleParameterValueMappingProfile());
-        mc.AddProfile(new TaskModuleParameterEnumOptionMappingProfile());
-        mc.AddProfile(new TaskModuleParameterListOptionMappingProfile());
-        mc.AddProfile(new TaskModuleParameterListOptionParamsMappingProfile());
+        cfg.AddProfile(new TaskInfoMappingProfile());
+        cfg.AddProfile(new TaskStatusMappingProfile());
+        cfg.AddProfile(new TaskMappingProfile());
+        cfg.AddProfile(new TaskSolutionMappingProfile());
+        cfg.AddProfile(new TaskMessageMappingProfile());
+        cfg.AddProfile(new TaskConfigMappingProfile());
+        cfg.AddProfile(new TaskConfigRepeatedMessageMappingProfile());
+        cfg.AddProfile(new TaskConfigRepeatedMessageItemMappingProfile());
+        cfg.AddProfile(new TaskKeyValueItemMappingProfile());
 
-        mc.AddProfile(new TaskFilterActionRequestMappingProfile());
+        cfg.AddProfile(new TaskModuleMappingProfile());
+        cfg.AddProfile(new TaskModuleParameterMappingProfile());
+        cfg.AddProfile(new TaskModuleParameterValueMappingProfile());
+        cfg.AddProfile(new TaskModuleParameterEnumOptionMappingProfile());
+        cfg.AddProfile(new TaskModuleParameterListOptionMappingProfile());
+        cfg.AddProfile(new TaskModuleParameterListOptionParamsMappingProfile());
+
+        cfg.AddProfile(new TaskFilterActionRequestMappingProfile());
     });
-
-    IMapper mapper = mappingConfig.CreateMapper();
-    builder.Services.AddSingleton(mapper);
 }
 
 void SetupRepositories()

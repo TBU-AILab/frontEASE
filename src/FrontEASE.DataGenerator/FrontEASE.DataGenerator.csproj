@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.10" />
   </ItemGroup>
 
   <ItemGroup>
