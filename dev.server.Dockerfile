@@ -1,5 +1,5 @@
 # Use the official .NET SDK image to build the application
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 # Set the working directory
 WORKDIR /app

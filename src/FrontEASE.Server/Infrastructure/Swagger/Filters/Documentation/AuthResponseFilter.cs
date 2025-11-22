@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Net;
 
@@ -14,7 +14,7 @@ namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
                 .OfType<AuthorizeAttribute>();
 
             if (authAttributes.Any())
-                operation.Responses.Add
+                operation.Responses?.Add
                 (
                     ((int)HttpStatusCode.Unauthorized).ToString(),
                     new OpenApiResponse

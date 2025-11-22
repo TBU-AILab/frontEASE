@@ -1,23 +1,22 @@
-﻿using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
 {
     public class EnumSchemaFilter : ISchemaFilter
     {
-        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+        public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
         {
             if (context.Type.IsEnum)
             {
-                schema.Enum.Clear();
+                schema.Enum?.Clear();
                 var enumNames = Enum.GetNames(context.Type).Distinct().ToList();
 
                 enumNames.ForEach(name =>
                 {
-                    if (!schema.Enum.Any(e => e.ToString() == name))
+                    if (!schema.Enum!.Any(e => e.ToString() == name))
                     {
-                        schema.Enum.Add(new OpenApiString(name));
+                        schema.Enum?.Add(name);
                     }
                 });
             }
