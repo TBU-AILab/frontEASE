@@ -74,7 +74,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Security.Claims;
@@ -153,7 +153,7 @@ void ConfigureFramework()
     {
         ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
     };
-    fordwardedHeaderOptions.KnownNetworks.Clear();
+    fordwardedHeaderOptions.KnownIPNetworks.Clear();
     fordwardedHeaderOptions.KnownProxies.Clear();
 
     app.UseForwardedHeaders(fordwardedHeaderOptions);
@@ -386,19 +386,9 @@ void SetupSwaggerGen()
             BearerFormat = "JWT",
             Scheme = "Bearer"
         });
-        options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+        options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
         {
-            {
-                new OpenApiSecurityScheme()
-                {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                Array.Empty<string>()
-            }
+            [new OpenApiSecuritySchemeReference("Bearer", document)] = []
         });
     });
 }

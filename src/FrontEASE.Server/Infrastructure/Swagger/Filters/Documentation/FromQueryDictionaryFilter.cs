@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
@@ -30,29 +30,30 @@ namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
             operation.Parameters = CreateParameters(actionParameters!, operation.Parameters, context);
         }
 
-        private IList<OpenApiParameter?>? CreateParameters(
+        private IList<IOpenApiParameter>? CreateParameters(
             IList<ParameterDescriptor> actionParameters,
-            IList<OpenApiParameter> operationParameters,
+            IList<IOpenApiParameter>? operationParameters,
             OperationFilterContext context)
         {
             var newParameters = actionParameters
                 .Select(p => CreateParameter(p, operationParameters, context))
                 .Where(p => p is not null)
+                .Select(p => p!)
                 .ToList();
 
             return newParameters!.Count != 0 ? newParameters : null;
         }
 
-        private static OpenApiParameter? CreateParameter(
+        private static IOpenApiParameter? CreateParameter(
             ParameterDescriptor actionParameter,
-            IList<OpenApiParameter> operationParameters,
+            IList<IOpenApiParameter>? operationParameters,
             OperationFilterContext context)
         {
-            var operationParamNames = operationParameters.Select(p => p.Name);
-            if (operationParamNames.Contains(actionParameter.Name))
+            var operationParamNames = operationParameters?.Select(p => p.Name);
+            if (operationParamNames?.Contains(actionParameter.Name) == true)
             {
                 // If param is defined as the action method argument, just pass it through
-                return operationParameters.First(p => p.Name == actionParameter.Name);
+                return operationParameters?.First(p => p.Name == actionParameter.Name);
             }
 
             if (actionParameter.BindingInfo is null)
