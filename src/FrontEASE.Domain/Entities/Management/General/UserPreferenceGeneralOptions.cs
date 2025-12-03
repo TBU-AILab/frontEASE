@@ -19,6 +19,7 @@ namespace FrontEASE.Domain.Entities.Management.General
         #region Data
 
         public ColorScheme ColorScheme { get; set; }
+        public TokenVisibility TokenVisibility { get; set; }
 
         #endregion
     }

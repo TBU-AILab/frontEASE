@@ -7,81 +7,83 @@
 @inject Blazored.Toast.Services.IToastService toastService
 
 <Row Background="@uiManager.Theme.BackgroundOptions.Primary">
-    <Column ColumnSize="ColumnSize.Is12" Margin="Margin.Is2.FromBottom" Padding="Padding.Is0">
-        <Icon Name="@(isFormCollapsed? IconName.PlusCircle: IconName.MinusCircle)" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@ChangeCollapseState" Class="float-right main-action-icon main-action-icon-primary" />
-    </Column>
+	<Column ColumnSize="ColumnSize.Is12" Margin="Margin.Is2.FromBottom" Padding="Padding.Is0">
+		<Icon Name="@(isFormCollapsed? IconName.PlusCircle: IconName.MinusCircle)" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@ChangeCollapseState" Class="float-right main-action-icon main-action-icon-primary" />
+	</Column>
 
-    <Column ColumnSize="ColumnSize.Is12" Display="@(isFormCollapsed? Display.None: Display.Block)" Margin="Margin.Is2.FromTop.Is4.FromBottom">
-        <Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="@(async (e) => await HandleKeyDown(e))">
-            <Validations @ref="Validations" Mode="ValidationMode.Manual" Model="TokenModel">
+	<Column ColumnSize="ColumnSize.Is12" Display="@(isFormCollapsed? Display.None: Display.Block)" Margin="Margin.Is2.FromTop.Is4.FromBottom">
+		<Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="@(async (e) => await HandleKeyDown(e))">
+			<Validations @ref="Validations" Mode="ValidationMode.Manual" Model="TokenModel">
 
-                <TokenDataFormSection Operation="DataOperation.INSERT" FullWidthFields="false" TokenModel="@TokenModel" />
+				<CascadingValue Value="TokenModel">
+					<TokenDataFormSection Operation="DataOperation.INSERT" FullWidthFields="false" />
+				</CascadingValue>
 
-                <Fields>
-                    <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
-                        <Button Color="Color.Success" Clicked="@InsertToken" Class="btn button btn-sized full-width" Disabled="@savingInProgress" TextWeight="TextWeight.Bold">
-                            @if (savingInProgress)
-                            {
-                                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
-                            }
-                            else
-                            {
-                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
-                            }
-                        </Button>
-                    </Field>
-                </Fields>
+				<Fields>
+					<Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+						<Button Color="Color.Success" Clicked="@InsertToken" Class="btn button btn-sized full-width" Disabled="@savingInProgress" TextWeight="TextWeight.Bold">
+							@if (savingInProgress)
+							{
+								<SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+							}
+							else
+							{
+								@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
+							}
+						</Button>
+					</Field>
+				</Fields>
 
-            </Validations>
-        </Form>
-    </Column>
+			</Validations>
+		</Form>
+	</Column>
 </Row>
 
 @code {
 
-    [CascadingParameter]
-    public UserPreferencesDto? Options { get; set; } = new();
+	[CascadingParameter]
+	public UserPreferencesDto? Options { get; set; } = new();
 
-    private UserPreferenceTokenOptionDto TokenModel = new();
-    private Validations Validations = new();
+	private UserPreferenceTokenOptionDto TokenModel = new();
+	private Validations Validations = new();
 
-    private bool isFormCollapsed = true;
-    private bool savingInProgress = false;
+	private bool isFormCollapsed = true;
+	private bool savingInProgress = false;
 
-    public async Task HandleKeyDown(KeyboardEventArgs e)
-    {
-        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
-        {
-            case ShortcutKeys.ENTER:
-                await InsertToken();
-                break;
-            default:
-                break;
-        }
-    }
+	public async Task HandleKeyDown(KeyboardEventArgs e)
+	{
+		switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
+		{
+			case ShortcutKeys.ENTER:
+				await InsertToken();
+				break;
+			default:
+				break;
+		}
+	}
 
-    public async Task InsertToken()
-    {
-        savingInProgress = true;
+	public async Task InsertToken()
+	{
+		savingInProgress = true;
 
-        if (await Validations.ValidateAll())
-        {
-            Options!.TokenOptions.Insert(0, mapper.Map<UserPreferenceTokenOptionDto>(TokenModel));
-            var updated = await managementApiService.UpdatePreferences(Options);
+		if (await Validations.ValidateAll())
+		{
+			Options!.TokenOptions.Insert(0, mapper.Map<UserPreferenceTokenOptionDto>(TokenModel));
+			var updated = await managementApiService.UpdatePreferences(Options);
 
-            if (updated is not null)
-            {
-                mapper.Map(updated, Options);
-                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}: {string.Join(", ", TokenModel.ConnectorTypes.Select(x => x.ConnectorType))} ({new string(TokenModel.Token.Take(3).ToArray())} ... {new string(TokenModel.Token.TakeLast(3).ToArray())})";
-                toastService.ShowSuccess(message);
+			if (updated is not null)
+			{
+				mapper.Map(updated, Options);
+				var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}: {string.Join(", ", TokenModel.ConnectorTypes.Select(x => x.ConnectorType))} ({TextHelper.TruncateTokenString(TokenModel.Token)})";
+				toastService.ShowSuccess(message);
 
-                managementManipulationService.ReinitializeTokenModel(TokenModel);
-            }
-        }
+				managementManipulationService.ReinitializeTokenModel(TokenModel);
+			}
+		}
 
-        savingInProgress = false;
-        await uiService.CallRequestRefreshAsync();
-    }
+		savingInProgress = false;
+		await uiService.CallRequestRefreshAsync();
+	}
 
-    private void ChangeCollapseState() => isFormCollapsed = !isFormCollapsed;
+	private void ChangeCollapseState() => isFormCollapsed = !isFormCollapsed;
 }

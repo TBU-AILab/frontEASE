@@ -14,7 +14,7 @@
                     @if (!TaskMetadata.InitializationInProgres)
                     {
                         <Column ColumnSize="ColumnSize.Is2" TextAlignment="TextAlignment.End" Class="align-self-center">
-                            <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                            <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                                 <Icon Class="action-icon-sm action-icon-success" Name="IconName.PlusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@AddNewModule" />
                             </Tooltip>
                         </Column>
@@ -77,7 +77,7 @@
                                     <Div>
                                         @if (!string.IsNullOrWhiteSpace(taskModuleData?.Description))
                                         {
-                                            <Tooltip Multiline="true" Text="@(taskModuleData?.Description)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd">
+                                            <Tooltip Multiline="true" Text="@(taskModuleData?.Description)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
                                                 <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                                             </Tooltip>
                                         }
@@ -103,7 +103,7 @@
 
                         @if (!TaskMetadata.InitializationInProgres)
                         {
-                            <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Remove}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                            <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Remove}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                                 <Icon Class="action-icon-sm action-icon-danger"
                                       Name="IconName.MinusCircle"
                                       IconSize="IconSize.Default"

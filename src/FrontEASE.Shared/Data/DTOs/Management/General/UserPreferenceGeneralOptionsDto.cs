@@ -19,6 +19,11 @@ namespace FrontEASE.Shared.Data.DTOs.Management.General
         [EnumValidation(typeof(ColorScheme))]
         public ColorScheme ColorScheme { get; set; }
 
+        [Resource($"{nameof(UserPreferenceGeneralOptionsDto)}.{nameof(TokenVisibility)}")]
+        [RequiredValidation<UserPreferenceGeneralOptionsDto>]
+        [EnumValidation(typeof(TokenVisibility))]
+        public TokenVisibility TokenVisibility { get; set; }
+
         #endregion
     }
 }

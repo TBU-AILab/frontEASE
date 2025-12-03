@@ -1,25 +1,27 @@
 ﻿@inject IMapper mapper
 @inject IUIService uiService
-@inject IUIManager uiManager
+@inject IResourceHandler resourceHandler;
 
 <Row Class="gx-0 margin-background-offset-top-1">
-    <CardHeader Display="Display.Flex" Border="Border.RoundedZero" Class="text-custom-primary bg-custom-secondary" Padding="Padding.Is2.FromEnd.Is2.FromStart">
-        <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.End" Class="align-self-center">
-            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => RemovePackage())" />
-        </Column>
-    </CardHeader>
+	<CardHeader Display="Display.Flex" Border="Border.RoundedZero" Class="text-custom-primary bg-custom-secondary" Padding="Padding.Is2.FromEnd.Is2.FromStart">
+		<Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.End" Class="align-self-center">
+			<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+				<Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => RemovePackage())" />
+			</Tooltip>
+		</Column>
+	</CardHeader>
 </Row>
 
 @code {
-    [CascadingParameter]
-    public GlobalPreferenceCorePackageDto Package { get; set; } = new();
+	[CascadingParameter]
+	public GlobalPreferenceCorePackageDto Package { get; set; } = new();
 
-    [CascadingParameter]
-    public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
+	[CascadingParameter]
+	public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
 
-    private async Task RemovePackage()
-    {
-        GlobalPreferences.CorePackages.Remove(Package);
-        await uiService.CallRequestRefreshAsync();
-    }
+	private async Task RemovePackage()
+	{
+		GlobalPreferences.CorePackages.Remove(Package);
+		await uiService.CallRequestRefreshAsync();
+	}
 }

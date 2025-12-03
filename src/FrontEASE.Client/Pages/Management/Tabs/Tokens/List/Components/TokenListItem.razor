@@ -2,37 +2,80 @@
 @inject IUIManager uiManager
 
 <Column Margin="Margin.Is3.FromBottom" ColumnSize="ColumnSize.Is12">
-    <Container Fluid Padding="Padding.Is2" Shadow="Shadow.Small" Border="Border.Rounded" Class="bg-custom-secondary">
+	<Container Fluid Padding="Padding.Is2" Shadow="Shadow.Small" Border="Border.Rounded" Class="bg-custom-secondary">
 
-        <Row Margin="Margin.Is2.FromTop" Class="justify-content-center text-break">
-            <Column TextAlignment="TextAlignment.Center" Class="align-self-center ">
-                <Heading Size="HeadingSize.Is5" TextWeight="TextWeight.Bold" Margin="Margin.Is0">
-                    @($"{Token.Name} ({GetTokenLongName() ?? string.Join(", ", Token.ConnectorTypes.Select(x => x.ConnectorType))})")
-                </Heading>
-                @if (!string.IsNullOrWhiteSpace(Token.Description))
-                {
-                    <Row Margin="Margin.Is2.FromTop" Class="text-break">
-                        <Column TextAlignment="TextAlignment.Center">
-                            <Span Class="font-large text-custom-primary" TextOverflow="TextOverflow.Wrap">
-                                @Token.Description
-                            </Span>
-                        </Column>
-                    </Row>
-                }
-            </Column>
-            <Column ColumnSize="ColumnSize.Is2.OnWidescreen">
-                <Column Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.End" Class="align-self-center">
-                    <Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowEditModal())" />
-                    <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowDeleteModal())" />
-                </Column>
-                <Column Display="Display.None.OnWidescreen" ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Class="align-self-center">
-                    <Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowEditModal())" />
-                    <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowDeleteModal())" />
-                </Column>
-            </Column>
-        </Row>
+		<Row Margin="Margin.Is2.FromTop" Class="justify-content-center text-break">
+			<Column TextAlignment="TextAlignment.Center" Class="align-self-center ">
+				<Heading Size="HeadingSize.Is5" TextWeight="TextWeight.Bold" Margin="Margin.Is0">
+					@($"{Token.Name} ({GetTokenLongName() ?? string.Join(", ", Token.ConnectorTypes.Select(x => x.ConnectorType))})")
+				</Heading>
+				@if (!string.IsNullOrWhiteSpace(Token.Description))
+				{
+					<Row Margin="Margin.Is2.FromTop" Class="text-break">
+						<Column TextAlignment="TextAlignment.Center">
+							<Span Class="font-large text-custom-primary" TextOverflow="TextOverflow.Wrap">
+								@Token.Description
+							</Span>
+						</Column>
+					</Row>
+				}
+				@if (!string.IsNullOrWhiteSpace(Token.Token))
+				{
+					<Row Margin="Margin.Is2.FromTop" Class="text-break">
+						<Column TextAlignment="TextAlignment.Center">
+							<Span Class="font-large text-custom-primary fst-italic" TextOverflow="TextOverflow.Wrap" TextColor="TextColor.Muted">
+								@switch (Options.GeneralOptions.TokenVisibility)
+								{
+									case TokenVisibility.VISIBLE:
+										@Token.Token
+										break;
+									case TokenVisibility.TRUNCATED:
+										@TextHelper.TruncateTokenString(Token.Token)
+										break;
+									case TokenVisibility.TRUNCATED_WITH_TOGGLE:
+										@(isTokenShown? Token.Token: TextHelper.TruncateTokenString(Token.Token))
+										break;
+								}
+							</Span>
+						</Column>
+					</Row>
+				}
+			</Column>
+			<Column ColumnSize="ColumnSize.Is2.OnWidescreen">
+				<Column Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.End" Class="align-self-center">
+					@if (Options.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE)
+					{
+						<Tooltip Multiline="true" Text="@(resourceHandler.GetResource(isTokenShown ? $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Hide}" : $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Show}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+							<Icon Class="action-icon action-icon-secondary" Name="@(isTokenShown? IconName.EyeSlash: IconName.Eye)" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => SwitchTokenVisibility())" />
+						</Tooltip>
+					}
+					<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+						<Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowEditModal())" />
+					</Tooltip>
+					<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+						<Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowDeleteModal())" />
+					</Tooltip>
+				</Column>
+				<Column Display="Display.None.OnWidescreen" ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Class="align-self-center">
+					@if (Options.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE)
+					{
+						<Tooltip Multiline="true" Text="@(resourceHandler.GetResource(isTokenShown ? $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Hide}" : $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Show}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+							<Icon Class="action-icon action-icon-secondary" Name="@(isTokenShown? IconName.EyeSlash: IconName.Eye)" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => SwitchTokenVisibility())" />
+						</Tooltip>
+					}
+					<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+						<Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowEditModal())" />
+					</Tooltip>
 
-    </Container>
+					<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+						<Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowDeleteModal())" />
+					</Tooltip>
+
+				</Column>
+			</Column>
+		</Row>
+
+	</Container>
 </Column>
 
 <TokenEditModal @ref="@editModal"></TokenEditModal>
@@ -40,22 +83,28 @@
 
 @code {
     [CascadingParameter]
+    public UserPreferencesDto Options { get; set; } = new();
+
+    [CascadingParameter]
     public UserPreferenceTokenOptionDto Token { get; set; } = new();
 
     [CascadingParameter]
     public IList<TaskModuleNoValidationDto> ConnectorTypes { get; set; } = [];
 
+    private bool isTokenShown = false;
     private TokenEditModal editModal = new();
     private TokenDeleteModal deleteModal = new();
 
     private Task ShowEditModal() => editModal.ShowModal();
     private Task ShowDeleteModal() => deleteModal.ShowModal();
 
+    private void SwitchTokenVisibility() => isTokenShown = !isTokenShown;
+
     private string? GetTokenLongName()
     {
-        var tokenConnectorTypes = Token.ConnectorTypes.Select(x => x.ConnectorType);
-        var matchingModules = ConnectorTypes.Where(x => tokenConnectorTypes.Contains(x.ShortName));
+		var tokenConnectorTypes = Token.ConnectorTypes.Select(x => x.ConnectorType);
+		var matchingModules = ConnectorTypes.Where(x => tokenConnectorTypes.Contains(x.ShortName));
 
-        return matchingModules.Any() ? string.Join(", ", matchingModules.Select(x => x.LongName)) : null;
-    }
+		return matchingModules.Any() ? string.Join(", ", matchingModules.Select(x => x.LongName)) : null;
+	}
 }

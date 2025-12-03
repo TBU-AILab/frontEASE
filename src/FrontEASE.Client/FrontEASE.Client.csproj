@@ -7,16 +7,16 @@
     <UserSecretsId>ab6ed372-6929-4ba9-9211-158163bad672</UserSecretsId>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;1591</NoWarn>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591</NoWarn>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;1591</NoWarn>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591</NoWarn>
+	</PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="15.1.0" />
+    <PackageReference Include="AutoMapper" Version="16.0.0" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Blazored.Toast" Version="4.2.1" />
     <PackageReference Include="Blazorise.Bootstrap5" Version="1.8.7" />
@@ -24,7 +24,7 @@
     <PackageReference Include="Blazorise.DataGrid" Version="1.8.7" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.8.7" />
     <PackageReference Include="Blazorise.Markdown" Version="1.8.7" />
-    <PackageReference Include="Markdig" Version="0.43.0" />
+    <PackageReference Include="Markdig" Version="0.44.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.0" PrivateAssets="all" />

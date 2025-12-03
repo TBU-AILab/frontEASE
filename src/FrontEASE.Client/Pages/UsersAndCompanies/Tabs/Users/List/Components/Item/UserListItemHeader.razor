@@ -1,22 +1,27 @@
 ﻿@inject IMapper mapper
 @inject IUIManager uiManager
+@inject IResourceHandler resourceHandler
 
 <Row Class="gx-0 margin-background-offset-top-1">
-    <CardHeader Display="Display.Flex" Border="Border.RoundedZero" Class="bg-custom-secondary text-custom-primary" Padding="Padding.Is2.FromEnd.Is2.FromStart">
-        <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.End" Class="align-self-center">
-            <Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowEditModal())" />
-            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowDeleteModal())" />
-        </Column>
-    </CardHeader>
+	<CardHeader Display="Display.Flex" Border="Border.RoundedZero" Class="bg-custom-secondary text-custom-primary" Padding="Padding.Is2.FromEnd.Is2.FromStart">
+		<Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.End" Class="align-self-center">
+			<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+				<Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowEditModal())" />
+			</Tooltip>
+			<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+				<Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowDeleteModal())" />
+			</Tooltip>
+		</Column>
+	</CardHeader>
 </Row>
 
 <UserEditModal @ref="@editModal"></UserEditModal>
 <UserDeleteModal @ref="@deleteModal"></UserDeleteModal>
 
 @code {
-    private UserEditModal editModal { get; set; } = new();
-    private UserDeleteModal deleteModal { get; set; } = new();
+	private UserEditModal editModal { get; set; } = new();
+	private UserDeleteModal deleteModal { get; set; } = new();
 
-    private Task ShowEditModal() => editModal.ShowModal();
-    private Task ShowDeleteModal() => deleteModal.ShowModal();
+	private Task ShowEditModal() => editModal.ShowModal();
+	private Task ShowDeleteModal() => deleteModal.ShowModal();
 }

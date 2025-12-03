@@ -38,14 +38,14 @@
                                                         <Div>
                                                             @if (flags.IsDescriptionPresent)
                                                             {
-                                                                <Tooltip Multiline="true" Text="@(paramOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                                                                <Tooltip Multiline="true" Text="@(paramOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                                                                     <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                                                                 </Tooltip>
                                                             }
 
                                                             @if (flags.IsListDefaultPresent && !TaskMetadata.InitializationInProgres)
                                                             {
-                                                                <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{flags.ListDefaultValue}\"")" Display="Display.InlineBlock">
+                                                                <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{flags.ListDefaultValue}\"")" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
                                                                     <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => taskManipulationService.FillParamDefaultValue(paramVal, flags.ListDefaultValue))" />
                                                                 </Tooltip>
                                                             }
@@ -72,7 +72,7 @@
 
                 @if (!TaskMetadata.InitializationInProgres)
                 {
-                    <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Remove}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                    <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Remove}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                         <Icon Class="action-icon-sm action-icon-danger"
                               Name="IconName.MinusCircle"
                               IconSize="IconSize.Default"

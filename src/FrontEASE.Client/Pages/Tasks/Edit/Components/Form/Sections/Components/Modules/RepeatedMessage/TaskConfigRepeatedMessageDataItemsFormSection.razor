@@ -13,10 +13,10 @@
                 @if (!TaskMetadata.InitializationInProgres)
                 {
                     <Column ColumnSize="ColumnSize.Is2" TextAlignment="TextAlignment.End" Class="align-self-center">
-                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Data}.{nameof(TaskConfigRepeatedMessageDto.RepeatedMessageItems)}.{UIStateConstants.Explanation}"))" Display="Display.InlineBlock">
+                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Data}.{nameof(TaskConfigRepeatedMessageDto.RepeatedMessageItems)}.{UIStateConstants.Explanation}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
                             <Icon Class="action-icon-sm action-icon-warning" Name="IconName.ExclamationCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                         </Tooltip>
-                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                             <Icon Class="action-icon-sm action-icon-success" Name="IconName.PlusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@AddNewTaskRepeatedMessageItem" />
                         </Tooltip>
                     </Column>
@@ -77,7 +77,7 @@
                     <Field ColumnSize="ColumnSize.Is1.OnWidescreen" Display="Display.Flex" Class="alignment-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Style="gap: 25px;" Margin="Margin.Is2.FromTop">
                         <Div Class="vertical-divider" />
 
-                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Remove}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Remove}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                             <Icon Class="action-icon-sm action-icon-danger" Name="IconName.MinusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@(async (e) => await RemoveTaskRepeatedMessageItem(e, repeatedMessageItem))" />
                         </Tooltip>
                     </Field>

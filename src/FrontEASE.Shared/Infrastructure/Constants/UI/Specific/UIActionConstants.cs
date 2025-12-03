@@ -26,5 +26,8 @@
         public const string Import = "Import";
         public const string Add = "Add";
         public const string Remove = "Remove";
+        public const string Click = "Click";
+        public const string Hide = "Hide";
+        public const string Show = "Show";
     }
 }

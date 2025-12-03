@@ -524,6 +524,22 @@ a, .btn-link {
         color: var(--b-theme-secondary);
     }
 
+.action-icon-secondary {
+    color: var(--b-theme-secondary);
+    border: 2px solid var(--b-theme-secondary);
+    transition: 0.3s;
+}
+
+    .action-icon-secondary:not(.action-icon-sm) {
+        line-height: .05em;
+    }
+
+    .action-icon-secondary:hover {
+        color: var(--b-theme-white);
+        background: var(--b-theme-secondary) !important;
+        border: 2px solid var(--b-theme-secondary);
+    }
+
 .action-icon-primary {
     color: var(--b-theme-primary);
     border: 2px solid var(--b-theme-primary);
@@ -944,4 +960,9 @@ nav.navbar {
 .thumbnail-message-image {
     max-width: 250px;
     max-height: 250px;
+}
+
+.task-info-overview-card-scrollable {
+    max-height: 50vh;
+    overflow-y: auto !important;
 }

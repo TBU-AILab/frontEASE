@@ -30,5 +30,8 @@ RUN chmod +x ./dev-docker-entrypoint.sh
 
 COPY ./src/FrontEASE.Server/* /app/FrontEASE.Server/
 
+# Declare a volume for wwwroot to preserve its content
+VOLUME /app/src/FrontEASE.Server/wwwroot
+
 # Set the entry point
 ENTRYPOINT [ "./dev-docker-entrypoint.sh" ]
