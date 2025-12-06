@@ -49,7 +49,7 @@
                 {
                     if (!SolutionDownloadsOngoing.Contains(Solution.ID))
                     {
-                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}"))" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                             <Icon Class="action-icon action-icon-info" Name="IconName.Download" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => DownloadSolutionArchive(Solution))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }

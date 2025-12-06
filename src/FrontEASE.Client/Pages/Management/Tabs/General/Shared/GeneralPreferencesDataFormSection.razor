@@ -3,39 +3,60 @@
 
 <Fields>
 
-    <Validation>
-        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.IsFull)">
-            <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))" RequiredIndicator>
-                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.ColorScheme), PropertyDisplayResourceType.FIELD)))
-            </FieldLabel>
-            <Select @bind-SelectedValue="@GeneralPreferencesModel.ColorScheme" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))">
-                <ChildContent>
-                    @foreach (var colorScheme in Enum.GetValues(typeof(ColorScheme)))
-                    {
-                        <SelectItem TValue="ColorScheme" Value="@((ColorScheme)colorScheme)">
-                            @(resourceHandler.GetResource(((ColorScheme)colorScheme).GetEnumResourceValue()))
-                        </SelectItem>
-                    }
-                </ChildContent>
-                <Feedback>
-                    <ValidationError Multiline="true" />
-                </Feedback>
-            </Select>
-        </Field>
-    </Validation>
+	<Validation>
+		<Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6)">
+			<FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))" RequiredIndicator>
+				@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.ColorScheme), PropertyDisplayResourceType.FIELD)))
+			</FieldLabel>
+			<Select @bind-SelectedValue="@GeneralPreferencesModel.ColorScheme" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))">
+				<ChildContent>
+					@foreach (var colorScheme in Enum.GetValues(typeof(ColorScheme)))
+					{
+						<SelectItem TValue="ColorScheme" Value="@((ColorScheme)colorScheme)">
+							@(resourceHandler.GetResource(((ColorScheme)colorScheme).GetEnumResourceValue()))
+						</SelectItem>
+					}
+				</ChildContent>
+				<Feedback>
+					<ValidationError Multiline="true" />
+				</Feedback>
+			</Select>
+		</Field>
+	</Validation>
+
+	<Validation>
+		<Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6)">
+			<FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility)))" RequiredIndicator>
+				@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility), PropertyDisplayResourceType.FIELD)))
+			</FieldLabel>
+			<Select @bind-SelectedValue="@GeneralPreferencesModel.TokenVisibility" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility)))">
+				<ChildContent>
+					@foreach (var tokenOption in Enum.GetValues(typeof(TokenVisibility)))
+					{
+						<SelectItem TValue="TokenVisibility" Value="@((TokenVisibility)tokenOption)">
+							@(resourceHandler.GetResource(((TokenVisibility)tokenOption).GetEnumResourceValue()))
+						</SelectItem>
+					}
+				</ChildContent>
+				<Feedback>
+					<ValidationError Multiline="true" />
+				</Feedback>
+			</Select>
+		</Field>
+	</Validation>
 
 </Fields>
 
 @code {
 
-    [CascadingParameter]
-    public UserPreferenceGeneralOptionsDto GeneralPreferencesModel { get; set; } = new();
+	[CascadingParameter]
+	public UserPreferenceGeneralOptionsDto GeneralPreferencesModel { get; set; } = new();
 
-    [Parameter]
-    public DataOperation Operation { get; set; }
+	[Parameter]
+	public DataOperation Operation { get; set; }
 
-    [Parameter]
-    public bool FullWidthFields { get; set; }
+	[Parameter]
+	public bool FullWidthFields { get; set; }
 
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<UserPreferenceGeneralOptionsDto>(elementBase, Operation, null);
+	private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<UserPreferenceGeneralOptionsDto>(elementBase, Operation, null);
 }

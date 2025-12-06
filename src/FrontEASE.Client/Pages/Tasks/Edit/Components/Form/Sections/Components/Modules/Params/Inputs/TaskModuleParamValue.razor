@@ -33,13 +33,13 @@
         <Div>
             @if (Flags.IsDescriptionPresent)
             {
-                <Tooltip Multiline="true" Text="@(ParamOption!.Description ?? Flags.InternalDescription)" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                <Tooltip Multiline="true" Text="@(ParamOption!.Description ?? Flags.InternalDescription)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                     <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                 </Tooltip>
             }
             @if (Flags.IsDefaultPresent && !TaskMetadata.InitializationInProgres)
             {
-                <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{Flags.ParamDefaultValue}\"")" Display="Display.InlineBlock">
+                <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{Flags.ParamDefaultValue}\"")" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
                     <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => taskManipulationService.FillParamDefaultValue(ParamValue, Flags.ParamDefaultValue))" />
                 </Tooltip>
             }

@@ -260,6 +260,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Reset}", Value="Reset" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Filter}", Value="Filter" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}", Value="Add" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Click}", Value="Click" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Hide}", Value="Hide" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Show}", Value="Show" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.BackToHomepage}", Value="Return to Home page" },
 
                 /* Data Manipulations */
@@ -326,6 +329,11 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* ColorScheme */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = ColorScheme.LIGHT.GetEnumResourceValue(), Value = "Light" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = ColorScheme.DARK.GetEnumResourceValue(), Value = "Dark" },
+
+                /* TokenOptions */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TokenVisibility.VISIBLE.GetEnumResourceValue(), Value = "Fully visible" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TokenVisibility.TRUNCATED.GetEnumResourceValue(), Value = "Truncated" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TokenVisibility.TRUNCATED_WITH_TOGGLE.GetEnumResourceValue(), Value = "Truncated with display toggle" },
 
                 /* RepeatedMessageType */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = RepeatedMessageType.SINGLE.GetEnumResourceValue(), Value = "Single" },
@@ -430,6 +438,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
 
                 /* UserPreferenceGeneralOptionsDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.ColorScheme), PropertyDisplayResourceType.FIELD), Value = "Color scheme" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility), PropertyDisplayResourceType.FIELD), Value = "Token visibility" },
 
                 /* UserPreferenceTokenOptionDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.FIELD), Value = "Token" },

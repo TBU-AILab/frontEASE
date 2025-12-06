@@ -1,0 +1,102 @@
+﻿@inject IResourceHandler resourceHandler
+
+@{
+	var displayActions = ((IsDescriptionPresent && !SkipLabel) || IsDefaultPresent) || (!string.IsNullOrWhiteSpace(ParamValue.Value?.StringValue) && Options.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE);
+}
+
+<Field ColumnSize="@(displayActions? ColumnSize.Is10.OnWidescreen : ColumnSize.IsFull)" Padding="Padding.Is1.FromTop">
+	@if (!SkipLabel)
+	{
+		<Text>
+			@($"{ParameterName}: ")
+		</Text>
+	}
+
+	@if (!string.IsNullOrWhiteSpace(ParamValue.Value?.StringValue))
+	{
+		<Span TextWeight="TextWeight.Bold" Class="fst-italic">
+			@switch (Options.GeneralOptions.TokenVisibility)
+			{
+				case TokenVisibility.VISIBLE:
+					@($" {ParamValue.Value!.StringValue}")
+					break;
+				case TokenVisibility.TRUNCATED:
+					@($" {TextHelper.TruncateTokenString(ParamValue.Value!.StringValue!)}")
+					break;
+				case TokenVisibility.TRUNCATED_WITH_TOGGLE:
+					@($" {(isTokenShown ? ParamValue.Value!.StringValue : TextHelper.TruncateTokenString(ParamValue.Value!.StringValue))}")
+					break;
+			}
+		</Span>
+	}
+	else
+	{
+		<Span TextWeight="TextWeight.Bold" Class="fst-italic">
+			@resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
+		</Span>
+	}
+</Field>
+
+@if (displayActions)
+{
+	<Field ColumnSize="ColumnSize.Is2.OnWidescreen" TextAlignment="TextAlignment.End" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+		<Div>
+			@if (Options.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE)
+			{
+				<Tooltip Multiline="true" Text="@(resourceHandler.GetResource(isTokenShown ? $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Hide}" : $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Show}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+					<Icon Class="action-icon-sm action-icon-secondary" Name="@(isTokenShown? IconName.EyeSlash: IconName.Eye)" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@(() => SwitchTokenVisibility())" />
+				</Tooltip>
+			}
+			@if (IsDescriptionPresent)
+			{
+				var internalDescription = string.Empty;
+				if (!string.IsNullOrWhiteSpace(ParamValue.Value?.EnumValue?.StringValue))
+				{
+					var indexOfSelected = ParamOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == ParamValue?.Value?.EnumValue?.StringValue);
+					if (indexOfSelected >= 0)
+					{
+						internalDescription = ParamOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+					}
+				}
+				<Tooltip Multiline="true" Text="@(ParamOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+					<Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+				</Tooltip>
+			}
+			@if (IsDefaultPresent)
+			{
+				<Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Default}.{UIConstants.Value}")} : {DefaultValue}")" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
+					<Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+				</Tooltip>
+			}
+		</Div>
+	</Field>
+}
+
+@code {
+	[CascadingParameter]
+	public UserPreferencesDto Options { get; set; } = new();
+
+	[Parameter]
+	public TaskModuleParameterNoValidationDto? ParamOption { get; set; } = null;
+
+	[Parameter]
+	public TaskModuleParameterDto ParamValue { get; set; } = new();
+
+	[Parameter]
+	public string? ParameterName { get; set; } = null;
+
+	[Parameter]
+	public bool SkipLabel { get; set; } = false;
+
+	[Parameter]
+	public bool IsDescriptionPresent { get; set; } = false;
+
+	[Parameter]
+	public bool IsDefaultPresent { get; set; } = false;
+
+	[Parameter]
+	public string? DefaultValue { get; set; } = null;
+
+	private bool isTokenShown = false;
+	private void SwitchTokenVisibility() => isTokenShown = !isTokenShown;
+}

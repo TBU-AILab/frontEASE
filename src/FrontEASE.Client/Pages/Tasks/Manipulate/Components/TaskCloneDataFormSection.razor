@@ -24,7 +24,7 @@
             @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
         </FieldLabel>
         <Div>
-            <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{(string.IsNullOrWhiteSpace(TaskInfo.Name) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)) : TaskInfo.Name)}\"")" Display="Display.InlineBlock">
+            <Tooltip Multiline="true" Padding="Padding.Is1.FromEnd" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{(string.IsNullOrWhiteSpace(TaskInfo.Name) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)) : TaskInfo.Name)}\"")" Display="Display.InlineBlock">
                 <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => FillDefaultName())" />
             </Tooltip>
         </Div>

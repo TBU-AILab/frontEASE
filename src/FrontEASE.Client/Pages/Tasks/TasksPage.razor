@@ -8,41 +8,44 @@
 @page "/Tasks"
 
 <PageTitle>
-    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Tasks}"))
+	@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Tasks}"))
 </PageTitle>
 
 
 <Container Fluid Class="content-main" Padding="Padding.Is5.FromStart.Is5.FromEnd">
-    <Row>
-        <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
-            <CascadingValue Value="Tasks">
-                <CascadingValue Value="AvailableCompanies">
-                    <CascadingValue Value="AvailableUsers">
-                        <CascadingValue Value="TaskModuleOptions">
-                            <TaskList />
-                        </CascadingValue>
-                    </CascadingValue>
-                </CascadingValue>
-            </CascadingValue>
-        </Column>
-    </Row>
+	<Row>
+		<Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
+			<CascadingValue Value="Tasks">
+				<CascadingValue Value="AvailableCompanies">
+					<CascadingValue Value="AvailableUsers">
+						<CascadingValue Value="TaskModuleOptions">
+							<CascadingValue Value="ViewMetadata">
+								<TaskList />
+							</CascadingValue>
+						</CascadingValue>
+					</CascadingValue>
+				</CascadingValue>
+			</CascadingValue>
+		</Column>
+	</Row>
 </Container>
 
 
 @code {
-    private ObservableCollection<TaskInfoDto> Tasks = [];
-    private IList<TaskModuleNoValidationDto> TaskModuleOptions = [];
-    private IList<ApplicationUserDto> AvailableUsers = [];
-    private IList<CompanyDto> AvailableCompanies = [];
+	private TaskListViewMetadataDto ViewMetadata = new();
+	private ObservableCollection<TaskInfoDto> Tasks = [];
+	private IList<TaskModuleNoValidationDto> TaskModuleOptions = [];
+	private IList<ApplicationUserDto> AvailableUsers = [];
+	private IList<CompanyDto> AvailableCompanies = [];
 
-    private async Task RefreshViewAsync()
-    {
-        await InvokeAsync(StateHasChanged);
-    }
+	private async Task RefreshViewAsync()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
 
-    protected override async Task OnInitializedAsync()
-    {
-        uiService.RefreshRequested += RefreshViewAsync;
-        await base.OnInitializedAsync();
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		uiService.RefreshRequested += RefreshViewAsync;
+		await base.OnInitializedAsync();
+	}
 }

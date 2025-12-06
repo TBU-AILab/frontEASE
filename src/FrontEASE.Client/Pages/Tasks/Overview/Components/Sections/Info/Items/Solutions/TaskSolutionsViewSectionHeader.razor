@@ -18,7 +18,7 @@
                 }
                 else
                 {
-                    <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}")} {resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Solutions), PropertyDisplayResourceType.FIELD))}")" Display="Display.InlineBlock" Margin="Padding.Is2.FromEnd" Placement="TooltipPlacement.Top">
+                    <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}")} {resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Solutions), PropertyDisplayResourceType.FIELD))}")" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                         <Icon Name="IconName.Download" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@(async () => await DownloadSolutionArchiveFull())" Class="main-action-icon main-action-icon-info" />
                     </Tooltip>
                 }
