@@ -278,5 +278,29 @@ namespace FrontEASE.Server.Controllers.User
             }
             return result;
         }
+
+        /// <summary>
+        /// Changes states of existing tasks.
+        /// </summary>
+        /// <param name="task">Task with modified access rules.</param>
+        [HttpPatch($"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.Share}/{ControllerConstants.IdParam}")]
+        [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> ShareTask([Required, FromBody] TaskDto task)
+        {
+            IActionResult result;
+            try
+            {
+                await _taskAppService.Share(task, CancellationToken.None);
+                result = GetHttpResult(HttpStatusCode.NoContent, null);
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
     }
 }

@@ -143,6 +143,20 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
             return await response.Content.ReadFromJsonAsync<TaskDto>();
         }
 
+        public async Task<TaskDto?> ShareTask(Guid taskID, TaskDto updateTaskDto)
+        {
+            _taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
+            var url = $"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.Share}/{taskID}";
+            var response = await _client.PatchAsJsonAsync(url, updateTaskDto);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return null;
+            }
+            return await response.Content.ReadFromJsonAsync<TaskDto>();
+        }
+
         public async Task<bool> ChangeTaskStates(IList<Guid> taskIDs, TaskState state)
         {
             var url = $"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.ChangeState}/{(int)state}{taskIDs.ToQueryString(nameof(taskIDs))}";

@@ -21,6 +21,7 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
 
         #region Update
         Task<TaskDto?> UpdateTask(Guid taskID, TaskDto updateTaskDto);
+        Task<TaskDto?> ShareTask(Guid taskID, TaskDto updateTaskDto);
         Task<bool> ChangeTaskStates(IList<Guid> taskIDs, TaskState state);
         #endregion
 

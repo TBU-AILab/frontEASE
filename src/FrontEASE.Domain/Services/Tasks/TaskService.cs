@@ -64,6 +64,16 @@ namespace FrontEASE.Domain.Services.Tasks
             return query;
         }
 
+        private static TasksQuery GetAccessQuery()
+        {
+            var query = new TasksQuery()
+            {
+                IncludeMembers = true,
+                IncludeGroups = true,
+            };
+            return query;
+        }
+
         public async Task<Entities.Tasks.Task> Load(Guid id, CancellationToken cancellationToken)
         {
             var task = await _taskRepository.Load(id, GetFullQuery(), cancellationToken) ?? throw new NotFoundException();
@@ -73,6 +83,12 @@ namespace FrontEASE.Domain.Services.Tasks
         public async Task<Entities.Tasks.Task> LoadSimple(Guid id, CancellationToken cancellationToken)
         {
             var task = await _taskRepository.Load(id, GetBaseQuery(), cancellationToken) ?? throw new NotFoundException();
+            return task;
+        }
+
+        public async Task<Entities.Tasks.Task> LoadAccess(Guid id, CancellationToken cancellationToken)
+        {
+            var task = await _taskRepository.Load(id, GetAccessQuery(), cancellationToken) ?? throw new NotFoundException();
             return task;
         }
 
@@ -108,6 +124,16 @@ namespace FrontEASE.Domain.Services.Tasks
         {
             await _coreService.RefreshTaskOptions(task, cancellationToken);
             return task.Config.AvailableModules;
+        }
+
+        public async Task<Entities.Tasks.Task> Share(Entities.Tasks.Task task, CancellationToken cancellationToken)
+        {
+            var updated = await LoadAccess(task.ID, cancellationToken);
+            var connectedEntities = await SelectConnectedEntities(task, cancellationToken);
+            UpdateConnectedEntities(updated, connectedEntities);
+
+            updated = await _taskRepository.Update(updated, cancellationToken);
+            return updated;
         }
 
         public async Task<Entities.Tasks.Task> Update(Entities.Tasks.Task task, CancellationToken cancellationToken)

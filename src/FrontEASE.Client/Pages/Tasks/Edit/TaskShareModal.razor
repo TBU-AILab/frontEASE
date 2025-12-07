@@ -25,7 +25,7 @@
                         <CascadingValue Value="TaskMetadata" >
                             <CascadingValue Value="Modal" >
 
-                                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}{(string.IsNullOrWhiteSpace(Task.Config?.Name) ? string.Empty : $" - {Task.Config.Name}")}")" />
+                                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}")}{(string.IsNullOrWhiteSpace(Task.Config?.Name) ? string.Empty : $" - {Task.Config.Name}")}")" />
 
                                 <ModalBody Padding="Padding.Is0" Class="bg-custom-primary text-custom-primary">
                                     <Container Fluid>
@@ -36,13 +36,11 @@
                                                              ValidateOnLoad="false"
                                                              EditContext="EditContext"
                                                              HandlerType="ValidationHandlerType.DataAnnotation">
-                                                    <CascadingValue Value="EditContext" >
                                                         <CascadingValue Value="Validations">
                                                             <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
-                                                                <TaskSubitemsDataFormSection />
+                                                                <TaskAccessSubitemsDataFormSection />
                                                             </Form>
                                                         </CascadingValue>
-                                                    </CascadingValue>
                                                 </Validations>
                                             </Column>
                                         </Row>
@@ -50,7 +48,7 @@
                                     </Container>
                                 </ModalBody>
 
-                                <TaskEditModalFooter Validations="Validations" @ref="@TaskEditModalFooter" />
+                                <TaskShareModalFooter Validations="Validations" @ref="@TaskShareModalFooter" />
 
                             </CascadingValue>
                         </CascadingValue>
@@ -73,17 +71,16 @@
 
     private bool isTaskLoading = false;
     private bool isModalVisible = false;
-    private CancellationTokenSource? cancellationTokenSource;
 
     private TaskDto Task;
     private TaskViewMetadataDto TaskMetadata;
 
     private Modal Modal;
-    private TaskEditModalFooter TaskEditModalFooter = new();
+    private TaskShareModalFooter TaskShareModalFooter = new();
     private Validations Validations;
     private EditContext? EditContext;
 
-    public TaskEditModal()
+    public TaskShareModal()
     {
         Task = new();
         TaskMetadata = new();
@@ -92,67 +89,19 @@
         Validations = new Validations();
     }
 
-    private async Task ResetCancellationToken()
-    {
-        if (cancellationTokenSource is not null)
-        {
-            await cancellationTokenSource.CancelAsync();
-            cancellationTokenSource.Dispose();
-        }
-        cancellationTokenSource = new();
-    }
-
     private async Task OnModalClosing(ModalClosingEventArgs e)
     {
         e.Cancel = e.CloseReason != CloseReason.UserClosing;
         if (!e.Cancel)
         {
             isModalVisible = false;
-            await ResetCancellationToken();
         }
     }
 
     protected override async Task OnInitializedAsync()
     {
         EditContext = new EditContext(Task);
-        EditContext.OnFieldChanged += OnFieldChanged;
         await base.OnInitializedAsync();
-    }
-
-    private async void OnFieldChanged(object? sender, FieldChangedEventArgs e)
-    {
-        var evaluationNeeded = TaskViewMetadataDto.OptionsReloadNecessary(e.FieldIdentifier.FieldName);
-        if (evaluationNeeded)
-        {
-            TaskMetadata.InitializationInProgres = true;
-            await ResetCancellationToken();
-
-            try
-            {
-                var token = cancellationTokenSource!.Token;
-                await System.Threading.Tasks.Task.Run(async () =>
-                {
-                    if (!token.IsCancellationRequested)
-                    {
-                        await uiService.CallRequestRefreshAsync();
-
-                        var updated = await taskApiService.RefreshTaskOptions(Task.ID, Task);
-                        if (updated is not null && !token.IsCancellationRequested)
-                        {
-                            mapper.Map(updated, Task);
-                        }
-                    }
-
-                }, token);
-            }
-            catch (TaskCanceledException)
-            { }
-            finally
-            {
-                TaskMetadata.InitializationInProgres = false;
-                await uiService.CallRequestRefreshAsync();
-            }
-        }
     }
 
     private Task ShowModal()
@@ -164,25 +113,12 @@
     public async Task Show()
     {
         isTaskLoading = true;
-        await ResetCancellationToken();
         await ShowModal();
 
-        if (Operation == DataOperation.INSERT)
+        var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
+        if (opened is not null)
         {
-            var inserted = await taskApiService.InsertTask();
-            if (inserted is not null)
-            {
-                mapper.Map(inserted, Task);
-                TaskInfo = mapper.Map<TaskInfoDto>(inserted);
-            }
-        }
-        else
-        {
-            var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
-            if (opened is not null)
-            {
-                mapper.Map(opened, Task);
-            }
+            mapper.Map(opened, Task);
         }
 
         isTaskLoading = false;

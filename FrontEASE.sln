@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.3.11222.16 d18.3
+VisualStudioVersion = 18.3.11222.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrontEASE.Server", "src\FrontEASE.Server\FrontEASE.Server.csproj", "{50029D50-433D-4A20-AC53-B377DD8158D1}"
 EndProject

@@ -234,6 +234,13 @@
 						</Tooltip>
 					}
 
+					@if (shareableTaskStates.Contains(context.State) && context.Author.Id == LoggedUser.Id)
+					{
+						<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+							<Icon Class="action-icon action-icon-secondary" Name="IconName.Share" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowShareModal(context))" @onclick:stopPropagation="true" />
+						</Tooltip>
+					}
+
 					@if (cloneableTaskStates.Contains(context.State))
 					{
 						<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
@@ -257,6 +264,7 @@
 
 <CascadingValue Value="TaskInfo">
 	<CascadingValue Value="SelectedTasks">
+		<TaskShareModal @ref="ShareModal" Operation="DataOperation.UPDATE" />
 		<TaskEditModal @ref="EditModal" Operation="DataOperation.UPDATE" />
 		<TaskChangeStateModal @ref="ChangeStateModal" Operation="DataOperation.UPDATE" />
 		<TaskCloneModal @ref="CloneModal" Operation="DataOperation.UPDATE" />
@@ -267,6 +275,9 @@
 
 
 @code {
+	[CascadingParameter]
+	public ApplicationUserDto LoggedUser { get; set; } = new();
+
 	[CascadingParameter]
 	public TaskListViewMetadataDto ViewMetadata { get; set; } = new();
 
@@ -287,9 +298,11 @@
 	private readonly IList<TaskState> stoppableTaskStates = new List<TaskState>() { TaskState.RUN };
 	private readonly IList<TaskState> editableTaskStates = new List<TaskState>() { TaskState.CREATED, TaskState.INIT };
 	private readonly IList<TaskState> overviewTaskStates = new List<TaskState>() { TaskState.RUN, TaskState.PAUSED, TaskState.STOP, TaskState.FINISH, TaskState.BREAK };
+	private readonly IList<TaskState> shareableTaskStates = new List<TaskState>() { TaskState.RUN, TaskState.PAUSED, TaskState.STOP, TaskState.FINISH, TaskState.BREAK };
 	private readonly IList<TaskState> deletableTaskStates = new List<TaskState>() { TaskState.CREATED, TaskState.INIT, TaskState.RUN, TaskState.PAUSED, TaskState.STOP, TaskState.BREAK, TaskState.FINISH };
 	private readonly IList<TaskState> cloneableTaskStates = new List<TaskState>() { TaskState.CREATED, TaskState.INIT, TaskState.RUN, TaskState.PAUSED, TaskState.STOP, TaskState.BREAK, TaskState.FINISH };
 
+	private TaskShareModal ShareModal = new();
 	private TaskEditModal EditModal = new();
 	private TaskOverviewModal OverviewModal = new();
 	private TaskDeleteModal DeleteModal = new();
@@ -331,6 +344,12 @@
 	{
 		uiService.RefreshRequested += RefreshViewAsync;
 		await base.OnInitializedAsync();
+	}
+
+	private async Task ShowShareModal(TaskInfoDto taskInfo)
+	{
+		TaskInfo = taskInfo;
+		await ShareModal.Show();
 	}
 
 	private async Task ShowOverviewModal(TaskInfoDto taskInfo)

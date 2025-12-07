@@ -104,13 +104,13 @@
         isModalVisible = false;
     }
 
-    private async Task ModalShow()
+    private async Task ShowModal()
     {
         isModalVisible = true;
         await Modal.Show();
     }
 
-    private async Task ModalHide()
+    private async Task HideModal()
     {
         isModalVisible = false;
         await Modal.Hide();
@@ -120,7 +120,7 @@
     {
         isTaskLoading = true;
         await ResetCancellationToken();
-        await ModalShow();
+        await ShowModal();
 
         var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
         if (opened is not null)

@@ -263,6 +263,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Click}", Value="Click" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Hide}", Value="Hide" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Show}", Value="Show" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}", Value="Share" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.BackToHomepage}", Value="Return to Home page" },
 
                 /* Data Manipulations */

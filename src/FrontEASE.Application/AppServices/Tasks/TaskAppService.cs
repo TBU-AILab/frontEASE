@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FrontEASE.Domain.Entities.Companies;
+using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
 using FrontEASE.Domain.Infrastructure.Settings.App;
@@ -107,6 +109,26 @@ namespace FrontEASE.Application.AppServices.Tasks
             taskEntity = await _taskService.Update(taskEntity, cancellationToken);
             var updatedDto = _mapper.Map<TaskDto>(taskEntity);
             return updatedDto;
+        }
+
+        public async Task<TaskDto> Share(TaskDto task, CancellationToken cancellationToken)
+        {
+            var userMail = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
+            var user = await _userService.Load(userMail, cancellationToken);
+            var taskLocal = await _taskService.LoadSimple(task.ID, cancellationToken);
+
+            if(taskLocal!.AuthorID != Guid.Parse(user!.Id))
+            {
+                throw new UnauthorizedAccessException();
+            }
+            else
+            {
+                var taskEntity = _mapper.Map<Domain.Entities.Tasks.Task>(task);
+
+                taskEntity = await _taskService.Share(taskEntity, cancellationToken);
+                var updatedDto = _mapper.Map<TaskDto>(taskEntity);
+                return updatedDto;
+            }
         }
 
         public async Task<TaskDto> Create(CancellationToken cancellationToken)
