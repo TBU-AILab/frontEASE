@@ -19,7 +19,7 @@ else
         <Form>
             <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@Options.GeneralOptions" ValidateOnLoad="false">
                 <CascadingValue Value="Options.GeneralOptions">
-                    <GeneralPreferencesDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="true" />
+                    <GeneralPreferencesDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="false" />
                     <Fields>
                         <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
                             <Button Clicked="@EditSettings" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">

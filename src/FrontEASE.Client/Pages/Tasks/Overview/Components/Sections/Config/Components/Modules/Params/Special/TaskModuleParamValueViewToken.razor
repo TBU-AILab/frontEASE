@@ -21,10 +21,10 @@
 					@($" {ParamValue.Value!.StringValue}")
 					break;
 				case TokenVisibility.TRUNCATED:
-					@($" {TextHelper.TruncateTokenString(ParamValue.Value!.StringValue!)}")
+					@($" {TextHelper.TruncateString(ParamValue.Value!.StringValue!, TextConstants.TokenDisplayLength)}")
 					break;
 				case TokenVisibility.TRUNCATED_WITH_TOGGLE:
-					@($" {(isTokenShown ? ParamValue.Value!.StringValue : TextHelper.TruncateTokenString(ParamValue.Value!.StringValue))}")
+					@($" {(isTokenShown ? ParamValue.Value!.StringValue : TextHelper.TruncateString(ParamValue.Value!.StringValue, TextConstants.TokenDisplayLength))}")
 					break;
 			}
 		</Span>

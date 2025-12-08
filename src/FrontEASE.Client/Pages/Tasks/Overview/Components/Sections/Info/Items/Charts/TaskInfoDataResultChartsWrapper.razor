@@ -1,0 +1,15 @@
+﻿<Container Fluid>
+	@{
+		var messageIDs = Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
+		var solutionsOrdered = Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
+	}
+	<Row>
+		<TaskInfoChartValueEvolution Solutions="solutionsOrdered" Messages="Task.Messages" />
+		<TaskInfoChartConvergenceEvolution Solutions="solutionsOrdered" Messages="Task.Messages" />
+	</Row>
+</Container>
+
+@code {
+	[CascadingParameter]
+	public TaskDto Task { get; set; } = new();
+}

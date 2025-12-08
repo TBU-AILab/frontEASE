@@ -49,6 +49,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Caching.Memory;
 using FrontEASE.Client;
+using FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -175,4 +176,5 @@ void SetupModelManipulationServices()
     builder!.Services.AddTransient<IUserManipulationService, UserManipulationService>();
     builder!.Services.AddTransient<ITaskManipulationService, TaskManipulationService>();
     builder!.Services.AddTransient<IManagementManipulationService, ManagementManipulationService>();
+    builder!.Services.AddTransient<ITaskChartManipulationService, TaskChartManipulationService>();
 }

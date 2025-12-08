@@ -7,6 +7,7 @@
         public const string Collection = "Collection";
         public const string Enum = "Enum";
         public const string Default = "Default";
+        public const string Chart = "Chart";
 
         public const string Route = "Route";
         public const string Page = "Page";

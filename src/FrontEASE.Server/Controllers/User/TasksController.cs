@@ -280,7 +280,7 @@ namespace FrontEASE.Server.Controllers.User
         }
 
         /// <summary>
-        /// Changes states of existing tasks.
+        /// Changes visibility of an existing task
         /// </summary>
         /// <param name="task">Task with modified access rules.</param>
         [HttpPatch($"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.Share}/{ControllerConstants.IdParam}")]
@@ -292,8 +292,8 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                await _taskAppService.Share(task, CancellationToken.None);
-                result = GetHttpResult(HttpStatusCode.NoContent, null);
+                var updatedTask = await _taskAppService.Share(task, CancellationToken.None);
+                result = GetHttpResult(HttpStatusCode.OK, updatedTask);
             }
             catch (Exception ex)
             {

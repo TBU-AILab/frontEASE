@@ -1,0 +1,69 @@
+﻿@inject ITaskChartManipulationService taskChartManipulationService
+@inject IResourceHandler resourceHandler
+@inject IUIManager uiManager
+
+<Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is2.FromBottom">
+	<LineChart @ref="LineChart" TItem="float" Options="@Options" />
+</Column>
+
+@code {
+	[Parameter]
+	public IList<TaskSolutionDto> Solutions { get; set; } = [];
+
+	[Parameter]
+	public IList<TaskMessageDto> Messages { get; set; } = [];
+
+	private IList<string> Labels = [];
+	private IList<float> Values = [];
+	private LineChart<float> LineChart = new();
+	private LineChartOptions Options = new();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		var titleText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessEvolutionChart}.{UIStateConstants.Explanation}");
+		var subtitleText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessEvolutionChart}");
+		Options = taskChartManipulationService.PrepareLineChartOptions(titleText, subtitleText);
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+		if (firstRender)
+		{
+			await HandleRedraw();
+		}
+	}
+
+	private void RecalculateValues()
+	{
+		var values = taskChartManipulationService.GetValueEvolutionChartData(Messages, Solutions);
+		Labels = values.Labels;
+		Values = values.Values;
+	}
+
+	private async Task HandleRedraw()
+	{
+		RecalculateValues();
+
+		await LineChart.Clear();
+		await LineChart.AddLabelsDatasetsAndUpdate(Labels.ToArray(), GetLineChartDataset());
+	}
+
+	private LineChartDataset<float> GetLineChartDataset()
+	{
+		return new LineChartDataset<float>
+		{
+			Label = resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Fitness), PropertyDisplayResourceType.FIELD)),
+			Data = Values.ToList(),
+			Fill = true,
+			BackgroundColor = new List<string>() { ColorHelper.HtmlToChartRGBA(uiManager.Theme.ColorOptions.Primary, 0.2f) },
+			PointBackgroundColor = new List<string>() { ChartColor.FromHtmlColorCode(uiManager.Theme.ColorOptions.Success) },
+			PointHoverBackgroundColor = new List<string>() { ChartColor.FromHtmlColorCode(uiManager.Theme.ColorOptions.Warning) },
+			Tension = 0.1f,
+			PointRadius = 3,
+			CubicInterpolationMode = "monotone"
+		};
+	}
+}

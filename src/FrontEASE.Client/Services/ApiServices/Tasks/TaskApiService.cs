@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using FrontEASE.Client.Services.HelperServices.ErrorHandling;
 using FrontEASE.Client.Services.ModelManipulationServices.Tasks;
+using FrontEASE.Shared.Data.DTOs.Companies;
+using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
@@ -131,7 +133,7 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
 
         public async Task<TaskDto?> UpdateTask(Guid taskID, TaskDto updateTaskDto)
         {
-            _taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
+            var preserved = _taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
             var url = $"{TasksControllerConstants.BaseUrl}/{taskID}";
             var response = await _client.PutAsJsonAsync(url, updateTaskDto);
 
@@ -140,12 +142,15 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
                 await _errorHandlingService.HandleErrorResponse(response);
                 return null;
             }
-            return await response.Content.ReadFromJsonAsync<TaskDto>();
+
+            var task = await response.Content.ReadFromJsonAsync<TaskDto>();
+            _taskManipulationService.AssignTaskImages(task!, preserved.PreservedGroups, preserved.PreservedMembers);
+            return task;
         }
 
-        public async Task<TaskDto?> ShareTask(Guid taskID, TaskDto updateTaskDto)
+        public async Task<(IList<ApplicationUserDto> Members, IList<CompanyDto> MemberGroups)?> ShareTask(Guid taskID, TaskDto updateTaskDto)
         {
-            _taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
+            var preserved = _taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
             var url = $"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.Share}/{taskID}";
             var response = await _client.PatchAsJsonAsync(url, updateTaskDto);
 
@@ -154,7 +159,12 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
                 await _errorHandlingService.HandleErrorResponse(response);
                 return null;
             }
-            return await response.Content.ReadFromJsonAsync<TaskDto>();
+            else
+            {
+                var task = await response.Content.ReadFromJsonAsync<TaskDto>();
+                _taskManipulationService.AssignTaskImages(task!, preserved.PreservedGroups, preserved.PreservedMembers);
+                return new(task?.Members ?? [], task?.MemberGroups ?? []);
+            }
         }
 
         public async Task<bool> ChangeTaskStates(IList<Guid> taskIDs, TaskState state)

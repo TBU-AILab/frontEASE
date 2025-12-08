@@ -40,6 +40,7 @@ using FrontEASE.Shared.Data.Enums.Users.Visualisation;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Generic;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Specific;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Management;
+using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Tasks.Charts;
 using FrontEASE.Shared.Infrastructure.Utils.Extensions;
 using Microsoft.AspNetCore.Http;
 using System.Net;
@@ -104,6 +105,12 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Login}", Value="Login" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Error}", Value="Error" },
 
+                /* Charts */
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIElementConstants.Chart}", Value="Charts" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessEvolutionChart}", Value="Fitness - Evolution" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessConvergenceChart}", Value="Fitness - Convergence" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessEvolutionChart}.{UIStateConstants.Explanation}", Value="Fitness value change over the iterations of this task" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessConvergenceChart}.{UIStateConstants.Explanation}", Value="Highest attained fitness value change over the course of this task" },
             ];
         }
 

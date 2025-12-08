@@ -32,7 +32,7 @@
 					@foreach (var tokenOption in matchingTokens!)
 					{
 						<SelectItem Value="@(tokenOption.Token)">
-							@($"{tokenOption.Name} ({TextHelper.TruncateTokenString(tokenOption.Token)})")
+							@($"{tokenOption.Name} ({TextHelper.TruncateString(tokenOption.Token, TextConstants.TokenDisplayLength)})")
 						</SelectItem>
 					}
 				</ChildContent>

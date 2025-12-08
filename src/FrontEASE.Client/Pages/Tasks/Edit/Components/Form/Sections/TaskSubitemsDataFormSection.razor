@@ -1,52 +1,58 @@
 ﻿@inject IResourceHandler resourceHandler
 
 @{
-    var connectorOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.LLM_CONNECTOR).ToList();
-    var evaluatorOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.EVALUATOR).ToList();
-    var solutionOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.SOLUTION).ToList();
+	var connectorOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.LLM_CONNECTOR).ToList();
+	var evaluatorOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.EVALUATOR).ToList();
+	var solutionOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.SOLUTION).ToList();
 
-    var stoppingConditionOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.STOPPING_CONDITION).ToList();
-    var testsOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.TEST).ToList();
-    var analysesOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.ANALYSIS).ToList();
-    var statOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.STATISTIC).ToList();
+	var stoppingConditionOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.STOPPING_CONDITION).ToList();
+	var testsOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.TEST).ToList();
+	var analysesOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.ANALYSIS).ToList();
+	var statOptions = Task.Config.AvailableModules.Where(x => x.PackageType == ModuleType.STATISTIC).ToList();
 }
 
 
 <TaskConfigDataFormSection />
 
 <TaskModuleDataFormSection ModuleOptions="@solutionOptions"
-                           Module="@Task.Config.Solution"
-                           ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Solution), PropertyDisplayResourceType.FIELD)))" />
+						   Module="@Task.Config.Solution"
+						   ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Solution), PropertyDisplayResourceType.FIELD)))" />
 
 <TaskModuleDataFormSection ModuleOptions="@connectorOptions"
-                           Module="@Task.Config.Connector"
-                           ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Connector), PropertyDisplayResourceType.FIELD)))" />
+						   Module="@Task.Config.Connector"
+						   ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Connector), PropertyDisplayResourceType.FIELD)))" />
 
 <TaskModuleDataFormSection ModuleOptions="@evaluatorOptions"
-                           Module="@Task.Config.Evaluator"
-                           ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Evaluator), PropertyDisplayResourceType.FIELD)))" />
+						   Module="@Task.Config.Evaluator"
+						   ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Evaluator), PropertyDisplayResourceType.FIELD)))" />
 
 
 <TaskModuleDataItemFormSection ModuleOptions="stoppingConditionOptions"
-                               Modules="Task.Config.StoppingConditions"
-                               ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.StoppingConditions), PropertyDisplayResourceType.FIELD)))" />
+							   Modules="Task.Config.StoppingConditions"
+							   ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.StoppingConditions), PropertyDisplayResourceType.FIELD)))" />
 
 <TaskModuleDataItemFormSection ModuleOptions="testsOptions"
-                               Modules="Task.Config.Tests"
-                               ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Tests), PropertyDisplayResourceType.FIELD)))" />
+							   Modules="Task.Config.Tests"
+							   ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Tests), PropertyDisplayResourceType.FIELD)))" />
 
 <TaskModuleDataItemFormSection ModuleOptions="analysesOptions"
-                               Modules="Task.Config.Analyses"
-                               ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Analyses), PropertyDisplayResourceType.FIELD)))" />
+							   Modules="Task.Config.Analyses"
+							   ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Analyses), PropertyDisplayResourceType.FIELD)))" />
 
 <TaskModuleDataItemFormSection ModuleOptions="statOptions"
-                               Modules="Task.Config.Stats"
-                               ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Stats), PropertyDisplayResourceType.FIELD)))" />
+							   Modules="Task.Config.Stats"
+							   ModuleName="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Stats), PropertyDisplayResourceType.FIELD)))" />
 
-<TaskAccessSubitemsDataFormSection />
+@if (Task.Author.Id == LoggedUser.Id || LoggedUser.Role == UserRole.OWNER)
+{
+	<TaskAccessSubitemsDataFormSection />
+}
 
 
 @code {
-    [CascadingParameter]
-    public TaskDto Task { get; set; } = new();
+	[CascadingParameter]
+	public TaskDto Task { get; set; } = new();
+
+	[CascadingParameter]
+	public ApplicationUserDto LoggedUser { get; set; } = new();
 }

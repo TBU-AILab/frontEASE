@@ -234,7 +234,7 @@
 						</Tooltip>
 					}
 
-					@if (shareableTaskStates.Contains(context.State) && context.Author.Id == LoggedUser.Id)
+					@if (shareableTaskStates.Contains(context.State) && (context.Author.Id == LoggedUser.Id) || LoggedUser.Role == UserRole.OWNER)
 					{
 						<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
 							<Icon Class="action-icon action-icon-secondary" Name="IconName.Share" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowShareModal(context))" @onclick:stopPropagation="true" />
@@ -348,36 +348,48 @@
 
 	private async Task ShowShareModal(TaskInfoDto taskInfo)
 	{
+		ViewMetadata.MiniOverviewTaskID = null;
+
 		TaskInfo = taskInfo;
 		await ShareModal.Show();
 	}
 
 	private async Task ShowOverviewModal(TaskInfoDto taskInfo)
 	{
+		ViewMetadata.MiniOverviewTaskID = null;
+
 		TaskInfo = taskInfo;
 		await OverviewModal.Show();
 	}
 
 	private async Task ShowDeleteModal(IList<TaskInfoDto> affectedTasks)
 	{
+		ViewMetadata.MiniOverviewTaskID = null;
+
 		DeleteModal.AffectedTasks = affectedTasks;
 		await DeleteModal.ShowModal();
 	}
 
 	private async Task ShowEditModal(TaskInfoDto taskInfo)
 	{
+		ViewMetadata.MiniOverviewTaskID = null;
+
 		TaskInfo = taskInfo;
 		await EditModal.Show();
 	}
 
 	private async Task ShowCloneModal(TaskInfoDto taskInfo)
 	{
+		ViewMetadata.MiniOverviewTaskID = null;
+
 		TaskInfo = taskInfo;
 		await CloneModal.ShowModal();
 	}
 
 	private async Task ShowChangeStateModal(IList<TaskInfoDto> affectedTasks, TaskState state)
 	{
+		ViewMetadata.MiniOverviewTaskID = null;
+
 		ChangeStateModal.AffectedTasks = affectedTasks;
 		await ChangeStateModal.ShowModal(state);
 	}

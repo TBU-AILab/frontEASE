@@ -2,18 +2,18 @@
 {
     public static class TextHelper
     {
-        public static string TruncateTokenString(string token)
+        public static string TruncateString(string token, int length)
         {
-            if(token.Length < 6)
+            if(token.Length < length)
             {
                 return token;
             }
 
             var parts = new List<string>()
             {
-                new([.. token.Take(3)]),
+                new([.. token.Take((int)Math.Ceiling(length / 2.0))]),
                 "...",
-                new([.. token.TakeLast(3)]),
+                new([.. token.TakeLast((int)Math.Ceiling(length / 2.0))]),
             };
 
             return string.Join(" ", parts);

@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
 using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs.List.Helpers;
 using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params.Helpers;
+using FrontEASE.Shared.Data.DTOs.Companies;
+using FrontEASE.Shared.Data.DTOs.Shared.Images;
+using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
@@ -14,6 +17,7 @@ using FrontEASE.Shared.Data.Enums.Tasks.Config;
 using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.Parameters;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Generic;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Tasks;
+using FrontEASE.Shared.Infrastructure.Utils.Extensions;
 using FrontEASE.Shared.Infrastructure.Utils.Helpers.Tasks;
 using FrontEASE.Shared.Services.Resources;
 
@@ -47,23 +51,59 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             }
         }
 
-        public void PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions)
+        public (IList<ApplicationUserDto> PreservedMembers, IList<CompanyDto> PreservedGroups) PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions)
         {
+            var preservedMembers = task.Members.Select(m => _mapper.Map<ApplicationUserDto>(m)).ToList();
+            var preservedGroups = task.MemberGroups.Select(g => _mapper.Map<CompanyDto>(g)).ToList();
+
             if (cleanImages)
             {
-                foreach (var user in task.Members)
-                { user.Image = null; }
-
-                foreach (var group in task.MemberGroups)
+                var sanitizedMembers = task.Members.Select(m =>
                 {
-                    group.Image = null;
-                    foreach (var user in group.Users)
-                    { user.Image = null; }
-                }
+                    var copy = _mapper.Map<ApplicationUserDto>(m);
+                    copy.Image = null;
+                    return copy;
+                }).ToList();
+
+                var sanitizedGroups = task.MemberGroups.Select(g =>
+                {
+                    var copy = _mapper.Map<CompanyDto>(g);
+                    copy.Image = null;
+                    copy.Users = [.. g.Users.Select(u =>
+                    {
+                        var uCopy = _mapper.Map<ApplicationUserDto>(u);
+                        uCopy.Image = null;
+                        return uCopy;
+                    })];
+                    return copy;
+                }).ToList();
+
+                task.Members.Clear();
+                task.Members.AddRange(sanitizedMembers);
+
+                task.MemberGroups.Clear();
+                task.MemberGroups.AddRange(sanitizedGroups);
             }
+
             if (cleanOptions)
             {
                 task.Config.AvailableModules.Clear();
+            }
+
+            return (preservedMembers, preservedGroups);
+        }
+
+        public void AssignTaskImages(TaskDto task, IList<CompanyDto> availableCompanies, IList<ApplicationUserDto> availableUsers)
+        {
+            foreach (var group in task.MemberGroups)
+            {
+                var matchingGroup = availableCompanies.FirstOrDefault(x => x.ID == group.ID);
+                group.Image ??= _mapper.Map<ImageDto>(matchingGroup?.Image);
+            }
+            foreach (var member in task.Members)
+            {
+                var matchingMember = availableUsers.FirstOrDefault(x => x.Id == member.Id);
+                member.Image ??= _mapper.Map<ImageDto>(matchingMember?.Image);
             }
         }
 

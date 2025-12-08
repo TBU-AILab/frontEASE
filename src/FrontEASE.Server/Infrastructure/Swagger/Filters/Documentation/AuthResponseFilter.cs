@@ -13,7 +13,7 @@ namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
                 .Union(context.MethodInfo.GetCustomAttributes(true))
                 .OfType<AuthorizeAttribute>();
 
-            if (authAttributes.Any())
+            if (authAttributes.Any() && operation.Responses?.Any(x => x.Key == ((int)HttpStatusCode.Unauthorized).ToString()) != true)
                 operation.Responses?.Add
                 (
                     ((int)HttpStatusCode.Unauthorized).ToString(),

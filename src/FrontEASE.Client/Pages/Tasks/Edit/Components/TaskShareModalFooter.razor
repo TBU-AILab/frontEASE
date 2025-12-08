@@ -69,9 +69,6 @@
 			var updated = await taskApiService.ShareTask(Task.ID, Task);
 			if (updated is not null)
 			{
-				mapper.Map(updated, Task);
-				mapper.Map(updated, TaskInfo);
-
 				var cleanModel = new TaskDto();
 				mapper.Map(cleanModel, Task);
 

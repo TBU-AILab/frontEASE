@@ -30,10 +30,10 @@
 										@Token.Token
 										break;
 									case TokenVisibility.TRUNCATED:
-										@TextHelper.TruncateTokenString(Token.Token)
+										@TextHelper.TruncateString(Token.Token, TextConstants.TokenDisplayLength)
 										break;
 									case TokenVisibility.TRUNCATED_WITH_TOGGLE:
-										@(isTokenShown? Token.Token: TextHelper.TruncateTokenString(Token.Token))
+										@(isTokenShown? Token.Token: TextHelper.TruncateString(Token.Token, TextConstants.TokenDisplayLength))
 										break;
 								}
 							</Span>

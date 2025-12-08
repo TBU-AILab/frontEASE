@@ -98,7 +98,7 @@
             if (editedPreferences is not null)
             {
                 mapper.Map(editedPreferences, Options);
-                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")}: {string.Join(", ", TokenModel.ConnectorTypes.Select(x => x.ConnectorType))} ({TextHelper.TruncateTokenString(Token.Token)})";
+                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")}: {string.Join(", ", TokenModel.ConnectorTypes.Select(x => x.ConnectorType))} ({TextHelper.TruncateString(Token.Token, TextConstants.TokenDisplayLength)})";
                 toastService.ShowSuccess(message);
 
                 await HideModal();
