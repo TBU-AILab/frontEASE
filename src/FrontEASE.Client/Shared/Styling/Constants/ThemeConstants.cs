@@ -2,7 +2,7 @@
 {
     public static class ThemeConstants
     {
-        public static ColorConstants LightThemeConstants = new()
+        public static readonly ColorConstants LightThemeConstants = new()
         {
             Primary = "#1d174b",
             Secondary = "#008B38",
@@ -23,7 +23,7 @@
             TextMuted = "#8b8b8b"
         };
 
-        public static ColorConstants DarkThemeConstants = new()
+        public static readonly ColorConstants DarkThemeConstants = new()
         {
             Primary = "#6d4ba9",
             Secondary = "#3e1a90",

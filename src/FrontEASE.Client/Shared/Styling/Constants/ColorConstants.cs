@@ -8,7 +8,7 @@
         }
 
         public string Primary { get; set; }
-        public string Secondary { get; set; } // Darker as primary for highlighting
+        public string Secondary { get; set; } // Used or Highlighting
         public string Success { get; set; }
         public string Danger { get; set; }
         public string Info { get; set; }
@@ -19,11 +19,11 @@
         public string White { get; set; }
         public string BackgroundPrimary { get; set; }
         public string BackgroundSecondary { get; set; }
-        public string BackgroundInfo { get; set; } // Info buttons
-        public string BackgroundLight { get; set; } // used for tab borders
+        public string BackgroundInfo { get; set; } // Used For Info Buttons
+        public string BackgroundLight { get; set; } // User for Tab Borders
         public string TextPrimary { get; set; }
         public string TextDark { get; set; }
-        public string TextInfo { get; set; } // Info buttons text
+        public string TextInfo { get; set; } // Used for Info Buttons Text
         public string TextMuted { get; set; }
     }
 }

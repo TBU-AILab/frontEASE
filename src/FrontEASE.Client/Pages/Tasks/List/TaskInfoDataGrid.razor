@@ -234,7 +234,7 @@
 						</Tooltip>
 					}
 
-					@if (shareableTaskStates.Contains(context.State) && (context.Author.Id == LoggedUser.Id) || LoggedUser.Role == UserRole.OWNER)
+					@if (shareableTaskStates.Contains(context.State) && ((context.Author?.Id is null || context.Author?.Id == LoggedUser.Id) || LoggedUser.Role == UserRole.OWNER))
 					{
 						<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
 							<Icon Class="action-icon action-icon-secondary" Name="IconName.Share" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowShareModal(context))" @onclick:stopPropagation="true" />
@@ -248,7 +248,7 @@
 						</Tooltip>
 					}
 
-					@if (deletableTaskStates.Contains(context.State))
+					@if (deletableTaskStates.Contains(context.State) && ((LoggedUser.Id == TaskInfo?.Author?.Id || TaskInfo?.Author?.Id is null) || LoggedUser.Role == UserRole.OWNER))
 					{
 						<Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
 							<Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowDeleteModal(new List<TaskInfoDto>() { context }))" @onclick:stopPropagation="true" />
@@ -269,7 +269,11 @@
 		<TaskChangeStateModal @ref="ChangeStateModal" Operation="DataOperation.UPDATE" />
 		<TaskCloneModal @ref="CloneModal" Operation="DataOperation.UPDATE" />
 		<TaskOverviewModal @ref="OverviewModal" Operation="DataOperation.READ" />
-		<TaskDeleteModal @ref="DeleteModal" Operation="DataOperation.DELETE" />
+
+		@if ((TaskInfo?.Author?.Id == LoggedUser.Id || TaskInfo?.Author?.Id is null) || LoggedUser.Role == UserRole.OWNER)
+		{
+			<TaskDeleteModal @ref="DeleteModal" Operation="DataOperation.DELETE" />
+		}
 	</CascadingValue>
 </CascadingValue>
 
@@ -320,7 +324,7 @@
 	private bool IsBulkRunEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => runnableTaskStates.Contains(task.State));
 	private bool IsBulkPauseEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => pauseableTaskStates.Contains(task.State));
 	private bool IsBulkStopEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => stoppableTaskStates.Contains(task.State));
-	private bool isBulkDeleteEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => deletableTaskStates.Contains(task.State));
+	private bool isBulkDeleteEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => deletableTaskStates.Contains(task.State) && ((task.Author?.Id is null || task.Author?.Id == LoggedUser.Id) || LoggedUser.Role == UserRole.OWNER));
 	private bool isBulkActionEnabled => isBulkDeleteEnabled || IsBulkPauseEnabled || IsBulkRunEnabled || IsBulkStopEnabled;
 
 	private async Task OnInfoClick(TaskInfoDto task, MouseEventArgs e)

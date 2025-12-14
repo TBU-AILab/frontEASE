@@ -86,6 +86,7 @@ namespace FrontEASE.Server.Controllers.Admin
         [HttpPost($"{UsersControllerConstants.BaseUrl}")]
         [ProducesResponseType(typeof(ApplicationUserDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> InsertUser([FromBody, Required] ApplicationUserDto user)
         {
             IActionResult result;
@@ -113,6 +114,7 @@ namespace FrontEASE.Server.Controllers.Admin
         [ProducesResponseType(typeof(ApplicationUserDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> UpdateUser([Required, FromBody] ApplicationUserDto user)
         {
             IActionResult result;
@@ -139,6 +141,7 @@ namespace FrontEASE.Server.Controllers.Admin
         [HttpDelete($"{UsersControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> DeleteUser([Required, FromRoute] Guid id)
         {
             IActionResult result;

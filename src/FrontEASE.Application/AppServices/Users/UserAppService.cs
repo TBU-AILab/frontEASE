@@ -42,11 +42,83 @@ namespace FrontEASE.Application.AppServices.Users
             _appSettings = appSettings;
         }
 
+        private async Task<ApplicationUser?> LoadCurrentUser(CancellationToken cancellationToken)
+        {
+            var userMail = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
+            var currentUser = await _userService.Load(userMail, cancellationToken);
+
+            return currentUser;
+        }
+
+        private void CheckPermissionsToDelete(ApplicationUser? currentUser, ApplicationUser? deletedUser)
+        {
+            /* deleted not found */
+            if (deletedUser is null)
+            { throw new NotFoundException(); }
+
+            var currentRole = UserRoleGuidToRole(Guid.Parse(currentUser?.UserRole!.RoleId ?? Guid.Empty.ToString()));
+            var deletedRole = deletedUser is not null
+                ? UserRoleGuidToRole(Guid.Parse(deletedUser.UserRole!.RoleId))
+                : UserRole.USER;
+
+            if (
+                currentUser is null ||                                      // anonymous cannot delete
+                currentUser.Id == deletedUser!.Id ||                        // cannot delete self
+                (currentRole != UserRole.OWNER &&                           // non-OWNER ...
+                (int)deletedRole > (int)currentRole)                        // ... cannot delete higher role
+               )
+            {
+                throw new UnauthorizedException();
+            }
+        }
+
+        private void CheckPermissionToCreate(ApplicationUser? currentUser, ApplicationUser insertedUser)
+        {
+            var currentRole = UserRoleGuidToRole(Guid.Parse(currentUser?.UserRole!.RoleId ?? Guid.Empty.ToString()));
+            var insertedRole = UserRoleGuidToRole(Guid.Parse(insertedUser.UserRole!.RoleId));
+
+            if (
+                currentUser is null ||                                  // anonymous cannot create
+                (currentRole != UserRole.OWNER &&                       // non-OWNER ...
+                 (int)insertedRole > (int)currentRole)                  // ... cannot create higher role
+               )
+            {
+                throw new UnauthorizedException();
+            }
+        }
+
+        private void CheckPermissionToUpdate(ApplicationUser? currentUser, ApplicationUser? updatedUser, ApplicationUser newUpdatedUser)
+        {
+            /* updated not found */
+            if (updatedUser is null)
+            { throw new NotFoundException(); }
+
+            var currentRole = UserRoleGuidToRole(Guid.Parse(currentUser?.UserRole!.RoleId ?? Guid.Empty.ToString()));
+            var originalTargetRole = UserRoleGuidToRole(Guid.Parse(updatedUser.UserRole!.RoleId));
+            var newTargetRole = UserRoleGuidToRole(Guid.Parse(newUpdatedUser.UserRole!.RoleId));
+
+            if (
+                currentUser is null ||                                                  // anonymous cannot update
+                (currentRole != UserRole.OWNER &&                                       // non-OWNER ...
+                 (
+                     (currentUser.Id == updatedUser.Id &&                               // ... cannot change own role
+                      newTargetRole != originalTargetRole) ||
+                     (int)originalTargetRole > (int)currentRole ||                      // ... cannot modify higher role user
+                     (int)newTargetRole > (int)currentRole                              // ... cannot assign higher role
+                 ))
+               )
+            {
+                throw new UnauthorizedException();
+            }
+        }
+
         public async Task<ApplicationUserDto> Load(CancellationToken cancellationToken)
         {
             var userID = _contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var user = await _userService.Load(Guid.Parse(userID), cancellationToken);
+            
             var userDto = _mapper.Map<ApplicationUserDto>(user);
+            userDto.Role = UserRoleGuidToRole(Guid.Parse(user!.UserRole!.RoleId));
             return userDto;
         }
 
@@ -66,6 +138,9 @@ namespace FrontEASE.Application.AppServices.Users
         public async Task<ApplicationUserDto> Create(ApplicationUserDto user, CancellationToken cancellationToken)
         {
             var userEntity = _mapper.Map<ApplicationUser>(user);
+            var currentUser = await LoadCurrentUser(cancellationToken);
+            CheckPermissionToCreate(currentUser, userEntity);
+
             var duplicities = await _userService.LoadDuplicities(userEntity, cancellationToken);
             if (duplicities.Count > 0)
             {
@@ -87,6 +162,10 @@ namespace FrontEASE.Application.AppServices.Users
         public async Task<ApplicationUserDto> Update(ApplicationUserDto user, CancellationToken cancellationToken)
         {
             var userEntity = _mapper.Map<ApplicationUser>(user);
+            var currentUser = await LoadCurrentUser(cancellationToken);
+            var editedUserEntity = await _userService.Load(user.Id!.Value, cancellationToken);
+
+            CheckPermissionToUpdate(currentUser, editedUserEntity, userEntity);
 
             var newDuplicities = await _userService.LoadDuplicities(userEntity, cancellationToken);
             if (newDuplicities.Count > 0)
@@ -103,8 +182,6 @@ namespace FrontEASE.Application.AppServices.Users
                 }
             }
 
-            var editedUserEntity = await _userService.Load(user.Id!.Value, cancellationToken);
-
             if (!string.IsNullOrWhiteSpace(user.Image?.ImageData) && !string.IsNullOrWhiteSpace(editedUserEntity!.Image?.ImageUrl))
             { _imageService.DeleteImage(editedUserEntity.Image); }
 
@@ -120,7 +197,10 @@ namespace FrontEASE.Application.AppServices.Users
 
         public async Task Delete(Guid id, CancellationToken cancellationToken)
         {
+            var currentUser = await LoadCurrentUser(cancellationToken);
             var deletedEntity = await _userService.Load(id, cancellationToken);
+            CheckPermissionsToDelete(currentUser, deletedEntity);
+
             await _userService.Delete(deletedEntity!, cancellationToken);
         }
 

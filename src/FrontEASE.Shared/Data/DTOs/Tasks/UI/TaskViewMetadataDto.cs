@@ -28,6 +28,6 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.UI
         /// <param name="fieldChanged"></param>
         /// <returns></returns>
         public static bool OptionsReloadNecessary(string fieldChanged) =>
-            string.Equals(fieldChanged, TaskMetadataConstants.ShortName, StringComparison.InvariantCultureIgnoreCase);
+            TaskMetadataConstants.ReloadTriggerFields.Any(x => x.Equals(fieldChanged, StringComparison.InvariantCultureIgnoreCase));
     }
 }

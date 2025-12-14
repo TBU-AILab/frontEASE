@@ -5,146 +5,148 @@
 @inject IUIManager uiManager
 
 <Fields>
+	<Validation>
+		<Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is5.OnWidescreen)">
+			<FieldLabel For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Email)))" RequiredIndicator>
+				@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FIELD)))
+			</FieldLabel>
+			<TextEdit ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Email)))"
+					  Role="TextRole.Email"
+					  Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.PLACEHOLDER)))"
+					  @bind-Text="@UserModel.Email">
+				<Feedback>
+					<ValidationError Multiline="true" />
+				</Feedback>
+			</TextEdit>
+		</Field>
+	</Validation>
 
-    <Validation>
-        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is5.OnWidescreen)">
-            <FieldLabel For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Email)))" RequiredIndicator>
-                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FIELD)))
-            </FieldLabel>
-            <TextEdit ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Email)))"
-                      Role="TextRole.Email"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Text="@UserModel.Email">
-                <Feedback>
-                    <ValidationError Multiline="true" />
-                </Feedback>
-            </TextEdit>
-        </Field>
-    </Validation>
+	<Validation>
+		<Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is3.OnWidescreen)">
+			<FieldLabel For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Role)))" RequiredIndicator>
+				@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Role), PropertyDisplayResourceType.FIELD)))
+			</FieldLabel>
+			<Select @bind-SelectedValue="@UserModel.Role" ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Role)))" ReadOnly="@(Operation == DataOperation.UPDATE ? LoggedUser.Id == UserModel.Id : false)" Disabled="@(Operation == DataOperation.UPDATE ? LoggedUser.Id == UserModel.Id : false)">
+				<ChildContent>
+					@foreach (var role in Enum.GetValues(typeof(UserRole)))
+					{
+						@if ((int)LoggedUser.Role >= (int)role)
+						{
+							<SelectItem TValue="UserRole" Value="@((UserRole)role)">
+								@(resourceHandler.GetResource(((UserRole)role).GetEnumResourceValue()))
+							</SelectItem>
+						}
+					}
+				</ChildContent>
+				<Feedback>
+					<ValidationError Multiline="true" />
+				</Feedback>
+			</Select>
+		</Field>
+	</Validation>
 
-    <Validation>
-        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is3.OnWidescreen)">
-            <FieldLabel For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Role)))" RequiredIndicator>
-                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Role), PropertyDisplayResourceType.FIELD)))
-            </FieldLabel>
-            <Select @bind-SelectedValue="@UserModel.Role" ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Role)))">
-                <ChildContent>
-                    @foreach (var role in Enum.GetValues(typeof(UserRole)))
-                    {
-                        <SelectItem TValue="UserRole" Value="@((UserRole)role)">
-                            @(resourceHandler.GetResource(((UserRole)role).GetEnumResourceValue()))
-                        </SelectItem>
-                    }
-                </ChildContent>
-                <Feedback>
-                    <ValidationError Multiline="true" />
-                </Feedback>
-            </Select>
-        </Field>
-    </Validation>
+	<Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: string.IsNullOrEmpty(UserModel.Image?.ImageData) ? ColumnSize.Is4.OnWidescreen : ColumnSize.Is3.OnWidescreen)">
+		<FieldLabel For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Image)))">
+			@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.FIELD)))
+		</FieldLabel>
+		@if (imageLoadInProgress)
+		{
+			<Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center">
+				<SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}"))" SmallControlSpinner="true" TextColor="TextColor.Dark" TextSize="TextSize.Small" />
+			</Column>
+		}
+		<Label For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Image)))" Display="@(imageLoadInProgress? Display.None: Display.Block)" Cursor="@(imageLoadInProgress? Cursor.Default: Cursor.Pointer)" Border="Border.Is1.Rounded" Class="button btn btn-sized btn-custom-file-picker" Overflow="Overflow.Auto" Margin="Margin.Is0.FromBottom">
+			<Text Display="Display.InlineBlock" Overflow="Overflow.Hidden" Width="Width.Is100" TextAlignment="TextAlignment.Start" TextWeight="TextWeight.Normal" TextSize="TextSize.Small"
+				  Class="@($"{(string.IsNullOrEmpty(UserModel.Image?.ImageData) ? "text-custom-muted" : "text-custom-primary")}")">
+				@(string.IsNullOrEmpty(UserModel.Image?.ImageData) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.PLACEHOLDER)) : UserModel.Image.Name)
+			</Text>
+			<FileEdit Display="Display.None"
+					  @ref="@FilePicker"
+					  Filter=".jpg, .jpeg, .jfif, .png, .gif, .bmp, .tiff"
+					  AutoReset="false"
+					  ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Image)))"
+					  MaxFileSize="@(SizeConstants.FiveMegabytes)"
+					  Changed="args => ImageLoaded(args, UserModel.Image!)"
+					  Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.PLACEHOLDER)))" />
+		</Label>
+	</Field>
 
-    <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : string.IsNullOrEmpty(UserModel.Image?.ImageData) ? ColumnSize.Is4.OnWidescreen : ColumnSize.Is3.OnWidescreen)">
-        <FieldLabel For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Image)))">
-            @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.FIELD)))
-        </FieldLabel>
-        @if (imageLoadInProgress)
-        {
-            <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center">
-                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}"))" SmallControlSpinner="true" TextColor="TextColor.Dark" TextSize="TextSize.Small" />
-            </Column>
-        }
-        <Label For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Image)))" Display="@(imageLoadInProgress ? Display.None : Display.Block)" Cursor="@(imageLoadInProgress ? Cursor.Default : Cursor.Pointer)" Border="Border.Is1.Rounded" Class="button btn btn-sized btn-custom-file-picker" Overflow="Overflow.Auto" Margin="Margin.Is0.FromBottom">
-            <Text Display="Display.InlineBlock" Overflow="Overflow.Hidden" Width="Width.Is100" TextAlignment="TextAlignment.Start" TextWeight="TextWeight.Normal" TextSize="TextSize.Small"
-                  Class="@($"{(string.IsNullOrEmpty(UserModel.Image?.ImageData) ? "text-custom-muted" : "text-custom-primary")}")">
-                @(string.IsNullOrEmpty(UserModel.Image?.ImageData) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.PLACEHOLDER)) : UserModel.Image.Name)
-            </Text>
-            <FileEdit Display="Display.None"
-                      @ref="@FilePicker"
-                      Filter=".jpg, .jpeg, .jfif, .png, .gif, .bmp, .tiff"
-                      AutoReset="false"
-                      ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Image)))"
-                      MaxFileSize="@(SizeConstants.FiveMegabytes)"
-                      Changed="args => ImageLoaded(args, UserModel.Image!)"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.PLACEHOLDER)))" />
-        </Label>
-    </Field>
+	@if (!string.IsNullOrEmpty(UserModel.Image?.ImageData) && !FullWidthFields)
+	{
+		<Column ColumnSize="ColumnSize.Is1.OnWidescreen" TextAlignment="TextAlignment.Center">
+			<Image Border="Border.RoundedCircle" Fluid Source=@($"data:{UserModel.Image.MimeType};base64,{UserModel.Image.ImageData}") Class="thumbnail-item-image" Loading />
+		</Column>
+	}
 
-    @if (!string.IsNullOrEmpty(UserModel.Image?.ImageData) && !FullWidthFields)
-    {
-        <Column ColumnSize="ColumnSize.Is1.OnWidescreen" TextAlignment="TextAlignment.Center">
-            <Image Border="Border.RoundedCircle" Fluid Source=@($"data:{UserModel.Image.MimeType};base64,{UserModel.Image.ImageData}") Class="thumbnail-item-image" Loading />
-        </Column>
-    }
+	<Validation>
+		<Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6.OnWidescreen)">
+			<FieldLabel For="@(GetElementIdByOperation(nameof(ApplicationUserDto.UserName)))" RequiredIndicator>
+				@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.FIELD)))
+			</FieldLabel>
+			<TextEdit ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.UserName)))"
+					  Role="TextRole.Text"
+					  Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.PLACEHOLDER)))"
+					  @bind-Text="@UserModel.UserName">
+				<Feedback>
+					<ValidationError Multiline="true" />
+				</Feedback>
+			</TextEdit>
+		</Field>
+	</Validation>
 
-    <Validation>
-        <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
-            <FieldLabel For="@(GetElementIdByOperation(nameof(ApplicationUserDto.UserName)))" RequiredIndicator>
-                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.FIELD)))
-            </FieldLabel>
-            <TextEdit ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.UserName)))"
-                      Role="TextRole.Text"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Text="@UserModel.UserName">
-                <Feedback>
-                    <ValidationError Multiline="true" />
-                </Feedback>
-            </TextEdit>
-        </Field>
-    </Validation>
-
-    @if (Operation == DataOperation.INSERT)
-    {
-        <Validation>
-            <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
-                <FieldLabel For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Password)))" RequiredIndicator>
-                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Password), PropertyDisplayResourceType.FIELD)))
-                </FieldLabel>
-                <TextEdit ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Password)))"
-                          Role="TextRole.Password"
-                          Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Password), PropertyDisplayResourceType.PLACEHOLDER)))"
-                          @bind-Text="@UserModel.Password">
-                    <Feedback>
-                        <ValidationError Multiline="true" />
-                    </Feedback>
-                </TextEdit>
-            </Field>
-        </Validation>
-    }
+	@if (Operation == DataOperation.INSERT)
+	{
+		<Validation>
+			<Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6.OnWidescreen)">
+				<FieldLabel For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Password)))" RequiredIndicator>
+					@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Password), PropertyDisplayResourceType.FIELD)))
+				</FieldLabel>
+				<TextEdit ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Password)))"
+						  Role="TextRole.Password"
+						  Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Password), PropertyDisplayResourceType.PLACEHOLDER)))"
+						  @bind-Text="@UserModel.Password">
+					<Feedback>
+						<ValidationError Multiline="true" />
+					</Feedback>
+				</TextEdit>
+			</Field>
+		</Validation>
+	}
 </Fields>
 
 
 @code {
-    [CascadingParameter]
-    public ApplicationUserDto LoggedUser { get; set; } = new();
+	[CascadingParameter]
+	public ApplicationUserDto LoggedUser { get; set; } = new();
 
-    [CascadingParameter]
-    public ApplicationUserDto UserModel { get; set; } = new();
+	[CascadingParameter]
+	public ApplicationUserDto UserModel { get; set; } = new();
 
-    [Parameter]
-    public DataOperation Operation { get; set; }
+	[Parameter]
+	public DataOperation Operation { get; set; }
 
-    [Parameter]
-    public bool FullWidthFields { get; set; }
+	[Parameter]
+	public bool FullWidthFields { get; set; }
 
-    public FileEdit FilePicker = new();
-    private bool imageLoadInProgress = false;
+	public FileEdit FilePicker = new();
+	private bool imageLoadInProgress = false;
 
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<ApplicationUserDto>(elementBase, Operation, UserModel.Id?.ToString());
+	private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<ApplicationUserDto>(elementBase, Operation, UserModel.Id?.ToString());
 
-    public async Task ImageLoaded(FileChangedEventArgs args, ImageDto destination)
-    {
-        imageLoadInProgress = true;
+	public async Task ImageLoaded(FileChangedEventArgs args, ImageDto destination)
+	{
+		imageLoadInProgress = true;
 
-        try
-        {
-            await dataLoader.LoadImage(args, destination);
-            await uiService.CallRequestRefreshAsync();
-        }
-        catch (Exception)
-        {
-            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}")}: {UserModel.Image?.Name}";
-        }
+		try
+		{
+			await dataLoader.LoadImage(args, destination);
+			await uiService.CallRequestRefreshAsync();
+		}
+		catch (Exception)
+		{
+			var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}")}: {UserModel.Image?.Name}";
+		}
 
-        imageLoadInProgress = false;
-    }
+		imageLoadInProgress = false;
+	}
 }

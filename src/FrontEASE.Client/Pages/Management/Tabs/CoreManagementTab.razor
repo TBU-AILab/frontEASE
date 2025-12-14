@@ -3,68 +3,68 @@
 @inject IResourceHandler resourceHandler
 
 <Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Shadow="Shadow.Small" Class="rounded-top-right-1 border-custom-light">
-    <Row>
-        <Column ColumnSize="ColumnSize.IsFull">
-            <Container Fluid Padding="Padding.Is2.FromStart.Is2.FromEnd">
-                <Row>
-                    <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
-                        <Tabs RenderMode="TabsRenderMode.LazyReload"
-                              SelectedTab="@managementTypeSelected.ToString()"
-                              SelectedTabChanged="@OnSelectedTabChanged"
-                              Class="tab-control"
-                              Border="Border.Is0">
-                            <Items>
-                                @foreach (var managementType in Enum.GetValues(typeof(CorePreferencesManagementType)))
-                                {
-                                    <Tab Name="@(managementType.ToString())">
-                                        @(resourceHandler.GetResource(((CorePreferencesManagementType)managementType).GetEnumResourceValue()))
-                                    </Tab>
-                                }
-                            </Items>
-                            <Content>
-                                @foreach (var managementType in Enum.GetValues(typeof(CorePreferencesManagementType)))
-                                {
-                                    <TabPanel TextAlignment="TextAlignment.Start" Name="@(managementType.ToString())">
-                                        @switch (managementTypeSelected)
-                                        {
-                                            case CorePreferencesManagementType.PACKAGES:
-                                                <CoreManagementPackagesTab />
-                                                break;
-                                            case CorePreferencesManagementType.MODULES:
-                                                <CoreManagementModulesTab />
-                                                break;
-                                            case CorePreferencesManagementType.EXTENDED:
-                                                <CoreManagementExtendedFunctionalityTab />
-                                                break;
-                                        }
-                                    </TabPanel>
-                                }
-                            </Content>
-                        </Tabs>
+	<Row>
+		<Column ColumnSize="ColumnSize.IsFull">
+			<Container Fluid Padding="Padding.Is2.FromStart.Is2.FromEnd">
+				<Row>
+					<Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
+						<Tabs RenderMode="TabsRenderMode.LazyReload"
+							  SelectedTab="@managementTypeSelected.ToString()"
+							  SelectedTabChanged="@OnSelectedTabChanged"
+							  Class="tab-control"
+							  Border="Border.Is0">
+							<Items>
+								@foreach (var managementType in Enum.GetValues(typeof(CorePreferencesManagementType)))
+								{
+									<Tab Name="@(managementType.ToString())">
+										@(resourceHandler.GetResource(((CorePreferencesManagementType)managementType).GetEnumResourceValue()))
+									</Tab>
+								}
+							</Items>
+							<Content>
+								@foreach (var managementType in Enum.GetValues(typeof(CorePreferencesManagementType)))
+								{
+									<TabPanel TextAlignment="TextAlignment.Start" Name="@(managementType.ToString())">
+										@switch (managementTypeSelected)
+										{
+											case CorePreferencesManagementType.PACKAGES:
+												<CoreManagementPackagesTab />
+												break;
+											case CorePreferencesManagementType.MODULES:
+												<CoreManagementModulesTab />
+												break;
+											case CorePreferencesManagementType.EXTENDED:
+												<CoreManagementExtendedFunctionalityTab />
+												break;
+										}
+									</TabPanel>
+								}
+							</Content>
+						</Tabs>
 
-                    </Column>
-                </Row>
-            </Container>
-        </Column>
-    </Row>
+					</Column>
+				</Row>
+			</Container>
+		</Column>
+	</Row>
 </Container>
 
 @code {
-    private CorePreferencesManagementType managementTypeSelected = CorePreferencesManagementType.PACKAGES;
+	private CorePreferencesManagementType managementTypeSelected = CorePreferencesManagementType.PACKAGES;
 
-    private async Task RefreshViewAsync()
-    {
-        await InvokeAsync(StateHasChanged);
-    }
+	private async Task RefreshViewAsync()
+	{
+		await InvokeAsync(StateHasChanged);
+	}
 
-    protected override async Task OnInitializedAsync()
-    {
-        uiService.RefreshRequested += RefreshViewAsync;
-        await base.OnInitializedAsync();
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		uiService.RefreshRequested += RefreshViewAsync;
+		await base.OnInitializedAsync();
+	}
 
-    private void OnSelectedTabChanged(string name)
-    {
-        managementTypeSelected = (CorePreferencesManagementType)Enum.Parse(typeof(CorePreferencesManagementType), name);
-    }
+	private void OnSelectedTabChanged(string name)
+	{
+		managementTypeSelected = (CorePreferencesManagementType)Enum.Parse(typeof(CorePreferencesManagementType), name);
+	}
 }

@@ -3,6 +3,7 @@ using FrontEASE.Domain.Entities.Companies;
 using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
+using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Services.Tasks;
 using FrontEASE.Domain.Services.Users;
@@ -119,7 +120,7 @@ namespace FrontEASE.Application.AppServices.Tasks
 
             if(taskLocal!.AuthorID != Guid.Parse(user!.Id))
             {
-                throw new UnauthorizedAccessException();
+                throw new UnauthorizedException();
             }
             else
             {
