@@ -78,6 +78,7 @@ using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Security.Claims;
+using System.Text.Json.Serialization;
 
 var executingAssembly = Assembly.GetExecutingAssembly();
 var builder = WebApplication.CreateBuilder(args);
@@ -232,7 +233,14 @@ void SetupMvc()
     builder.Services.AddControllers()
         .AddJsonOptions(options =>
         {
-            options.JsonSerializerOptions.NumberHandling |= System.Text.Json.Serialization.JsonNumberHandling.AllowNamedFloatingPointLiterals;
+            options.JsonSerializerOptions.NumberHandling |= JsonNumberHandling.AllowNamedFloatingPointLiterals;
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            options.JsonSerializerOptions.MaxDepth = 2048;
+        })
+        .AddMvcOptions(options =>
+        {
+            options.MaxModelValidationErrors = int.MaxValue;
+            options.MaxValidationDepth = int.MaxValue;
         });
 }
 
