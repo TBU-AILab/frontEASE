@@ -72,22 +72,20 @@ namespace FrontEASE.Application.AppServices.Users
             }
         }
 
-        private void CheckPermissionToCreate(ApplicationUser? currentUser, ApplicationUser insertedUser)
+        private void CheckPermissionToCreate(ApplicationUser? currentUser, UserRole insertedRole)
         {
             var currentRole = UserRoleGuidToRole(Guid.Parse(currentUser?.UserRole!.RoleId ?? Guid.Empty.ToString()));
-            var insertedRole = UserRoleGuidToRole(Guid.Parse(insertedUser.UserRole!.RoleId));
-
             if (
                 currentUser is null ||                                  // anonymous cannot create
                 (currentRole != UserRole.OWNER &&                       // non-OWNER ...
                  (int)insertedRole > (int)currentRole)                  // ... cannot create higher role
                )
             {
-                throw new UnauthorizedException();
+                throw new UnauthorizedException(); 
             }
         }
 
-        private void CheckPermissionToUpdate(ApplicationUser? currentUser, ApplicationUser? updatedUser, ApplicationUser newUpdatedUser)
+        private void CheckPermissionToUpdate(ApplicationUser? currentUser, ApplicationUser? updatedUser, UserRole newTargetRole)
         {
             /* updated not found */
             if (updatedUser is null)
@@ -95,7 +93,6 @@ namespace FrontEASE.Application.AppServices.Users
 
             var currentRole = UserRoleGuidToRole(Guid.Parse(currentUser?.UserRole!.RoleId ?? Guid.Empty.ToString()));
             var originalTargetRole = UserRoleGuidToRole(Guid.Parse(updatedUser.UserRole!.RoleId));
-            var newTargetRole = UserRoleGuidToRole(Guid.Parse(newUpdatedUser.UserRole!.RoleId));
 
             if (
                 currentUser is null ||                                                  // anonymous cannot update
@@ -137,10 +134,10 @@ namespace FrontEASE.Application.AppServices.Users
 
         public async Task<ApplicationUserDto> Create(ApplicationUserDto user, CancellationToken cancellationToken)
         {
-            var userEntity = _mapper.Map<ApplicationUser>(user);
             var currentUser = await LoadCurrentUser(cancellationToken);
-            CheckPermissionToCreate(currentUser, userEntity);
+            CheckPermissionToCreate(currentUser, user.Role);
 
+            var userEntity = _mapper.Map<ApplicationUser>(user);
             var duplicities = await _userService.LoadDuplicities(userEntity, cancellationToken);
             if (duplicities.Count > 0)
             {
@@ -160,13 +157,12 @@ namespace FrontEASE.Application.AppServices.Users
         }
 
         public async Task<ApplicationUserDto> Update(ApplicationUserDto user, CancellationToken cancellationToken)
-        {
-            var userEntity = _mapper.Map<ApplicationUser>(user);
+        {           
             var currentUser = await LoadCurrentUser(cancellationToken);
             var editedUserEntity = await _userService.Load(user.Id!.Value, cancellationToken);
+            CheckPermissionToUpdate(currentUser, editedUserEntity, user.Role);
 
-            CheckPermissionToUpdate(currentUser, editedUserEntity, userEntity);
-
+            var userEntity = _mapper.Map<ApplicationUser>(user);
             var newDuplicities = await _userService.LoadDuplicities(userEntity, cancellationToken);
             if (newDuplicities.Count > 0)
             {
