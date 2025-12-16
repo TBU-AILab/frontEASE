@@ -1,13 +1,11 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject ITaskManipulationService taskManipulationService
-@inject IUIManager uiManager
 
 <Row Margin="Margin.Is2.FromTop">
     <Container Fluid>
         <FormSectionHeader DisplayText="@ModuleName" />
     </Container>
 
-    <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small"/>
+    <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
     @{
         var TaskModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == Module.ShortName);
     }
@@ -41,7 +39,7 @@
             <Container Fluid>
                 @if (!string.IsNullOrWhiteSpace(Module.ShortName))
                 {
-                    <TaskModuleParamsViewSection AvailableParams="@TaskModuleData?.Parameters" Module="Module" />
+                    <TaskModuleParamsViewSection Task="Task" AvailableParams="@TaskModuleData?.Parameters" Module="Module" />
                 }
             </Container>
         </Column>
@@ -49,6 +47,9 @@
 </Row>
 
 @code {
+    [Parameter]
+    public TaskDto Task { get; set; } = new();
+
     [Parameter]
     public IList<TaskModuleNoValidationDto> ModuleOptions { get; set; } = [];
 

@@ -1,6 +1,5 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject IMapper mapper
-@inject IUIManager uiManager
 
 @if (AvailableParams?.Count > 0)
 {
@@ -30,11 +29,11 @@
                                 <Fields>
                                     @if (paramOption.Readonly != true)
                                     {
-                                        <TaskModuleParamValue Module="@Module" ParamOption="@paramOption" ParamValue="@paramValue" />
+                                        <TaskModuleParamValue EditContext="EditContext" TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" Module="@Module" ParamOption="@paramOption" ParamValue="@paramValue" />
                                     }
                                     else
                                     {
-                                        <TaskModuleParamLabel ParamOption="@paramOption"/>
+                                        <TaskModuleParamLabel TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" ParamOption="@paramOption" />
                                     }
                                 </Fields>
                             }
@@ -47,11 +46,20 @@
 }
 
 @code {
-    [CascadingParameter]
+    [Parameter]
+    public EditContext EditContext { get; set; } = null!;
+
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
     [Parameter]
-    public TaskModuleDto? Module { get; set; }
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+
+    [Parameter]
+    public TaskModuleDto? Module { get; set; } = new();
+
+    [Parameter]
+    public DataOperation Operation { get; set; }
 
     [Parameter]
     public IList<TaskModuleParameterNoValidationDto> AvailableParams { get; set; } = [];
@@ -87,11 +95,11 @@
         if (parameterValue is null && Module is not null)
         {
             parameterValue = new()
-                {
-                    Key = parameterOption.Key,
-                    ShortName = parameterOption.ShortName,
-                    Type = parameterOption.Type
-                };
+            {
+                Key = parameterOption.Key,
+                ShortName = parameterOption.ShortName,
+                Type = parameterOption.Type
+            };
 
             Module.Parameters.Add(parameterValue);
         }

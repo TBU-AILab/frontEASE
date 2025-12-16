@@ -10,7 +10,6 @@
 @inject IManagementApiService managementApiService
 @inject IUIService uiService
 @inject IMapper mapper
-@inject IUIManager uiManager
 @inject AppSettings appSettings
 
 <Container Fluid>
@@ -24,7 +23,7 @@
     {
         <Row Margin="Margin.Is2.FromTop">
             <TaskInfoFilter />
-            @if (Tasks.Count > 0)
+            @if (PageContext.Tasks.Count > 0)
             {
                 <TaskInfoDataGrid />
             }
@@ -43,19 +42,7 @@
 
 @code {
     [CascadingParameter]
-    public UserPreferencesDto Options { get; set; } = new();
-
-    [CascadingParameter]
-    public ObservableCollection<TaskInfoDto> Tasks { get; set; } = [];
-
-    [CascadingParameter]
-    public IList<TaskModuleNoValidationDto> TaskModuleOptions { get; set; } = [];
-
-    [CascadingParameter]
-    public IList<ApplicationUserDto> AvailableUsers { get; set; } = [];
-
-    [CascadingParameter]
-    public IList<CompanyDto> AvailableCompanies { get; set; } = [];
+    public TasksPageContext PageContext { get; set; } = null!;
 
     private bool isTasksLoading;
     private bool isUsersLoading;
@@ -97,7 +84,7 @@
         await Task.WhenAll(loadTasksTask, loadUsersTask, loadCompaniesTask, loadTaskOptionsTask);
         isTasksLoading = isUsersLoading = isCompaniesLoading = isTaskOptionsLoading = false;
 
-        companyManipulationService.SortUsersToCompanies(AvailableUsers!, AvailableCompanies!);
+        companyManipulationService.SortUsersToCompanies(PageContext.AvailableUsers!, PageContext.AvailableCompanies!);
 
         _ = StartPeriodicTasksStatusCall(cancellationTokenSource!.Token);
         await base.OnInitializedAsync();
@@ -112,7 +99,7 @@
                 var taskStatuses = await taskApiService.LoadTaskStatuses();
                 await InvokeAsync(async () =>
                 {
-                    var updateNecessary = taskManipulationService.UpdateTaskStatuses(Tasks, taskStatuses);
+                    var updateNecessary = taskManipulationService.UpdateTaskStatuses(PageContext.Tasks, taskStatuses);
                     if (updateNecessary)
                     {
                         await uiService.CallRequestRefreshAsync();
@@ -133,8 +120,8 @@
         var tasks = await taskApiService.LoadTaskInfos(null);
         if (tasks?.Count > 0 == true)
         {
-            Tasks.Clear();
-            foreach (var task in tasks) { Tasks.Add(task); }
+            PageContext.Tasks.Clear();
+            foreach (var task in tasks) { PageContext.Tasks.Add(task); }
         }
     }
 
@@ -143,8 +130,8 @@
         var moduleOptions = await typelistApiService.LoadTaskModuleOptions();
         if (moduleOptions?.Count > 0 == true)
         {
-            TaskModuleOptions.Clear();
-            foreach (var option in moduleOptions) { TaskModuleOptions.Add(option); }
+            PageContext.TaskModuleOptions.Clear();
+            foreach (var option in moduleOptions) { PageContext.TaskModuleOptions.Add(option); }
         }
     }
 
@@ -153,8 +140,8 @@
         var users = await userApiService.LoadUsers();
         if (users?.Count > 0 == true)
         {
-            AvailableUsers.Clear();
-            foreach (var user in users) { AvailableUsers.Add(user); }
+            PageContext.AvailableUsers.Clear();
+            foreach (var user in users) { PageContext.AvailableUsers.Add(user); }
         }
     }
 
@@ -163,8 +150,8 @@
         var companies = await companyApiService.LoadCompanies();
         if (companies?.Count > 0 == true)
         {
-            AvailableCompanies.Clear();
-            foreach (var company in companies) { AvailableCompanies.Add(company); }
+            PageContext.AvailableCompanies.Clear();
+            foreach (var company in companies) { PageContext.AvailableCompanies.Add(company); }
         }
     }
 
@@ -173,7 +160,7 @@
         var preferences = await managementApiService.LoadPreferences();
         if (preferences is not null)
         {
-            mapper.Map(preferences, Options);
+            mapper.Map(preferences, PageContext.UserPreferences);
         }
     }
 

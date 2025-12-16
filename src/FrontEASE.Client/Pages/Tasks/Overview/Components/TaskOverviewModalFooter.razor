@@ -1,6 +1,5 @@
 ﻿@inject IMapper mapper
 @inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 
 <ModalFooter Class="bg-custom-secondary border-custom-light">
     <Container Fluid Padding="Padding.Is0">
@@ -15,10 +14,10 @@
 </ModalFooter>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public Modal Modal { get; set; } = new();
 
     public async Task HandleKeyDown(KeyboardEventArgs e)

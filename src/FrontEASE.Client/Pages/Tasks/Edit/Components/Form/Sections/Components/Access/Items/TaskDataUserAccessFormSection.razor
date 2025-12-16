@@ -1,7 +1,6 @@
 ﻿@inject ITaskManipulationService taskManipulationService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
-@inject IUIManager uiManager
 @inject AppSettings appSettings
 
 <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
@@ -23,7 +22,7 @@
                         <Fields>
 
                             <DataGrid TItem="ApplicationUserDto"
-                                      Data="@AvailableUsers"
+                                      Data="@PageContext.AvailableUsers"
                                       SelectionMode="DataGridSelectionMode.Multiple"
                                       SelectedRows="@selectedUsers"
                                       SelectedRowsChanged="(obj => SelectionChanged(obj))"
@@ -86,16 +85,13 @@
 
 @code {
     [CascadingParameter]
+    public TasksPageContext PageContext { get; set; } = null!;
+
+    [Parameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+
+    [Parameter]
     public TaskDto Task { get; set; } = new();
-
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
-
-    [CascadingParameter]
-    public IList<ApplicationUserDto> AvailableUsers { get; set; } = [];
-
-    [CascadingParameter]
-    public IList<CompanyDto> AvailableCompanies { get; set; } = [];
 
     private List<ApplicationUserDto> selectedUsers = [];
     private bool isSectionCollapsed = false;
@@ -146,7 +142,7 @@
     private void SetInitialData()
     {
         var selectedUserIDs = Task.Members.Select(x => x.Id);
-        selectedUsers.AddRange(AvailableUsers.Where(x => selectedUserIDs.Contains(x.Id)));
+        selectedUsers.AddRange(PageContext.AvailableUsers.Where(x => selectedUserIDs.Contains(x.Id)));
     }
 
     private void SelectionChanged(IList<ApplicationUserDto> newSelection)
@@ -161,7 +157,7 @@
         {
             foreach (var addedUser in added)
             {
-                var userDto = AvailableUsers.Single(x => x.Id == addedUser);
+                var userDto = PageContext.AvailableUsers.Single(x => x.Id == addedUser);
                 Task.Members.Add(userDto);
             }
         }
@@ -188,7 +184,7 @@
 
     private string? GetUserImageUrl(Guid userID)
     {
-        var userData = AvailableUsers.SingleOrDefault(x => x.Id == userID);
+        var userData = PageContext.AvailableUsers.SingleOrDefault(x => x.Id == userID);
         return string.IsNullOrWhiteSpace(userData?.Image?.ImageUrl) ?
         ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{userData?.Image?.ImageUrl}";
     }

@@ -1,7 +1,7 @@
 ﻿@inject IResourceHandler resourceHandler
 
 @{
-	var matchingTokens = Options.TokenOptions.Where(x => x.ConnectorTypes.Any(z => z.ConnectorType == Module?.ShortName))?.ToList() ?? [];
+	var matchingTokens = PageContext.UserPreferences.TokenOptions.Where(x => x.ConnectorTypes.Any(z => z.ConnectorType == Module?.ShortName))?.ToList() ?? [];
 	var selectedToken = matchingTokens.SingleOrDefault(x => x.Token == ParamValue.Value?.StringValue);
 	var displayActions = !string.IsNullOrWhiteSpace(selectedToken?.Description) || !string.IsNullOrWhiteSpace(ParamOption?.Description);
 
@@ -72,18 +72,16 @@
 
 @code {
 	[CascadingParameter]
-	public UserPreferencesDto Options { get; set; } = new();
+	public TasksPageContext PageContext { get; set; } = null!;
 
-	[CascadingParameter]
+	[Parameter]
 	public TaskDto Task { get; set; } = new();
 
-	[CascadingParameter]
+	[Parameter]
 	public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
-	[CascadingParameter]
+	[Parameter]
 	public DataOperation Operation { get; set; }
-
-
 
 	[Parameter]
 	public TaskModuleDto? Module { get; set; } = null;

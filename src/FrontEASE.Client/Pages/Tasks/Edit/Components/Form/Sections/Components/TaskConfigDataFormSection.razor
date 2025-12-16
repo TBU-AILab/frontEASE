@@ -1,6 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
-
 
 <Row>
 
@@ -103,7 +101,7 @@
         <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
             <Container Fluid>
                 <Fields>
-                    <TaskConfigRepeatedMessageDataFormSection />
+                    <TaskConfigRepeatedMessageDataFormSection Task="Task" TaskMetadata="TaskMetadata" Operation="Operation"/>
                 </Fields>
             </Container>
         </Column>
@@ -162,14 +160,14 @@
 </Row>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+    [Parameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
-    [CascadingParameter]
-    public DataOperation DataOperation { get; set; }
+    [Parameter]
+    public DataOperation Operation { get; set; }
 
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskConfigDto>(elementBase, DataOperation, Task.ID.ToString());
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskConfigDto>(elementBase, Operation, Task.ID.ToString());
 }

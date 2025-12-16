@@ -11,12 +11,12 @@
 		<Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
 
 		<Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is1.FromTop">
-			<TaskInfoDataResultChartsWrapper />
+			<TaskInfoDataResultChartsWrapper Task="Task"/>
 		</Column>
 	</Row>
 }
 
 @code {
-	[CascadingParameter]
+	[Parameter]
 	public TaskDto Task { get; set; } = new();
 }

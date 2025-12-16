@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 
 <CardHeader Border="Border.Is0" Class="bg-custom-secondary" Overflow="Overflow.Hidden">
     <Container Fluid>
@@ -32,9 +31,6 @@
 </CardHeader>
 
 @code {
-    [CascadingParameter]
-    public TaskMessageDto Message { get; set; } = null!;
-
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+    [Parameter]
+    public TaskMessageDto Message { get; set; } = new();
 }

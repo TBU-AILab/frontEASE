@@ -1,7 +1,5 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject ITaskManipulationService taskManipulationService
-@inject IUIManager uiManager
-
 
 <Container Fluid>
     <Row>
@@ -89,13 +87,13 @@
 </Column>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter]
     public DataOperation DataOperation { get; set; }
 
     private string GetElementIdByOperation(string elementBase, Guid randomString) => VisualisationHelper.GetElementIdByOperation<TaskConfigRepeatedMessageItemDto>(elementBase, DataOperation, $"{Task.ID.ToString()}{randomString}");

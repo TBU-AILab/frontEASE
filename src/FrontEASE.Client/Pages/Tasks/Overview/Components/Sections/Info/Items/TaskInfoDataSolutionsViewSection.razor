@@ -3,7 +3,7 @@
     <Row>
 
         <Container Fluid>
-            <TaskSolutionsViewSectionHeader />
+            <TaskSolutionsViewSectionHeader Task="Task" />
         </Container>
 
         <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
@@ -16,11 +16,9 @@
                         var messageIDs = Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
                         var solutionsOrdered = Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
                     }
-                    @foreach (var Solution in solutionsOrdered)
+                    @foreach (var solution in solutionsOrdered)
                     {
-                        <CascadingValue Value="@Solution">
-                            <TaskSolutionItemView IsSelectable="true" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
-                        </CascadingValue>
+                        <TaskSolutionItemView Task="Task" TaskMetadata="TaskMetadata" Solution="solution" IsSelectable="true" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
                     }
                 </Row>
             </Container>
@@ -29,11 +27,11 @@
 }
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+    [Parameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
     private IList<Guid> SolutionDownloadsOngoing = [];
 }

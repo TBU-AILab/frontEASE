@@ -1,6 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject ITaskManipulationService taskManipulationService
-@inject IUIManager uiManager
 
 <Row>
     <Container Fluid>
@@ -54,12 +52,10 @@
 
                     @if (!string.IsNullOrWhiteSpace(module.ShortName))
                     {
-                        var Module = module;
                         var moduleOptions = ModuleOptions.SingleOrDefault(x => x.ShortName == module.ShortName);
-
                         if (moduleOptions is not null)
                         {
-                            <TaskModuleParamsViewSection AvailableParams="@moduleOptions.Parameters" Module="module" />
+                            <TaskModuleParamsViewSection Task="Task" AvailableParams="@moduleOptions.Parameters" Module="module" />
                         }
                         else
                         {
@@ -81,6 +77,9 @@
 </Row>
 
 @code {
+    [Parameter]
+    public TaskDto Task { get; set; } = new();
+
     [Parameter]
     public IList<TaskModuleNoValidationDto> ModuleOptions { get; set; } = [];
 

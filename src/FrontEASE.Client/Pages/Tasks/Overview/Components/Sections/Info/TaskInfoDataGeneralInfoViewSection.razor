@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 
 <Row>
 
@@ -68,6 +67,6 @@
 </Row>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 }

@@ -1,6 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
-
 
 <Row>
 
@@ -14,24 +12,22 @@
         <Row>
             @if (Task.Messages.Count > 0)
             {
-                @foreach (var Message in Task.Messages.OrderBy(x => x.DateCreated))
+                @foreach (var message in Task.Messages.OrderBy(x => x.DateCreated))
                 {
-                    <CascadingValue Value="Message">
-                        <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromBottom">
-                            @switch (Message.Role)
-                            {
-                                case MessageRole.SYSTEM:
-                                    <SystemMessageView />
-                                    break;
-                                case MessageRole.USER:
-                                    <UserMessageView IsFullWidth="false"/>
-                                    break;
-                                case MessageRole.AI:
-                                    <AssistantMessageView IsThumbnail="false" IsSelectable="true" IsFullWidth="false"/>
-                                    break;
-                            }
-                        </Column>
-                    </CascadingValue>
+                    <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromBottom">
+                        @switch (message.Role)
+                        {
+                            case MessageRole.SYSTEM:
+                                <SystemMessageView Message="message"/>
+                                break;
+                            case MessageRole.USER:
+                                <UserMessageView Message="message" IsFullWidth="false" />
+                                break;
+                            case MessageRole.AI:
+                                <AssistantMessageView TaskMetadata="TaskMetadata" Task="Task" Message="message" IsThumbnail="false" IsSelectable="true" IsFullWidth="false" />
+                                break;
+                        }
+                    </Column>
                 }
             }
             else
@@ -47,6 +43,9 @@
 </Row>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
+
+    [Parameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 }

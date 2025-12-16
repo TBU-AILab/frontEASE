@@ -1,16 +1,14 @@
-﻿@inject IUIManager uiManager
-
-<Container Fluid>
+﻿<Container Fluid>
     <Row>
         <Column ColumnSize="@(IsFullWidth ? ColumnSize.IsFull : ColumnSize.Is8.OnWidescreen.Is4.WithOffset.OnWidescreen.Is10.OnMobile.Is2.WithOffset.OnMobile)" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
             <Card Border="Border.Rounded" Class="border-custom-light">
-                <MessageViewHeader />
+                <MessageViewHeader Message="Message"/>
 
                 <CardBody Class="throws-shadow border-custom-light bg-custom-primary" Border="Border.Is0">
                     @Message.Content
                 </CardBody>
 
-                <MessageViewFooter />
+                <MessageViewFooter Message="Message"/>
             </Card>
         </Column>
     </Row>
@@ -18,7 +16,7 @@
 </Container>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskMessageDto Message { get; set; } = new();
 
     [Parameter]

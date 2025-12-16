@@ -21,11 +21,11 @@
                                         <Fields>
                                             @if (flags.IsReadonly)
                                             {
-                                                <TaskModuleParamLabel ParamOption="@paramOption" />
+                                                <TaskModuleParamLabel TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" ParamOption="@paramOption" />
                                             }
                                             else
                                             {
-                                                <TaskModuleParamValueInput ListFlags="@flags" ParamOption="@paramOption" ParamValue="@paramVal" />
+                                                <TaskModuleParamValueInput TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" ListFlags="@flags" ParamOption="@paramOption" ParamValue="@paramVal" />
 
                                                 @if (flags.DisplayActions)
                                                 {
@@ -91,18 +91,17 @@
 }
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public DataOperation Operation { get; set; }
 
-    [CascadingParameter]
+    [Parameter]
     public EditContext EditContext { get; set; } = null!;
-
 
     [Parameter]
     public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();

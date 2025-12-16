@@ -1,3 +1,11 @@
-﻿<TaskInfoDataGeneralInfoViewSection />
-<TaskInfoDataResultChartSection />
-<TaskInfoDataSolutionsViewSection />
+﻿<TaskInfoDataGeneralInfoViewSection Task="Task" />
+<TaskInfoDataResultChartSection Task="Task" />
+<TaskInfoDataSolutionsViewSection Task="Task" TaskMetadata="TaskMetadata" />
+
+@code {
+    [Parameter]
+    public TaskDto Task { get; set; } = new();
+
+    [Parameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+}

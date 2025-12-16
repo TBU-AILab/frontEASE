@@ -1,7 +1,6 @@
 ﻿@inject ITaskManipulationService taskManipulationService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
-@inject IUIManager uiManager
 @inject AppSettings appSettings
 
 <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
@@ -23,7 +22,7 @@
                         <Fields>
 
                             <DataGrid TItem="CompanyDto"
-                                      Data="@AvailableCompanies"
+                                      Data="@PageContext.AvailableCompanies"
                                       SelectionMode="DataGridSelectionMode.Multiple"
                                       SelectedRows="@selectedCompanies"
                                       SelectedRowsChanged="(obj => SelectionChanged(obj))"
@@ -89,15 +88,13 @@
 
 @code {
     [CascadingParameter]
+    public TasksPageContext PageContext { get; set; } = null!;
+
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
-
-    [CascadingParameter]
-    public IList<ApplicationUserDto> AvailableUsers { get; set; } = [];
-    [CascadingParameter]
-    public IList<CompanyDto> AvailableCompanies { get; set; } = [];
+    [Parameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
     private List<CompanyDto> selectedCompanies = [];
     private bool isSectionCollapsed = false;
@@ -128,7 +125,7 @@
     private void SetInitialData()
     {
         var selectedCompanyIDs = Task.MemberGroups.Select(x => x.ID);
-        selectedCompanies.AddRange(AvailableCompanies.Where(x => selectedCompanyIDs.Contains(x.ID)));
+        selectedCompanies.AddRange(PageContext.AvailableCompanies.Where(x => selectedCompanyIDs.Contains(x.ID)));
     }
 
     private void SelectionChanged(IList<CompanyDto> newSelection)
@@ -143,7 +140,7 @@
         {
             foreach (var addedGroup in added)
             {
-                var groupDto = AvailableCompanies.Single(x => x.ID == addedGroup);
+                var groupDto = PageContext.AvailableCompanies.Single(x => x.ID == addedGroup);
                 Task.MemberGroups.Add(groupDto);
             }
         }
@@ -170,7 +167,7 @@
 
     private string? GetMemberGroupImageUrl(Guid groupID)
     {
-        var groupData = AvailableCompanies.SingleOrDefault(x => x.ID == groupID);
+        var groupData = PageContext.AvailableCompanies.SingleOrDefault(x => x.ID == groupID);
         return string.IsNullOrWhiteSpace(groupData?.Image?.ImageUrl) ?
             ImageConstants.CompanyPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{groupData?.Image?.ImageUrl}";
     }

@@ -181,7 +181,7 @@
             if (moduleType is not null)
             {
                 ParamValue.Value!.EnumValue!.ModuleValue ??= new() { PackageType = moduleType.Value };
-                <TaskModuleDataFormSection ModuleOptions="@moduleOptions" Module="@ParamValue.Value!.EnumValue!.ModuleValue" ModuleName="@parameterName" />
+                <TaskModuleDataFormSection EditContext="EditContext" Operation="Operation" TaskMetadata="TaskMetadata" Task="Task" ModuleOptions="@moduleOptions" Module="@ParamValue.Value!.EnumValue!.ModuleValue" ModuleName="@parameterName" />
             }
         }
         break;
@@ -210,13 +210,16 @@
 }
 
 @code {
-    [CascadingParameter]
+    [Parameter]
+    public EditContext EditContext { get; set; } = null!;
+
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public DataOperation Operation { get; set; }
 
     [Parameter]

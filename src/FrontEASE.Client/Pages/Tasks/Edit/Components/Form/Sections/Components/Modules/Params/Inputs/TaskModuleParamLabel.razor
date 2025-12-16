@@ -61,7 +61,7 @@
                     {
                         foreach (var listParamItem in listParam.ParameterItems)
                         {
-                            <TaskModuleParamLabel ParamOption="@listParamItem" />
+                            <TaskModuleParamLabel Task="Task" TaskMetadata="TaskMetadata" Operation="Operation" ParamOption="@listParamItem" />
                         }
                     }
 
@@ -138,13 +138,13 @@
 }
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public DataOperation Operation { get; set; }
 
     [Parameter]

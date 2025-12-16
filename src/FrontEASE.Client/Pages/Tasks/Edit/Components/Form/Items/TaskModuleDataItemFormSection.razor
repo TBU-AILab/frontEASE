@@ -121,16 +121,16 @@
 </Row>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter]
     public DataOperation Operation { get; set; }
 
-    [CascadingParameter]
+    [Parameter]
     public EditContext EditContext { get; set; } = null!;
 
     [Parameter]

@@ -1,6 +1,4 @@
-﻿@inject IResourceHandler resourceHandler
-@inject IUIService uiService
-@inject IUIManager uiManager
+﻿@inject IUIService uiService
 @inject AppSettings appSettings
 
 <Container Fluid>
@@ -40,13 +38,13 @@
 </Container>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskMessageDto Message { get; set; } = new();
 
     [Parameter]

@@ -1,6 +1,4 @@
-﻿@inject IUIManager uiManager
-
-<Container Fluid>
+﻿<Container Fluid>
     <Row>
         <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
             <Card Border="Border.Rounded" Class="border-custom-light">
@@ -18,6 +16,6 @@
 </Container>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskMessageDto Message { get; set; } = new();
 }

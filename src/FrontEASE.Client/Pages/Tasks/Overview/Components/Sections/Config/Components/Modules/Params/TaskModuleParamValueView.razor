@@ -1,208 +1,206 @@
 ﻿@inject ITaskManipulationService taskManipulationService
 @inject IResourceHandler resourceHandler
-@inject IUIService uiService
-@inject IMapper mapper
 
 @{
-	var parameterType = DynamicParamUtils.GetParameterType(ParamValue.Type);
-	IsListParam = parameterType == ParameterType.LIST;
-	IsTokenParam = Module?.PackageType == ModuleType.LLM_CONNECTOR && ParamOption?.ShortName?.Contains(TaskMetadataConstants.Token) == true;
-	IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(ParamOption, ParamValue);
-	(IsDefaultPresent, var defaultValue) = taskManipulationService.ExtractDefaultValue(ParamOption);
-	SkipLabel = parameterType == ParameterType.ENUM && ParamOption?.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
+    var parameterType = DynamicParamUtils.GetParameterType(ParamValue.Type);
+    IsListParam = parameterType == ParameterType.LIST;
+    IsTokenParam = Module?.PackageType == ModuleType.LLM_CONNECTOR && ParamOption?.ShortName?.Contains(TaskMetadataConstants.Token) == true;
+    IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(ParamOption, ParamValue);
+    (IsDefaultPresent, var defaultValue) = taskManipulationService.ExtractDefaultValue(ParamOption);
+    SkipLabel = parameterType == ParameterType.ENUM && ParamOption?.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
 
-	var parameterName = ParamOption?.LongName ?? ParamValue.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
-	var isSpecialCase = IsTokenParam;
+    var parameterName = ParamOption?.LongName ?? ParamValue.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
+    var isSpecialCase = IsTokenParam;
 }
 
 @if (!isSpecialCase)
 {
-	@if (parameterType is not null)
-	{
-		<Field ColumnSize="@(DisplayActions? ColumnSize.Is10.OnWidescreen : ColumnSize.IsFull)" Padding="Padding.Is1.FromTop">
-			@if (!SkipLabel)
-			{
-				<Text>
-					@($"{parameterName}: ")
-				</Text>
-			}
+    @if (parameterType is not null)
+    {
+        <Field ColumnSize="@(DisplayActions? ColumnSize.Is10.OnWidescreen : ColumnSize.IsFull)" Padding="Padding.Is1.FromTop">
+            @if (!SkipLabel)
+            {
+                <Text>
+                    @($"{parameterName}: ")
+                </Text>
+            }
 
-			@if (ParamValue.Value is not null)
-			{
-				@switch (parameterType)
-				{
-					case ParameterType.STR:
-						<Span TextWeight="TextWeight.Bold" Class="fst-italic">
-							@($" {ParamValue.Value!.StringValue}")
-						</Span>
-						break;
+            @if (ParamValue.Value is not null)
+            {
+                @switch (parameterType)
+                {
+                    case ParameterType.STR:
+                        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                            @($" {ParamValue.Value!.StringValue}")
+                        </Span>
+                        break;
 
-					case ParameterType.MARKDOWN:
-						<Span TextWeight="TextWeight.Bold" Class="fst-italic">
-							@($" {(MarkupString)Markdig.Markdown.ToHtml(ParamValue.Value!.StringValue ?? string.Empty)}")
-						</Span>
-						break;
+                    case ParameterType.MARKDOWN:
+                        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                            @($" {(MarkupString)Markdig.Markdown.ToHtml(ParamValue.Value!.StringValue ?? string.Empty)}")
+                        </Span>
+                        break;
 
-					case ParameterType.INT:
-						<Span TextWeight="TextWeight.Bold" Class="fst-italic">
-							@($" {ParamValue.Value!.IntValue}")
-						</Span>
-						break;
+                    case ParameterType.INT:
+                        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                            @($" {ParamValue.Value!.IntValue}")
+                        </Span>
+                        break;
 
-					case ParameterType.TIME:
-						<Span TextWeight="TextWeight.Bold" Class="fst-italic">
-							@($"{ParameterTimeHelper.FormatTimeValueForDisplay(ParamValue.Value?.IntValue, resourceHandler)}")
-						</Span>
-						break;
+                    case ParameterType.TIME:
+                        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                            @($"{ParameterTimeHelper.FormatTimeValueForDisplay(ParamValue.Value?.IntValue, resourceHandler)}")
+                        </Span>
+                        break;
 
-					case ParameterType.FLOAT:
-						<Span TextWeight="TextWeight.Bold" Class="fst-italic">
-							@($" {Math.Round((double)ParamValue.Value!.FloatValue!, 4)}")
-						</Span>
-						break;
+                    case ParameterType.FLOAT:
+                        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                            @($" {Math.Round((double)ParamValue.Value!.FloatValue!, 4)}")
+                        </Span>
+                        break;
 
-					case ParameterType.ENUM:
-						@if (!string.IsNullOrWhiteSpace(ParamValue.Value!.EnumValue?.StringValue))
-						{
-							var longName = (string?)null;
-							var longNameIndex = ParamOption?.EnumOptions?.Select(x => x.StringValue).ToList().FindIndex(x => x == ParamValue!.Value!.EnumValue!.StringValue);
-							@if (ParamOption?.EnumLongNames?.Count > 0 && longNameIndex >= 0)
-							{
-								longName = ParamOption.EnumLongNames?.ElementAtOrDefault(longNameIndex.Value);
-							}
+                    case ParameterType.ENUM:
+                        @if (!string.IsNullOrWhiteSpace(ParamValue.Value!.EnumValue?.StringValue))
+                        {
+                            var longName = (string?)null;
+                            var longNameIndex = ParamOption?.EnumOptions?.Select(x => x.StringValue).ToList().FindIndex(x => x == ParamValue!.Value!.EnumValue!.StringValue);
+                            @if (ParamOption?.EnumLongNames?.Count > 0 && longNameIndex >= 0)
+                            {
+                                longName = ParamOption.EnumLongNames?.ElementAtOrDefault(longNameIndex.Value);
+                            }
 
-							<Span TextWeight="TextWeight.Bold" Class="fst-italic">
-								@(longName ?? ParamValue.Value!.EnumValue!.StringValue)
-							</Span>
-						}
-						else if (ParamValue.Value!.EnumValue?.ModuleValue is not null)
-						{
-							var moduleType = ParamValue.Value!.EnumValue?.ModuleValue.PackageType;
-							var moduleOptions = ParamOption?.EnumOptions?.Select(x => x.ModuleValue).ToList();
+                            <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                                @(longName ?? ParamValue.Value!.EnumValue!.StringValue)
+                            </Span>
+                        }
+                        else if (ParamValue.Value!.EnumValue?.ModuleValue is not null)
+                        {
+                            var moduleType = ParamValue.Value!.EnumValue?.ModuleValue.PackageType;
+                            var moduleOptions = ParamOption?.EnumOptions?.Select(x => x.ModuleValue).ToList();
 
-							<TaskModuleDataViewSection ModuleOptions="@moduleOptions" Module="@ParamValue.Value!.EnumValue!.ModuleValue" ModuleName="@parameterName" />
-						}
-						break;
+                            <TaskModuleDataViewSection Task="Task" ModuleOptions="@moduleOptions" Module="@ParamValue.Value!.EnumValue!.ModuleValue" ModuleName="@parameterName" />
+                        }
+                        break;
 
-					case ParameterType.BOOL:
-						<Span TextWeight="TextWeight.Bold" Class="fst-italic">
-							@if (ParamValue.Value!.BoolValue is null)
-							{
-								@resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
-							}
-							else
-							{
-								@(ParamValue.Value!.BoolValue!.Value ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))
-							}
-						</Span>
-						break;
+                    case ParameterType.BOOL:
+                        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                            @if (ParamValue.Value!.BoolValue is null)
+                            {
+                                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
+                            }
+                            else
+                            {
+                                @(ParamValue.Value!.BoolValue!.Value ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))
+                            }
+                        </Span>
+                        break;
 
 
-					case ParameterType.LIST:
-						<Span TextWeight="TextWeight.Bold" Class="fst-italic">
-							@if (!(ParamValue.Value!.ListValue?.ParameterValues.Count > 0))
-							{
-								@resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
-							}
-						</Span>
+                    case ParameterType.LIST:
+                        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                            @if (!(ParamValue.Value!.ListValue?.ParameterValues.Count > 0))
+                            {
+                                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
+                            }
+                        </Span>
 
-						<Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
-						<Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
+                        <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
+                        <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
 
-						foreach (var listItem in ParamValue.Value!.ListValue!.ParameterValues)
-						{
-							@foreach (var paramItem in listItem.ParameterItems)
-							{
-								if (paramItem.Value is not null)
-								{
-									var paramOption = ParamOption?.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems.SingleOrDefault(x => x.ShortName == paramItem.ShortName);
-									if (paramOption is not null)
-									{
-										<Fields>
-											<TaskModuleParamValueView Module="null" ParamOption="paramOption" ParamValue="paramItem" />
-										</Fields>
-									}
-								}
-							}
+                        foreach (var listItem in ParamValue.Value!.ListValue!.ParameterValues)
+                        {
+                            @foreach (var paramItem in listItem.ParameterItems)
+                            {
+                                if (paramItem.Value is not null)
+                                {
+                                    var paramOption = ParamOption?.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems.SingleOrDefault(x => x.ShortName == paramItem.ShortName);
+                                    if (paramOption is not null)
+                                    {
+                                        <Fields>
+                                            <TaskModuleParamValueView Task="Task" Module="null" ParamOption="paramOption" ParamValue="paramItem" />
+                                        </Fields>
+                                    }
+                                }
+                            }
 
-							<Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
-						}
-						break;
-				}
-			}
-			else
-			{
-				<Span TextWeight="TextWeight.Bold" Class="fst-italic">
-					@resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
-				</Span>
-			}
+                            <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                <Span TextWeight="TextWeight.Bold" Class="fst-italic">
+                    @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
+                </Span>
+            }
 
-		</Field>
-	}
+        </Field>
+    }
 
-	@if (DisplayActions)
-	{
-		<Field ColumnSize="ColumnSize.Is2.OnWidescreen" TextAlignment="TextAlignment.End" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
-			<Div>
-				@if (IsDescriptionPresent)
-				{
-					var internalDescription = string.Empty;
-					if (!string.IsNullOrWhiteSpace(ParamValue.Value?.EnumValue?.StringValue))
-					{
-						var indexOfSelected = ParamOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == ParamValue?.Value?.EnumValue?.StringValue);
-						if (indexOfSelected >= 0)
-						{
-							internalDescription = ParamOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
-						}
-					}
-					<Tooltip Multiline="true" Text="@(ParamOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-						<Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-					</Tooltip>
-				}
-				@if (IsDefaultPresent)
-				{
-					<Tooltip Multiline="true" Padding="Padding.Is1.FromEnd" Text="@($"{resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Default}.{UIConstants.Value}")} : {defaultValue}")" Display="Display.InlineBlock">
-						<Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-					</Tooltip>
-				}
-			</Div>
-		</Field>
-	}
+    @if (DisplayActions)
+    {
+        <Field ColumnSize="ColumnSize.Is2.OnWidescreen" TextAlignment="TextAlignment.End" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+            <Div>
+                @if (IsDescriptionPresent)
+                {
+                    var internalDescription = string.Empty;
+                    if (!string.IsNullOrWhiteSpace(ParamValue.Value?.EnumValue?.StringValue))
+                    {
+                        var indexOfSelected = ParamOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == ParamValue?.Value?.EnumValue?.StringValue);
+                        if (indexOfSelected >= 0)
+                        {
+                            internalDescription = ParamOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+                        }
+                    }
+                    <Tooltip Multiline="true" Text="@(ParamOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+                        <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                    </Tooltip>
+                }
+                @if (IsDefaultPresent)
+                {
+                    <Tooltip Multiline="true" Padding="Padding.Is1.FromEnd" Text="@($"{resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIStateConstants.Default}.{UIConstants.Value}")} : {defaultValue}")" Display="Display.InlineBlock">
+                        <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                    </Tooltip>
+                }
+            </Div>
+        </Field>
+    }
 }
 else
 {
-	if (IsTokenParam)
-	{
-		<TaskModuleParamValueViewToken DefaultValue="@defaultValue"
-									   IsDefaultPresent="IsDefaultPresent"
-									   IsDescriptionPresent="@IsDescriptionPresent"
-									   ParameterName="@parameterName"
-									   ParamOption="@ParamOption"
-									   ParamValue="@ParamValue"
-									   SkipLabel="@SkipLabel" />
-	}
+    if (IsTokenParam)
+    {
+        <TaskModuleParamValueViewToken DefaultValue="@defaultValue"
+                                       IsDefaultPresent="IsDefaultPresent"
+                                       IsDescriptionPresent="@IsDescriptionPresent"
+                                       ParameterName="@parameterName"
+                                       ParamOption="@ParamOption"
+                                       ParamValue="@ParamValue"
+                                       SkipLabel="@SkipLabel" />
+    }
 }
 
 
 
 @code {
-	[CascadingParameter]
-	public TaskDto Task { get; set; } = new();
+    [Parameter]
+    public TaskDto Task { get; set; } = new();
 
-	[Parameter]
-	public TaskModuleDto Module { get; set; } = new();
+    [Parameter]
+    public TaskModuleDto Module { get; set; } = new();
 
-	[Parameter]
-	public TaskModuleParameterNoValidationDto? ParamOption { get; set; } = null;
+    [Parameter]
+    public TaskModuleParameterNoValidationDto? ParamOption { get; set; } = null;
 
-	[Parameter]
-	public TaskModuleParameterDto ParamValue { get; set; } = new();
+    [Parameter]
+    public TaskModuleParameterDto ParamValue { get; set; } = new();
 
-	private bool SkipLabel { get; set; }
-	private bool IsDescriptionPresent { get; set; }
-	private bool IsDefaultPresent { get; set; }
-	private bool IsListParam { get; set; }
-	private bool IsTokenParam { get; set; }
+    private bool SkipLabel { get; set; }
+    private bool IsDescriptionPresent { get; set; }
+    private bool IsDefaultPresent { get; set; }
+    private bool IsListParam { get; set; }
+    private bool IsTokenParam { get; set; }
 
-	private bool DisplayActions => ((IsDescriptionPresent && !SkipLabel) || IsDefaultPresent) && !IsListParam;
+    private bool DisplayActions => ((IsDescriptionPresent && !SkipLabel) || IsDefaultPresent) && !IsListParam;
 }

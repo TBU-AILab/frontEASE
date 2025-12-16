@@ -1,6 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IMapper mapper
-@inject IUIManager uiManager
 
 @if (AvailableParams?.Count > 0)
 {
@@ -26,7 +24,7 @@
                                 {
                                     var paramOption = AvailableParams.SingleOrDefault(x => x.ShortName == paramValue.ShortName);
                                     <Fields>
-                                        <TaskModuleParamValueView ParamOption="paramOption" ParamValue="paramValue" Module="Module" />
+                                        <TaskModuleParamValueView Task="Task" ParamOption="paramOption" ParamValue="paramValue" Module="Module" />
                                     </Fields>
                                 }
                             </Row>
@@ -39,7 +37,7 @@
 }
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
     [Parameter]

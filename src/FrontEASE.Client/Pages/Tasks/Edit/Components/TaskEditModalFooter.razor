@@ -1,6 +1,5 @@
 ﻿@inject IMapper mapper
 @inject IUIService uiService
-@inject IUIManager uiManager
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
@@ -44,22 +43,22 @@
 
 @code {
     [CascadingParameter]
-    public ObservableCollection<TaskInfoDto> Tasks { get; set; } = null!;
-
-    [CascadingParameter]
-    public TaskDto Task { get; set; } = null!;
-
-    [CascadingParameter]
-    public Modal Modal { get; set; } = null!;
-
-    [CascadingParameter]
-    public TaskInfoDto TaskInfo { get; set; } = null!;
-
-    [CascadingParameter]
-    public DataOperation DataOperation { get; set; }
+    public TasksPageContext PageContext { get; set; } = null!;
 
     [Parameter]
-    public Validations Validations { get; set; } = null!;
+    public TaskDto Task { get; set; } = new();
+
+    [Parameter]
+    public Modal Modal { get; set; } = new();
+
+    [Parameter]
+    public TaskInfoDto TaskInfo { get; set; } = new();
+
+    [Parameter]
+    public Validations Validations { get; set; } = new();
+
+    [Parameter]
+    public DataOperation DataOperation { get; set; }
 
     private bool savingInProgress = false;
     private bool deletingInProgress = false;
@@ -95,7 +94,7 @@
                 mapper.Map(updated, TaskInfo);
 
                 if (DataOperation == DataOperation.INSERT)
-                { Tasks.Insert(0, TaskInfo); }
+                { PageContext.Tasks.Insert(0, TaskInfo); }
 
                 var cleanModel = new TaskDto();
                 mapper.Map(cleanModel, Task);

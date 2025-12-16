@@ -64,7 +64,7 @@
             <Container Fluid>
                 @if (!string.IsNullOrWhiteSpace(Module.ShortName))
                 {
-                    <TaskModuleParamsFormSection Module="@Module" AvailableParams="@taskModuleData?.Parameters" />
+                    <TaskModuleParamsFormSection EditContext="EditContext" TaskMetadata="TaskMetadata" Task="Task" Module="@Module" AvailableParams="@taskModuleData?.Parameters" />
                 }
             </Container>
         </Column>
@@ -72,23 +72,26 @@
 </Row>
 
 @code {
-    [CascadingParameter]
-    public TaskDto Task { get; set; } = new();
-
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
-
-    [CascadingParameter]
-    public DataOperation Operation { get; set; }
+    [Parameter]
+    public EditContext EditContext { get; set; } = null!;
 
     [Parameter]
     public IList<TaskModuleNoValidationDto> ModuleOptions { get; set; } = [];
 
     [Parameter]
-    public TaskModuleDto Module { get; set; } = new();
+    public TaskDto Task { get; set; } = new();
+
+    [Parameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+
+    [Parameter]
+    public TaskModuleDto Module { get; set; } = null!;
 
     [Parameter]
     public string? ModuleName { get; set; }
+
+    [Parameter]
+    public DataOperation Operation { get; set; }
 
     private Guid ModuleID = Guid.NewGuid();
 

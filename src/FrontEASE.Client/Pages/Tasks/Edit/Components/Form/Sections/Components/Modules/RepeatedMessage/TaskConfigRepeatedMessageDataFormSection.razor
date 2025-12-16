@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 
 <Row Padding="Padding.Is3.FromBottom" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small" Margin="Margin.Is3.FromTop.Is3.FromBottom" TextOverflow="TextOverflow.Wrap" NoGutters>
     <Column ColumnSize="ColumnSize.IsFull" Display="Display.Flex" Class="justify-content-between align-items-center" Padding="Padding.Is2" Shadow="Shadow.Small">
@@ -50,19 +49,19 @@
 
     <Column ColumnSize="ColumnSize.IsFull">
         <Container Fluid>
-            <TaskConfigRepeatedMessageDataItemsFormSection />
+            <TaskConfigRepeatedMessageDataItemsFormSection DataOperation="Operation" Task="Task" TaskMetadata="TaskMetadata"/>
         </Container>
     </Column>
 </Row>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+    [Parameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public DataOperation Operation { get; set; }
 
 

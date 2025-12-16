@@ -11,16 +11,16 @@
 {
     @if (Flags.IsTokenSelector)
     {
-        <TaskModuleParamValueTokenSelector Module="@Module" ParamOption="@ParamOption" ParamValue="@ParamValue" ParamName="@Flags.ParamName" />
+        <TaskModuleParamValueTokenSelector TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" Module="@Module" ParamOption="@ParamOption" ParamValue="@ParamValue" ParamName="@Flags.ParamName" />
     }
     else if (Flags.IsListParam)
     {
-        <TaskModuleListParamLabel ParamOption="@ParamOption" ParamValue="@ParamValue" ParameterName="@Flags.ParamName" />
-        <TaskModuleListParamValue ParamOption="@ParamOption" ParamValue="@ParamValue" />
+        <TaskModuleListParamLabel Task="Task" Operation="Operation" ParamOption="@ParamOption" ParamValue="@ParamValue" ParameterName="@Flags.ParamName" />
+        <TaskModuleListParamValue TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" ParamOption="@ParamOption" ParamValue="@ParamValue" EditContext="EditContext"/>
     }
     else
     {
-        <TaskModuleParamValueInput ParameterID="@ParameterID" Flags="@Flags" Module="@Module" ParamOption="@ParamOption" ParamValue="@ParamValue" />
+        <TaskModuleParamValueInput EditContext="EditContext" TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" ParameterID="@ParameterID" Flags="@Flags" Module="@Module" ParamOption="@ParamOption" ParamValue="@ParamValue" />
     }
 }
 
@@ -65,16 +65,17 @@
 }
 
 @code {
+    [Parameter]
+    public EditContext EditContext { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public DataOperation Operation { get; set; }
-
 
     [Parameter]
     public TaskModuleDto? Module { get; set; }
@@ -85,7 +86,7 @@
     [Parameter]
     public TaskModuleParameterDto ParamValue { get; set; } = new();
 
-    private TaskModuleParamFlags? Flags = null;  
+    private TaskModuleParamFlags? Flags = null;
 
     private async Task RefreshViewAsync()
     {
@@ -99,7 +100,7 @@
     }
 
     protected override async Task OnParametersSetAsync()
-    {      
+    {
         await base.OnParametersSetAsync();
         var derivedFlags = taskManipulationService.GetParamFlags(Module, ParamOption, ParamValue);
         mapper.Map(derivedFlags, Flags);

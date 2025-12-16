@@ -30,12 +30,12 @@
         </Column>
 
         @{
-            var Message = GetLastMessage();
-            var Solution = GetMessageAssociatedSolution(Message);
+            var message = GetLastMessage();
+            var solution = GetMessageAssociatedSolution(message);
         }
-        @if (Message is not null || Solution is not null)
+        @if (message is not null || solution is not null)
         {
-            @if (Message is not null)
+            @if (message is not null)
             {
                 <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" />
 
@@ -43,24 +43,22 @@
                     <Text TextWeight="TextWeight.Bold" Class="mb-1">
                         @($"{resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Messages), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Last}")}:")
                     </Text>
-                    <CascadingValue Value="Message">
-                        @switch (Message.Role)
-                        {
-                            case MessageRole.SYSTEM:
-                                <SystemMessageView />
-                                break;
-                            case MessageRole.USER:
-                                <UserMessageView IsFullWidth="true" />
-                                break;
-                            case MessageRole.AI:
-                                <AssistantMessageView IsThumbnail="true" IsSelectable="true" IsFullWidth="true" />
-                                break;
-                        }
-                    </CascadingValue>
+                    @switch (message.Role)
+                    {
+                        case MessageRole.SYSTEM:
+                            <SystemMessageView Message="message" />
+                            break;
+                        case MessageRole.USER:
+                            <UserMessageView Message="message" IsFullWidth="true" />
+                            break;
+                        case MessageRole.AI:
+                            <AssistantMessageView Task="TaskData" TaskMetadata="TaskMetadata" Message="message" IsThumbnail="true" IsSelectable="false" IsFullWidth="true" />
+                            break;
+                    }
                 </Column>
             }
 
-            @if (Solution is not null)
+            @if (solution is not null)
             {
                 <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" />
 
@@ -68,9 +66,7 @@
                     <Text TextWeight="TextWeight.Bold" Class="mb-1">
                         @($"{resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Solutions), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Last}")}:")
                     </Text>
-                    <CascadingValue Value="Solution">
-                        <TaskSolutionItemView IsSelectable="false" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
-                    </CascadingValue>
+                    <TaskSolutionItemView TaskMetadata="TaskMetadata" Task="TaskData" Solution="solution" IsSelectable="false" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
                 </Column>
             }
         }
@@ -79,8 +75,11 @@
 
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto TaskData { get; set; } = new();
+
+    [Parameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
 
     private IList<Guid> SolutionDownloadsOngoing = [];
 

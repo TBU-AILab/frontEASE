@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 
 <Row>
 
@@ -40,7 +39,7 @@
 
             </Row>
 
-            <TaskConfigRepeatedMessageViewSection />
+            <TaskConfigRepeatedMessageViewSection Task="Task" />
 
             <Row>
                 <Column ColumnSize="ColumnSize.IsFull">
@@ -67,6 +66,6 @@
 </Row>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 }

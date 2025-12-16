@@ -43,15 +43,11 @@
          Margin="Margin.Is0.FromTop" />
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskDto Task { get; set; } = new();
 
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
-
-    [CascadingParameter]
+    [Parameter]
     public DataOperation Operation { get; set; }
-
 
     [Parameter]
     public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();

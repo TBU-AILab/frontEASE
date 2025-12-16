@@ -1,2 +1,10 @@
-﻿<TaskDataUserAccessFormSection />
-<TaskDataCompanyAccessFormSection />
+﻿<TaskDataUserAccessFormSection TaskMetadata="TaskMetadata" Task="Task" />
+<TaskDataCompanyAccessFormSection TaskMetadata="TaskMetadata" Task="Task" />
+
+@code {
+    [Parameter]
+    public TaskDto Task { get; set; } = new();
+
+    [Parameter]
+    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+}
