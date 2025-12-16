@@ -2,7 +2,6 @@
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
-@inject IUIManager uiManager
 @inject Blazored.Toast.Services.IToastService toastService
 @inject AppSettings appSettings
 
@@ -29,8 +28,7 @@
                     <Column ColumnSize="ColumnSize.IsFull">
                         <Form>
                             <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="UserModel" ValidateOnLoad="false">
-                                <CascadingValue Value="UserModel">
-                                    <UserDataFormSection FullWidthFields="true" Operation="DataOperation.UPDATE" />
+                                    <UserDataFormSection UserModel="UserModel" FullWidthFields="true" Operation="DataOperation.UPDATE" />
 
                                     <Fields>
                                         <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
@@ -46,7 +44,6 @@
                                             </Button>
                                         </Field>
                                     </Fields>
-                                </CascadingValue>
                             </Validations>
                         </Form>
                     </Column>
@@ -57,11 +54,8 @@
 </Modal>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public ApplicationUserDto User { get; set; } = new();
-
-    [CascadingParameter]
-    public IList<ApplicationUserDto> Users { get; set; } = [];
 
     private Modal EditModal = new();
     private Validations Validations = new();

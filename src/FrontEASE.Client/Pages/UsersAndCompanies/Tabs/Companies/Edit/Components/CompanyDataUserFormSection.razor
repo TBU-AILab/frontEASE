@@ -1,7 +1,6 @@
 ﻿@inject ICompanyManipulationService companyManipulationService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
-@inject IUIManager uiManager
 @inject AppSettings appSettings
 
 <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded.Primary" Class="border-custom-light" Shadow="Shadow.Small">
@@ -23,7 +22,7 @@
                         <Fields>
 
                             <DataGrid TItem="ApplicationUserDto"
-                            Data="@Users"
+                            Data="@PageContext.Users"
                             SelectionMode="DataGridSelectionMode.Multiple"
                             SelectedRows="@selectedUsers"
                             SelectedRowsChanged="(obj => SelectionChanged(obj))"
@@ -82,10 +81,10 @@
 
 @code {
     [CascadingParameter]
-    public CompanyDto CompanyModel { get; set; } = new();
+    public UsersAndCompaniesPageContext PageContext { get; set; } = null!;
 
-    [CascadingParameter]
-    public IList<ApplicationUserDto> Users { get; set; } = [];
+    [Parameter]
+    public CompanyDto CompanyModel { get; set; } = new();
 
     private List<ApplicationUserDto> selectedUsers = [];
     private bool isSectionCollapsed = false;
@@ -127,7 +126,7 @@
     private void SetInitialData()
     {
         var selectedUserIDs = CompanyModel.Users.Select(x => x.Id);
-        selectedUsers.AddRange(Users.Where(x => selectedUserIDs.Contains(x.Id)));
+        selectedUsers.AddRange(PageContext.Users.Where(x => selectedUserIDs.Contains(x.Id)));
     }
 
     private void SelectionChanged(IList<ApplicationUserDto> newSelection)
@@ -142,7 +141,7 @@
         {
             foreach (var addedUser in added)
             {
-                var userDto = Users.Single(x => x.Id == addedUser);
+                var userDto = PageContext.Users.Single(x => x.Id == addedUser);
                 CompanyModel.Users.Add(userDto);
             }
         }

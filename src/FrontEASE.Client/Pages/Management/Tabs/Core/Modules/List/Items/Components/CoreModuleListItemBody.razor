@@ -1,5 +1,4 @@
-﻿@inject IUIManager uiManager
-@inject IResourceHandler resourceHandler
+﻿@inject IResourceHandler resourceHandler
 
 <Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary">
     <CardBody>
@@ -39,6 +38,6 @@
 </Row>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskModuleNoValidationDto Module { get; set; } = new();
 }

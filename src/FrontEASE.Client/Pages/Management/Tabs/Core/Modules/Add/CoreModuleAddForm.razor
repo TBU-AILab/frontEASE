@@ -35,9 +35,10 @@
 
 @code {
     [CascadingParameter]
-    public IList<TaskModuleNoValidationDto> TaskModules { get; set; } = [];
+    public ManagementPageContext PageContext { get; set; } = null!;
 
-    private GlobalPreferenceCoreModuleDto ModuleModel = new();
+    [Parameter]
+    public GlobalPreferenceCoreModuleDto ModuleModel { get; set; } = new();
 
     private bool isFormCollapsed = true;
     private bool addInProgress = false;
@@ -100,8 +101,8 @@
         var moduleOptions = await typelistApiService.LoadTaskModuleOptions();
         if (moduleOptions?.Count > 0 == true)
         {
-            TaskModules.Clear();
-            foreach (var option in moduleOptions) { TaskModules.Add(option); }
+            PageContext.ModuleTypes.Clear();
+            foreach (var option in moduleOptions) { PageContext.ModuleTypes.Add(option); }
         }
     }
 

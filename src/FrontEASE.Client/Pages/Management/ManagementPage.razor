@@ -1,89 +1,86 @@
-﻿@inject IManagementApiService managementApiService
-@inject IResourcesManager resourcesManager
-@inject IUIManager uiManager
-@inject IResourceHandler resourceHandler
-@inject IMapper mapper
+﻿@inject IResourceHandler resourceHandler
 @inject IUIService uiService
 
 @attribute [Authorize]
 @page "/Management"
 
 <PageTitle>
-	@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Management}"))
+    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Management}"))
 </PageTitle>
 
 
 <Container Fluid Class="content-main" Padding="Padding.Is5.FromStart.Is5.FromEnd">
-	<Row>
-		<Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
-			<Tabs RenderMode="TabsRenderMode.LazyReload"
-				  SelectedTab="@managementTypeSelected.ToString()"
-				  SelectedTabChanged="OnSelectedTabChanged"
-				  Class="tab-control"
-				  Border="Border.Is0">
-				<Items>
-					@foreach (var managementType in Enum.GetValues(typeof(UserPreferencesManagementType)))
-					{
-						@switch (managementType)
-						{
-							case UserPreferencesManagementType.CORE:
-								<AuthorizeView Roles="@($"{UserRoleNames.AdminRoleName}, {UserRoleNames.SuperadminRoleName}")">
-									<Tab Name="@(managementType.ToString())">
-										@(resourceHandler.GetResource(((UserPreferencesManagementType)managementType).GetEnumResourceValue()))
-									</Tab>
-								</AuthorizeView>
-								break;
-							default:
-								<Tab Name="@(managementType.ToString())">
-									@(resourceHandler.GetResource(((UserPreferencesManagementType)managementType).GetEnumResourceValue()))
-								</Tab>
-								break;
-						}
-					}
-				</Items>
-				<Content>
-					@foreach (var managementType in Enum.GetValues(typeof(UserPreferencesManagementType)))
-					{
-						<TabPanel TextAlignment="TextAlignment.Start" Name="@(managementType.ToString())">
-							@switch (managementTypeSelected)
-							{
-								case UserPreferencesManagementType.TOKENS:
-									<TokensManagementTab />
-									break;
-								case UserPreferencesManagementType.GENERAL:
-									<GeneralSettingsManagementTab />
-									break;
-								case UserPreferencesManagementType.CORE:
-									<AuthorizeView Roles="@($"{UserRoleNames.AdminRoleName}, {UserRoleNames.SuperadminRoleName}")">
-										<CoreManagementTab />
-									</AuthorizeView>
-									break;
-							}
-						</TabPanel>
-					}
-				</Content>
-			</Tabs>
+    <Row>
+        <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Center" Padding="Padding.Is0">
+            <Tabs RenderMode="TabsRenderMode.LazyReload"
+                  SelectedTab="@managementTypeSelected.ToString()"
+                  SelectedTabChanged="OnSelectedTabChanged"
+                  Class="tab-control"
+                  Border="Border.Is0">
+                <Items>
+                    @foreach (var managementType in Enum.GetValues(typeof(UserPreferencesManagementType)))
+                    {
+                        @switch (managementType)
+                        {
+                            case UserPreferencesManagementType.CORE:
+                                <AuthorizeView Roles="@($"{UserRoleNames.AdminRoleName}, {UserRoleNames.SuperadminRoleName}")">
+                                    <Tab Name="@(managementType.ToString())">
+                                        @(resourceHandler.GetResource(((UserPreferencesManagementType)managementType).GetEnumResourceValue()))
+                                    </Tab>
+                                </AuthorizeView>
+                                break;
+                            default:
+                                <Tab Name="@(managementType.ToString())">
+                                    @(resourceHandler.GetResource(((UserPreferencesManagementType)managementType).GetEnumResourceValue()))
+                                </Tab>
+                                break;
+                        }
+                    }
+                </Items>
+                <Content>
+                    @foreach (var managementType in Enum.GetValues(typeof(UserPreferencesManagementType)))
+                    {
+                        <CascadingValue Value="PageContext">
+                            <TabPanel TextAlignment="TextAlignment.Start" Name="@(managementType.ToString())">
+                                @switch (managementTypeSelected)
+                                {
+                                    case UserPreferencesManagementType.TOKENS:
+                                        <TokensManagementTab />
+                                        break;
+                                    case UserPreferencesManagementType.GENERAL:
+                                        <GeneralSettingsManagementTab />
+                                        break;
+                                    case UserPreferencesManagementType.CORE:
+                                        <AuthorizeView Roles="@($"{UserRoleNames.AdminRoleName}, {UserRoleNames.SuperadminRoleName}")">
+                                            <CoreManagementTab />
+                                        </AuthorizeView>
+                                        break;
+                                }
+                            </TabPanel>
+                        </CascadingValue>
+                    }
+                </Content>
+            </Tabs>
 
-		</Column>
-	</Row>
+        </Column>
+    </Row>
 </Container>
 
 @code {
-	private UserPreferencesManagementType managementTypeSelected = UserPreferencesManagementType.TOKENS;
+    [CascadingParameter]
+    public ApplicationContext ApplicationContext { get; set; } = new();
 
-	private async Task RefreshViewAsync()
-	{
-		await InvokeAsync(StateHasChanged);
-	}
+    private ManagementPageContext PageContext = null!;
+    private UserPreferencesManagementType managementTypeSelected = UserPreferencesManagementType.TOKENS;
 
-	protected override async Task OnInitializedAsync()
-	{
-		uiService.RefreshRequested += RefreshViewAsync;
-		await base.OnInitializedAsync();
-	}
+    private async Task RefreshViewAsync() => await InvokeAsync(StateHasChanged);
 
-	private void OnSelectedTabChanged(string name)
-	{
-		managementTypeSelected = (UserPreferencesManagementType)Enum.Parse(typeof(UserPreferencesManagementType), name);
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        PageContext = new ManagementPageContext(ApplicationContext);
+        uiService.RefreshRequested += RefreshViewAsync;
+        await base.OnInitializedAsync();
+    }
+
+    private void OnSelectedTabChanged(string name) => managementTypeSelected = (UserPreferencesManagementType)Enum.Parse(typeof(UserPreferencesManagementType), name);
 }

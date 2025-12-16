@@ -9,17 +9,17 @@
 
 <AuthorizeView>
     <Authorized>
-        @if (LoggedUser.Id is not null)
+        @if (AppContext.LoggedInUser.Id is not null)
         {
             <Dropdown RightAligned Class="navbar-dropdown-menu">
                 <DropdownToggle Padding="Padding.Is3.FromStart.Is3.FromEnd.Is0.FromBottom" Class="nav-link nav-link-custom" ElementId="navbar-login-toggle" Display="Display.InlineFlex">
                     <Div Class="d-flex align-items-center">
                         <Image Border="Border.Is1.RoundedCircle"
-                               Source="@(string.IsNullOrWhiteSpace(LoggedUser.Image?.ImageUrl) ? ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{LoggedUser.Image?.ImageUrl}")"
+                               Source="@(string.IsNullOrWhiteSpace(AppContext.LoggedInUser.Image?.ImageUrl) ? ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{AppContext.LoggedInUser.Image?.ImageUrl}")"
                                Class="full-max-width datagrid-item-image-extrasmall" Loading />
                         <Div class="d-flex flex-column justify-content-center ms-3 text-start">
-                            <Text TextWeight=TextWeight.Bold Display="Display.Block">@LoggedUser.UserName</Text>
-                            <Text TextSize="TextSize.Small" Display="Display.Block">@LoggedUser.Email</Text>
+                            <Text TextWeight=TextWeight.Bold Display="Display.Block">@AppContext.LoggedInUser.UserName</Text>
+                            <Text TextSize="TextSize.Small" Display="Display.Block">@AppContext.LoggedInUser.Email</Text>
                         </Div>
                     </Div>
                 </DropdownToggle>
@@ -41,7 +41,7 @@
 
 @code {
     [CascadingParameter]
-    public ApplicationUserDto LoggedUser { get; set; } = new();
+    public ApplicationContext AppContext { get; set; } = new();
 
     private void Logout()
     {

@@ -1,7 +1,6 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject IUIService uiService
 @inject IDataLoader dataLoader
-@inject IUIManager uiManager
 
 <Fields>
     <Validation>
@@ -73,7 +72,7 @@
 
 @code {
 
-    [CascadingParameter]
+    [Parameter]
     public CompanyDto CompanyModel { get; set; } = new();
 
     [Parameter]

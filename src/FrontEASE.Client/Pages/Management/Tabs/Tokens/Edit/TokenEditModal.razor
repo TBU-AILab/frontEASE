@@ -10,30 +10,28 @@
     {
         <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
 
-            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")} - {Token.Name}")"/>
+            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")} - {Token.Name}")" />
 
             <ModalBody Border="Border.Rounded">
                 <Row Margin="Margin.Is3" Padding="Margin.Is3.FromStart.Is3.FromEnd" Border="Border.Rounded" Class="user-modal-form">
                     <Column ColumnSize="ColumnSize.IsFull">
                         <Form>
                             <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@TokenModel" ValidateOnLoad="false">
-                                <CascadingValue Value="TokenModel">
-                                    <TokenDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="true" />
-                                    <Fields>
-                                        <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
-                                            <Button Clicked="@EditToken" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
-                                                @if (updateInProgress)
-                                                {
-                                                    <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
-                                                }
-                                                else
-                                                {
-                                                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
-                                                }
-                                            </Button>
-                                        </Field>
-                                    </Fields>
-                                </CascadingValue>
+                                <TokenDataFormSection TokenModel="TokenModel" Operation="DataOperation.UPDATE" FullWidthFields="true" />
+                                <Fields>
+                                    <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                                        <Button Clicked="@EditToken" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
+                                            @if (updateInProgress)
+                                            {
+                                                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                                            }
+                                            else
+                                            {
+                                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
+                                            }
+                                        </Button>
+                                    </Field>
+                                </Fields>
                             </Validations>
                         </Form>
                     </Column>
@@ -45,9 +43,9 @@
 
 @code {
     [CascadingParameter]
-    public UserPreferencesDto Options { get; set; } = new();
+    public ManagementPageContext PageContext { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter]
     public UserPreferenceTokenOptionDto Token { get; set; } = new();
 
     private Modal EditModal = new();
@@ -90,14 +88,14 @@
         if (await Validations.ValidateAll())
         {
             mapper.Map(TokenModel, Token);
-            Options.TokenOptions.Remove(Token);
-            Options.TokenOptions.Insert(0, Token);
+            PageContext.UserPreferences.TokenOptions.Remove(Token);
+            PageContext.UserPreferences.TokenOptions.Insert(0, Token);
 
-            var editedPreferences = await managementApiService.UpdatePreferences(Options);
+            var editedPreferences = await managementApiService.UpdatePreferences(PageContext.UserPreferences);
 
             if (editedPreferences is not null)
             {
-                mapper.Map(editedPreferences, Options);
+                mapper.Map(editedPreferences, PageContext.UserPreferences);
                 var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")}: {string.Join(", ", TokenModel.ConnectorTypes.Select(x => x.ConnectorType))} ({TextHelper.TruncateString(Token.Token, TextConstants.TokenDisplayLength)})";
                 toastService.ShowSuccess(message);
 

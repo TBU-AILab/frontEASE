@@ -1,13 +1,4 @@
-﻿@inject IUIManager uiManager
-
-<CascadingValue Value="ConnectorTypes" >
-    <Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Shadow="Shadow.Small" Class="rounded-top-right-1 border-custom-light">
-        <TokenAddForm />
-        <TokenList />
-    </Container>
-</CascadingValue>
-
-
-@code {
-    private IList<TaskModuleNoValidationDto> ConnectorTypes = [];
-}
+﻿<Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Shadow="Shadow.Small" Class="rounded-top-right-1 border-custom-light">
+    <TokenAddForm />
+    <TokenList />
+</Container>

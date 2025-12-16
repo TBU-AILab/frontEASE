@@ -13,13 +13,11 @@
 else
 {
     <Row Margin="Margin.Is2.FromTop">
-        @if (Users.Count > 0)
+        @if (PageContext.Users.Count > 0)
         {
-            @foreach (var User in Users)
+            @foreach (var user in PageContext.Users)
             {
-                <CascadingValue Value="User">
-                    <UserListItem />
-                </CascadingValue>
+                <UserListItem User="user" />
             }
         }
         else
@@ -35,7 +33,7 @@ else
 
 @code {
     [CascadingParameter]
-    public IList<ApplicationUserDto> Users { get; set; } = [];
+    public UsersAndCompaniesPageContext PageContext { get; set; } = null!;
 
     private bool isUsersLoading = false;
     private bool isInitialized = false;
@@ -48,7 +46,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         uiService.RefreshRequested += RefreshViewAsync;
-        if (!isInitialized && !(Users?.Count > 0 == true))
+        if (!isInitialized && !(PageContext.Users?.Count > 0 == true))
         {
             isUsersLoading = true;
             await LoadUsers();
@@ -63,8 +61,8 @@ else
         var users = await userApiService.LoadUsers();
         if (users?.Count > 0 == true)
         {
-            Users.Clear();
-            foreach (var user in users) { Users.Add(user); }
+            PageContext.Users.Clear();
+            foreach (var user in users) { PageContext.Users.Add(user); }
         }
     }
 }

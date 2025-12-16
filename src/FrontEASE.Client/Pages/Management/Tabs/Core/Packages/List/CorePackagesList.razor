@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 @inject IUIService uiService
 @inject IMapper mapper
 @inject IManagementApiService managementApiService
@@ -41,12 +40,10 @@ else
                             }
                             else
                             {
-                                @foreach (var Package in GlobalPreferences.CorePackages.Where(x => !x.System))
+                                @foreach (var package in GlobalPreferences.CorePackages.Where(x => !x.System))
                                 {
                                     <Column ColumnSize="ColumnSize.Is3.OnWidescreen.Is4.OnTablet">
-                                        <CascadingValue Value="@Package" >
-                                            <CorePackageListItem />
-                                        </CascadingValue>
+                                        <CorePackageListItem Package="package" GlobalPreferences="GlobalPreferences" />
                                     </Column>
                                 }
                             }
@@ -80,12 +77,10 @@ else
                         }
                         else
                         {
-                            @foreach (var Package in GlobalPreferences.CorePackages.Where(x => x.System))
+                            @foreach (var package in GlobalPreferences.CorePackages.Where(x => x.System))
                             {
                                 <Column ColumnSize="ColumnSize.Is3.OnWidescreen.Is4.OnTablet">
-                                    <CascadingValue Value="@Package" >
-                                        <CorePackageListItem />
-                                    </CascadingValue>
+                                    <CorePackageListItem GlobalPreferences="GlobalPreferences" Package="package" />
                                 </Column>
                             }
                         }
@@ -97,14 +92,11 @@ else
 }
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
 
     [Parameter]
     public DataOperation Operation { get; set; }
-
-    [Parameter]
-    public bool FullWidthFields { get; set; }
 
     private bool isInitialized = false;
     private bool isSystemPackagesCollapsed;

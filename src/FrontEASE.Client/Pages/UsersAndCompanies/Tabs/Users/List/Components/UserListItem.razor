@@ -1,22 +1,11 @@
-﻿@inject IUIService uiService
-@inject IUIManager uiManager
-
-<Column ColumnSize="ColumnSize.Is3.OnQuadHD.Is4.OnWidescreen.Is6.OnDesktop">
+﻿<Column ColumnSize="ColumnSize.Is3.OnQuadHD.Is4.OnWidescreen.Is6.OnDesktop">
     <Card Shadow="Shadow.Small" Margin="Margin.Is4.FromBottom" Border="Border.Is2.Rounded" Class="border-custom-light" Overflow="Overflow.Hidden">
-        <UserListItemHeader />
-        <UserListItemBody />
+        <UserListItemHeader User="User" />
+        <UserListItemBody User="User" />
     </Card>
 </Column>
 
 @code {
-    private async Task RefreshViewAsync()
-    {
-        await InvokeAsync(StateHasChanged);
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        uiService.RefreshRequested += RefreshViewAsync;
-        await base.OnInitializedAsync();
-    }
+    [Parameter]
+    public ApplicationUserDto User { get; set; } = new();
 }

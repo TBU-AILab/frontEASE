@@ -1,6 +1,4 @@
-﻿@inject IUIManager uiManager
-
-<Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary">
+﻿<Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary">
     <CardBody>
         <Container Fluid Shadow="Shadow.Small">
             <Row>
@@ -20,6 +18,6 @@
 </Row>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public GlobalPreferenceCorePackageDto Package { get; set; } = new();
 }

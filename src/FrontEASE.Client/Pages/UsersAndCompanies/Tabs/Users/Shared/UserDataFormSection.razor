@@ -1,8 +1,6 @@
-﻿@inject IUserManipulationService userManipulationService
-@inject IResourceHandler resourceHandler
+﻿@inject IResourceHandler resourceHandler
 @inject IDataLoader dataLoader
 @inject IUIService uiService
-@inject IUIManager uiManager
 
 <Fields>
 	<Validation>
@@ -26,11 +24,11 @@
 			<FieldLabel For="@(GetElementIdByOperation(nameof(ApplicationUserDto.Role)))" RequiredIndicator>
 				@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Role), PropertyDisplayResourceType.FIELD)))
 			</FieldLabel>
-			<Select @bind-SelectedValue="@UserModel.Role" ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Role)))" ReadOnly="@(Operation == DataOperation.UPDATE ? LoggedUser.Id == UserModel.Id : false)" Disabled="@(Operation == DataOperation.UPDATE ? LoggedUser.Id == UserModel.Id : false)">
+			<Select @bind-SelectedValue="@UserModel.Role" ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Role)))" ReadOnly="@(Operation == DataOperation.UPDATE ? PageContext.LoggedInUser.Id == UserModel.Id : false)" Disabled="@(Operation == DataOperation.UPDATE ? PageContext.LoggedInUser.Id == UserModel.Id : false)">
 				<ChildContent>
 					@foreach (var role in Enum.GetValues(typeof(UserRole)))
 					{
-						@if ((int)LoggedUser.Role >= (int)role)
+						@if ((int)PageContext.LoggedInUser.Role >= (int)role)
 						{
 							<SelectItem TValue="UserRole" Value="@((UserRole)role)">
 								@(resourceHandler.GetResource(((UserRole)role).GetEnumResourceValue()))
@@ -61,7 +59,7 @@
 				@(string.IsNullOrEmpty(UserModel.Image?.ImageData) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.PLACEHOLDER)) : UserModel.Image.Name)
 			</Text>
 			<FileEdit Display="Display.None"
-					  @ref="@FilePicker"
+					  @ref="@filePicker"
 					  Filter=".jpg, .jpeg, .jfif, .png, .gif, .bmp, .tiff"
 					  AutoReset="false"
 					  ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Image)))"
@@ -117,9 +115,9 @@
 
 @code {
 	[CascadingParameter]
-	public ApplicationUserDto LoggedUser { get; set; } = new();
+	public UsersAndCompaniesPageContext PageContext { get; set; } = null!;
 
-	[CascadingParameter]
+	[Parameter]
 	public ApplicationUserDto UserModel { get; set; } = new();
 
 	[Parameter]
@@ -128,7 +126,7 @@
 	[Parameter]
 	public bool FullWidthFields { get; set; }
 
-	public FileEdit FilePicker = new();
+	private FileEdit filePicker = new();
 	private bool imageLoadInProgress = false;
 
 	private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<ApplicationUserDto>(elementBase, Operation, UserModel.Id?.ToString());

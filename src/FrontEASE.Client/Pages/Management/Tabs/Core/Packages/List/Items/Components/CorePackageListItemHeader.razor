@@ -1,5 +1,4 @@
-﻿@inject IMapper mapper
-@inject IUIService uiService
+﻿@inject IUIService uiService
 @inject IResourceHandler resourceHandler;
 
 <Row Class="gx-0 margin-background-offset-top-1">
@@ -13,10 +12,10 @@
 </Row>
 
 @code {
-	[CascadingParameter]
+	[Parameter]
 	public GlobalPreferenceCorePackageDto Package { get; set; } = new();
 
-	[CascadingParameter]
+	[Parameter]
 	public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
 
 	private async Task RemovePackage()

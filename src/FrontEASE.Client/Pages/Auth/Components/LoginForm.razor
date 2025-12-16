@@ -1,5 +1,4 @@
-﻿@inject IJSRuntime jsRuntime
-@inject IResourceHandler resourceHandler
+﻿@inject IResourceHandler resourceHandler
 @inject IUserApiService userApiService
 @inject IUIService uiService
 @inject IManagementApiService managementApiService
@@ -63,18 +62,13 @@
 
 @code {
     [CascadingParameter]
-    public ApplicationUserDto LoggedUser { get; set; } = new();
-
-    [CascadingParameter]
-    private UserPreferencesDto Options { get; set; } = new();
+    public ApplicationContext context { get; set; } = new();
 
     private bool loginInProgress;
-    private DataOperation operation = DataOperation.READ;
-
     private LoginDto LoginModel = new();
     private Validations Validations = new();
 
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<LoginDto>(elementBase, operation, null);
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<LoginDto>(elementBase, DataOperation.READ, null);
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
@@ -124,7 +118,7 @@
             var loggedInUser = await userApiService.LoadUser();
             if (loggedInUser is not null)
             {
-                mapper.Map(loggedInUser, LoggedUser);
+                mapper.Map(loggedInUser, context.LoggedInUser);
             }
 
             await uiService.AssureResourcesInitialized(true);
@@ -132,7 +126,7 @@
             var options = await managementApiService.LoadPreferences();
             if (options is not null)
             {
-                mapper.Map(options, Options);
+                mapper.Map(options, context.UserPreferences);
             }
         }
     }

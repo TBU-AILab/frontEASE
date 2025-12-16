@@ -3,7 +3,6 @@
 @inject IUIService uiService
 @inject ICompanyManipulationService companyManipulationService
 @inject ICompanyApiService companyApiService
-@inject IUIManager uiManager
 
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<CompanyDto>()))" />
 <Divider Class="divider-main-thin bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is0.FromTop" />
@@ -12,13 +11,11 @@
     <ContentLoadSpinner />
 }
 <Row Margin="Margin.Is2.FromTop">
-    @if (Companies.Count > 0)
+    @if (PageContext.Companies.Count > 0)
     {
-        @foreach (var Company in Companies)
+        @foreach (var company in PageContext.Companies)
         {
-            <CascadingValue Value="Company">
-                <CompanyListItem />
-            </CascadingValue>
+            <CompanyListItem Company="company" />
         }
     }
     else
@@ -33,10 +30,7 @@
 
 @code {
     [CascadingParameter]
-    public IList<CompanyDto> Companies { get; set; } = [];
-
-    [CascadingParameter]
-    public IList<ApplicationUserDto> Users { get; set; } = [];
+    public UsersAndCompaniesPageContext PageContext { get; set; } = null!;
 
     private bool isInitialized = false;
 
@@ -53,12 +47,12 @@
             var loadUsersTask = Task.CompletedTask;
             var loadCompaniesTask = Task.CompletedTask;
 
-            if (!(Users?.Count > 0 == true))
+            if (!(PageContext.Users?.Count > 0 == true))
             {
                 loadUsersTask = LoadUsers();
             }
 
-            if (!(Companies?.Count > 0 == true))
+            if (!(PageContext.Companies?.Count > 0 == true))
             {
                 loadCompaniesTask = LoadCompanies();
             }
@@ -66,7 +60,7 @@
             await Task.WhenAll(loadUsersTask, loadCompaniesTask);
         }
 
-        companyManipulationService.SortUsersToCompanies(Users!, Companies!);
+        companyManipulationService.SortUsersToCompanies(PageContext.Users!, PageContext.Companies!);
         await base.OnInitializedAsync();
         isInitialized = true;
     }
@@ -76,8 +70,8 @@
         var companies = await companyApiService.LoadCompanies();
         if (companies?.Count > 0 == true)
         {
-            Companies.Clear();
-            foreach (var company in companies) { Companies.Add(company); }
+            PageContext.Companies.Clear();
+            foreach (var company in companies) { PageContext.Companies.Add(company); }
         }
     }
 
@@ -86,8 +80,8 @@
         var users = await userApiService.LoadUsers();
         if (users?.Count > 0 == true)
         {
-            Users.Clear();
-            foreach (var user in users) { Users.Add(user); }
+            PageContext.Users.Clear();
+            foreach (var user in users) { PageContext.Users.Add(user); }
         }
     }
 }

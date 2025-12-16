@@ -3,7 +3,6 @@
 @inject IManagementApiService managementApiService
 @inject IUIService uiService
 @inject IMapper mapper
-@inject IUIManager uiManager
 
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<UserPreferenceTokenOptionDto>()))" />
 <Divider Class="divider-main-thin bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is0.FromTop" />
@@ -15,13 +14,11 @@
 else
 {
     <Row Margin="Margin.Is2.FromTop">
-        @if (Options.TokenOptions.Count > 0)
+        @if (PageContext.UserPreferences.TokenOptions.Count > 0)
         {
-            @foreach (var Token in Options.TokenOptions.OrderBy(x => x.Priority))
+            @foreach (var token in PageContext.UserPreferences.TokenOptions.OrderBy(x => x.Priority))
             {
-                <CascadingValue Value="Token">
-                    <TokenListItem />
-                </CascadingValue>
+                <TokenListItem Token="token" />
             }
 
         }
@@ -38,10 +35,7 @@ else
 
 @code {
     [CascadingParameter]
-    public UserPreferencesDto Options { get; set; } = new();
-
-    [CascadingParameter]
-    public IList<TaskModuleNoValidationDto> ConnectorTypes { get; set; } = [];
+    public ManagementPageContext PageContext { get; set; } = null!;
 
     private bool isInitialized = false;
 
@@ -58,7 +52,7 @@ else
             var loadTypelistsTask = Task.CompletedTask;
             var loadPreferencesTask = Task.CompletedTask;
 
-            if (!(ConnectorTypes?.Any() == true))
+            if (!(PageContext.ConnectorTypes?.Any() == true))
             {
                 loadTypelistsTask = LoadTypelists();
             }
@@ -76,19 +70,19 @@ else
         var preferences = await managementApiService.LoadPreferences();
         if (preferences is not null)
         {
-            mapper.Map(preferences, Options);
+            mapper.Map(preferences, PageContext.UserPreferences);
         }
     }
 
     private async Task LoadTypelists()
     {
         var connectorTypes = await typelistApiService.LoadTaskModuleOptions();
-        ConnectorTypes.Clear();
+        PageContext.ConnectorTypes.Clear();
         foreach (var type in connectorTypes)
         {
             if (type.PackageType == ModuleType.LLM_CONNECTOR)
             {
-                ConnectorTypes.Add(type);
+                PageContext.ConnectorTypes.Add(type);
             }
         }
     }

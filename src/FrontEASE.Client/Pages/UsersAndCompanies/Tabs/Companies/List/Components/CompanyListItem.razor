@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 @inject AppSettings appSettings
 
 <Column ColumnSize="ColumnSize.Is12" Margin="Margin.Is3.FromBottom">
@@ -58,11 +57,11 @@
 	</Container>
 </Column>
 
-<CompanyEditModal @ref="@editModal"></CompanyEditModal>
-<CompanyDeleteModal @ref="@deleteModal"></CompanyDeleteModal>
+<CompanyEditModal @ref="@editModal" Company="Company"></CompanyEditModal>
+<CompanyDeleteModal @ref="@deleteModal" Company="Company"></CompanyDeleteModal>
 
 @code {
-	[CascadingParameter]
+	[Parameter]
 	public CompanyDto Company { get; set; } = new();
 
 	private CompanyEditModal editModal = new();

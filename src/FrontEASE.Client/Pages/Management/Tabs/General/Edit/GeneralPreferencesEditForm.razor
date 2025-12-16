@@ -17,9 +17,8 @@ else
 {
     <Row Margin="Margin.Is2.FromTop.Is2.Is3.FromBottom">
         <Form>
-            <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@Options.GeneralOptions" ValidateOnLoad="false">
-                <CascadingValue Value="Options.GeneralOptions">
-                    <GeneralPreferencesDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="false" />
+            <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@PageContext.UserPreferences.GeneralOptions" ValidateOnLoad="false">
+                    <GeneralPreferencesDataFormSection GeneralPreferencesModel="PageContext.UserPreferences.GeneralOptions" Operation="DataOperation.UPDATE" FullWidthFields="false" />
                     <Fields>
                         <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
                             <Button Clicked="@EditSettings" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
@@ -34,7 +33,6 @@ else
                             </Button>
                         </Field>
                     </Fields>
-                </CascadingValue>
             </Validations>
         </Form>
     </Row>
@@ -42,14 +40,10 @@ else
 
 @code {
     [CascadingParameter]
-    public UserPreferencesDto Options { get; set; } = new(); 
-
-    [CascadingParameter]
-    public Theme Theme { get; set; } = new();
+    public ManagementPageContext PageContext { get; set; } = null!;
 
     private Validations Validations = new();
     private bool updateInProgress = false;
-
     private bool isInitialized = false;
 
     private async Task RefreshViewAsync()
@@ -76,7 +70,7 @@ else
         var preferences = await managementApiService.LoadPreferences();
         if (preferences is not null)
         {
-            mapper.Map(preferences, Options);
+            mapper.Map(preferences, PageContext.UserPreferences);
         }
     }
 
@@ -86,10 +80,10 @@ else
 
         if (await Validations.ValidateAll())
         {
-            var editedPreferences = await managementApiService.UpdatePreferences(Options);
+            var editedPreferences = await managementApiService.UpdatePreferences(PageContext.UserPreferences);
             if (editedPreferences is not null)
             {
-                mapper.Map(editedPreferences, Options);
+                mapper.Map(editedPreferences, PageContext.UserPreferences);
 
                 var editActionName = resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.GeneralOptions), PropertyDisplayResourceType.FIELD));
                 var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")}: {editActionName}";
