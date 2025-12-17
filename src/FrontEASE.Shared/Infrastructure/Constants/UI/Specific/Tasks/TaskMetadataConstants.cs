@@ -7,12 +7,10 @@
         public const string Url = "url";
 
         public const string ShortName = "ShortName";
-        public const string StringValue = "StringValue";
 
         public static readonly IList<string> ReloadTriggerFields = 
         [
-            ShortName,
-            StringValue
+            ShortName
         ];
     }
 }
