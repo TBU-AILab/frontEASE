@@ -1,100 +1,87 @@
 ﻿@inject IResourceHandler resourceHandler
 
 @{
-	var matchingTokens = PageContext.UserPreferences.TokenOptions.Where(x => x.ConnectorTypes.Any(z => z.ConnectorType == Module?.ShortName))?.ToList() ?? [];
-	var selectedToken = matchingTokens.SingleOrDefault(x => x.Token == ParamValue.Value?.StringValue);
-	var displayActions = !string.IsNullOrWhiteSpace(selectedToken?.Description) || !string.IsNullOrWhiteSpace(ParamOption?.Description);
+    var matchingTokens = PageContext.UserPreferences.TokenOptions.Where(x => x.ConnectorTypes.Any(z => z.ConnectorType == TaskModuleContext.Module?.ShortName))?.ToList() ?? [];
+    var selectedToken = matchingTokens.SingleOrDefault(x => x.Token == TaskModuleParamContext.ParamValue?.Value?.StringValue);
+    var displayActions = !string.IsNullOrWhiteSpace(selectedToken?.Description) || !string.IsNullOrWhiteSpace(TaskModuleParamContext.ParamOption?.Description);
 
-	if (matchingTokens.Count > 0 && !string.IsNullOrWhiteSpace(ParamValue.Value?.StringValue) && selectedToken is null)
-	{
-		ParamValue.Value!.StringValue = string.Empty;
-	}
+    if (matchingTokens.Count > 0 && !string.IsNullOrWhiteSpace(TaskModuleParamContext.ParamValue?.Value?.StringValue) && selectedToken is null)
+    {
+        TaskModuleParamContext.ParamValue.Value!.StringValue = string.Empty;
+    }
 }
 
 
 <Validation>
-	<Field ColumnSize="@(displayActions? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+    <Field ColumnSize="@(displayActions? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
 
-		<FieldLabel For="@(GetElementIdByOperation(ParamOption!.Key))" RequiredIndicator>
-			@ParamName
-		</FieldLabel>
+        <FieldLabel For="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption!.Key))" RequiredIndicator>
+            @TaskModuleParamContext.ParamName
+        </FieldLabel>
 
-		@if (matchingTokens?.Count > 0)
-		{
-			<Select TValue="string"
-					Disabled="@(TaskMetadata.InitializationInProgres)"
-					ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-					@bind-SelectedValue="@ParamValue.Value!.StringValue">
-				<ChildContent>
-					<SelectItem Value="string.Empty">
-						@(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
-					</SelectItem>
-					@foreach (var tokenOption in matchingTokens!)
-					{
-						<SelectItem Value="@(tokenOption.Token)">
-							@($"{tokenOption.Name} ({TextHelper.TruncateString(tokenOption.Token, TextConstants.TokenDisplayLength)})")
-						</SelectItem>
-					}
-				</ChildContent>
-				<Feedback>
-					<ValidationError Multiline="true" />
-				</Feedback>
-			</Select>
-		}
-		else
-		{
-			<MemoEdit ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-					  Disabled="@(TaskMetadata.InitializationInProgres)"
-					  @bind-Text="@ParamValue.Value!.StringValue"
-					  Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)">
-				<Feedback>
-					<ValidationError Multiline="true" />
-				</Feedback>
-			</MemoEdit>
-		}
-	</Field>
+        @if (matchingTokens?.Count > 0)
+        {
+            <Select TValue="string"
+                    Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                    ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                    @bind-SelectedValue="@TaskModuleParamContext.ParamValue!.Value!.StringValue">
+                <ChildContent>
+                    <SelectItem Value="string.Empty">
+                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
+                    </SelectItem>
+                    @foreach (var tokenOption in matchingTokens!)
+                    {
+                        <SelectItem Value="@(tokenOption.Token)">
+                            @($"{tokenOption.Name} ({TextHelper.TruncateString(tokenOption.Token, TextConstants.TokenDisplayLength)})")
+                        </SelectItem>
+                    }
+                </ChildContent>
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </Select>
+        }
+        else
+        {
+            <MemoEdit ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                      Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                      @bind-Text="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
+                      Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)">
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </MemoEdit>
+        }
+    </Field>
 </Validation>
 
 @if (displayActions)
 {
-	<Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
-		<FieldLabel>
-			@(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Info}"))
-		</FieldLabel>
-		<Div>
-			<Tooltip Multiline="true" Text="@(selectedToken?.Description ?? ParamOption?.Description)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-				<Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
-			</Tooltip>
-		</Div>
-	</Field>
+    <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
+        <FieldLabel>
+            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Info}"))
+        </FieldLabel>
+        <Div>
+            <Tooltip Multiline="true" Text="@(selectedToken?.Description ?? TaskModuleParamContext.ParamOption?.Description)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+                <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+            </Tooltip>
+        </Div>
+    </Field>
 }
 
 
 @code {
-	[CascadingParameter]
-	public TasksPageContext PageContext { get; set; } = null!;
+    [CascadingParameter]
+    public TasksPageContext PageContext { get; set; } = null!;
 
-	[Parameter]
-	public TaskDto Task { get; set; } = new();
+    [Parameter]
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
-	[Parameter]
-	public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+    [Parameter]
+    public TaskModuleContext TaskModuleContext { get; set; } = null!;
 
-	[Parameter]
-	public DataOperation Operation { get; set; }
+    [Parameter]
+    public TaskModuleParamContext TaskModuleParamContext { get; set; } = null!;
 
-	[Parameter]
-	public TaskModuleDto? Module { get; set; } = null;
-
-	[Parameter]
-	public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
-
-	[Parameter]
-	public TaskModuleParameterDto ParamValue { get; set; } = new();
-
-	[Parameter]
-	public string ParamName { get; set; } = string.Empty;
-
-	private Guid ParameterID = Guid.NewGuid();
-	private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, TaskModalContext.Operation, $"{TaskModalContext.Task.ID.ToString()}_{TaskModuleParamContext.ParamID.ToString()}");
 }

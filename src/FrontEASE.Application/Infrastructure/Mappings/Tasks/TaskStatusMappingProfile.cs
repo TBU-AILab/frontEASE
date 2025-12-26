@@ -25,10 +25,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
                 .ForMember(x => x.IsDeleted, opt => opt.Ignore())
                 .AfterMap((src, dest) =>
                 {
-                    if (dest.Config is not null)
-                    {
-                        dest.Config.Name = src.Name ?? string.Empty;
-                    }
+                    dest.Config?.Name = src.Name ?? string.Empty;
                 })
                 .ReverseMap();
         }

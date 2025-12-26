@@ -1,5 +1,5 @@
-﻿@inject IMapper mapper
-@inject IResourceHandler resourceHandler
+﻿@inject IResourceHandler resourceHandler
+@inject IMapper mapper
 
 <ModalFooter Class="bg-custom-secondary border-custom-light">
     <Container Fluid Padding="Padding.Is0">
@@ -15,10 +15,7 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
-
-    [Parameter]
-    public Modal Modal { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     public async Task HandleKeyDown(KeyboardEventArgs e)
     {
@@ -36,8 +33,8 @@
     private async Task HideModal()
     {
         var cleanModel = new TaskDto();
-        mapper.Map(cleanModel, Task);
+        mapper.Map(cleanModel, TaskModalContext.Task);
 
-        await Modal.Hide();
+        await TaskModalContext.Modal.Hide();
     }
 }

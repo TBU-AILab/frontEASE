@@ -4,14 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace FrontEASE.Domain.Services.Shared.Images
 {
-    public class ImageService : IImageService
+    public class ImageService(IWebHostEnvironment webHostEnvironment) : IImageService
     {
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        public ImageService(IWebHostEnvironment webHostEnvironment)
-        {
-            _webHostEnvironment = webHostEnvironment;
-        }
-
         public async Task SaveImage(Image image, Guid identifier, CancellationToken cancellationToken)
         {
             if (image is not null)
@@ -33,7 +27,7 @@ namespace FrontEASE.Domain.Services.Shared.Images
         {
             if (image is not null)
             {
-                var path = Path.Combine(_webHostEnvironment.WebRootPath, image.ImageUrl);
+                var path = Path.Combine(webHostEnvironment.WebRootPath, image.ImageUrl);
                 if (File.Exists(path)) { File.Delete(path); }
 
                 image.ImageData = image.ImageUrl = string.Empty;
@@ -66,7 +60,7 @@ namespace FrontEASE.Domain.Services.Shared.Images
 
             var fileName = $"{identifier}_{image.Name}";
             var relativePath = $"{directory}{Path.DirectorySeparatorChar}{fileName}";
-            var absolutePath = Path.Combine(_webHostEnvironment.WebRootPath, directory, fileName);
+            var absolutePath = Path.Combine(webHostEnvironment.WebRootPath, directory, fileName);
 
             return (relativePath, absolutePath);
         }

@@ -5,20 +5,14 @@ using FrontEASE.Infrastructure.Data.Configuration.Shared.CountryCodes.Defaults;
 namespace FrontEASE.DataGenerator.Services.Generators.Resources
 {
     [Order(0)]
-    public class CountryCodeGenerator : IGenerator
+    public class CountryCodeGenerator(ApplicationDbContext dataContext) : IGenerator
     {
-        private readonly ApplicationDbContext _dataContext;
-        public CountryCodeGenerator(ApplicationDbContext dataContext)
-        {
-            _dataContext = dataContext;
-        }
-
         public async Task Generate()
         {
-            var countryCodes = DefaultCountryCodesConfiguration.GetDefaults().ToList();
+            var countryCodes = DefaultCountryCodesConfiguration.GetDefaults();
 
-            await _dataContext.CountryCodes.AddRangeAsync(countryCodes);
-            await _dataContext.SaveChangesAsync();
+            await dataContext.CountryCodes.AddRangeAsync(countryCodes);
+            await dataContext.SaveChangesAsync();
         }
     }
 }

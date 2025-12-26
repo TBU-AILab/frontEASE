@@ -6,15 +6,8 @@ using FrontEASE.Shared.Data.DTOs.Shared.Users;
 
 namespace FrontEASE.Client.Services.ModelManipulationServices.Companies
 {
-    public class CompanyManipulationService : ICompanyManipulationService
+    public class CompanyManipulationService(IMapper mapper) : ICompanyManipulationService
     {
-        private readonly IMapper _mapper;
-
-        public CompanyManipulationService(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
-
         public void CleanAddressInfo(CompanyDto company) => company.Address = null;
         public void InitAddressInfo(CompanyDto company) => company.Address = new();
         public void CleanUsersInfo(CompanyDto company) => company.Users.Clear();
@@ -34,15 +27,15 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Companies
                 Address = new AddressDto(),
                 Image = new ImageDto()
             };
-            _mapper.Map(cleanModel, company);
+            mapper.Map(cleanModel, company);
         }
 
         public void SortUsersToCompanies(IList<ApplicationUserDto> users, IList<CompanyDto> companies)
         {
             foreach (var company in companies)
             {
-                var relevantUserIDs = company.Users.Select(x => x.Id).ToList();
-                var relevantUsers = users.Where(x => relevantUserIDs.Contains(x.Id)).ToList();
+                var relevantUserIDs = company.Users.Select(x => x.Id);
+                var relevantUsers = users.Where(x => relevantUserIDs.Contains(x.Id));
 
                 company.Users.Clear();
                 foreach (var user in relevantUsers) { company.Users.Add(user); }

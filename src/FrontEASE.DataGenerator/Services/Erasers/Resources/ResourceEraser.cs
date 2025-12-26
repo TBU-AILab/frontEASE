@@ -4,18 +4,12 @@ using FrontEASE.Infrastructure.Data;
 namespace FrontEASE.DataGenerator.Services.Erasers.Resources
 {
     [Order(0)]
-    public class ResourceEraser : IEraser
+    public class ResourceEraser(ApplicationDbContext dataContext) : IEraser
     {
-        private readonly ApplicationDbContext _dataContext;
-        public ResourceEraser(ApplicationDbContext dataContext)
-        {
-            _dataContext = dataContext;
-        }
-
         public async Task Erase()
         {
-            _dataContext.Resources.RemoveRange(_dataContext.Resources);
-            await _dataContext.SaveChangesAsync();
+            dataContext.Resources.RemoveRange(dataContext.Resources);
+            await dataContext.SaveChangesAsync();
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Infrastructure.Constants;
-using FrontEASE.Infrastructure.Data.Configuration.Shared.Base.Tracked;
+using FrontEASE.Infrastructure.Data.Configuration.Shared.Base.Manual;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FrontEASE.Infrastructure.Data.Configuration.Tasks.Runs
+namespace FrontEASE.Infrastructure.Data.Configuration.Tasks.Messages
 {
     public class TaskMessageConfiguration : IEntityTypeConfiguration<TaskMessage>
     {

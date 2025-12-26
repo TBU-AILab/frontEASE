@@ -7,11 +7,8 @@
 </Column>
 
 @code {
-	[Parameter]
-	public IList<TaskSolutionDto> Solutions { get; set; } = [];
-
-	[Parameter]
-	public IList<TaskMessageDto> Messages { get; set; } = [];
+    [Parameter]
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
 	private IList<string> Labels = [];
 	private IList<float> Values = [];
@@ -38,7 +35,10 @@
 
 	private void RecalculateValues()
 	{
-		var values = taskChartManipulationService.GetValueConvergenceChartData(Messages, Solutions);
+		var messageIDs = TaskModalContext.Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
+		var solutionsOrdered = TaskModalContext.Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
+
+		var values = taskChartManipulationService.GetValueEvolutionChartData(TaskModalContext.Task.Messages, solutionsOrdered);
 		Labels = values.Labels;
 		Values = values.Values;
 	}

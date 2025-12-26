@@ -3,14 +3,9 @@ using FrontEASE.Shared.Infrastructure.Utils.Extensions;
 
 namespace FrontEASE.Domain.Services.Shared.Logging.Sentry
 {
-    public class SentryLoggingService : ISentryLoggingService
+    public class SentryLoggingService(AppSettings appSettings) : ISentryLoggingService
     {
-
-        private readonly AppSettings _appSettings;
-
-        public SentryLoggingService(AppSettings appSettings) => _appSettings = appSettings;
-
-        private bool IsEnabled => _appSettings.SentrySettings!.IsEnabled;
+        private bool IsEnabled => appSettings.SentrySettings!.IsEnabled;
 
         public void Error(object message, object? data = null)
         {

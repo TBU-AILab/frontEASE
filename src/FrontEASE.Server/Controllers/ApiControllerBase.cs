@@ -19,8 +19,8 @@ namespace FrontEASE.Server.Controllers
     /// </summary>
     public abstract class ApiControllerBase : ControllerBase
     {
+        protected readonly IResourceAppService _resourceAppService;
         private readonly IResourceHandler _resourceHandler;
-        private readonly IResourceAppService _resourceAppService;
         private readonly AppSettings _appSettings;
 
         protected ApiControllerBase(IResourceHandler resourceHandler, IResourceAppService resourceAppService, AppSettings appSettings)

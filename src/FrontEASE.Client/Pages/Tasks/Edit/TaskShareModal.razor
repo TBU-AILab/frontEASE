@@ -3,10 +3,10 @@
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
 
-<Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@(async (e) => await OnModalClosing(e))" Class="modal-dialog-wide" Border="Border.Rounded">
+<Modal @ref="@TaskModalContext.Modal" @bind-Visible="isModalVisible" Closing="@(async (e) => await OnModalClosing(e))" Class="modal-dialog-wide" Border="Border.Rounded">
     @if (isModalVisible)
     {
-        @if (TaskMetadata.InitializationInProgres)
+        @if (TaskModalContext.TaskMetadata.InitializationInProgres)
         {
             <BackgroundLoadSpinner Class="bg-custom-primary text-custom-primary background-load-spinner-overlay" TextSize="TextSize.Large" />
         }
@@ -18,19 +18,19 @@
             }
             else
             {
-                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}")}{(string.IsNullOrWhiteSpace(Task.Config?.Name) ? string.Empty : $" - {Task.Config.Name}")}")" />
+                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}")}{(string.IsNullOrWhiteSpace(TaskModalContext.Task.Config?.Name) ? string.Empty : $" - {TaskModalContext.Task.Config.Name}")}")" />
 
                 <ModalBody Padding="Padding.Is0" Class="bg-custom-primary text-custom-primary">
                     <Container Fluid>
                         <Row>
                             <Column ColumnSize="ColumnSize.IsFull">
-                                <Validations @ref="Validations"
+                                <Validations @ref="TaskModalContext.Validations"
                                              Mode="ValidationMode.Auto"
                                              ValidateOnLoad="false"
-                                             EditContext="EditContext"
+                                             EditContext="TaskModalContext.EditContext"
                                              HandlerType="ValidationHandlerType.DataAnnotation">
                                     <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
-                                        <TaskAccessSubitemsDataFormSection Task="Task" TaskMetadata="TaskMetadata" />
+                                        <TaskAccessSubitemsDataFormSection TaskModalContext="TaskModalContext" />
                                     </Form>
                                 </Validations>
                             </Column>
@@ -39,7 +39,7 @@
                     </Container>
                 </ModalBody>
 
-                <TaskShareModalFooter Modal="Modal" Validations="Validations" Task="Task" TaskInfo="TaskInfo" @ref="@TaskShareModalFooter" />
+                <TaskShareModalFooter TaskModalContext="TaskModalContext" @ref="@TaskShareModalFooter" />
             }
         </ModalContent>
     }
@@ -55,21 +55,12 @@
     private bool isTaskLoading = false;
     private bool isModalVisible = false;
 
-    private TaskDto Task;
-    private TaskViewMetadataDto TaskMetadata;
-
-    private Modal Modal;
+    private TaskModalContext TaskModalContext { get; set; }
     private TaskShareModalFooter TaskShareModalFooter = new();
-    private Validations Validations;
-    private EditContext? EditContext;
 
     public TaskShareModal()
     {
-        Task = new();
-        TaskMetadata = new();
-
-        Modal = new Modal();
-        Validations = new Validations();
+        TaskModalContext = new TaskModalContext(new(), TaskInfo, new(), new(), Operation, new());
     }
 
     private async Task OnModalClosing(ModalClosingEventArgs e)
@@ -83,14 +74,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        EditContext = new EditContext(Task);
+        TaskModalContext.EditContext = new EditContext(TaskModalContext.Task);
         await base.OnInitializedAsync();
     }
 
     private Task ShowModal()
     {
         isModalVisible = true;
-        return Modal.Show();
+        return TaskModalContext.Modal.Show();
     }
 
     public async Task Show()
@@ -101,7 +92,7 @@
         var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
         if (opened is not null)
         {
-            mapper.Map(opened, Task);
+            mapper.Map(opened, TaskModalContext.Task);
         }
 
         isTaskLoading = false;

@@ -1,25 +1,20 @@
-﻿@if (Task.Solutions.Count > 0)
+﻿@if (TaskModalContext.Task.Solutions.Count > 0)
 {
     <Row>
-
         <Container Fluid>
-            <TaskSolutionsViewSectionHeader Task="Task" />
+            <TaskSolutionsViewSectionHeader TaskModalContext="TaskModalContext" />
         </Container>
 
         <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
 
         <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is1.FromTop">
-
             <Container Fluid>
                 <Row>
-                    @{
-                        var messageIDs = Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
-                        var solutionsOrdered = Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
-                    }
-                    @foreach (var solution in solutionsOrdered)
-                    {
-                        <TaskSolutionItemView Task="Task" TaskMetadata="TaskMetadata" Solution="solution" IsSelectable="true" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
-                    }
+                    <Virtualize Items="GetOrderedSolutions()" Context="solution">
+                        <ItemContent>
+                            <TaskSolutionItemView TaskModalContext="TaskModalContext" Solution="solution" IsSelectable="true" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
+                        </ItemContent>
+                    </Virtualize>
                 </Row>
             </Container>
         </Column>
@@ -28,10 +23,13 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
-
-    [Parameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     private IList<Guid> SolutionDownloadsOngoing = [];
+
+    private IList<TaskSolutionDto> GetOrderedSolutions()
+    {
+        var messageIDs = TaskModalContext.Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
+        return TaskModalContext.Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
+    }
 }

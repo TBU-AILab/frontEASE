@@ -15,7 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace Microsoft.AspNetCore.Routing;
+namespace FrontEASE.Server.Infrastructure.Overrides.Auth;
 
 /// <summary>
 /// Provides extension methods for <see cref="IEndpointRouteBuilder"/> to add identity endpoints.

@@ -80,8 +80,8 @@
 
         if (deleteResult)
         {
-            var toRemoveFromSelected = SelectedTasks.Where(st => AffectedTasks.Any(at => at.ID == st.ID)).ToList();
-            var toRemoveFromTasks = PageContext.Tasks.Where(t => AffectedTasks.Any(at => at.ID == t.ID)).ToList();
+            var toRemoveFromSelected = SelectedTasks.Where(st => AffectedTasks.Any(at => at.ID == st.ID));
+            var toRemoveFromTasks = PageContext.Tasks.Where(t => AffectedTasks.Any(at => at.ID == t.ID));
 
             foreach (var task in toRemoveFromSelected)
             {

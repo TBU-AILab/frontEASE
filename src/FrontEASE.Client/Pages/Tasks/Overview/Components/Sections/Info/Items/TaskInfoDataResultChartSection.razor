@@ -1,22 +1,22 @@
 ﻿@inject IResourceHandler resourceHandler
 
-@if (Task.Solutions.Count > 0)
+@if (TaskModalContext.Task.Solutions.Count > 0)
 {
-	<Row>
+    <Row>
 
-		<Container Fluid>
-			<FormSectionHeader DisplayText="@resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIElementConstants.Chart}")" />
-		</Container>
+        <Container Fluid>
+            <FormSectionHeader DisplayText="@resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIElementConstants.Chart}")" />
+        </Container>
 
-		<Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
+        <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
 
-		<Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is1.FromTop">
-			<TaskInfoDataResultChartsWrapper Task="Task"/>
-		</Column>
-	</Row>
+        <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is1.FromTop">
+            <TaskInfoDataResultChartsWrapper TaskModalContext="TaskModalContext" />
+        </Column>
+    </Row>
 }
 
 @code {
-	[Parameter]
-	public TaskDto Task { get; set; } = new();
+    [Parameter]
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 }

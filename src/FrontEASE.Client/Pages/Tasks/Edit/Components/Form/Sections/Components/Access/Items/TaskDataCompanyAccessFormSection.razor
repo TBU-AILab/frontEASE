@@ -27,7 +27,7 @@
                                       SelectedRows="@selectedCompanies"
                                       SelectedRowsChanged="(obj => SelectionChanged(obj))"
                                       Filterable="true"
-                                      RowSelectable="@((company) => {return !TaskMetadata.InitializationInProgres;})"
+                                      RowSelectable="@((company) => {return !TaskModalContext.TaskMetadata.InitializationInProgres;})"
                                       FilterMode="DataGridFilterMode.Default"
                                       FilterMethod="DataGridFilterMethod.Contains"
                                       Class="text-custom-primary border-custom-light"
@@ -91,10 +91,7 @@
     public TasksPageContext PageContext { get; set; } = null!;
 
     [Parameter]
-    public TaskDto Task { get; set; } = new();
-
-    [Parameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     private List<CompanyDto> selectedCompanies = [];
     private bool isSectionCollapsed = false;
@@ -116,7 +113,7 @@
 
     private async Task SetInitialCollapse()
     {
-        if (!(Task.MemberGroups?.Count > 0))
+        if (!(TaskModalContext.Task.MemberGroups?.Count > 0))
         {
             await ChangeCollapseState();
         }
@@ -124,13 +121,13 @@
 
     private void SetInitialData()
     {
-        var selectedCompanyIDs = Task.MemberGroups.Select(x => x.ID);
+        var selectedCompanyIDs = TaskModalContext.Task.MemberGroups.Select(x => x.ID);
         selectedCompanies.AddRange(PageContext.AvailableCompanies.Where(x => selectedCompanyIDs.Contains(x.ID)));
     }
 
     private void SelectionChanged(IList<CompanyDto> newSelection)
     {
-        var selectedIDs = Task.MemberGroups.Select(x => x.ID);
+        var selectedIDs = TaskModalContext.Task.MemberGroups.Select(x => x.ID);
         var newSelectionIDs = newSelection.Select(x => x.ID);
 
         var added = newSelectionIDs.Except(selectedIDs).ToList();
@@ -141,7 +138,7 @@
             foreach (var addedGroup in added)
             {
                 var groupDto = PageContext.AvailableCompanies.Single(x => x.ID == addedGroup);
-                Task.MemberGroups.Add(groupDto);
+                TaskModalContext.Task.MemberGroups.Add(groupDto);
             }
         }
 
@@ -149,8 +146,8 @@
         {
             foreach (var removedCompany in removed)
             {
-                var removedFromModel = Task.MemberGroups.Single(x => x.ID == removedCompany);
-                Task.MemberGroups.Remove(removedFromModel);
+                var removedFromModel = TaskModalContext.Task.MemberGroups.Single(x => x.ID == removedCompany);
+                TaskModalContext.Task.MemberGroups.Remove(removedFromModel);
             }
         }
     }
@@ -160,7 +157,7 @@
         isSectionCollapsed = !isSectionCollapsed;
 
         if (!isSectionCollapsed)
-        { taskManipulationService.CleanCompaniesInfo(Task); }
+        { taskManipulationService.CleanCompaniesInfo(TaskModalContext.Task); }
 
         await uiService.CallRequestRefreshAsync();
     }

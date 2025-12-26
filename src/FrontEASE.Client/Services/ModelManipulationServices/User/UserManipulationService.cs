@@ -5,15 +5,8 @@ using FrontEASE.Shared.Data.Enums.Auth;
 
 namespace FrontEASE.Client.Services.ModelManipulationServices.User
 {
-    public class UserManipulationService : IUserManipulationService
+    public class UserManipulationService(IMapper mapper) : IUserManipulationService
     {
-        private readonly IMapper _mapper;
-
-        public UserManipulationService(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
-
         public void ChangeUserRole(ApplicationUserDto user, UserRole role) => user.Role = role;
 
         public void ConsolidateUserModel(ApplicationUserDto user)
@@ -30,7 +23,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.User
             {
                 Image = new ImageDto()
             };
-            _mapper.Map(cleanModel, user);
+            mapper.Map(cleanModel, user);
         }
     }
 }

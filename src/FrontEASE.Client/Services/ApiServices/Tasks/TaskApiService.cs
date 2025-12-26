@@ -3,7 +3,6 @@ using FrontEASE.Client.Services.HelperServices.ErrorHandling;
 using FrontEASE.Client.Services.ModelManipulationServices.Tasks;
 using FrontEASE.Shared.Data.DTOs.Companies;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
-using FrontEASE.Shared.Data.DTOs.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
@@ -16,18 +15,12 @@ using System.Net.Http.Json;
 
 namespace FrontEASE.Client.Services.ApiServices.Tasks
 {
-    public class TaskApiService : ApiServiceBase, ITaskApiService
+    public class TaskApiService(
+        HttpClient client,
+        IMapper mapper,
+        IErrorHandlingService errorHandlingService,
+        ITaskManipulationService taskManipulationService) : ApiServiceBase(client, mapper, errorHandlingService), ITaskApiService
     {
-        private readonly ITaskManipulationService _taskManipulationService;
-
-        public TaskApiService(
-            HttpClient client,
-            IMapper mapper,
-            IErrorHandlingService errorHandlingService,
-            ITaskManipulationService taskManipulationService) : base(client, mapper, errorHandlingService)
-        {
-            _taskManipulationService = taskManipulationService;
-        }
 
         #region Load
 
@@ -50,7 +43,7 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
         {
             if (filter is not null)
             {
-                _taskManipulationService.PrepareTaskFilter(filter!);
+                taskManipulationService.PrepareTaskFilter(filter!);
             }
 
             var filterQuery = filter is null ? string.Empty : filter.ToQueryString();
@@ -115,7 +108,7 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
 
         public async Task<TaskDto?> RefreshTaskOptions(Guid taskID, TaskDto refreshTaskDto)
         {
-            _taskManipulationService.PrepareTaskRequest(refreshTaskDto, false, true);
+            taskManipulationService.PrepareTaskRequest(refreshTaskDto, false, true);
             var url = $"{TasksControllerConstants.BaseUrl}/{taskID}";
             var response = await _client.PatchAsJsonAsync(url, refreshTaskDto);
 
@@ -133,7 +126,7 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
 
         public async Task<TaskDto?> UpdateTask(Guid taskID, TaskDto updateTaskDto)
         {
-            var preserved = _taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
+            var (PreservedMembers, PreservedGroups) = taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
             var url = $"{TasksControllerConstants.BaseUrl}/{taskID}";
             var response = await _client.PutAsJsonAsync(url, updateTaskDto);
 
@@ -144,13 +137,13 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
             }
 
             var task = await response.Content.ReadFromJsonAsync<TaskDto>();
-            _taskManipulationService.AssignTaskImages(task!, preserved.PreservedGroups, preserved.PreservedMembers);
+            taskManipulationService.AssignTaskImages(task!, PreservedGroups, PreservedMembers);
             return task;
         }
 
         public async Task<(IList<ApplicationUserDto> Members, IList<CompanyDto> MemberGroups)?> ShareTask(Guid taskID, TaskDto updateTaskDto)
         {
-            var preserved = _taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
+            var (PreservedMembers, PreservedGroups) = taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
             var url = $"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.Share}/{taskID}";
             var response = await _client.PatchAsJsonAsync(url, updateTaskDto);
 
@@ -162,7 +155,7 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
             else
             {
                 var task = await response.Content.ReadFromJsonAsync<TaskDto>();
-                _taskManipulationService.AssignTaskImages(task!, preserved.PreservedGroups, preserved.PreservedMembers);
+                taskManipulationService.AssignTaskImages(task!, PreservedGroups, PreservedMembers);
                 return new(task?.Members ?? [], task?.MemberGroups ?? []);
             }
         }

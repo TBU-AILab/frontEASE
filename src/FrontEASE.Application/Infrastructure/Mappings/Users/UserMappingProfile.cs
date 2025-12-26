@@ -3,7 +3,7 @@ using FrontEASE.Domain.Entities.Shared.Images;
 using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 
-namespace FrontEASE.Application.Infrastructure.Mappings.Companies
+namespace FrontEASE.Application.Infrastructure.Mappings.Users
 {
     public class UserMappingProfile : Profile
     {

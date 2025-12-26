@@ -9,10 +9,8 @@ using System.Net.Http.Json;
 
 namespace FrontEASE.Client.Services.ApiServices.Shared.Resources
 {
-    public class ResourceApiService : ApiServiceBase, IResourceApiService
+    public class ResourceApiService(HttpClient client, IMapper mapper, IErrorHandlingService errorHandlingService) : ApiServiceBase(client, mapper, errorHandlingService), IResourceApiService
     {
-        public ResourceApiService(HttpClient client, IMapper mapper, IErrorHandlingService errorHandlingService) : base(client, mapper, errorHandlingService) { }
-
         public async Task<IList<ResourceDto>> LoadResources(LanguageCode language)
         {
             var url = string.Format($"{ResourcesControllerConstants.BaseUrl}/{ControllerConstants.All}?{ResourcesControllerConstants.LanguageParam}=" + "{0}", language);

@@ -9,34 +9,23 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FrontEASE.Domain.Services.Users
 {
-    public class UserService : IUserService
+    public class UserService(IUserRepository userRepository, IImageService imageService, AppSettings appSettings) : IUserService
     {
-        private readonly AppSettings _appSettings;
-        private readonly IImageService _imageService;
-        private readonly IUserRepository _userRepository;
-
-        public UserService(IUserRepository userRepository, IImageService imageService, AppSettings appSettings)
-        {
-            _imageService = imageService;
-            _userRepository = userRepository;
-            _appSettings = appSettings;
-        }
-
         public async Task<IList<ApplicationUser>> LoadAll(CancellationToken cancellationToken)
         {
-            var users = await _userRepository.LoadAll(cancellationToken);
+            var users = await userRepository.LoadAll(cancellationToken);
             return users;
         }
 
         public async Task<ApplicationUser?> Load(Guid id, CancellationToken cancellationToken)
         {
-            var user = await _userRepository.Load(id, cancellationToken) ?? throw new NotFoundException();
+            var user = await userRepository.Load(id, cancellationToken) ?? throw new NotFoundException();
             return user;
         }
 
         public async Task<ApplicationUser?> Load(string email, CancellationToken cancellationToken)
         {
-            var user = (await _userRepository.LoadWhere(u => 
+            var user = (await userRepository.LoadWhere(u => 
                 u.Email == email,
                 cancellationToken))
                 .FirstOrDefault() ?? throw new NotFoundException();
@@ -46,7 +35,7 @@ namespace FrontEASE.Domain.Services.Users
 
         public async Task<IList<ApplicationUser>> LoadDuplicities(ApplicationUser user, CancellationToken cancellationToken)
         {
-            var users = await _userRepository.LoadWhere(u =>
+            var users = await userRepository.LoadWhere(u =>
                 u.Email == user.Email ||
                 u.UserName == user.UserName,
                 cancellationToken);
@@ -76,7 +65,7 @@ namespace FrontEASE.Domain.Services.Users
             if (!string.IsNullOrEmpty(user?.Image?.ImageData))
             {
                 user!.Image!.Type = ImageType.USER_PROFILE_PICTURE;
-                await _imageService.SaveImage(newUser!.Image!, Guid.Parse(newUser.Id), cancellationToken);
+                await imageService.SaveImage(newUser!.Image!, Guid.Parse(newUser.Id), cancellationToken);
             }
             else
             {
@@ -86,7 +75,7 @@ namespace FrontEASE.Domain.Services.Users
                 }
             }
 
-            newUser = await _userRepository.Insert(newUser, cancellationToken);
+            newUser = await userRepository.Insert(newUser, cancellationToken);
             return newUser;
         }
 
@@ -99,7 +88,7 @@ namespace FrontEASE.Domain.Services.Users
             if (!string.IsNullOrEmpty(user?.Image?.ImageData))
             {
                 user!.Image!.Type = ImageType.USER_PROFILE_PICTURE;
-                await _imageService.SaveImage(user!.Image!, Guid.Parse(user.Id), cancellationToken);
+                await imageService.SaveImage(user!.Image!, Guid.Parse(user.Id), cancellationToken);
             }
             else
             {
@@ -109,15 +98,15 @@ namespace FrontEASE.Domain.Services.Users
                 }
             }
 
-            var updatedUser = await _userRepository.Update(user, cancellationToken);
+            var updatedUser = await userRepository.Update(user, cancellationToken);
             return updatedUser;
         }
 
         public async Task Delete(ApplicationUser user, CancellationToken cancellationToken)
         {
-            await _userRepository.Delete(user, cancellationToken);
+            await userRepository.Delete(user, cancellationToken);
             if (!string.IsNullOrEmpty(user?.Image?.ImageUrl))
-            { _imageService.DeleteImage(user?.Image!); }
+            { imageService.DeleteImage(user?.Image!); }
         }
 
         private IdentityUserRole<string> UserRoleToIdentityRole(UserRole role)
@@ -135,9 +124,9 @@ namespace FrontEASE.Domain.Services.Users
         {
             return role switch
             {
-                UserRole.USER => _appSettings.AuthSettings!.Defaults!.Roles!.UserGuid!.Value,
-                UserRole.ADMIN => _appSettings.AuthSettings!.Defaults!.Roles!.AdminGuid!.Value,
-                UserRole.OWNER => _appSettings.AuthSettings!.Defaults!.Roles!.SuperadminGuid!.Value,
+                UserRole.USER => appSettings.AuthSettings!.Defaults!.Roles!.UserGuid!.Value,
+                UserRole.ADMIN => appSettings.AuthSettings!.Defaults!.Roles!.AdminGuid!.Value,
+                UserRole.OWNER => appSettings.AuthSettings!.Defaults!.Roles!.SuperadminGuid!.Value,
                 _ => Guid.Empty,
             };
         }

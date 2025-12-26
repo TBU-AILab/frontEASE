@@ -31,6 +31,7 @@ using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Repeat
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Messages;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Shared;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Solutions;
+using FrontEASE.Application.Infrastructure.Mappings.Users;
 using FrontEASE.DataContracts.Models.Core;
 using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Infrastructure.Settings.App;
@@ -62,6 +63,7 @@ using FrontEASE.Infrastructure.Repositories.Shared.Resources;
 using FrontEASE.Infrastructure.Repositories.Tasks;
 using FrontEASE.Infrastructure.Repositories.Users;
 using FrontEASE.Server.Infrastructure.Hangfire.Attributes;
+using FrontEASE.Server.Infrastructure.Overrides.Auth;
 using FrontEASE.Server.Infrastructure.Overrides.Auth.Models;
 using FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions;
@@ -312,7 +314,7 @@ void SetupMonitoring()
         });
 
         var sentrySettings = settings?.SentrySettings!;
-        builder.WebHost.UseSentry(o =>
+        _ = builder.WebHost.UseSentry(o =>
         {
             o.Dsn = sentrySettings.DSN;
             o.Release = sentrySettings.Release;

@@ -38,16 +38,15 @@ using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.V
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.Values.Enums;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.Values.List;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.RepeatedMessage;
-using FrontEASE.Infrastructure.Data.Configuration.Tasks.Runs;
+using FrontEASE.Infrastructure.Data.Configuration.Tasks.Messages;
+using FrontEASE.Infrastructure.Data.Configuration.Tasks.Solutions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FrontEASE.Infrastructure.Data
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    public class ApplicationDbContext(DbContextOptions options) : IdentityDbContext<ApplicationUser>(options)
     {
-        public ApplicationDbContext(DbContextOptions options) : base(options)
-        { }
 
         /* App Control */
         public DbSet<JobLog> JobExecutions { get; set; }
@@ -90,7 +89,7 @@ namespace FrontEASE.Infrastructure.Data
             ApplyCustomConfigurations(builder);
         }
 
-        private void ApplyCustomConfigurations(ModelBuilder builder)
+        private static void ApplyCustomConfigurations(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new JobLogConfiguration());
 

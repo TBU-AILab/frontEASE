@@ -2,7 +2,7 @@
 using FrontEASE.Shared.Data.Enums.Tasks;
 using FrontEASE.Shared.Infrastructure.Attributes;
 
-namespace FrontEASE.Shared.Data.DTOs.Tasks
+namespace FrontEASE.Shared.Data.DTOs.Tasks.UI
 {
     /// <summary>
     /// DTO for simplified task information (multiple overview)

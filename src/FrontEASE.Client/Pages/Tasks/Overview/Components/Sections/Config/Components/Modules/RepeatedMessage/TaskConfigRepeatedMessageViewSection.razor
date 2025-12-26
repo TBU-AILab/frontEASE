@@ -15,13 +15,13 @@
             @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageDto>(nameof(TaskConfigRepeatedMessageDto.RepeatedMessageType), PropertyDisplayResourceType.FIELD))):
         </Text>
         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-            @($" {Task.Config.RepeatedMessage.RepeatedMessageType}")
+            @($" {TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageType}")
         </Span>
     </Column>
 
     <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
 
-    @foreach (var messageItem in Task.Config.RepeatedMessage.RepeatedMessageItems)
+    @foreach (var messageItem in TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageItems)
     {
         <Column ColumnSize="ColumnSize.Is3.OnWidescreen">
             <Text>
@@ -41,7 +41,7 @@
             </Span>
         </Column>
 
-        @if (messageItem != Task.Config.RepeatedMessage.RepeatedMessageItems.LastOrDefault())
+        @if (messageItem != TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageItems.LastOrDefault())
         {
             <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
         }
@@ -51,6 +51,5 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
-
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 }

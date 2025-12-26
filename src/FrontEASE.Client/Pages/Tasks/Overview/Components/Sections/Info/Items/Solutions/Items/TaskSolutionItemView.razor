@@ -4,8 +4,8 @@
 @inject Blazored.Toast.Services.IToastService toastService
 
 <Container Fluid
-           Class="@($"{(IsSelectable ? "cursor-pointer" : string.Empty)} {(TaskMetadata.SelectedMessageID == Solution.TaskMessageID ? "border-custom-info" : "border-custom-light")}")"
-           Border="@(TaskMetadata.SelectedMessageID == Solution.TaskMessageID ? Border.Is2.Rounded : Border.Is1.Rounded)"
+           Class="@($"{(IsSelectable ? "cursor-pointer" : string.Empty)} {(TaskModalContext.TaskMetadata.SelectedMessageID == Solution.TaskMessageID ? "border-custom-info" : "border-custom-light")}")"
+           Border="@(TaskModalContext.TaskMetadata.SelectedMessageID == Solution.TaskMessageID ? Border.Is2.Rounded : Border.Is1.Rounded)"
            @onclick="(async () => await SelectMessageSolution(Solution))"
            Shadow="Shadow.Small"
            Margin="Margin.Is2.FromTop"
@@ -67,10 +67,7 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
-
-    [Parameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     [Parameter]
     public TaskSolutionDto Solution { get; set; } = new();
@@ -85,7 +82,7 @@
     {
         SolutionDownloadsOngoing.Add(solution.ID);
 
-        var archiveName = $"{Task.Config.Name}_${solution.ID}";
+        var archiveName = $"{TaskModalContext.Task.Config.Name}_${solution.ID}";
         var fileSaved = await fileApiService.DownloadDirectory(archiveName, solution.ID, FileSpecification.TASK_SOLUTION_ARCHIVE);
         if (!fileSaved)
         {
@@ -104,8 +101,8 @@
         }
         else
         {
-            TaskMetadata.SelectedMessageID =
-            TaskMetadata.SelectedMessageID == solution.TaskMessageID ? null : solution.TaskMessageID;
+            TaskModalContext.TaskMetadata.SelectedMessageID =
+            TaskModalContext.TaskMetadata.SelectedMessageID == solution.TaskMessageID ? null : solution.TaskMessageID;
 
             await uiService.CallRequestRefreshAsync();
         }

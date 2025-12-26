@@ -14,18 +14,12 @@ namespace FrontEASE.Server.Controllers.Anonymous
     /// Controller for typelists retrieval.
     /// </summary>
     [Authorize]
-    public class TypelistsController : ApiControllerBase
+    public class TypelistsController(
+        ITypelistAppService typelistAppService,
+        IResourceHandler resourceHandler,
+        IResourceAppService resourceAppService,
+        AppSettings appSettings) : ApiControllerBase(resourceHandler, resourceAppService, appSettings)
     {
-        private readonly ITypelistAppService _typelistAppService;
-
-        public TypelistsController(
-            ITypelistAppService typelistAppService,
-            IResourceHandler resourceHandler,
-            IResourceAppService resourceAppService,
-            AppSettings appSettings) : base(resourceHandler, resourceAppService, appSettings)
-        {
-            _typelistAppService = typelistAppService;
-        }
 
         /// <summary>
         /// Gets the module types typelist.
@@ -39,7 +33,7 @@ namespace FrontEASE.Server.Controllers.Anonymous
             IActionResult result;
             try
             {
-                var response = await _typelistAppService.LoadModuleTypes(cancellationToken);
+                var response = await typelistAppService.LoadModuleTypes(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)

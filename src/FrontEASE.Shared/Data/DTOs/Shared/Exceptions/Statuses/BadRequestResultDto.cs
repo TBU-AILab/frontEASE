@@ -11,7 +11,7 @@ namespace FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses
         {
             StatusCode = HttpStatusCode.BadRequest;
 
-            Errors = new List<BadRequestErrorReason>();
+            Errors = [];
         }
 
         /// <summary>

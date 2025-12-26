@@ -6,26 +6,19 @@ using System.Globalization;
 
 namespace FrontEASE.Shared.Services.Resources
 {
-    public class ResourceHandler : IResourceHandler
+    public class ResourceHandler(IMemoryCache memoryCache) : IResourceHandler
     {
-        private readonly IMemoryCache _memoryCache;
-
         public LanguageCode CurrentLanguage { get; set; }
-
-        public ResourceHandler(IMemoryCache memoryCache)
-        {
-            _memoryCache = memoryCache;
-        }
 
         public bool CheckResourcesInitialized()
         {
-            var resourcesInited = _memoryCache.TryGetValue(CacheNameConstants.ResourcesDictionaryKey, out _);
+            var resourcesInited = memoryCache.TryGetValue(CacheNameConstants.ResourcesDictionaryKey, out _);
             return resourcesInited;
         }
 
         public string GetResource(string key)
         {
-            var dict = (IDictionary<string, string>?)_memoryCache.Get(CacheNameConstants.ResourcesDictionaryKey)!;
+            var dict = (IDictionary<string, string>?)memoryCache.Get(CacheNameConstants.ResourcesDictionaryKey)!;
 
             var value = string.Empty;
             dict?.TryGetValue(key, out value);
@@ -48,11 +41,11 @@ namespace FrontEASE.Shared.Services.Resources
 
         public void InitResources(IList<ResourceDto> resources)
         {
-            var dict = (IDictionary<string, string>?)_memoryCache.Get(CacheNameConstants.ResourcesDictionaryKey);
+            var dict = (IDictionary<string, string>?)memoryCache.Get(CacheNameConstants.ResourcesDictionaryKey);
             if (dict is null)
             {
                 var resourcesDict = resources.ToDictionary(item => item.ResourceCode, item => item.Value);
-                _memoryCache.Set(CacheNameConstants.ResourcesDictionaryKey, resourcesDict);
+                memoryCache.Set(CacheNameConstants.ResourcesDictionaryKey, resourcesDict);
             }
         }
     }

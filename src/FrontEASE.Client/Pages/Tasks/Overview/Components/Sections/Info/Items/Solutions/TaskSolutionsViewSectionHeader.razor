@@ -29,7 +29,7 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     private bool fullDownloadOngoing = false;
 
@@ -37,8 +37,8 @@
     {
         fullDownloadOngoing = true;
 
-        var archiveName = $"{Task.Config.Name} ({Task.ID})";
-        var fileSaved = await fileApiService.DownloadDirectory(archiveName, Task.ID, FileSpecification.TASK_FULL_ARCHIVE);
+        var archiveName = $"{TaskModalContext.Task.Config.Name} ({TaskModalContext.Task.ID})";
+        var fileSaved = await fileApiService.DownloadDirectory(archiveName, TaskModalContext.Task.ID, FileSpecification.TASK_FULL_ARCHIVE);
         if (!fileSaved)
         {
             var message = ($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Download}")} ({archiveName})");

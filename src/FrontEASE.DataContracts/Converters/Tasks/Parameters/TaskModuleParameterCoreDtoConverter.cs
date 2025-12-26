@@ -29,7 +29,7 @@ namespace FrontEASE.DataContracts.Converters.Tasks.Parameters
             var typeString = root.TryGetProperty(ParameterDtoConstants.Type, out var typeElement) ? typeElement.GetString() ?? string.Empty : string.Empty;
             var paramType = DynamicParamUtils.GetParameterType(typeString);
 
-            double? ReadDoubleAllowInfinity(JsonElement element)
+            static double? ReadDoubleAllowInfinity(JsonElement element)
             {
                 if (element.ValueKind == JsonValueKind.Number && element.TryGetDouble(out var num))
                     return num;

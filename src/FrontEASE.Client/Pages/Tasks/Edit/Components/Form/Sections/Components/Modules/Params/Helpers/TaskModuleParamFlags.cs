@@ -1,6 +1,6 @@
 ﻿using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.Parameters;
 
-namespace FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params.Helpers
+namespace FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Helpers
 {
     public class TaskModuleParamFlags
     {

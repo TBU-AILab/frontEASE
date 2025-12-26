@@ -8,15 +8,8 @@ namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific
 {
     namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic
     {
-        public class ParameterNumericRangeValidationAttribute : ValidationAttribute
+        public class ParameterNumericRangeValidationAttribute(bool nullable = false) : ValidationAttribute
         {
-            private readonly bool _nullable;
-
-            public ParameterNumericRangeValidationAttribute(bool nullable = false)
-            {
-                _nullable = nullable;
-            }
-
             protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
             {
                 if (validationContext.ObjectInstance is not TaskModuleParameterValueDto dto)
@@ -30,7 +23,7 @@ namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific
                 if (dto.Metadata is null || dto.Metadata.Readonly || (!validatableTypes.Any(x => x == dto.Metadata.Type)))
                 { return ValidationResult.Success!; }
 
-                if (_nullable && (value is null || string.IsNullOrEmpty(value.ToString())))
+                if (nullable && (value is null || string.IsNullOrEmpty(value.ToString())))
                 { return ValidationResult.Success!; }
 
                 var minValue = dto.Metadata.MinValue ?? (integerTypes.Contains(dto.Metadata.Type) ? int.MinValue : double.MinValue);

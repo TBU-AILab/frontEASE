@@ -14,28 +14,13 @@ using FrontEASE.Shared.Infrastructure.Utils.Extensions;
 
 namespace FrontEASE.Domain.Services.Tasks
 {
-    public class TaskService : ITaskService
+    public class TaskService(
+        ITaskRepository taskRepository,
+        IUserRepository userRepository,
+        ICompanyRepository companyRepository,
+        ICoreConnector coreService,
+        IMapper mapper) : ITaskService
     {
-        private readonly ITaskRepository _taskRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly ICompanyRepository _companyRepository;
-        private readonly ICoreConnector _coreService;
-        private readonly IMapper _mapper;
-
-        public TaskService(
-            ITaskRepository taskRepository,
-            IUserRepository userRepository,
-            ICompanyRepository companyRepository,
-            ICoreConnector coreService,
-            IMapper mapper)
-        {
-            _userRepository = userRepository;
-            _taskRepository = taskRepository;
-            _companyRepository = companyRepository;
-            _coreService = coreService;
-            _mapper = mapper;
-        }
-
         private static TasksQuery GetFullQuery()
         {
             var query = new TasksQuery()
@@ -76,53 +61,53 @@ namespace FrontEASE.Domain.Services.Tasks
 
         public async Task<Entities.Tasks.Task> Load(Guid id, CancellationToken cancellationToken)
         {
-            var task = await _taskRepository.Load(id, GetFullQuery(), cancellationToken) ?? throw new NotFoundException();
+            var task = await taskRepository.Load(id, GetFullQuery(), cancellationToken) ?? throw new NotFoundException();
             return task;
         }
 
         public async Task<Entities.Tasks.Task> LoadSimple(Guid id, CancellationToken cancellationToken)
         {
-            var task = await _taskRepository.Load(id, GetBaseQuery(), cancellationToken) ?? throw new NotFoundException();
+            var task = await taskRepository.Load(id, GetBaseQuery(), cancellationToken) ?? throw new NotFoundException();
             return task;
         }
 
         public async Task<Entities.Tasks.Task> LoadAccess(Guid id, CancellationToken cancellationToken)
         {
-            var task = await _taskRepository.Load(id, GetAccessQuery(), cancellationToken) ?? throw new NotFoundException();
+            var task = await taskRepository.Load(id, GetAccessQuery(), cancellationToken) ?? throw new NotFoundException();
             return task;
         }
 
         public async Task<IList<Entities.Tasks.Task>> Load(IList<Guid> ids, CancellationToken cancellationToken)
         {
-            var tasks = await _taskRepository.Load(ids, GetFullQuery(), cancellationToken) ?? throw new NotFoundException();
+            var tasks = await taskRepository.Load(ids, GetFullQuery(), cancellationToken) ?? throw new NotFoundException();
             return tasks;
         }
 
         public async Task<IList<Entities.Tasks.Task>> LoadAll(Guid? userID, TaskFilterActionRequest? filter, CancellationToken cancellationToken)
         {
-            var tasks = await _taskRepository.LoadInfo(userID, filter, cancellationToken);
+            var tasks = await taskRepository.LoadInfo(userID, filter, cancellationToken);
             return tasks;
         }
 
         public async Task<IList<Entities.Tasks.Task>> LoadAllBase(Guid? userID, TaskFilterActionRequest? filter, CancellationToken cancellationToken)
         {
-            var tasks = await _taskRepository.LoadInfoBase(userID, filter, cancellationToken);
+            var tasks = await taskRepository.LoadInfoBase(userID, filter, cancellationToken);
             return tasks;
         }
 
         public async Task<Entities.Tasks.Task> Create(Entities.Tasks.Task task, CancellationToken cancellationToken)
         {
-            var author = await _userRepository.Load(task.AuthorID, cancellationToken);
+            var author = await userRepository.Load(task.AuthorID, cancellationToken);
             task.Members.Add(author!);
 
-            await _coreService.HandleTaskCreate(task, cancellationToken);
-            var inserted = await _taskRepository.Insert(task, cancellationToken);
+            await coreService.HandleTaskCreate(task, cancellationToken);
+            var inserted = await taskRepository.Insert(task, cancellationToken);
             return inserted!;
         }
 
         public async Task<IList<TaskModule>> RefreshOptions(Entities.Tasks.Task task, CancellationToken cancellationToken)
         {
-            await _coreService.RefreshTaskOptions(task, cancellationToken);
+            await coreService.RefreshTaskOptions(task, cancellationToken);
             return task.Config.AvailableModules;
         }
 
@@ -132,7 +117,7 @@ namespace FrontEASE.Domain.Services.Tasks
             var connectedEntities = await SelectConnectedEntities(task, cancellationToken);
             UpdateConnectedEntities(updated, connectedEntities);
 
-            updated = await _taskRepository.Update(updated, cancellationToken);
+            updated = await taskRepository.Update(updated, cancellationToken);
             return updated;
         }
 
@@ -141,21 +126,21 @@ namespace FrontEASE.Domain.Services.Tasks
             var updated = await Load(task.ID, cancellationToken);
             var connectedEntities = await SelectConnectedEntities(task, cancellationToken);
 
-            _mapper.Map(task, updated);
+            mapper.Map(task, updated);
             UpdateConnectedEntities(updated, connectedEntities);
-            await _coreService.HandleTaskInit(updated, cancellationToken);
+            await coreService.HandleTaskInit(updated, cancellationToken);
 
-            updated = await _taskRepository.Update(updated, cancellationToken);
+            updated = await taskRepository.Update(updated, cancellationToken);
             return updated;
         }
 
         public async Task<IList<Entities.Tasks.Task>> Duplicate(Entities.Tasks.Task task, string baseName, int copies, CancellationToken cancellationToken)
         {
             var duplicates = new List<Entities.Tasks.Task>();
-            for (int i = 0; i < copies; i++)
+            for (var i = 0; i < copies; i++)
             {
                 var newTask = new Entities.Tasks.Task();
-                _mapper.Map(task, newTask);
+                mapper.Map(task, newTask);
                 newTask.AuthorID = task.AuthorID;
 
                 var connectedEntities = await SelectConnectedEntities(task, cancellationToken);
@@ -165,8 +150,8 @@ namespace FrontEASE.Domain.Services.Tasks
                 duplicates.Add(newTask);
             }
 
-            await _coreService.HandleTaskDuplicate(duplicates, task.ID, baseName, copies, cancellationToken);
-            var duplicated = await _taskRepository.InsertRange(duplicates, true, cancellationToken);
+            await coreService.HandleTaskDuplicate(duplicates, task.ID, baseName, copies, cancellationToken);
+            var duplicated = await taskRepository.InsertRange(duplicates, true, cancellationToken);
             return duplicated;
         }
 
@@ -178,8 +163,8 @@ namespace FrontEASE.Domain.Services.Tasks
                 await ChangeState(runningTasks, TaskState.BREAK, cancellationToken);
             }
 
-            await _coreService.HandleTaskDelete(tasks, cancellationToken);
-            await _taskRepository.DeleteRange(tasks, false, true, cancellationToken);
+            await coreService.HandleTaskDelete(tasks, cancellationToken);
+            await taskRepository.DeleteRange(tasks, false, true, cancellationToken);
         }
 
         public async Task ChangeState(IList<Entities.Tasks.Task> modifiedTasks, TaskState state, CancellationToken cancellationToken)
@@ -187,25 +172,25 @@ namespace FrontEASE.Domain.Services.Tasks
             switch (state)
             {
                 case TaskState.RUN:
-                    await _coreService.ChangeTaskState(modifiedTasks, TaskState.RUN, cancellationToken);
+                    await coreService.ChangeTaskState(modifiedTasks, TaskState.RUN, cancellationToken);
                     break;
                 case TaskState.STOP:
-                    await _coreService.ChangeTaskState(modifiedTasks, TaskState.STOP, cancellationToken);
+                    await coreService.ChangeTaskState(modifiedTasks, TaskState.STOP, cancellationToken);
                     break;
                 case TaskState.PAUSED:
-                    await _coreService.ChangeTaskState(modifiedTasks, TaskState.PAUSED, cancellationToken);
+                    await coreService.ChangeTaskState(modifiedTasks, TaskState.PAUSED, cancellationToken);
                     break;
             }
-            await _taskRepository.UpdateRange(modifiedTasks, cancellationToken);
+            await taskRepository.UpdateRange(modifiedTasks, cancellationToken);
         }
 
         private async Task<(IList<ApplicationUser> Users, IList<Company> Companies)> SelectConnectedEntities(Entities.Tasks.Task sourceTask, CancellationToken cancellationToken)
         {
             var linkedUserIDs = sourceTask.Members.Select(x => x.Id);
-            var linkedUsers = await _userRepository.LoadWhere(x => linkedUserIDs.Contains(x.Id), cancellationToken);
+            var linkedUsers = await userRepository.LoadWhere(x => linkedUserIDs.Contains(x.Id), cancellationToken);
 
             var linkedCompanyIDs = sourceTask.MemberGroups.Select(x => x.ID);
-            var linkedCompanies = await _companyRepository.LoadWhere(x => linkedCompanyIDs.Contains(x.ID), cancellationToken);
+            var linkedCompanies = await companyRepository.LoadWhere(x => linkedCompanyIDs.Contains(x.ID), cancellationToken);
 
             return new(linkedUsers, linkedCompanies);
         }

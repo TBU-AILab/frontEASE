@@ -1,6 +1,7 @@
 ﻿@inject IResourceHandler resourceHandler
+@inject ITaskManipulationService taskManipulationService
 
-@if (AvailableParams?.Count > 0)
+@if (TaskModuleContext.ModuleData?.Parameters?.Count > 0)
 {
     <Row Padding="Padding.Is2" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small" Margin="Margin.Is3.FromTop.Is3.FromBottom" TextOverflow="TextOverflow.Wrap">
         <Column ColumnSize="ColumnSize.IsFull" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseState" Padding="Padding.Is2" Shadow="Shadow.Small">
@@ -20,11 +21,12 @@
                         <Container Fluid Margin="Margin.Is3.FromTop">
                             <Row Padding="Padding.Is0" Flex="Flex.ReverseRow">
 
-                                @foreach (var paramValue in Module.Parameters)
+                                @foreach (var paramValue in TaskModuleContext.Module.Parameters)
                                 {
-                                    var paramOption = AvailableParams.SingleOrDefault(x => x.ShortName == paramValue.ShortName);
+                                    var paramOption = TaskModuleContext.ModuleData?.Parameters.SingleOrDefault(x => x.ShortName == paramValue.ShortName);
+                                    var paramContext = taskManipulationService.GetParamContext(paramOption!, paramValue, TaskModuleContext.Module);
                                     <Fields>
-                                        <TaskModuleParamValueView Task="Task" ParamOption="paramOption" ParamValue="paramValue" Module="Module" />
+                                        <TaskModuleParamValueView TaskModalContext="TaskModalContext" TaskModuleContext="TaskModuleContext" TaskModuleParamContext="paramContext" />
                                     </Fields>
                                 }
                             </Row>
@@ -38,20 +40,16 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     [Parameter]
-    public TaskModuleDto Module { get; set; } = new();
-
-    [Parameter]
-    public IList<TaskModuleParameterNoValidationDto> AvailableParams { get; set; } = null!;
-
+    public TaskModuleContext TaskModuleContext { get; set; } = null!;
 
     private bool isSectionCollapsed = true;
 
     protected override async Task OnInitializedAsync()
     {
-        isSectionCollapsed = !(Module.Parameters?.Count > 0);
+        isSectionCollapsed = !(TaskModuleContext.Module.Parameters?.Count > 0);
         await base.OnInitializedAsync();
     }
 

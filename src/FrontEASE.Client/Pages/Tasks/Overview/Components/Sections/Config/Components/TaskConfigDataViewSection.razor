@@ -13,33 +13,33 @@
         <Container Fluid>
             <Row>
 
-                @if (!string.IsNullOrEmpty(Task.Config.SystemMessage))
+                @if (!string.IsNullOrEmpty(TaskModalContext.Task.Config.SystemMessage))
                 {
                     <Column ColumnSize="ColumnSize.Is12.OnWidescreen">
                         <Text>
                             @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.FIELD))):
                         </Text>
                         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                            @($" \"{Task.Config.SystemMessage}\"")
+                            @($" \"{TaskModalContext.Task.Config.SystemMessage}\"")
                         </Span>
                     </Column>
                 }
 
-                @if (!string.IsNullOrEmpty(Task.Config.InitialMessage))
+                @if (!string.IsNullOrEmpty(TaskModalContext.Task.Config.InitialMessage))
                 {
                     <Column ColumnSize="ColumnSize.IsFull">
                         <Text>
                             @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitialMessage), PropertyDisplayResourceType.FIELD))):
                         </Text>
                         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                            @($" \"{Task.Config.InitialMessage}\"")
+                            @($" \"{TaskModalContext.Task.Config.InitialMessage}\"")
                         </Span>
                     </Column>
                 }
 
             </Row>
 
-            <TaskConfigRepeatedMessageViewSection Task="Task" />
+            <TaskConfigRepeatedMessageViewSection TaskModalContext="TaskModalContext" />
 
             <Row>
                 <Column ColumnSize="ColumnSize.IsFull">
@@ -47,7 +47,7 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD))):
                     </Text>
                     <Span TextWeight="TextWeight.Bold">
-                        @($" {Task.Config.MaxContextSize}")
+                        @($" {TaskModalContext.Task.Config.MaxContextSize}")
                     </Span>
                 </Column>
 
@@ -56,7 +56,7 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.FeedbackFromSolution), PropertyDisplayResourceType.FIELD))):
                     </Text>
                     <Span TextWeight="TextWeight.Bold">
-                        @($" {(Task.Config.FeedbackFromSolution ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))}")
+                        @($" {(TaskModalContext.Task.Config.FeedbackFromSolution ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))}")
                     </Span>
                 </Column>
 
@@ -67,5 +67,5 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 }

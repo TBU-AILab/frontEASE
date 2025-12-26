@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Base
+namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Base.Manual
 {
     public class EntityBaseManualStampConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : EntityBaseManualStamp
     {

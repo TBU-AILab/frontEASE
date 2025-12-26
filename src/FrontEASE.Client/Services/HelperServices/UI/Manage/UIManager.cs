@@ -6,24 +6,17 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace FrontEASE.Client.Services.HelperServices.UI.Manage
 {
-    public class UIManager : IUIManager
+    public class UIManager(IMemoryCache memoryCache) : IUIManager
     {
-        public Theme Theme { get; private set; }
-        private readonly IMemoryCache _memoryCache;
-
-        public UIManager(IMemoryCache memoryCache)
-        {
-            Theme = new Theme();
-            _memoryCache = memoryCache;
-        }
+        public Theme Theme { get; private set; } = new Theme();
 
         public bool CheckPreferencesInitialized()
         {
-            var resourcesInited = _memoryCache.TryGetValue(CacheNameConstants.PreferencesDictionaryKey, out _);
+            var resourcesInited = memoryCache.TryGetValue(CacheNameConstants.PreferencesDictionaryKey, out _);
             return resourcesInited;
         }
 
-        public void InitPreferences(UserPreferencesDto userPrefs) => _memoryCache.Set(CacheNameConstants.PreferencesDictionaryKey, userPrefs);
+        public void InitPreferences(UserPreferencesDto userPrefs) => memoryCache.Set(CacheNameConstants.PreferencesDictionaryKey, userPrefs);
 
         public void HandleUIPreferencesStateChange(UserPreferencesDto? userPrefs)
         {

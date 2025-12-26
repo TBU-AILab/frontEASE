@@ -30,23 +30,20 @@ else
                 {
                     <Column ColumnSize="ColumnSize.IsFull">
                         <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
-                            @if (!GlobalPreferences.CorePackages.Any(x => !x.System))
-                            {
-                                <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
-                                    <Heading Size="HeadingSize.Is4" TextColor="TextColor.Dark" TextWeight="TextWeight.Bold">
-                                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(GlobalPreferenceCorePackageDto)}.{ManagementMetadataConstants.System}.{UIElementConstants.Collection}"))
-                                    </Heading>
-                                </Column>
-                            }
-                            else
-                            {
-                                @foreach (var package in GlobalPreferences.CorePackages.Where(x => !x.System))
-                                {
+                            <Virtualize Items="GlobalPreferences.CorePackages.Where(x => !x.System).ToList()" Context="package">
+                                <ItemContent>
                                     <Column ColumnSize="ColumnSize.Is3.OnWidescreen.Is4.OnTablet">
                                         <CorePackageListItem Package="package" GlobalPreferences="GlobalPreferences" />
                                     </Column>
-                                }
-                            }
+                                </ItemContent>
+                                <EmptyContent>
+                                    <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                                        <Heading Size="HeadingSize.Is4" TextColor="TextColor.Dark" TextWeight="TextWeight.Bold">
+                                            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(GlobalPreferenceCorePackageDto)}.{ManagementMetadataConstants.System}.{UIElementConstants.Collection}"))
+                                        </Heading>
+                                    </Column>
+                                </EmptyContent>
+                            </Virtualize>
                         </Row>
                     </Column>
                 }
@@ -67,23 +64,20 @@ else
             {
                 <Column ColumnSize="ColumnSize.IsFull">
                     <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
-                        @if (!GlobalPreferences.CorePackages.Any(x => x.System))
-                        {
-                            <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
-                                <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold">
-                                    @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(GlobalPreferenceCorePackageDto)}.{ManagementMetadataConstants.System}.{UIElementConstants.Collection}"))
-                                </Heading>
-                            </Column>
-                        }
-                        else
-                        {
-                            @foreach (var package in GlobalPreferences.CorePackages.Where(x => x.System))
-                            {
+                        <Virtualize Items="GlobalPreferences.CorePackages.Where(x => x.System).ToList()" Context="package">
+                            <ItemContent>
                                 <Column ColumnSize="ColumnSize.Is3.OnWidescreen.Is4.OnTablet">
                                     <CorePackageListItem GlobalPreferences="GlobalPreferences" Package="package" />
                                 </Column>
-                            }
-                        }
+                            </ItemContent>
+                            <EmptyContent>
+                                <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                                    <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold">
+                                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(GlobalPreferenceCorePackageDto)}.{ManagementMetadataConstants.System}.{UIElementConstants.Collection}"))
+                                    </Heading>
+                                </Column>
+                            </EmptyContent>
+                        </Virtualize>
                     </Row>
                 </Column>
             }

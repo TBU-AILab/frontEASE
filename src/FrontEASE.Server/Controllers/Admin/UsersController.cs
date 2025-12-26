@@ -18,18 +18,12 @@ namespace FrontEASE.Server.Controllers.Admin
     /// Controller for user management.
     /// </summary>
     [Authorize]
-    public class UsersController : ApiControllerBase
+    public class UsersController(
+        IUserAppService userAppService,
+        IResourceHandler resourceHandler,
+        IResourceAppService resourceAppService,
+        AppSettings appSettings) : ApiControllerBase(resourceHandler, resourceAppService, appSettings)
     {
-        private readonly IUserAppService _userAppService;
-
-        public UsersController(
-            IUserAppService userAppService,
-            IResourceHandler resourceHandler,
-            IResourceAppService resourceAppService,
-            AppSettings appSettings) : base(resourceHandler, resourceAppService, appSettings)
-        {
-            _userAppService = userAppService;
-        }
 
         /// <summary>
         /// Gets user by ID
@@ -43,7 +37,7 @@ namespace FrontEASE.Server.Controllers.Admin
             IActionResult result;
             try
             {
-                var response = await _userAppService.Load(cancellationToken);
+                var response = await userAppService.Load(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -66,7 +60,7 @@ namespace FrontEASE.Server.Controllers.Admin
             IActionResult result;
             try
             {
-                var response = await _userAppService.LoadAll(cancellationToken);
+                var response = await userAppService.LoadAll(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -93,7 +87,7 @@ namespace FrontEASE.Server.Controllers.Admin
             try
             {
                 ValidateModel();
-                var response = await _userAppService.Create(user, CancellationToken.None);
+                var response = await userAppService.Create(user, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.Created, response, nameof(InsertUser));
             }
             catch (Exception ex)
@@ -121,7 +115,7 @@ namespace FrontEASE.Server.Controllers.Admin
             try
             {
                 ValidateModel();
-                var updatedUser = await _userAppService.Update(user, CancellationToken.None);
+                var updatedUser = await userAppService.Update(user, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, updatedUser);
             }
             catch (Exception ex)
@@ -147,7 +141,7 @@ namespace FrontEASE.Server.Controllers.Admin
             IActionResult result;
             try
             {
-                await _userAppService.Delete(id, CancellationToken.None);
+                await userAppService.Delete(id, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent, null);
             }
             catch (Exception ex)

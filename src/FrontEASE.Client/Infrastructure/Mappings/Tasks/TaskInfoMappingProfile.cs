@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using FrontEASE.Shared.Data.DTOs.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
+using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 
 namespace FrontEASE.Client.Infrastructure.Mappings.Tasks
 {

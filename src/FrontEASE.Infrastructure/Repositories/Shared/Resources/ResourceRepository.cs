@@ -7,18 +7,11 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FrontEASE.Infrastructure.Repositories.Shared.Resources
 {
-    public class ResourceRepository : IResourceRepository
+    public class ResourceRepository(ApplicationDbContext dataContext) : IResourceRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public ResourceRepository(ApplicationDbContext dataContext)
-        {
-            _context = dataContext;
-        }
-
         public async Task<Resource?> Load(LanguageCode language, string resourceCode, CancellationToken cancellationToken)
         {
-            var resource = await _context.Resources
+            var resource = await dataContext.Resources
                 .AsNoTracking()
                 .Where(x =>
                     x.CountryCodeID == language &&
@@ -30,14 +23,14 @@ namespace FrontEASE.Infrastructure.Repositories.Shared.Resources
 
         public async Task<IList<Resource>> LoadAll(LanguageCode language, CancellationToken cancellationToken)
         {
-            var resources = await _context.Resources
+            var resources = await dataContext.Resources
                 .AsNoTracking()
                 .Where(x => x.CountryCodeID == language)
             .ToListAsync(cancellationToken) ?? [];
             return resources;
         }
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken) => await _context.SaveChangesAsync(cancellationToken);
-        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken) => await _context.Database.BeginTransactionAsync(cancellationToken);
+        public async Task SaveChangesAsync(CancellationToken cancellationToken) => await dataContext.SaveChangesAsync(cancellationToken);
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken) => await dataContext.Database.BeginTransactionAsync(cancellationToken);
     }
 }

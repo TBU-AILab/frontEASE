@@ -9,7 +9,7 @@ namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             var description = context.ApiDescription;
-            if (description?.HttpMethod?.ToLower() != HttpMethod.Get.ToString().ToLower())
+            if (!(description.HttpMethod!.ToLower()).Equals(HttpMethod.Get.ToString(), StringComparison.CurrentCultureIgnoreCase))
             {
                 // We only want to do this for GET requests, if this is not a
                 // GET request, leave this operation as is, do not modify
@@ -17,9 +17,7 @@ namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
             }
 
             var actionParameters = description?.ActionDescriptor.Parameters;
-            var apiParameters = description?.ParameterDescriptions
-                    .Where(p => p.Source.IsFromRequest)
-                    .ToList();
+            var apiParameters = description?.ParameterDescriptions.Where(p => p.Source.IsFromRequest).ToList();
 
             if (actionParameters?.Count == apiParameters?.Count)
             {
@@ -30,7 +28,7 @@ namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
             operation.Parameters = CreateParameters(actionParameters!, operation.Parameters, context);
         }
 
-        private IList<IOpenApiParameter>? CreateParameters(
+        private static IList<IOpenApiParameter>? CreateParameters(
             IList<ParameterDescriptor> actionParameters,
             IList<IOpenApiParameter>? operationParameters,
             OperationFilterContext context)

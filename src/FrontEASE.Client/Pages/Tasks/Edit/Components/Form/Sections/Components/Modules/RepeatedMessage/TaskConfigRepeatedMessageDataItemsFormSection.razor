@@ -8,7 +8,7 @@
                 <Column ColumnSize="ColumnSize.Is10" Class="align-self-center">
                     <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageDto>(nameof(TaskConfigRepeatedMessageDto.RepeatedMessageItems), PropertyDisplayResourceType.FIELD)))" />
                 </Column>
-                @if (!TaskMetadata.InitializationInProgres)
+                @if (!TaskModalContext.TaskMetadata.InitializationInProgres)
                 {
                     <Column ColumnSize="ColumnSize.Is2" TextAlignment="TextAlignment.End" Class="align-self-center">
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Data}.{nameof(TaskConfigRepeatedMessageDto.RepeatedMessageItems)}.{UIStateConstants.Explanation}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
@@ -29,10 +29,9 @@
 
 <Column ColumnSize="ColumnSize.Is12">
     <Container Fluid>
-        @foreach (var repeatedMessageItem in Task.Config.RepeatedMessage.RepeatedMessageItems)
+        @foreach (var repeatedMessageItem in TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageItems)
         {
             var itemID = Guid.NewGuid();
-
             <Fields Class="form-group">
 
                 <Validation>
@@ -41,7 +40,7 @@
                             @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Weight), PropertyDisplayResourceType.FIELD)))
                         </FieldLabel>
                         <NumericEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageItemDto.Weight), itemID))"
-                                     Disabled="@(TaskMetadata.InitializationInProgres)"
+                                     Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                                      @bind-Value="@repeatedMessageItem.Weight"
                                      Min="0"
                                      Max="1"
@@ -59,7 +58,7 @@
                             @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.FIELD)))
                         </FieldLabel>
                         <MemoEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageItemDto.Content), itemID))"
-                                  Disabled="@(TaskMetadata.InitializationInProgres)"
+                                  Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                                   AutoSize="false" Rows="1"
                                   Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.PLACEHOLDER)))"
                                   @bind-Text="@repeatedMessageItem.Content">
@@ -70,7 +69,7 @@
                     </Field>
                 </Validation>
 
-                @if (!TaskMetadata.InitializationInProgres)
+                @if (!TaskModalContext.TaskMetadata.InitializationInProgres)
                 {
                     <Field ColumnSize="ColumnSize.Is1.OnWidescreen" Display="Display.Flex" Class="alignment-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Style="gap: 25px;" Margin="Margin.Is2.FromTop">
                         <Div Class="vertical-divider" />
@@ -88,21 +87,15 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
-    [Parameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
+    private string GetElementIdByOperation(string elementBase, Guid randomString) => VisualisationHelper.GetElementIdByOperation<TaskConfigRepeatedMessageItemDto>(elementBase, TaskModalContext.Operation, $"{TaskModalContext.Task.ID.ToString()}{randomString}");
 
-    [Parameter]
-    public DataOperation DataOperation { get; set; }
-
-    private string GetElementIdByOperation(string elementBase, Guid randomString) => VisualisationHelper.GetElementIdByOperation<TaskConfigRepeatedMessageItemDto>(elementBase, DataOperation, $"{Task.ID.ToString()}{randomString}");
-
-    private void AddNewTaskRepeatedMessageItem() => taskManipulationService.AddTaskRepeatedMessageItem(Task);
+    private void AddNewTaskRepeatedMessageItem() => taskManipulationService.AddTaskRepeatedMessageItem(TaskModalContext.Task);
 
     private Task RemoveTaskRepeatedMessageItem(object eventArgs, TaskConfigRepeatedMessageItemDto item)
     {
-        taskManipulationService.RemoveTaskRepeatedMessageItem(Task, item);
+        taskManipulationService.RemoveTaskRepeatedMessageItem(TaskModalContext.Task, item);
         return System.Threading.Tasks.Task.CompletedTask;
     }
 }

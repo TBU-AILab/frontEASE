@@ -2,95 +2,97 @@
 @inject IResourceHandler resourceHandler
 
 @{
-    var parameterType = DynamicParamUtils.GetParameterType(ParamValue.Type);
-    IsListParam = parameterType == ParameterType.LIST;
-    IsTokenParam = Module?.PackageType == ModuleType.LLM_CONNECTOR && ParamOption?.ShortName?.Contains(TaskMetadataConstants.Token) == true;
-    IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(ParamOption, ParamValue);
-    (IsDefaultPresent, var defaultValue) = taskManipulationService.ExtractDefaultValue(ParamOption);
-    SkipLabel = parameterType == ParameterType.ENUM && ParamOption?.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
-
-    var parameterName = ParamOption?.LongName ?? ParamValue.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
+    IsListParam = TaskModuleParamContext.ParamType == ParameterType.LIST;
+    IsTokenParam = TaskModuleContext.Module?.PackageType == ModuleType.LLM_CONNECTOR && TaskModuleParamContext.ParamOption?.ShortName?.Contains(TaskMetadataConstants.Token) == true;
+    IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
+    (IsDefaultPresent, var defaultValue) = taskManipulationService.ExtractDefaultValue(TaskModuleParamContext.ParamOption);
+    SkipLabel = TaskModuleParamContext.ParamType == ParameterType.ENUM && TaskModuleParamContext.ParamOption?.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
     var isSpecialCase = IsTokenParam;
 }
 
 @if (!isSpecialCase)
 {
-    @if (parameterType is not null)
+    @if (TaskModuleParamContext.ParamType is not null)
     {
         <Field ColumnSize="@(DisplayActions? ColumnSize.Is10.OnWidescreen : ColumnSize.IsFull)" Padding="Padding.Is1.FromTop">
             @if (!SkipLabel)
             {
                 <Text>
-                    @($"{parameterName}: ")
+                    @($"{TaskModuleParamContext.ParamName}: ")
                 </Text>
             }
 
-            @if (ParamValue.Value is not null)
+            @if (TaskModuleParamContext.ParamValue?.Value is not null)
             {
-                @switch (parameterType)
+                @switch (TaskModuleParamContext.ParamType)
                 {
                     case ParameterType.STR:
                         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                            @($" {ParamValue.Value!.StringValue}")
+                            @($" {TaskModuleParamContext.ParamValue?.Value!.StringValue}")
                         </Span>
                         break;
 
                     case ParameterType.MARKDOWN:
                         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                            @($" {(MarkupString)Markdig.Markdown.ToHtml(ParamValue.Value!.StringValue ?? string.Empty)}")
+                            @($" {(MarkupString)Markdig.Markdown.ToHtml(TaskModuleParamContext.ParamValue?.Value!.StringValue ?? string.Empty)}")
                         </Span>
                         break;
 
                     case ParameterType.INT:
                         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                            @($" {ParamValue.Value!.IntValue}")
+                            @($" {TaskModuleParamContext.ParamValue?.Value!.IntValue}")
                         </Span>
                         break;
 
                     case ParameterType.TIME:
                         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                            @($"{ParameterTimeHelper.FormatTimeValueForDisplay(ParamValue.Value?.IntValue, resourceHandler)}")
+                            @($"{ParameterTimeHelper.FormatTimeValueForDisplay(TaskModuleParamContext.ParamValue?.Value?.IntValue, resourceHandler)}")
                         </Span>
                         break;
 
                     case ParameterType.FLOAT:
                         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                            @($" {Math.Round((double)ParamValue.Value!.FloatValue!, 4)}")
+                            @($" {Math.Round((double)TaskModuleParamContext.ParamValue!.Value!.FloatValue!, 4)}")
                         </Span>
                         break;
 
                     case ParameterType.ENUM:
-                        @if (!string.IsNullOrWhiteSpace(ParamValue.Value!.EnumValue?.StringValue))
+                        @if (!string.IsNullOrWhiteSpace(TaskModuleParamContext.ParamValue?.Value!.EnumValue?.StringValue))
                         {
                             var longName = (string?)null;
-                            var longNameIndex = ParamOption?.EnumOptions?.Select(x => x.StringValue).ToList().FindIndex(x => x == ParamValue!.Value!.EnumValue!.StringValue);
-                            @if (ParamOption?.EnumLongNames?.Count > 0 && longNameIndex >= 0)
+                            var longNameIndex = TaskModuleParamContext.ParamOption?.EnumOptions?.Select(x => x.StringValue).ToList().FindIndex(x => x == TaskModuleParamContext!.ParamValue!.Value!.EnumValue!.StringValue);
+                            @if (TaskModuleParamContext.ParamOption?.EnumLongNames?.Count > 0 && longNameIndex >= 0)
                             {
-                                longName = ParamOption.EnumLongNames?.ElementAtOrDefault(longNameIndex.Value);
+                                longName = TaskModuleParamContext.ParamOption!.EnumLongNames?.ElementAtOrDefault(longNameIndex.Value);
                             }
 
                             <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                                @(longName ?? ParamValue.Value!.EnumValue!.StringValue)
+                                @(longName ?? TaskModuleParamContext.ParamValue!.Value!.EnumValue!.StringValue)
                             </Span>
                         }
-                        else if (ParamValue.Value!.EnumValue?.ModuleValue is not null)
+                        else if (TaskModuleParamContext.ParamValue!.Value!.EnumValue?.ModuleValue is not null)
                         {
-                            var moduleType = ParamValue.Value!.EnumValue?.ModuleValue.PackageType;
-                            var moduleOptions = ParamOption?.EnumOptions?.Select(x => x.ModuleValue).ToList();
+                            var moduleType = TaskModuleParamContext.ParamValue?.Value!.EnumValue?.ModuleValue?.PackageType;
+                            var moduleOptions = TaskModuleParamContext.ParamOption?.EnumOptions?.Select(x => x.ModuleValue).ToList();
+                            var module = TaskModuleParamContext.ParamValue!.Value!.EnumValue!.ModuleValue;
 
-                            <TaskModuleDataViewSection Task="Task" ModuleOptions="@moduleOptions" Module="@ParamValue.Value!.EnumValue!.ModuleValue" ModuleName="@parameterName" />
+                            var moduleContext = new TaskModuleContext(module!, moduleOptions!, TaskModuleParamContext.ParamName)
+                            {
+                                ModuleType = moduleType
+                            };
+                            <TaskModuleDataViewSection TaskModalContext="TaskModalContext" TaskModuleContext="moduleContext" />
                         }
                         break;
 
                     case ParameterType.BOOL:
                         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                            @if (ParamValue.Value!.BoolValue is null)
+                            @if (TaskModuleParamContext.ParamValue!.Value!.BoolValue is null)
                             {
                                 @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
                             }
                             else
                             {
-                                @(ParamValue.Value!.BoolValue!.Value ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))
+                                @(TaskModuleParamContext.ParamValue.Value!.BoolValue!.Value ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))
                             }
                         </Span>
                         break;
@@ -98,7 +100,7 @@
 
                     case ParameterType.LIST:
                         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                            @if (!(ParamValue.Value!.ListValue?.ParameterValues.Count > 0))
+                            @if (!(TaskModuleParamContext.ParamValue!.Value!.ListValue?.ParameterValues.Count > 0))
                             {
                                 @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")
                             }
@@ -107,17 +109,18 @@
                         <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
                         <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
 
-                        foreach (var listItem in ParamValue.Value!.ListValue!.ParameterValues)
+                        foreach (var listItem in TaskModuleParamContext.ParamValue!.Value!.ListValue!.ParameterValues)
                         {
                             @foreach (var paramItem in listItem.ParameterItems)
                             {
                                 if (paramItem.Value is not null)
                                 {
-                                    var paramOption = ParamOption?.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems.SingleOrDefault(x => x.ShortName == paramItem.ShortName);
+                                    var paramOption = TaskModuleParamContext.ParamOption?.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems.SingleOrDefault(x => x.ShortName == paramItem.ShortName);
                                     if (paramOption is not null)
                                     {
+                                        var paramContext = new TaskModuleParamContext(paramItem.ShortName!, paramOption, paramItem, null);
                                         <Fields>
-                                            <TaskModuleParamValueView Task="Task" Module="null" ParamOption="paramOption" ParamValue="paramItem" />
+                                            <TaskModuleParamValueView TaskModalContext="TaskModalContext" TaskModuleContext="null!" TaskModuleParamContext="paramContext" />
                                         </Fields>
                                     }
                                 }
@@ -145,15 +148,15 @@
                 @if (IsDescriptionPresent)
                 {
                     var internalDescription = string.Empty;
-                    if (!string.IsNullOrWhiteSpace(ParamValue.Value?.EnumValue?.StringValue))
+                    if (!string.IsNullOrWhiteSpace(TaskModuleParamContext.ParamValue!.Value?.EnumValue?.StringValue))
                     {
-                        var indexOfSelected = ParamOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == ParamValue?.Value?.EnumValue?.StringValue);
+                        var indexOfSelected = TaskModuleParamContext.ParamOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == TaskModuleParamContext.ParamValue?.Value?.EnumValue?.StringValue);
                         if (indexOfSelected >= 0)
                         {
-                            internalDescription = ParamOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+                            internalDescription = TaskModuleParamContext.ParamOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
                         }
                     }
-                    <Tooltip Multiline="true" Text="@(ParamOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+                    <Tooltip Multiline="true" Text="@(TaskModuleParamContext.ParamOption!.Description ?? internalDescription)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                         <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                     </Tooltip>
                 }
@@ -174,9 +177,7 @@ else
         <TaskModuleParamValueViewToken DefaultValue="@defaultValue"
                                        IsDefaultPresent="IsDefaultPresent"
                                        IsDescriptionPresent="@IsDescriptionPresent"
-                                       ParameterName="@parameterName"
-                                       ParamOption="@ParamOption"
-                                       ParamValue="@ParamValue"
+                                       TaskModuleParamContext="@TaskModuleParamContext"
                                        SkipLabel="@SkipLabel" />
     }
 }
@@ -185,16 +186,14 @@ else
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     [Parameter]
-    public TaskModuleDto Module { get; set; } = new();
+    public TaskModuleContext TaskModuleContext { get; set; } = null!;
 
     [Parameter]
-    public TaskModuleParameterNoValidationDto? ParamOption { get; set; } = null;
+    public TaskModuleParamContext TaskModuleParamContext { get; set; } = null!;
 
-    [Parameter]
-    public TaskModuleParameterDto ParamValue { get; set; } = new();
 
     private bool SkipLabel { get; set; }
     private bool IsDescriptionPresent { get; set; }

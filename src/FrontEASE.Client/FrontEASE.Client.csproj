@@ -8,12 +8,19 @@
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591</NoWarn>
+		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591;ASP0000;CA1859</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591</NoWarn>
+		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591;ASP0000;CA1859</NoWarn>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Infrastructure\Settings\AppSettings\Libraries\**" />
+	  <Content Remove="Infrastructure\Settings\AppSettings\Libraries\**" />
+	  <EmbeddedResource Remove="Infrastructure\Settings\AppSettings\Libraries\**" />
+	  <None Remove="Infrastructure\Settings\AppSettings\Libraries\**" />
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.0.0" />
@@ -48,10 +55,6 @@
     <Content Update="wwwroot\resources\logos\logo.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Infrastructure\Settings\AppSettings\Libraries\" />
   </ItemGroup>
 
 </Project>

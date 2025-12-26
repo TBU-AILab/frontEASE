@@ -2,14 +2,14 @@
 @inject IResourceHandler resourceHandler
 @inject ITaskManipulationService taskManipulationService
 
-@foreach (var listParam in ParamValue.Value!.ListValue!.ParameterValues)
+@foreach (var listParam in TaskModuleParamContext.ParamValue!.Value!.ListValue!.ParameterValues)
 {
     <Container Fluid Border="Border.Is1.Rounded.Light">
         <Row Margin="Margin.Is3.FromTop.Is2.FromBottom" Class="align-items-stretch">
             <Column ColumnSize="ColumnSize.Is11">
                 @foreach (var paramVal in listParam.ParameterItems)
                 {
-                    var paramOption = taskManipulationService.GetListValueParamOption(paramVal.ShortName, ParamOption);
+                    var paramOption = taskManipulationService.GetListValueParamOption(paramVal.ShortName, TaskModuleParamContext.ParamOption);
                     if (paramOption is not null)
                     {
                         var flags = taskManipulationService.GetListParamFlags(paramOption, paramVal);
@@ -21,11 +21,13 @@
                                         <Fields>
                                             @if (flags.IsReadonly)
                                             {
-                                                <TaskModuleParamLabel TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" ParamOption="@paramOption" />
+                                                var paramContext = taskManipulationService.GetParamContext(paramOption);
+                                                <TaskModuleParamLabel TaskModalContext="TaskModalContext" TaskModuleParamContext="paramContext" />
                                             }
                                             else
                                             {
-                                                <TaskModuleParamValueInput TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" ListFlags="@flags" ParamOption="@paramOption" ParamValue="@paramVal" />
+                                                var paramContext = taskManipulationService.GetListParamContext(paramOption, paramVal, flags);
+                                                <TaskModuleParamValueInput TaskModalContext="TaskModalContext" TaskModuleParamContext="paramContext" />
 
                                                 @if (flags.DisplayActions)
                                                 {
@@ -43,7 +45,7 @@
                                                                 </Tooltip>
                                                             }
 
-                                                            @if (flags.IsListDefaultPresent && !TaskMetadata.InitializationInProgres)
+                                                            @if (flags.IsListDefaultPresent && !TaskModalContext.TaskMetadata.InitializationInProgres)
                                                             {
                                                                 <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{flags.ListDefaultValue}\"")" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
                                                                     <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => taskManipulationService.FillParamDefaultValue(paramVal, flags.ListDefaultValue))" />
@@ -70,7 +72,7 @@
 
                 <Div Class="vertical-divider" />
 
-                @if (!TaskMetadata.InitializationInProgres)
+                @if (!TaskModalContext.TaskMetadata.InitializationInProgres)
                 {
                     <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Remove}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                         <Icon Class="action-icon-sm action-icon-danger"
@@ -84,7 +86,7 @@
         </Row>
     </Container>
 
-    @if (listParam is not null && listParam != ParamValue.Value!.ListValue!.ParameterValues.LastOrDefault())
+    @if (listParam is not null && listParam != TaskModuleParamContext.ParamValue.Value!.ListValue!.ParameterValues.LastOrDefault())
     {
         <Divider Class="divider-main bg-custom-light" Shadow="Shadow.Small" Style="height:2px !important;" Margin="Margin.Is3.FromTop" />
     }
@@ -92,22 +94,10 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     [Parameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
-
-    [Parameter]
-    public DataOperation Operation { get; set; }
-
-    [Parameter]
-    public EditContext EditContext { get; set; } = null!;
-
-    [Parameter]
-    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
-
-    [Parameter]
-    public TaskModuleParameterDto ParamValue { get; set; } = new();
+    public TaskModuleParamContext TaskModuleParamContext { get; set; } = null!;
 
 
     private async Task RefreshViewAsync()
@@ -123,10 +113,10 @@
 
     private Task RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam)
     {
-        var refreshOptions = taskManipulationService.RemoveListParameter(listParam, ParamValue);
+        var refreshOptions = taskManipulationService.RemoveListParameter(listParam, TaskModuleParamContext.ParamValue!);
         if (refreshOptions)
         {
-            EditContext.NotifyFieldChanged(new FieldIdentifier(Task, TaskMetadataConstants.ShortName));
+            TaskModalContext.EditContext?.NotifyFieldChanged(new FieldIdentifier(TaskModalContext.Task, TaskMetadataConstants.ShortName));
         }
         return System.Threading.Tasks.Task.CompletedTask;
     }

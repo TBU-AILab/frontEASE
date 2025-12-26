@@ -11,7 +11,7 @@ namespace FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses
         {
             StatusCode = HttpStatusCode.UnprocessableContent;
 
-            Errors = new List<string>();
+            Errors = [];
         }
 
         /// <summary>

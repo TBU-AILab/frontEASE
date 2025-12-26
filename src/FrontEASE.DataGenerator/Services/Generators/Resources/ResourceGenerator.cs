@@ -5,20 +5,14 @@ using FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults;
 namespace FrontEASE.DataGenerator.Services.Generators.Resources
 {
     [Order(1)]
-    public class ResourceGenerator : IGenerator
+    public class ResourceGenerator(ApplicationDbContext dataContext) : IGenerator
     {
-        private readonly ApplicationDbContext _dataContext;
-        public ResourceGenerator(ApplicationDbContext dataContext)
-        {
-            _dataContext = dataContext;
-        }
-
         public async Task Generate()
         {
-            var resources = DefaultResourcesConfiguration.GetDefaults().ToList();
+            var resources = DefaultResourcesConfiguration.GetDefaults();
 
-            await _dataContext.Resources.AddRangeAsync(resources);
-            await _dataContext.SaveChangesAsync();
+            await dataContext.Resources.AddRangeAsync(resources);
+            await dataContext.SaveChangesAsync();
         }
     }
 }

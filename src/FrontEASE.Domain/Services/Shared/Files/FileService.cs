@@ -7,17 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FrontEASE.Domain.Services.Shared.Files
 {
-    public class FileService : IFileService
+    public class FileService(ITaskRepository taskRepository, ICoreConnector coreService) : IFileService
     {
-        private readonly ICoreConnector _coreService;
-        private readonly ITaskRepository _taskRepository;
-
-        public FileService(ITaskRepository taskRepository, ICoreConnector coreService)
-        {
-            _taskRepository = taskRepository;
-            _coreService = coreService;
-        }
-
         public async Task<(FileStreamResult? Stream, string? Name)?> GetArchive(Guid identifier, FileSpecification type, CancellationToken cancellationToken)
         {
             return type switch
@@ -36,9 +27,9 @@ namespace FrontEASE.Domain.Services.Shared.Files
                 WithNoTracking = true,
             };
 
-            var task = (await _taskRepository.LoadAllWhere(x => x.Solutions.Any(x => x.ID == identifier), query, cancellationToken)).SingleOrDefault() ?? throw new NotFoundException();
+            var task = (await taskRepository.LoadAllWhere(x => x.Solutions.Any(x => x.ID == identifier), query, cancellationToken)).SingleOrDefault() ?? throw new NotFoundException();
             var solution = task.Solutions.Single(x => x.ID == identifier);
-            var result = await _coreService.DownloadTaskSolution(task.ID, solution.TaskMessageID, cancellationToken);
+            var result = await coreService.DownloadTaskSolution(task.ID, solution.TaskMessageID, cancellationToken);
 
             var name = $"{task.Config.Name}_{solution.ID}";
             return (result, name);
@@ -52,8 +43,8 @@ namespace FrontEASE.Domain.Services.Shared.Files
                 WithNoTracking = true,
             };
 
-            var task = await _taskRepository.Load(identifier, query, cancellationToken) ?? throw new NotFoundException();
-            var result = await _coreService.DownloadTaskFull(task.ID, cancellationToken);
+            var task = await taskRepository.Load(identifier, query, cancellationToken) ?? throw new NotFoundException();
+            var result = await coreService.DownloadTaskFull(task.ID, cancellationToken);
 
             var name = task.Config.Name;
             return (result, name);

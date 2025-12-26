@@ -15,28 +15,15 @@ using Hangfire.States;
 
 namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 {
-    public class UpdateTaskDetailsJob : JobBase, IJob
+    public class UpdateTaskDetailsJob(
+        IMapper mapper,
+        ICoreConnector coreService,
+        ITaskRepository taskRepository,
+        IJobLogRepository jobLogRepository,
+        AppSettings appSettings) : JobBase(jobLogRepository), IJob
     {
-        private readonly IMapper _mapper;
-        private readonly ICoreConnector _coreService;
-        private readonly ITaskRepository _taskRepository;
 
-        public string JobName { get; init; }
-
-        public UpdateTaskDetailsJob(
-            IMapper mapper,
-            ICoreConnector coreService,
-            ITaskRepository taskRepository,
-            IJobLogRepository jobLogRepository,
-            AppSettings appSettings)
-            : base(jobLogRepository)
-        {
-            _mapper = mapper;
-            _coreService = coreService;
-            _taskRepository = taskRepository;
-
-            JobName = appSettings.HangfireSettings!.Jobs!.UpdateTaskDetailsJob!.CronName!;
-        }
+        public string JobName { get; init; } = appSettings.HangfireSettings!.Jobs!.UpdateTaskDetailsJob!.CronName!;
 
         public async Task Execute(PerformContext context)
         {
@@ -48,7 +35,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             var lastExecutedLog = await _jobLogRepository.LoadLastSuccessful(JobName, cancellationToken);
             context.WriteLine($"Last successful execution:{(lastExecutedLog is null ? "N/A" : $"{lastExecutedLog.DateStart} - {lastExecutedLog.DateEnd}")}");
 
-            await using var transaction = await _taskRepository.BeginTransactionAsync(cancellationToken);
+            await using var transaction = await taskRepository.BeginTransactionAsync(cancellationToken);
             try
             {
                 var queryDetailsCheck = new TasksQuery()
@@ -56,15 +43,15 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                     LoadSolutions = true,
                     LoadMessages = true
                 };
-                var tasksForDataSync = await _taskRepository.LoadAllWhere(x => !x.IsDeleted && x.State == TaskState.RUN, queryDetailsCheck, cancellationToken);
+                var tasksForDataSync = await taskRepository.LoadAllWhere(x => !x.IsDeleted && x.State == TaskState.RUN, queryDetailsCheck, cancellationToken);
                 var tasksForDataSyncIDs = tasksForDataSync.Select(x => x.ID).ToList();
 
                 context.WriteLine($"Checking info, statuses, messages and solutions for: {tasksForDataSync.Count} items.");
 
                 if (tasksForDataSync.Count > 0)
                 {
-                    var infoResults = await _coreService.GetTaskStates(tasksForDataSyncIDs, cancellationToken);
-                    var dataResults = await _coreService.GetTaskRunData(tasksForDataSyncIDs, null, cancellationToken);
+                    var infoResults = await coreService.GetTaskStates(tasksForDataSyncIDs, cancellationToken);
+                    var dataResults = await coreService.GetTaskRunData(tasksForDataSyncIDs, null, cancellationToken);
 
                     foreach (var taskStateInfo in infoResults)
                     {
@@ -72,7 +59,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                         if (matchingTask is not null)
                         {
                             context.WriteLine($"Mapping state for task: {matchingTask.ID}.");
-                            _mapper.Map(taskStateInfo, matchingTask);
+                            mapper.Map(taskStateInfo, matchingTask);
 
                             if (matchingTask.State != taskStateInfo.State)
                             {
@@ -93,14 +80,14 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                             var missingMessages = taskDataInfo.Messages.Where(x => !presentMessages.Contains(x.ID)).ToList();
 
                             context.WriteLine($"Mapping {missingSolutions.Count} new solutions and {missingMessages.Count} new messages for task: {matchingTask.ID}.");
-                            var messagesToBeAdded = _mapper.Map<IList<TaskMessage>>(missingMessages);
-                            var solutionsToBeAdded = _mapper.Map<IList<TaskSolution>>(missingSolutions);
+                            var messagesToBeAdded = mapper.Map<IList<TaskMessage>>(missingMessages);
+                            var solutionsToBeAdded = mapper.Map<IList<TaskSolution>>(missingSolutions);
 
                             matchingTask.Messages.AddRange(messagesToBeAdded);
                             matchingTask.Solutions.AddRange(solutionsToBeAdded);
                         }
                     }
-                    await _taskRepository.SaveChangesAsync(cancellationToken);
+                    await taskRepository.SaveChangesAsync(cancellationToken);
                 }
 
                 await UpdateJobLog(log, DateTime.UtcNow, true, cancellationToken);

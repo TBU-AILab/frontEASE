@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 
-namespace FrontEASE.Client.Infrastructure.Mappings.Shared.Images
+namespace FrontEASE.Client.Infrastructure.Mappings.Shared.Users
 {
     public class UserMappingProfile : Profile
     {

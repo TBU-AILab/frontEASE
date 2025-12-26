@@ -5,13 +5,11 @@ namespace FrontEASE.Shared.Infrastructure.Utils.Extensions
 {
     public static class ObjectExtensions
     {
-        public static string Serialize(this object o)
+        private static readonly JsonSerializerOptions JsonSettings = new()
         {
-            var jsonSettings = new JsonSerializerOptions
-            {
-                ReferenceHandler = ReferenceHandler.IgnoreCycles
-            };
-            return JsonSerializer.Serialize(o, jsonSettings);
-        }
+            ReferenceHandler = ReferenceHandler.IgnoreCycles
+        };
+
+        public static string Serialize(this object o) => JsonSerializer.Serialize(o, JsonSettings);
     }
 }

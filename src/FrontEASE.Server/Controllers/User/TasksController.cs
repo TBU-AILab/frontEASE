@@ -2,7 +2,6 @@
 using FrontEASE.Application.AppServices.Tasks;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
-using FrontEASE.Shared.Data.DTOs.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
@@ -21,18 +20,12 @@ namespace FrontEASE.Server.Controllers.User
     /// Controller for task management.
     /// </summary>
     [Authorize]
-    public class TasksController : ApiControllerBase
+    public class TasksController(
+        ITaskAppService taskAppService,
+        IResourceHandler resourceHandler,
+        IResourceAppService resourceAppService,
+        AppSettings appSettings) : ApiControllerBase(resourceHandler, resourceAppService, appSettings)
     {
-        private readonly ITaskAppService _taskAppService;
-
-        public TasksController(
-            ITaskAppService taskAppService,
-            IResourceHandler resourceHandler,
-            IResourceAppService resourceAppService,
-            AppSettings appSettings) : base(resourceHandler, resourceAppService, appSettings)
-        {
-            _taskAppService = taskAppService;
-        }
 
         /// <summary>
         /// Gets list of task overview models.
@@ -47,7 +40,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var response = await _taskAppService.LoadAll(filter, cancellationToken);
+                var response = await taskAppService.LoadAll(filter, cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -70,7 +63,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var response = await _taskAppService.LoadAllStatuses(cancellationToken);
+                var response = await taskAppService.LoadAllStatuses(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -95,7 +88,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var response = await _taskAppService.Load(id, cancellationToken);
+                var response = await taskAppService.Load(id, cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -120,7 +113,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var response = await _taskAppService.LoadSimple(id, cancellationToken);
+                var response = await taskAppService.LoadSimple(id, cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -146,7 +139,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var response = await _taskAppService.Refresh(task, cancellationToken);
+                var response = await taskAppService.Refresh(task, cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -169,7 +162,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var createdTask = await _taskAppService.Create(CancellationToken.None);
+                var createdTask = await taskAppService.Create(CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.Created, createdTask, nameof(CreateTask));
             }
             catch (Exception ex)
@@ -194,7 +187,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var duplicatedTask = await _taskAppService.Duplicate(id, request, CancellationToken.None);
+                var duplicatedTask = await taskAppService.Duplicate(id, request, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.Created, duplicatedTask, nameof(CloneTask));
             }
             catch (Exception ex)
@@ -220,7 +213,7 @@ namespace FrontEASE.Server.Controllers.User
             try
             {
                 ValidateModel();
-                var updatedTask = await _taskAppService.Update(task, CancellationToken.None);
+                var updatedTask = await taskAppService.Update(task, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, updatedTask);
             }
             catch (Exception ex)
@@ -244,7 +237,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                await _taskAppService.Delete(taskIDs, CancellationToken.None);
+                await taskAppService.Delete(taskIDs, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent, null);
             }
             catch (Exception ex)
@@ -268,7 +261,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                await _taskAppService.ChangeState(taskIDs, state, CancellationToken.None);
+                await taskAppService.ChangeState(taskIDs, state, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent, null);
             }
             catch (Exception ex)
@@ -292,7 +285,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var updatedTask = await _taskAppService.Share(task, CancellationToken.None);
+                var updatedTask = await taskAppService.Share(task, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, updatedTask);
             }
             catch (Exception ex)

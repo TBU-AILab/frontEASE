@@ -5,77 +5,68 @@
 @inject Blazored.Toast.Services.IToastService toastService
 
 <ModalFooter Class="bg-custom-secondary border-custom-light">
-	<Container Fluid Padding="Padding.Is0">
-		<Row Margin="Margin.Is0">
-			<Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is5.OnMobile">
-				<Button Clicked="@HideModal" Color="Color.Danger" Class="btn button btn-sized full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
-					@resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Close}")
-				</Button>
-			</Column>
-			<Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile.Is3.OnFullHD.Is6.WithOffset.OnFullHD">
-				<Button Clicked="@SaveTask"
-						Class="btn button btn-sized full-width bg-custom-success text-custom-white"
-						Disabled="@savingInProgress"
-						TextWeight="TextWeight.Bold">
-					@if (savingInProgress)
-					{
-						<SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
-					}
-					else
-					{
-						@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}"))
-					}
-				</Button>
-			</Column>
-		</Row>
-	</Container>
+    <Container Fluid Padding="Padding.Is0">
+        <Row Margin="Margin.Is0">
+            <Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is5.OnMobile">
+                <Button Clicked="@HideModal" Color="Color.Danger" Class="btn button btn-sized full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
+                    @resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Close}")
+                </Button>
+            </Column>
+            <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile.Is3.OnFullHD.Is6.WithOffset.OnFullHD">
+                <Button Clicked="@SaveTask"
+                        Class="btn button btn-sized full-width bg-custom-success text-custom-white"
+                        Disabled="@savingInProgress"
+                        TextWeight="TextWeight.Bold">
+                    @if (savingInProgress)
+                    {
+                        <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                    }
+                    else
+                    {
+                        @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}"))
+                    }
+                </Button>
+            </Column>
+        </Row>
+    </Container>
 </ModalFooter>
 
 @code {
-	[Parameter]
-	public TaskDto Task { get; set; } = new();
+    [Parameter]
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
-	[Parameter]
-	public Modal Modal { get; set; } = new();
+    private bool savingInProgress = false;
+    private bool deletingInProgress = false;
 
-	[Parameter]
-	public TaskInfoDto TaskInfo { get; set; } = new();
+    private async Task HideModal()
+    {
+        var cleanModel = new TaskDto();
+        mapper.Map(cleanModel, TaskModalContext.Task);
 
-	[Parameter]
-	public Validations Validations { get; set; } = new();
+        await TaskModalContext.Modal.Hide();
+    }
 
-	private bool savingInProgress = false;
-	private bool deletingInProgress = false;
+    private async Task SaveTask()
+    {
+        savingInProgress = true;
+        var message = string.Empty;
 
-	private async Task HideModal()
-	{
-		var cleanModel = new TaskDto();
-		mapper.Map(cleanModel, Task);
+        if (await TaskModalContext.Validations!.ValidateAll())
+        {
+            var updated = await taskApiService.ShareTask(TaskModalContext.Task.ID, TaskModalContext.Task);
+            if (updated is not null)
+            {
+                var cleanModel = new TaskDto();
+                mapper.Map(cleanModel, TaskModalContext.Task);
 
-		await Modal.Hide();
-	}
+                message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}")}: {TaskModalContext.TaskInfo.Name}";
+                toastService.ShowSuccess(message);
 
-	private async Task SaveTask()
-	{
-		savingInProgress = true;
-		var message = string.Empty;
+                await TaskModalContext.Modal.Hide();
+                await uiService.CallRequestRefreshAsync();
+            }
+        }
 
-		if (await Validations.ValidateAll())
-		{
-			var updated = await taskApiService.ShareTask(Task.ID, Task);
-			if (updated is not null)
-			{
-				var cleanModel = new TaskDto();
-				mapper.Map(cleanModel, Task);
-
-				message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}")}: {TaskInfo.Name}";
-				toastService.ShowSuccess(message);
-
-				await Modal.Hide();
-				await uiService.CallRequestRefreshAsync();
-			}
-		}
-
-		savingInProgress = false;
-	}
+        savingInProgress = false;
+    }
 }

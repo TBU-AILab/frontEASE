@@ -1,4 +1,4 @@
-﻿namespace FrontEASE.Domain.Infrastructure.Settings.App.Auth.Defaults.Superuser
+﻿namespace FrontEASE.Domain.Infrastructure.Settings.App.Auth.Defaults.Superadmin
 {
     public class SuperadminDefaults
     {

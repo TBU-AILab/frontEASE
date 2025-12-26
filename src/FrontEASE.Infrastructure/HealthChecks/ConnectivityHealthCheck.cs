@@ -4,15 +4,8 @@ using System.Net;
 
 namespace FrontEASE.Infrastructure.HealthChecks
 {
-    public class ConnectivityHealthCheck : IHealthCheck
+    public class ConnectivityHealthCheck(ApplicationDbContext dataContext) : IHealthCheck
     {
-        private readonly ApplicationDbContext _dataContext;
-
-        public ConnectivityHealthCheck(ApplicationDbContext dataContext)
-        {
-            _dataContext = dataContext;
-        }
-
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
             var isHealthy = true;
@@ -20,7 +13,7 @@ namespace FrontEASE.Infrastructure.HealthChecks
 
             try
             {
-                var isDbAvailable = await _dataContext.Database.CanConnectAsync(cancellationToken);
+                var isDbAvailable = await dataContext.Database.CanConnectAsync(cancellationToken);
                 if (!isDbAvailable)
                 {
                     throw new Exception("Database is not available.");

@@ -1,12 +1,12 @@
 ﻿using FrontEASE.Domain.Entities.Tasks.Shared;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Infrastructure.Constants;
-using FrontEASE.Infrastructure.Data.Configuration.Shared.Base;
+using FrontEASE.Infrastructure.Data.Configuration.Shared.Base.Manual;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Text.Json;
 
-namespace FrontEASE.Infrastructure.Data.Configuration.Tasks.Runs
+namespace FrontEASE.Infrastructure.Data.Configuration.Tasks.Solutions
 {
     public class TaskSolutionConfiguration : IEntityTypeConfiguration<TaskSolution>
     {

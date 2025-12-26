@@ -6,15 +6,8 @@ using FrontEASE.Shared.Data.DTOs.Management.Tokens.Connectors;
 
 namespace FrontEASE.Client.Services.ModelManipulationServices.Management
 {
-    public class ManagementManipulationService : IManagementManipulationService
+    public class ManagementManipulationService(IMapper mapper) : IManagementManipulationService
     {
-        private readonly IMapper _mapper;
-
-        public ManagementManipulationService(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
-
         public void SetItemPriorities(UserPreferencesDto preferences)
         {
             foreach (var item in preferences.TokenOptions.Select((value, i) => new { i, value }))
@@ -39,13 +32,13 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Management
         public void ReinitializeTokenModel(UserPreferenceTokenOptionDto token)
         {
             var cleanModel = new UserPreferenceTokenOptionDto();
-            _mapper.Map(cleanModel, token);
+            mapper.Map(cleanModel, token);
         }
 
         public void ReinitializePackageModel(GlobalPreferenceCorePackageDto package)
         {
             var cleanModel = new GlobalPreferenceCorePackageDto();
-            _mapper.Map(cleanModel, package);
+            mapper.Map(cleanModel, package);
         }
     }
 }

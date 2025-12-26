@@ -11,19 +11,19 @@
                 <Button Clicked="@HideModal" Color="Color.Danger" Class="btn button btn-sized full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
                     @if (deletingInProgress)
                     {
-                        <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(DataOperation == DataOperation.READ ? UIActionConstants.Close : UIActionConstants.Discard)}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                        <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(TaskModalContext.Operation == DataOperation.READ ? UIActionConstants.Close : UIActionConstants.Discard)}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
                     }
                     else
                     {
-                        @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(DataOperation == DataOperation.READ ? UIActionConstants.Close : UIActionConstants.Discard)}"))
+                        @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(TaskModalContext.Operation == DataOperation.READ ? UIActionConstants.Close : UIActionConstants.Discard)}"))
                     }
                 </Button>
             </Column>
             <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile.Is3.OnFullHD.Is6.WithOffset.OnFullHD">
-                @if (DataOperation != DataOperation.READ)
+                @if (TaskModalContext.Operation != DataOperation.READ)
                 {
                     <Button Clicked="@SaveTask"
-                            Class="@($"btn button btn-sized full-width {(DataOperation == DataOperation.INSERT ? "bg-custom-success text-custom-white" : "bg-custom-info text-custom-info")}")"
+                            Class="@($"btn button btn-sized full-width {(TaskModalContext.Operation == DataOperation.INSERT ? "bg-custom-success text-custom-white" : "bg-custom-info text-custom-info")}")"
                             Disabled="@savingInProgress"
                             TextWeight="TextWeight.Bold">
                         @if (savingInProgress)
@@ -32,7 +32,7 @@
                         }
                         else
                         {
-                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(DataOperation == DataOperation.INSERT ? UIActionConstants.Save : UIActionConstants.Update)}"))
+                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(TaskModalContext.Operation == DataOperation.INSERT ? UIActionConstants.Save : UIActionConstants.Update)}"))
                         }
                     </Button>
                 }
@@ -46,34 +46,22 @@
     public TasksPageContext PageContext { get; set; } = null!;
 
     [Parameter]
-    public TaskDto Task { get; set; } = new();
-
-    [Parameter]
-    public Modal Modal { get; set; } = new();
-
-    [Parameter]
-    public TaskInfoDto TaskInfo { get; set; } = new();
-
-    [Parameter]
-    public Validations Validations { get; set; } = new();
-
-    [Parameter]
-    public DataOperation DataOperation { get; set; }
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     private bool savingInProgress = false;
     private bool deletingInProgress = false;
 
     private async Task HideModal()
     {
-        if (DataOperation == DataOperation.INSERT)
+        if (TaskModalContext.Operation == DataOperation.INSERT)
         {
             await DeleteTask();
         }
 
         var cleanModel = new TaskDto();
-        mapper.Map(cleanModel, Task);
+        mapper.Map(cleanModel, TaskModalContext.Task);
 
-        await Modal.Hide();
+        await TaskModalContext.Modal.Hide();
     }
 
     private async Task SaveTask()
@@ -81,29 +69,29 @@
         savingInProgress = true;
         var message = string.Empty;
 
-        if (await Validations.ValidateAll())
+        if (await TaskModalContext.Validations!.ValidateAll())
         {
-            var updated = await taskApiService.UpdateTask(Task.ID, Task);
+            var updated = await taskApiService.UpdateTask(TaskModalContext.Task.ID, TaskModalContext.Task);
             if (updated is not null)
             {
-                mapper.Map(updated, Task);
+                mapper.Map(updated, TaskModalContext.Task);
 
-                if (DataOperation == DataOperation.INSERT)
-                { TaskInfo = new(); }
+                if (TaskModalContext.Operation == DataOperation.INSERT)
+                { TaskModalContext.TaskInfo = new(); }
 
-                mapper.Map(updated, TaskInfo);
+                mapper.Map(updated, TaskModalContext.TaskInfo);
 
-                if (DataOperation == DataOperation.INSERT)
-                { PageContext.Tasks.Insert(0, TaskInfo); }
+                if (TaskModalContext.Operation == DataOperation.INSERT)
+                { PageContext.Tasks.Insert(0, TaskModalContext.TaskInfo); }
 
                 var cleanModel = new TaskDto();
-                mapper.Map(cleanModel, Task);
+                mapper.Map(cleanModel, TaskModalContext.Task);
 
-                message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(DataOperation == DataOperation.INSERT ? UIActionConstants.Save : UIActionConstants.Update)}")}: {TaskInfo.Name}";
+                message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{(TaskModalContext.Operation == DataOperation.INSERT ? UIActionConstants.Save : UIActionConstants.Update)}")}: {TaskModalContext.TaskInfo.Name}";
                 if (!string.IsNullOrWhiteSpace(message))
                 { toastService.ShowSuccess(message); }
 
-                await Modal.Hide();
+                await TaskModalContext.Modal.Hide();
                 await uiService.CallRequestRefreshAsync();
             }
         }
@@ -114,7 +102,7 @@
     private async Task DeleteTask()
     {
         deletingInProgress = true;
-        await taskApiService.DeleteTasks(new List<Guid>() { Task.ID });
+        await taskApiService.DeleteTasks(new List<Guid>() { TaskModalContext.Task.ID });
         deletingInProgress = false;
     }
 }

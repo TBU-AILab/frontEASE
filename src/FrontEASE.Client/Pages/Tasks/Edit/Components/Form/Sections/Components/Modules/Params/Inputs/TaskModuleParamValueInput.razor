@@ -3,29 +3,24 @@
 @inject IMapper mapper
 @inject IUIService uiService
 
-@{
-    var parameterType = DynamicParamUtils.GetParameterType(ParamOption.Type);
-    var parameterName = ParamOption.LongName ?? ParamOption.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
-}
-
-@switch (parameterType)
+@switch (TaskModuleParamContext.ParamType)
 {
     case ParameterType.MARKDOWN:
-        <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-            @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
+        <Field ColumnSize="@(TaskModuleParamContext.ParamFlags?.DisplayActions == true || TaskModuleParamContext.ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+            @if (!(TaskModuleParamContext.ParamFlags?.SkipLabel == true) && !(TaskModuleParamContext.ListFlags?.SkipListLabel == true))
             {
-                <FieldLabel For="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))" RequiredIndicator="@(ParamOption.Required == true)">
-                    @parameterName
+                <FieldLabel For="@(GetElementIdByOperation($"{TaskModuleParamContext.ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))" RequiredIndicator="@(TaskModuleParamContext.ParamOption.Required == true)">
+                    @TaskModuleParamContext.ParamName
                 </FieldLabel>
             }
 
-            @if (!TaskMetadata.InitializationInProgres)
+            @if (!TaskModalContext.TaskMetadata.InitializationInProgres)
             {
                 <Markdown UploadImage="false"
                           NativeSpellcheck="false"
                           SpellChecker="false"
-                          @bind-Value="@ParamValue.Value!.StringValue"
-                          Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)" />
+                          @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
+                          Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)" />
             }
         </Field>
         break;
@@ -33,18 +28,18 @@
 
     case ParameterType.STR:
         <Validation>
-            <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
+            <Field ColumnSize="@(TaskModuleParamContext.ParamFlags?.DisplayActions == true || TaskModuleParamContext.ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!(TaskModuleParamContext.ParamFlags?.SkipLabel == true) && !(TaskModuleParamContext.ListFlags?.SkipListLabel == true))
                 {
-                    <FieldLabel For="@(GetElementIdByOperation(ParamValue.Key))" RequiredIndicator="@(ParamOption.Required == true)">
-                        @parameterName
+                    <FieldLabel For="@(GetElementIdByOperation(TaskModuleParamContext.ParamValue!.Key))" RequiredIndicator="@(TaskModuleParamContext.ParamOption.Required == true)">
+                        @TaskModuleParamContext.ParamName
                     </FieldLabel>
                 }
 
-                <MemoEdit ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-                          Disabled="@(TaskMetadata.InitializationInProgres)"
-                          @bind-Text="@ParamValue.Value!.StringValue"
-                          Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)"
+                <MemoEdit ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                          Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                          @bind-Text="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
+                          Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)"
                           Rows="2" AutoSize="true">
                     <Feedback>
                         <ValidationError Multiline="true" />
@@ -56,21 +51,21 @@
 
     case ParameterType.INT:
         <Validation>
-            <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
+            <Field ColumnSize="@(TaskModuleParamContext.ParamFlags?.DisplayActions == true || TaskModuleParamContext.ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!(TaskModuleParamContext.ParamFlags?.SkipLabel == true) && !(TaskModuleParamContext.ListFlags?.SkipListLabel == true))
                 {
-                    <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
-                        @parameterName
+                    <FieldLabel For="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))" RequiredIndicator="@(TaskModuleParamContext.ParamOption.Required == true)">
+                        @TaskModuleParamContext.ParamName
                     </FieldLabel>
                 }
 
                 <NumericEdit TValue="int?"
-                             ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-                             Disabled="@(TaskMetadata.InitializationInProgres)"
-                             @bind-Value="@ParamValue.Value!.IntValue"
-                             Placeholder="@(ParamOption.Default?.IntValue?.ToString() ?? 0.ToString())"
-                             Min="@(ParamOption.MinValue is double intMin ? (int)intMin : int.MinValue)"
-                             Max="@(ParamOption.MaxValue is double intMax ? (int)intMax : int.MaxValue)">
+                             ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                             Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                             @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.IntValue"
+                             Placeholder="@(TaskModuleParamContext.ParamOption.Default?.IntValue?.ToString() ?? 0.ToString())"
+                             Min="@(TaskModuleParamContext.ParamOption.MinValue is double intMin ? (int)intMin : int.MinValue)"
+                             Max="@(TaskModuleParamContext.ParamOption.MaxValue is double intMax ? (int)intMax : int.MaxValue)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -82,19 +77,19 @@
 
     case ParameterType.TIME:
         <Validation @ref="timeValidationComponent" Validator="@ValidateTimeParameter">
-            <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
+            <Field ColumnSize="@(TaskModuleParamContext.ParamFlags?.DisplayActions == true || TaskModuleParamContext.ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!(TaskModuleParamContext.ParamFlags?.SkipLabel == true) && !(TaskModuleParamContext.ListFlags?.SkipListLabel == true))
                 {
-                    <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
-                        @parameterName
+                    <FieldLabel For="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))" RequiredIndicator="@(TaskModuleParamContext.ParamOption.Required == true)">
+                        @TaskModuleParamContext.ParamName
                     </FieldLabel>
                 }
                 <InputMask @ref="timeInputMask"
-                           ElementId="@(GetElementIdByOperation(ParamOption.Key))"
+                           ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
                            Mask="99:99:99"
                            MaskPlaceholder="_"
                            Placeholder="@GetTimeInputPlaceholder()"
-                           Disabled="@(TaskMetadata.InitializationInProgres)"
+                           Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                            Value="@timeStringValue"
                            ValueChanged="@(async (e) => await OnTimeStringChanged(e))"
                            ClearIncomplete="true"
@@ -107,21 +102,21 @@
 
     case ParameterType.FLOAT:
         <Validation>
-            <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
+            <Field ColumnSize="@(TaskModuleParamContext.ParamFlags?.DisplayActions == true || TaskModuleParamContext.ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!(TaskModuleParamContext.ParamFlags?.SkipLabel == true) && !(TaskModuleParamContext.ListFlags?.SkipListLabel == true))
                 {
-                    <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
-                        @parameterName
+                    <FieldLabel For="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))" RequiredIndicator="@(TaskModuleParamContext.ParamOption.Required == true)">
+                        @TaskModuleParamContext.ParamName
                     </FieldLabel>
                 }
 
                 <NumericEdit TValue="double?"
-                             ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-                             Disabled="@(TaskMetadata.InitializationInProgres)"
-                             @bind-Value="@ParamValue.Value!.FloatValue"
-                             Placeholder="@(ParamOption.Default?.FloatValue?.ToString() ?? 0.0.ToString())"
-                             Min="@(ParamOption.MinValue is double floatMin ? floatMin : double.MinValue)"
-                             Max="@(ParamOption.MaxValue is double floatMax ? floatMax : double.MaxValue)">
+                             ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                             Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                             @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.FloatValue"
+                             Placeholder="@(TaskModuleParamContext.ParamOption.Default?.FloatValue?.ToString() ?? 0.0.ToString())"
+                             Min="@(TaskModuleParamContext.ParamOption.MinValue is double floatMin ? floatMin : double.MinValue)"
+                             Max="@(TaskModuleParamContext.ParamOption.MaxValue is double floatMax ? floatMax : double.MaxValue)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -131,34 +126,34 @@
         break;
 
     case ParameterType.ENUM:
-        @if (!string.IsNullOrWhiteSpace(ParamOption.EnumOptions?.FirstOrDefault()?.StringValue))
+        @if (!string.IsNullOrWhiteSpace(TaskModuleParamContext.ParamOption.EnumOptions?.FirstOrDefault()?.StringValue))
         {
             <Validation>
-                <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                    @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
+                <Field ColumnSize="@(TaskModuleParamContext.ParamFlags?.DisplayActions == true || TaskModuleParamContext.ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                    @if (!(TaskModuleParamContext.ParamFlags?.SkipLabel == true) && !(TaskModuleParamContext.ListFlags?.SkipListLabel == true))
                     {
-                        <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
-                            @parameterName
+                        <FieldLabel For="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))" RequiredIndicator="@(TaskModuleParamContext.ParamOption.Required == true)">
+                            @TaskModuleParamContext.ParamName
                         </FieldLabel>
                     }
 
                     <Select TValue="string"
-                            Disabled="@(TaskMetadata.InitializationInProgres)"
-                            ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-                            SelectedValue="@ParamValue.Value!.EnumValue!.StringValue"
-                            SelectedValueExpression="@(() => ParamValue.Value!.EnumValue!.StringValue)"
+                            Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                            ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                            SelectedValue="@TaskModuleParamContext.ParamValue!.Value!.EnumValue!.StringValue"
+                            SelectedValueExpression="@(() => TaskModuleParamContext.ParamValue.Value!.EnumValue!.StringValue)"
                             SelectedValueChanged="@(async (value) => await OnStringEnumValueChanged(value))">
                         <ChildContent>
                             <SelectItem Value="string.Empty">
                                 @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
                             </SelectItem>
-                            @foreach (var enumOption in ParamOption.EnumOptions)
+                            @foreach (var enumOption in TaskModuleParamContext.ParamOption.EnumOptions)
                             {
                                 var longName = (string?)null;
-                                var longNameIndex = ParamOption.EnumOptions.Select(x => x.StringValue).ToList().FindIndex(x => x == enumOption.StringValue);
-                                @if (ParamOption.EnumLongNames?.Count > 0)
+                                var longNameIndex = TaskModuleParamContext.ParamOption.EnumOptions.Select(x => x.StringValue).ToList().FindIndex(x => x == enumOption.StringValue);
+                                @if (TaskModuleParamContext.ParamOption.EnumLongNames?.Count > 0)
                                 {
-                                    longName = ParamOption.EnumLongNames?.ElementAtOrDefault(longNameIndex);
+                                    longName = TaskModuleParamContext.ParamOption.EnumLongNames?.ElementAtOrDefault(longNameIndex);
                                 }
 
                                 <SelectItem Value="@(enumOption.StringValue)">
@@ -173,33 +168,36 @@
                 </Field>
             </Validation>
         }
-        else if (ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null)
+        else if (TaskModuleParamContext.ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null)
         {
-            var moduleType = ParamOption.EnumOptions.Select(x => x.ModuleValue?.PackageType).FirstOrDefault(x => x.HasValue);
-            var moduleOptions = ParamOption.EnumOptions.Select(x => x.ModuleValue).ToList();
-
+            var moduleType = TaskModuleParamContext.ParamOption.EnumOptions.Select(x => x.ModuleValue?.PackageType).FirstOrDefault(x => x.HasValue);
             if (moduleType is not null)
             {
-                ParamValue.Value!.EnumValue!.ModuleValue ??= new() { PackageType = moduleType.Value };
-                <TaskModuleDataFormSection EditContext="EditContext" Operation="Operation" TaskMetadata="TaskMetadata" Task="Task" ModuleOptions="@moduleOptions" Module="@ParamValue.Value!.EnumValue!.ModuleValue" ModuleName="@parameterName" />
+                var moduleContext = new TaskModuleContext(
+                    TaskModuleParamContext.ParamValue!.Value!.EnumValue!.ModuleValue!,
+                    TaskModuleParamContext.ParamOption!.EnumOptions.Select(x => x.ModuleValue!).ToList(),
+                    TaskModuleParamContext.ParamName);
+
+                TaskModuleParamContext.ParamValue.Value!.EnumValue!.ModuleValue ??= new() { PackageType = moduleType.Value };
+                <TaskModuleDataFormSection TaskModalContext="TaskModalContext" TaskModuleContext="moduleContext" />
             }
         }
         break;
 
     case ParameterType.BOOL:
         <Validation>
-            <Field ColumnSize="@(Flags?.DisplayActions == true || ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
-                @if (!(Flags?.SkipLabel == true) && !(ListFlags?.SkipListLabel == true))
+            <Field ColumnSize="@(TaskModuleParamContext.ParamFlags?.DisplayActions == true || TaskModuleParamContext.ListFlags?.DisplayActions == true ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)">
+                @if (!(TaskModuleParamContext.ParamFlags?.SkipLabel == true) && !(TaskModuleParamContext.ListFlags?.SkipListLabel == true))
                 {
-                    <FieldLabel For="@(GetElementIdByOperation(ParamOption.Key))" RequiredIndicator="@(ParamOption.Required == true)">
-                        @parameterName
+                    <FieldLabel For="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))" RequiredIndicator="@(TaskModuleParamContext.ParamOption.Required == true)">
+                        @TaskModuleParamContext.ParamName
                     </FieldLabel>
                 }
 
                 <Check TValue="bool?"
-                       ElementId="@(GetElementIdByOperation(ParamOption.Key))"
-                       Disabled="@(TaskMetadata.InitializationInProgres)"
-                       @bind-Checked="@ParamValue.Value!.BoolValue">
+                       ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                       Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                       @bind-Checked="@TaskModuleParamContext.ParamValue!.Value!.BoolValue">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -211,57 +209,34 @@
 
 @code {
     [Parameter]
-    public EditContext EditContext { get; set; } = null!;
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     [Parameter]
-    public TaskDto Task { get; set; } = new();
+    public TaskModuleContext TaskModuleContext { get; set; } = null!;
 
     [Parameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
-
-    [Parameter]
-    public DataOperation Operation { get; set; }
-
-    [Parameter]
-    public TaskModuleDto? Module { get; set; } = null;
-
-    [Parameter]
-    public TaskModuleParamFlags? Flags { get; set; } = null;
-
-    [Parameter]
-    public ListParamFlags? ListFlags { get; set; } = null;
-
-    [Parameter]
-    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
-
-    [Parameter]
-    public TaskModuleParameterDto ParamValue { get; set; } = new();
-
-    [Parameter]
-    public Guid? ParameterID { get; set; }
+    public TaskModuleParamContext TaskModuleParamContext { get; set; } = null!;
 
     private string? timeStringValue;
     private InputMask? timeInputMask;
     private Validation? timeValidationComponent;
 
-    public TaskModuleParamValueInput() => ParameterID ??= Guid.NewGuid();
-
-    private void ValidateTimeParameter(ValidatorEventArgs args) => ParameterTimeValidator.ValidateTimeParameter(args, ParamValue, resourceHandler);
+    private void ValidateTimeParameter(ValidatorEventArgs args) => ParameterTimeValidator.ValidateTimeParameter(args, TaskModuleParamContext.ParamValue!, resourceHandler);
 
     protected override async Task OnParametersSetAsync()
     {
-        if (DynamicParamUtils.GetParameterType(ParamOption.Type) == ParameterType.TIME)
+        if (DynamicParamUtils.GetParameterType(TaskModuleParamContext.ParamOption.Type) == ParameterType.TIME)
         {
-            timeStringValue = ParameterTimeHelper.ConvertSecondsToTimeString(ParamValue.Value?.IntValue);
+            timeStringValue = ParameterTimeHelper.ConvertSecondsToTimeString(TaskModuleParamContext.ParamValue!.Value?.IntValue);
         }
         await base.OnParametersSetAsync();
     }
 
     private string GetTimeInputPlaceholder()
     {
-        if (ParamOption.Default?.IntValue is not null && ParamOption.Default.IntValue.Value != -1)
+        if (TaskModuleParamContext.ParamOption.Default?.IntValue is not null && TaskModuleParamContext.ParamOption.Default.IntValue.Value != -1)
         {
-            return ParameterTimeHelper.ConvertSecondsToTimeString(ParamOption.Default.IntValue) ?? string.Empty;
+            return ParameterTimeHelper.ConvertSecondsToTimeString(TaskModuleParamContext.ParamOption.Default.IntValue) ?? string.Empty;
         }
         return string.Empty;
     }
@@ -292,9 +267,9 @@
 
     private async Task OnStringEnumValueChanged(string? newValue)
     {
-        if (ParamValue.Value?.EnumValue is not null)
+        if (TaskModuleParamContext.ParamValue?.Value?.EnumValue is not null)
         {
-            ParamValue.Value.EnumValue.StringValue = newValue;
+            TaskModuleParamContext.ParamValue.Value.EnumValue.StringValue = newValue;
         }
         await RefreshFlags();
     }
@@ -303,27 +278,27 @@
     private async Task OnTimeStringChanged(string? newValue)
     {
         timeStringValue = newValue;
-        if (ParamValue.Value is not null)
+        if (TaskModuleParamContext.ParamValue?.Value is not null)
         {
-            ParamValue.Value.IntValue = ConvertTimeStringToSeconds(timeStringValue);
+            TaskModuleParamContext.ParamValue.Value.IntValue = ConvertTimeStringToSeconds(timeStringValue);
         }
         await RefreshFlags();
     }
 
     private async Task RefreshFlags()
     {
-        if (Flags is not null)
+        if (TaskModuleParamContext.ParamFlags is not null)
         {
-            var flags = taskManipulationService.GetParamFlags(Module, ParamOption, ParamValue);
-            mapper.Map(flags, Flags);
+            var flags = taskManipulationService.GetParamFlags(TaskModuleContext.Module, TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
+            mapper.Map(flags, TaskModuleParamContext.ParamFlags);
         }
-        else if (ListFlags is not null)
+        else if (TaskModuleParamContext.ListFlags is not null)
         {
-            var listFlags = taskManipulationService.GetListParamFlags(ParamOption, ParamValue);
-            mapper.Map(listFlags, ListFlags);
+            var listFlags = taskManipulationService.GetListParamFlags(TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
+            mapper.Map(listFlags, TaskModuleParamContext.ListFlags);
         }
         await uiService.CallRequestRefreshAsync();
     }
 
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, TaskModalContext.Operation, $"{TaskModalContext.Task.ID.ToString()}_{TaskModuleParamContext.ParamID.ToString()}");
 }

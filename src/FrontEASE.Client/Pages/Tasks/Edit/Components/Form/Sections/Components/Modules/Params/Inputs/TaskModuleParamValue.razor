@@ -3,59 +3,60 @@
 @inject IUIService uiService
 @inject IMapper mapper
 
-@{
-    Flags = taskManipulationService.GetParamFlags(Module, ParamOption, ParamValue);
+@if (TaskModuleParamContext is not null)
+{
+    TaskModuleParamContext.ParamFlags = taskManipulationService.GetParamFlags(TaskModuleContext.Module, TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
 }
 
-@if (Flags?.ParamType is not null)
+@if (TaskModuleParamContext?.ParamFlags?.ParamType is not null)
 {
-    @if (Flags.IsTokenSelector)
+    @if (TaskModuleParamContext.ParamFlags.IsTokenSelector)
     {
-        <TaskModuleParamValueTokenSelector TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" Module="@Module" ParamOption="@ParamOption" ParamValue="@ParamValue" ParamName="@Flags.ParamName" />
+        <TaskModuleParamValueTokenSelector TaskModalContext="TaskModalContext" TaskModuleContext="TaskModuleContext" TaskModuleParamContext="TaskModuleParamContext" />
     }
-    else if (Flags.IsListParam)
+    else if (TaskModuleParamContext.ParamFlags.IsListParam)
     {
-        <TaskModuleListParamLabel Task="Task" Operation="Operation" ParamOption="@ParamOption" ParamValue="@ParamValue" ParameterName="@Flags.ParamName" />
-        <TaskModuleListParamValue TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" ParamOption="@ParamOption" ParamValue="@ParamValue" EditContext="EditContext"/>
+        <TaskModuleListParamLabel TaskModalContext="TaskModalContext" TaskModuleParamContext="TaskModuleParamContext" />
+        <TaskModuleListParamValue TaskModalContext="TaskModalContext" TaskModuleParamContext="TaskModuleParamContext" />
     }
     else
     {
-        <TaskModuleParamValueInput EditContext="EditContext" TaskMetadata="TaskMetadata" Task="Task" Operation="Operation" ParameterID="@ParameterID" Flags="@Flags" Module="@Module" ParamOption="@ParamOption" ParamValue="@ParamValue" />
+        <TaskModuleParamValueInput TaskModalContext="TaskModalContext" TaskModuleContext="TaskModuleContext" TaskModuleParamContext="TaskModuleParamContext" />
     }
 }
 
-@if (Flags?.DisplayActions == true)
+@if (TaskModuleParamContext?.ParamFlags?.DisplayActions == true)
 {
     <Field ColumnSize="ColumnSize.Is2.OnWidescreen.Is1.OnFullHD" TextAlignment="TextAlignment.Center" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
         <FieldLabel>
             @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))
         </FieldLabel>
         <Div>
-            @if (Flags.IsDescriptionPresent)
+            @if (TaskModuleParamContext.ParamFlags!.IsDescriptionPresent)
             {
-                <Tooltip Multiline="true" Text="@(ParamOption!.Description ?? Flags.InternalDescription)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+                <Tooltip Multiline="true" Text="@(TaskModuleParamContext.ParamOption!.Description ?? TaskModuleParamContext.ParamFlags!.InternalDescription)" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                     <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                 </Tooltip>
             }
-            @if (Flags.IsDefaultPresent && !TaskMetadata.InitializationInProgres)
+            @if (TaskModuleParamContext.ParamFlags!.IsDefaultPresent && !TaskModalContext.TaskMetadata.InitializationInProgres)
             {
-                <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{Flags.ParamDefaultValue}\"")" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
-                    <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => taskManipulationService.FillParamDefaultValue(ParamValue, Flags.ParamDefaultValue))" />
+                <Tooltip Multiline="true" Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Use}.{UIStateConstants.Default}")} : \"{TaskModuleParamContext.ParamFlags.ParamDefaultValue}\"")" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
+                    <Icon Class="action-icon-sm action-icon-success" Name="IconName.Paste" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="(() => taskManipulationService.FillParamDefaultValue(TaskModuleParamContext.ParamValue!, TaskModuleParamContext.ParamFlags.ParamDefaultValue))" />
                 </Tooltip>
             }
         </Div>
     </Field>
 }
 
-@if (Flags?.ParamType == ParameterType.MARKDOWN)
+@if (TaskModuleParamContext?.ParamFlags?.ParamType == ParameterType.MARKDOWN)
 {
     <Validation>
-        <Field ColumnSize="@(Flags.DisplayActions? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)" Class="input-validation-only">
+        <Field ColumnSize="@(TaskModuleParamContext.ParamFlags!.DisplayActions ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)" Class="input-validation-only">
 
-            <MemoEdit ElementId="@(GetElementIdByOperation($"{ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))"
-                      Disabled="@(TaskMetadata.InitializationInProgres)"
-                      @bind-Text="@ParamValue.Value!.StringValue"
-                      Placeholder="@(ParamOption.Default?.StringValue ?? ParamOption.LongName ?? string.Empty)">
+            <MemoEdit ElementId="@(GetElementIdByOperation($"{TaskModuleParamContext.ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))"
+                      Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                      @bind-Text="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
+                      Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
@@ -66,27 +67,13 @@
 
 @code {
     [Parameter]
-    public EditContext EditContext { get; set; } = null!;
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     [Parameter]
-    public TaskDto Task { get; set; } = new();
+    public TaskModuleContext TaskModuleContext { get; set; } = null!;
 
     [Parameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
-
-    [Parameter]
-    public DataOperation Operation { get; set; }
-
-    [Parameter]
-    public TaskModuleDto? Module { get; set; }
-
-    [Parameter]
-    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
-
-    [Parameter]
-    public TaskModuleParameterDto ParamValue { get; set; } = new();
-
-    private TaskModuleParamFlags? Flags = null;
+    public TaskModuleParamContext TaskModuleParamContext { get; set; } = null!;
 
     private async Task RefreshViewAsync()
     {
@@ -102,11 +89,9 @@
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        var derivedFlags = taskManipulationService.GetParamFlags(Module, ParamOption, ParamValue);
-        mapper.Map(derivedFlags, Flags);
+        var derivedFlags = taskManipulationService.GetParamFlags(TaskModuleContext.Module, TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
+        mapper.Map(derivedFlags, TaskModuleParamContext.ParamFlags);
     }
 
-    private Guid ParameterID = Guid.NewGuid();
-
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, $"{Task.ID.ToString()}_{ParameterID.ToString()}");
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, TaskModalContext.Operation, $"{TaskModalContext.Task.ID.ToString()}_{TaskModuleParamContext.ParamID.ToString()}");
 }

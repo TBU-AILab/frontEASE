@@ -13,14 +13,14 @@
         <Container Fluid>
             <Row>
 
-                @if (!string.IsNullOrEmpty(Task.Config.Name))
+                @if (!string.IsNullOrEmpty(TaskModalContext.Task.Config.Name))
                 {
                     <Column ColumnSize="ColumnSize.IsFull">
                         <Text>
                             @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.FIELD))):
                         </Text>
                         <Span TextWeight="TextWeight.Bold">
-                            @($" {Task.Config.Name}")
+                            @($" {TaskModalContext.Task.Config.Name}")
                         </Span>
                     </Column>
                 }
@@ -30,7 +30,7 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.State), PropertyDisplayResourceType.FIELD))):
                     </Text>
                     <Span TextWeight="TextWeight.Bold">
-                        @($" {resourceHandler.GetResource(((TaskState)Task.State).GetEnumResourceValue())}")
+                        @($" {resourceHandler.GetResource(((TaskState)TaskModalContext.Task.State).GetEnumResourceValue())}")
                     </Span>
                 </Column>
 
@@ -39,7 +39,7 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.CurrentIteration), PropertyDisplayResourceType.FIELD))):
                     </Text>
                     <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Info">
-                        @($" {Task.CurrentIteration}")
+                        @($" {TaskModalContext.Task.CurrentIteration}")
                     </Span>
                 </Column>
 
@@ -48,7 +48,7 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsValid), PropertyDisplayResourceType.FIELD))):
                     </Text>
                     <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Success">
-                        @($" {Task.IterationsValid}")
+                        @($" {TaskModalContext.Task.IterationsValid}")
                     </Span>
                 </Column>
 
@@ -57,7 +57,7 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsInvalidConsecutive), PropertyDisplayResourceType.FIELD))):
                     </Text>
                     <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Danger">
-                        @($" {Task.IterationsInvalidConsecutive}")
+                        @($" {TaskModalContext.Task.IterationsInvalidConsecutive}")
                     </Span>
                 </Column>
 
@@ -68,5 +68,5 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 }

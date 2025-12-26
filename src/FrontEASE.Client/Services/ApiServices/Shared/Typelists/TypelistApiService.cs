@@ -7,10 +7,8 @@ using System.Net.Http.Json;
 
 namespace FrontEASE.Client.Services.ApiServices.Shared.Typelists
 {
-    public class TypelistApiService : ApiServiceBase, ITypelistApiService
+    public class TypelistApiService(HttpClient client, IMapper mapper, IErrorHandlingService errorHandlingService) : ApiServiceBase(client, mapper, errorHandlingService), ITypelistApiService
     {
-        public TypelistApiService(HttpClient client, IMapper mapper, IErrorHandlingService errorHandlingService) : base(client, mapper, errorHandlingService) { }
-
         private async Task<IList<T>> GetTaskTypelists<T>(string url)
         {
             var response = await _client.GetAsync(url);

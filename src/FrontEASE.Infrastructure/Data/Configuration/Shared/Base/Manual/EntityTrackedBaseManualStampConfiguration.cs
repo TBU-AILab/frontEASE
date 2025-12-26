@@ -3,7 +3,7 @@ using FrontEASE.Infrastructure.Constants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Base.Tracked
+namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Base.Manual
 {
     public class EntityTrackedBaseManualStampConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : EntityTrackedBaseManualStamp
     {

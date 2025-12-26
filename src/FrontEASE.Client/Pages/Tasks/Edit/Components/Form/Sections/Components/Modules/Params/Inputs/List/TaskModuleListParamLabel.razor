@@ -3,8 +3,8 @@
 @inject IMapper mapper
 
 <Field ColumnSize="ColumnSize.Is10.OnWidescreen.Is11.OnFullHD">
-    <FieldLabel For="@(GetElementIdByOperation(ParamOption!.Key))" RequiredIndicator>
-        @ParameterName
+    <FieldLabel For="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption!.Key))" RequiredIndicator>
+        @TaskModuleParamContext.ParamName
     </FieldLabel>
 </Field>
 
@@ -17,7 +17,7 @@
         @if (ContainsDescription)
         {
             <Tooltip Multiline="true"
-                     Text="@(ParamOption?.Description)"
+                     Text="@(TaskModuleParamContext.ParamOption?.Description)"
                      Display="Display.InlineBlock"
                      Padding="Padding.Is1.FromEnd"
                      Placement="TooltipPlacement.Top">
@@ -32,7 +32,7 @@
                   Name="IconName.PlusCircle"
                   IconSize="IconSize.Default"
                   IconStyle="IconStyle.Solid"
-                  Clicked="(async () => await AddListParameter(ParamValue))" />
+                  Clicked="(async () => await AddListParameter(TaskModuleParamContext.ParamValue!))" />
         </Tooltip>
     </Div>
 </Field>
@@ -44,29 +44,18 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     [Parameter]
-    public DataOperation Operation { get; set; }
+    public TaskModuleParamContext TaskModuleParamContext { get; set; } = null!;
 
-    [Parameter]
-    public TaskModuleParameterNoValidationDto ParamOption { get; set; } = new();
-
-    [Parameter]
-    public TaskModuleParameterDto ParamValue { get; set; } = new();
-
-    [Parameter]
-    public string ParameterName { get; set; } = string.Empty;
-
-
-    private bool ContainsDescription => !string.IsNullOrWhiteSpace(ParamOption.Description);
-
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, Operation, Task.ID.ToString());
+    private bool ContainsDescription => !string.IsNullOrWhiteSpace(TaskModuleParamContext.ParamOption.Description);
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, TaskModalContext.Operation, TaskModalContext.Task.ID.ToString());
 
     private async Task AddListParameter(TaskModuleParameterDto parameter)
     {
         var newListParam = new TaskModuleParameterListOptionParamsDto();
-        foreach (var param in ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems ?? [])
+        foreach (var param in TaskModuleParamContext.ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems ?? [])
         {
             var mappedParam = mapper.Map<TaskModuleParameterDto>(param);
             newListParam.ParameterItems.Add(mappedParam);
@@ -74,7 +63,7 @@
         foreach (var paramItem in newListParam.ParameterItems)
         {
             var paramType = DynamicParamUtils.GetParameterType(paramItem.Type);
-            var paramOption = ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems?.SingleOrDefault(x => x.Key == paramItem.Key);
+            var paramOption = TaskModuleParamContext.ParamOption.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems?.SingleOrDefault(x => x.Key == paramItem.Key);
             if (paramType is not null && paramOption is not null)
             {
                 InitializeParamValue(paramItem, paramOption, paramType.Value);

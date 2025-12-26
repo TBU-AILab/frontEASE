@@ -5,17 +5,17 @@
     <Row>
         <Column ColumnSize="@(IsFullWidth? ColumnSize.IsFull: ColumnSize.Is8.OnWidescreen.Is10.OnMobile)" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
             <Card Border="Border.Rounded" Class="@($"{(IsSelectable ? "cursor-pointer" : string.Empty)} border-custom-light")" @onclick="(async () => await SelectMessageSolution())">
-                <MessageViewHeader />
+                <MessageViewHeader Message="Message" />
 
                 <CardBody Border="Border.Is0"
-                          Class="@($"{(TaskMetadata.SelectedMessageID == Message.ID ? "bg-custom-info" :"bg-custom-primary")} {(TaskMetadata.SelectedMessageID == Message.ID ? "text-custom-info" : "text-custom-primary")}")">
+                          Class="@($"{(TaskModalContext.TaskMetadata.SelectedMessageID == Message.ID ? "bg-custom-info" :"bg-custom-primary")} {(TaskModalContext.TaskMetadata.SelectedMessageID == Message.ID ? "text-custom-info" : "text-custom-primary")}")">
                     @if (!string.IsNullOrWhiteSpace(Message.Content))
                     {
                         @((MarkupString)Markdig.Markdown.ToHtml(Message.Content))
                     }
 
                     @{
-                        var matchedSolution = Task.Solutions.SingleOrDefault(x => x.TaskMessageID == Message.ID);
+                        var matchedSolution = TaskModalContext.Task.Solutions.SingleOrDefault(x => x.TaskMessageID == Message.ID);
                     }
                     @if (matchedSolution is not null)
                     {
@@ -30,7 +30,7 @@
                     }
 
                 </CardBody>
-                <MessageViewFooter />
+                <MessageViewFooter Message="Message" />
             </Card>
         </Column>
     </Row>
@@ -39,10 +39,7 @@
 
 @code {
     [Parameter]
-    public TaskDto Task { get; set; } = new();
-
-    [Parameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     [Parameter]
     public TaskMessageDto Message { get; set; } = new();
@@ -64,8 +61,8 @@
         }
         else
         {
-            TaskMetadata.SelectedMessageID =
-            TaskMetadata.SelectedMessageID == Message.ID ? null : Message.ID;
+            TaskModalContext.TaskMetadata.SelectedMessageID =
+            TaskModalContext.TaskMetadata.SelectedMessageID == Message.ID ? null : Message.ID;
 
             await uiService.CallRequestRefreshAsync();
         }

@@ -9,19 +9,10 @@ using FrontEASE.Shared.Services.Resources;
 
 namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts
 {
-    public class TaskChartManipulationService : ITaskChartManipulationService
+    public class TaskChartManipulationService(
+        IResourceHandler resourceHandler,
+        IUIManager uiManager) : ITaskChartManipulationService
     {
-        private readonly IResourceHandler _resourceHandler;
-        private readonly IUIManager _uiManager;
-
-        public TaskChartManipulationService(
-            IResourceHandler resourceHandler,
-            IUIManager uiManager)
-        {
-            _resourceHandler = resourceHandler;
-            _uiManager = uiManager;
-        }
-
         public (IList<float> Values, IList<string> Labels) GetValueEvolutionChartData(IList<TaskMessageDto> messages, IList<TaskSolutionDto> solutions)
         {
             var labels = new List<string>();
@@ -35,7 +26,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts
                 var fitness = (float)(solution.Fitness ?? float.NegativeInfinity);
                 values.Add(fitness);
 
-                var messageContent = string.IsNullOrEmpty(message?.Content) ? _resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : message.Content;
+                var messageContent = string.IsNullOrEmpty(message?.Content) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : message.Content;
                 labels.Add($"n°{++i}: \"{TextHelper.TruncateString(messageContent, TextConstants.TaskChartMessageDisplayLength)}\"");
             }
 
@@ -57,7 +48,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts
                 bestSoFar = Math.Max(bestSoFar, fitness);
                 values.Add(bestSoFar);
 
-                var messageContent = string.IsNullOrEmpty(message?.Content) ? _resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : message.Content;
+                var messageContent = string.IsNullOrEmpty(message?.Content) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : message.Content;
                 labels.Add($"n°{++i}: \"{TextHelper.TruncateString(messageContent, TextConstants.TaskChartMessageDisplayLength)}\"");
             }
 
@@ -89,7 +80,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts
                     Subtitle = new()
                     {
                         Text = subtitleText,
-                        Color = new List<string>() { ChartColor.FromHtmlColorCode(_uiManager.Theme.ColorOptions.Primary) },
+                        Color = new List<string>() { ChartColor.FromHtmlColorCode(uiManager.Theme.ColorOptions.Primary) },
                         Display = true,
                     }
                 },

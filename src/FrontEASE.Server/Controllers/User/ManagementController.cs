@@ -18,18 +18,12 @@ namespace FrontEASE.Server.Controllers.User
     /// Controller for preferences management.
     /// </summary>
     [Authorize]
-    public class ManagementController : ApiControllerBase
+    public class ManagementController(
+        IManagementAppService managementAppService,
+        IResourceHandler resourceHandler,
+        IResourceAppService resourceAppService,
+        AppSettings appSettings) : ApiControllerBase(resourceHandler, resourceAppService, appSettings)
     {
-        private readonly IManagementAppService _managementAppService;
-
-        public ManagementController(
-            IManagementAppService managementAppService,
-            IResourceHandler resourceHandler,
-            IResourceAppService resourceAppService,
-            AppSettings appSettings) : base(resourceHandler, resourceAppService, appSettings)
-        {
-            _managementAppService = managementAppService;
-        }
 
         /// <summary>
         /// Loads current user preferences.
@@ -44,7 +38,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var response = await _managementAppService.Load(cancellationToken);
+                var response = await managementAppService.Load(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -68,7 +62,7 @@ namespace FrontEASE.Server.Controllers.User
             IActionResult result;
             try
             {
-                var response = await _managementAppService.LoadGlobal(cancellationToken);
+                var response = await managementAppService.LoadGlobal(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -94,7 +88,7 @@ namespace FrontEASE.Server.Controllers.User
             try
             {
                 ValidateModel();
-                var updatedPreferences = await _managementAppService.Update(preferences, CancellationToken.None);
+                var updatedPreferences = await managementAppService.Update(preferences, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, updatedPreferences);
             }
             catch (Exception ex)
@@ -121,7 +115,7 @@ namespace FrontEASE.Server.Controllers.User
             try
             {
                 ValidateModel();
-                var updatedPreferences = await _managementAppService.UpdateGlobal(preferences, CancellationToken.None);
+                var updatedPreferences = await managementAppService.UpdateGlobal(preferences, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, updatedPreferences);
             }
             catch (Exception ex)

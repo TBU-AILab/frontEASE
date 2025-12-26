@@ -18,17 +18,12 @@ namespace FrontEASE.Server.Controllers.Superadmin
     /// Controller for company management.
     /// </summary>
     [Authorize]
-    public class CompaniesController : ApiControllerBase
+    public class CompaniesController(
+        ICompanyAppService companyAppService,
+        IResourceHandler resourceHandler,
+        IResourceAppService resourceAppService,
+        AppSettings appSettings) : ApiControllerBase(resourceHandler, resourceAppService, appSettings)
     {
-        private readonly ICompanyAppService _companyAppService;
-        public CompaniesController(
-            ICompanyAppService companyAppService,
-            IResourceHandler resourceHandler,
-            IResourceAppService resourceAppService,
-            AppSettings appSettings) : base(resourceHandler, resourceAppService, appSettings)
-        {
-            _companyAppService = companyAppService;
-        }
 
         /// <summary>
         /// Gets list of companies.
@@ -42,7 +37,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
             IActionResult result;
             try
             {
-                var response = await _companyAppService.LoadAll(cancellationToken);
+                var response = await companyAppService.LoadAll(cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -67,7 +62,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
             IActionResult result;
             try
             {
-                var response = await _companyAppService.Load(id, cancellationToken);
+                var response = await companyAppService.Load(id, cancellationToken);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -93,7 +88,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
             try
             {
                 ValidateModel();
-                var createdCompany = await _companyAppService.Create(company, CancellationToken.None);
+                var createdCompany = await companyAppService.Create(company, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.Created, createdCompany, nameof(CreateCompany));
             }
             catch (Exception ex)
@@ -120,7 +115,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
             try
             {
                 ValidateModel();
-                var updatedCompany = await _companyAppService.Update(company, CancellationToken.None);
+                var updatedCompany = await companyAppService.Update(company, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, updatedCompany);
             }
             catch (Exception ex)
@@ -144,7 +139,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
             IActionResult result;
             try
             {
-                await _companyAppService.Delete(id, CancellationToken.None);
+                await companyAppService.Delete(id, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent, null);
             }
             catch (Exception ex)

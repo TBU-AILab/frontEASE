@@ -16,17 +16,11 @@ namespace FrontEASE.Server.Controllers.Anonymous
     /// Controller for resource management.
     /// </summary>
     [AllowAnonymous]
-    public class ResourcesController : ApiControllerBase
+    public class ResourcesController(
+        IResourceAppService resourceAppService,
+        IResourceHandler resourceHandler,
+        AppSettings appSettings) : ApiControllerBase(resourceHandler, resourceAppService, appSettings)
     {
-        private readonly IResourceAppService _resourceAppService;
-
-        public ResourcesController(
-            IResourceAppService resourceAppService,
-            IResourceHandler resourceHandler,
-            AppSettings appSettings) : base(resourceHandler, resourceAppService, appSettings)
-        {
-            _resourceAppService = resourceAppService;
-        }
 
         /// <summary>
         /// Gets list of text resources (translations) from API.

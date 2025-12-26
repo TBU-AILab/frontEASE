@@ -8,20 +8,12 @@ using System.Net.Http.Json;
 
 namespace FrontEASE.Client.Services.ApiServices.Management
 {
-    public class ManagementApiService : ApiServiceBase, IManagementApiService
+    public class ManagementApiService(
+        HttpClient client,
+        IMapper mapper,
+        IErrorHandlingService errorHandlingService,
+        IManagementManipulationService managementManipulationService) : ApiServiceBase(client, mapper, errorHandlingService), IManagementApiService
     {
-        private readonly IManagementManipulationService _managementManipulationService;
-
-        public ManagementApiService(
-            HttpClient client,
-            IMapper mapper,
-            IErrorHandlingService errorHandlingService,
-            IManagementManipulationService managementManipulationService) :
-            base(client, mapper, errorHandlingService)
-        {
-            _managementManipulationService = managementManipulationService;
-        }
-
         public async Task<GlobalPreferencesDto?> LoadGlobalPreferences()
         {
             var url = string.Format($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Global}");
@@ -64,8 +56,8 @@ namespace FrontEASE.Client.Services.ApiServices.Management
 
         public async Task<UserPreferencesDto?> UpdatePreferences(UserPreferencesDto editedPreferencesDto)
         {
-            _managementManipulationService.SetItemPriorities(editedPreferencesDto);
-            _managementManipulationService.SetItemConnectorTypes(editedPreferencesDto);
+            managementManipulationService.SetItemPriorities(editedPreferencesDto);
+            managementManipulationService.SetItemConnectorTypes(editedPreferencesDto);
 
             var response = await _client.PutAsJsonAsync(ManagementControllerConstants.BaseUrl, editedPreferencesDto);
             if (response.StatusCode != HttpStatusCode.OK)
