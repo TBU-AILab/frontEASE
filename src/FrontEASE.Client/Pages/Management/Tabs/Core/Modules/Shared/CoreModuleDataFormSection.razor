@@ -20,7 +20,7 @@
             <FileEdit Display="Display.None"
                       @ref="@filePicker"
                       Filter=".py, .zip"
-                      AutoReset="false"
+                      AutoReset="true"
                       ElementId="@(GetElementIdByOperation(nameof(FileDto.Content)))"
                       MaxFileSize="@(SizeConstants.FiveMegabytes)"
                       Changed="args => FileLoaded(args)"

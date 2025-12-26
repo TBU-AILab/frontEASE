@@ -51,9 +51,9 @@
                 @(string.IsNullOrEmpty(CompanyModel.Image?.ImageData) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Image), PropertyDisplayResourceType.PLACEHOLDER)) : CompanyModel.Image.Name)
             </Text>
             <FileEdit Display="Display.None"
-                      @ref="@FilePicker"
+                      @ref="@filePicker"
                       Filter=".jpg, .jpeg, .jfif, .png, .gif, .bmp, .tiff"
-                      AutoReset="false"
+                      AutoReset="true"
                       ElementId="@(GetElementIdByOperation(nameof(CompanyDto.Image)))"
                       MaxFileSize="@(SizeConstants.FiveMegabytes)"
                       Changed="args => ImageLoaded(args, CompanyModel.Image!)"
@@ -81,7 +81,7 @@
     [Parameter]
     public bool FullWidthFields { get; set; }
 
-    public FileEdit FilePicker = new();
+    private FileEdit filePicker = new();
     private bool imageLoadInProgress = false;
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<CompanyDto>(elementBase, Operation, CompanyModel.ID?.ToString());

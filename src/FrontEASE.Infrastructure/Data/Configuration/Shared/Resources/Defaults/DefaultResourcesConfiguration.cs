@@ -1,4 +1,5 @@
 ﻿using FrontEASE.Domain.Entities.Shared.Resources;
+using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Companies;
 using FrontEASE.Shared.Data.DTOs.Management;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Modules;
@@ -190,8 +191,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.InternalServerError}.{UIStateConstants.Text}", Value="Unclassified error - server failure." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.Forbidden}.{UIStateConstants.Text}", Value="Access has been forbidden." },
 
+                /* ApplicationUser */
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUser)}.{UIExceptionConstants.UserExists}", Value="User with this user name / email already exists." },
+
                 /* ApplicationUserDto */
-                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUserDto)}.{UIExceptionConstants.UserExists}", Value="User with this user name / email already exists." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(ApplicationUserDto)}.{UIElementConstants.Collection}", Value="No users have been found." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(ApplicationUserDto)}.{UIConstants.Question}", Value="Do you really wish to permanently delete this user account?" },
 

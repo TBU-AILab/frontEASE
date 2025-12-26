@@ -61,7 +61,7 @@
 			<FileEdit Display="Display.None"
 					  @ref="@filePicker"
 					  Filter=".jpg, .jpeg, .jfif, .png, .gif, .bmp, .tiff"
-					  AutoReset="false"
+					  AutoReset="true"
 					  ElementId="@(GetElementIdByOperation(nameof(ApplicationUserDto.Image)))"
 					  MaxFileSize="@(SizeConstants.FiveMegabytes)"
 					  Changed="args => ImageLoaded(args, UserModel.Image!)"
@@ -144,7 +144,6 @@
 		{
 			var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}")}: {UserModel.Image?.Name}";
 		}
-
 		imageLoadInProgress = false;
 	}
 }

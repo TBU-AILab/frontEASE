@@ -64,7 +64,7 @@ namespace FrontEASE.Application.AppServices.Users
                  (int)insertedRole > (int)currentRole)                  // ... cannot create higher role
                )
             {
-                throw new UnauthorizedException(); 
+                throw new UnauthorizedException();
             }
         }
 
@@ -96,7 +96,7 @@ namespace FrontEASE.Application.AppServices.Users
         {
             var userID = contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var user = await userService.Load(Guid.Parse(userID), cancellationToken);
-            
+
             var userDto = mapper.Map<ApplicationUserDto>(user);
             userDto.Role = UserRoleGuidToRole(Guid.Parse(user!.UserRole!.RoleId));
             return userDto;
@@ -128,7 +128,7 @@ namespace FrontEASE.Application.AppServices.Users
                 {
                     InternalExceptionCode = ApiInternalExceptionCode.BAD_REQUEST,
                     Errors = new Dictionary<string, string[]>()
-                    {{nameof(user),new string[] { (await resourceService.Load(LanguageCode.EN,$"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUser)}.{UIExceptionConstants.UserExists}", cancellationToken)).Value}}}
+                    {{nameof(user),new string[] { $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUser)}.{UIExceptionConstants.UserExists}"}}}
                 };
             }
 
@@ -140,7 +140,7 @@ namespace FrontEASE.Application.AppServices.Users
         }
 
         public async Task<ApplicationUserDto> Update(ApplicationUserDto user, CancellationToken cancellationToken)
-        {           
+        {
             var currentUser = await LoadCurrentUser(cancellationToken);
             var editedUserEntity = await userService.Load(user.Id!.Value, cancellationToken);
             CheckPermissionToUpdate(currentUser, editedUserEntity, user.Role);
@@ -156,7 +156,7 @@ namespace FrontEASE.Application.AppServices.Users
                     {
                         InternalExceptionCode = ApiInternalExceptionCode.BAD_REQUEST,
                         Errors = new Dictionary<string, string[]>()
-                        {{nameof(user),new string[] { (await resourceService.Load(LanguageCode.EN,$"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUser)}.{UIExceptionConstants.UserExists}", cancellationToken)).Value}}}
+                        {{nameof(user),new string[] { $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUser)}.{UIExceptionConstants.UserExists}"}}}
                     };
                 }
             }
