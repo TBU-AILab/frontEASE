@@ -56,6 +56,17 @@
     private bool deletingInProgress = false;
     private bool isModalVisible = false;
 
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshViewAsync;
+        await base.OnInitializedAsync();
+    }
+
+
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
         switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
@@ -80,8 +91,8 @@
 
         if (deleteResult)
         {
-            var toRemoveFromSelected = SelectedTasks.Where(st => AffectedTasks.Any(at => at.ID == st.ID));
-            var toRemoveFromTasks = PageContext.Tasks.Where(t => AffectedTasks.Any(at => at.ID == t.ID));
+            var toRemoveFromSelected = SelectedTasks.Where(st => AffectedTasks.Any(at => at.ID == st.ID)).ToList();
+            var toRemoveFromTasks = PageContext.Tasks.Where(t => AffectedTasks.Any(at => at.ID == t.ID)).ToList();
 
             foreach (var task in toRemoveFromSelected)
             {
@@ -95,9 +106,10 @@
                 toastService.ShowSuccess(message);
             }
 
-            deletingInProgress = false;
             await uiService.CallRequestRefreshAsync();
         }
+
+        deletingInProgress = false;
         await HideModal();
     }
 

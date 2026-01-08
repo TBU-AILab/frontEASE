@@ -295,9 +295,9 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             if (module is not null && paramValue is null)
             {
                 paramVal = module?.Parameters?.SingleOrDefault(x => x.ShortName == parameterOption.ShortName);
-                paramVal = parameterOption.Readonly == true ? InitializeReadonlyParamValue(module, paramValue, parameterOption) : InitializeParamValue(module, paramValue, parameterOption, paramType!.Value);
+                paramVal = parameterOption.Readonly == true ? InitializeReadonlyParamValue(module, paramVal, parameterOption) : InitializeParamValue(module, paramVal, parameterOption, paramType!.Value);
             }
-            else if (paramVal is not null)
+            else if (paramValue is not null)
             {
                 paramVal = paramValue;
             }

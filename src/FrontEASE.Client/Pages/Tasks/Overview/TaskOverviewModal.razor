@@ -99,6 +99,7 @@
     public async Task Show()
     {
         isTaskLoading = true;
+        TaskModalContext.Operation = Operation;
         await ResetCancellationToken();
         await ShowModal();
 

@@ -87,6 +87,7 @@
     public async Task Show()
     {
         isTaskLoading = true;
+        TaskModalContext.Operation = Operation;
         await ShowModal();
 
         var opened = await taskApiService.LoadTask(TaskInfo.ID, false);

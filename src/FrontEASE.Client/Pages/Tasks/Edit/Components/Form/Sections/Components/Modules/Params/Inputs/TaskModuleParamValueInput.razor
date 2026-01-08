@@ -173,12 +173,12 @@
             var moduleType = TaskModuleParamContext.ParamOption.EnumOptions.Select(x => x.ModuleValue?.PackageType).FirstOrDefault(x => x.HasValue);
             if (moduleType is not null)
             {
+                TaskModuleParamContext.ParamValue!.Value!.EnumValue!.ModuleValue ??= new() { PackageType = moduleType.Value };
                 var moduleContext = new TaskModuleContext(
-                    TaskModuleParamContext.ParamValue!.Value!.EnumValue!.ModuleValue!,
+                    TaskModuleParamContext.ParamValue.Value!.EnumValue!.ModuleValue!,
                     TaskModuleParamContext.ParamOption!.EnumOptions.Select(x => x.ModuleValue!).ToList(),
                     TaskModuleParamContext.ParamName);
 
-                TaskModuleParamContext.ParamValue.Value!.EnumValue!.ModuleValue ??= new() { PackageType = moduleType.Value };
                 <TaskModuleDataFormSection TaskModalContext="TaskModalContext" TaskModuleContext="moduleContext" />
             }
         }

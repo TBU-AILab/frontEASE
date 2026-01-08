@@ -14,7 +14,7 @@ namespace FrontEASE.Client.Contexts.Specific.Tasks
             Module = module;
             ModuleName = moduleName;
 
-            ModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == Module.ShortName);
+            ModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == Module?.ShortName);
             ModuleType = ModuleOptions.FirstOrDefault()?.PackageType;
         }
 

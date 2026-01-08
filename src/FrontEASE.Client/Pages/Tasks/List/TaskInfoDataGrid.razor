@@ -247,7 +247,7 @@
                         </Tooltip>
                     }
 
-                    @if (deletableTaskStates.Contains(context.State) && ((PageContext.LoggedInUser.Id == TaskInfo?.Author?.Id || TaskInfo?.Author?.Id is null) || PageContext.LoggedInUser.Role == UserRole.OWNER))
+                    @if (deletableTaskStates.Contains(context.State) && ((PageContext.LoggedInUser.Id == context.Author?.Id || context.Author?.Id is null) || PageContext.LoggedInUser.Role == UserRole.OWNER))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                             <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowDeleteModal(new List<TaskInfoDto>() { context }))" @onclick:stopPropagation="true" />

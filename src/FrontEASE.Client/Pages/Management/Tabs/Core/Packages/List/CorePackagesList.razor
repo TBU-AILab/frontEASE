@@ -28,7 +28,7 @@ else
 
                 @if (!isAddonsPackagesCollapsed)
                 {
-                    <Column ColumnSize="ColumnSize.IsFull">
+                    <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
                         <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
                             <Virtualize Items="GlobalPreferences.CorePackages.Where(x => !x.System).ToList()" Context="package">
                                 <ItemContent>
@@ -62,7 +62,7 @@ else
 
             @if (!isSystemPackagesCollapsed)
             {
-                <Column ColumnSize="ColumnSize.IsFull">
+                <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
                     <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
                         <Virtualize Items="GlobalPreferences.CorePackages.Where(x => x.System).ToList()" Context="package">
                             <ItemContent>

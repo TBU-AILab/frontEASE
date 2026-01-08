@@ -59,7 +59,7 @@
 
         <Column ColumnSize="ColumnSize.IsFull">
             <Container Fluid>
-                @if (!string.IsNullOrWhiteSpace(TaskModuleContext.Module.ShortName))
+                @if (!string.IsNullOrWhiteSpace(TaskModuleContext.Module?.ShortName))
                 {
                     <TaskModuleParamsFormSection TaskModalContext="TaskModalContext" TaskModuleContext="TaskModuleContext" />
                 }

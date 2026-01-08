@@ -66,6 +66,11 @@
         TaskModalContext = new TaskModalContext(new(), TaskInfo, new(), new(), Operation, new());
     }
 
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
     private async Task ResetCancellationToken()
     {
         if (cancellationTokenSource is not null)
@@ -90,6 +95,7 @@
     {
         TaskModalContext.EditContext = new EditContext(TaskModalContext.Task);
         TaskModalContext.EditContext.OnFieldChanged += OnFieldChanged;
+        uiService.RefreshRequested += RefreshViewAsync;
         await base.OnInitializedAsync();
     }
 
@@ -138,6 +144,7 @@
     public async Task Show()
     {
         isTaskLoading = true;
+        TaskModalContext.Operation = Operation;
         await ResetCancellationToken();
         await ShowModal();
 
@@ -147,7 +154,7 @@
             if (inserted is not null)
             {
                 mapper.Map(inserted, TaskModalContext.Task);
-                TaskInfo = mapper.Map<TaskInfoDto>(inserted);
+                TaskModalContext.TaskInfo = mapper.Map<TaskInfoDto>(inserted);
             }
         }
         else
