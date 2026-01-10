@@ -28,8 +28,9 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
         void CleanUsersInfo(TaskDto task);
         void CleanCompaniesInfo(TaskDto task);
         void AssignTaskImages(TaskDto task, IList<CompanyDto> availableCompanies, IList<ApplicationUserDto> availableUsers);
+        void AssignTaskModules(TaskDto task, IList<TaskModuleNoValidationDto> availableModules);
 
-        (IList<ApplicationUserDto> PreservedMembers, IList<CompanyDto> PreservedGroups) PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions);
+        (IList<ApplicationUserDto> PreservedMembers, IList<CompanyDto> PreservedGroups, IList<TaskModuleNoValidationDto> PreservedModules) PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions);
         void PrepareTaskFilter(TaskFilterActionRequestDto filter);
 
         (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto? parameter);

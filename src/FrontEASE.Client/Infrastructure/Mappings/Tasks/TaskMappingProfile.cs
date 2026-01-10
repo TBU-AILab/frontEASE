@@ -18,7 +18,8 @@ namespace FrontEASE.Client.Infrastructure.Mappings.Tasks
                 .ForMember(x => x.Author, cd => cd.MapFrom(map => map.Author))
                 .ForMember(x => x.Members, cd => cd.MapFrom(map => map.Members))
                 .ForMember(x => x.MemberGroups, cd => cd.MapFrom(map => map.MemberGroups))
-                .ForMember(x => x.Config, cd => cd.MapFrom(map => map.Config));
+                .ForMember(x => x.Config, cd => cd.MapFrom(map => map.Config))
+                .ForMember(x => x.ProcessingErrors, cd => cd.MapFrom(map => map.ProcessingErrors));
         }
     }
 }

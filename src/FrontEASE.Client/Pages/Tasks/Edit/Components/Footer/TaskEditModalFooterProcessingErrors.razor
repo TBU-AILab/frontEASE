@@ -1,0 +1,46 @@
+﻿@inject IResourceHandler resourceHandler
+
+<Row>
+    <Column ColumnSize="ColumnSize.IsFull">
+        <Alert Color="Color.Danger" Background="Background.Transparent" Border="Border.Is0" Visible="@(TaskModalContext.Task.ProcessingErrors?.Count > 0)">
+            <Heading Size="HeadingSize.Is5" TextColor="TextColor.Danger" TextWeight="TextWeight.Bold">
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.ProcessingErrors), PropertyDisplayResourceType.FIELD)))
+            </Heading>
+            <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is3.FromBottom" />
+            <ListGroup>
+                @foreach (var (value, i) in TaskModalContext.Task.ProcessingErrors!.OrderBy(x => x.Length).Select((value, i) => (value, i)))
+                {
+                    <ListGroupItem Color="Color.Danger" Margin="Margin.Is2" Border="Border.Is1.Rounded.Danger" Flex="Flex.Row.AlignItems.Center">
+                        <Span TextWeight="TextWeight.Bold" Margin="Margin.Is2.FromEnd" TextSize="TextSize.Heading6">
+                            @($"{i}.")
+                        </Span>
+                        <Span Flex="Flex.Grow.Is1" TextAlignment="TextAlignment.Center">
+                            @GetHumanReadableExceptionMessage(value)
+                        </Span>
+                        <Span Style="min-width: 2rem;"></Span>
+                    </ListGroupItem>
+                }
+            </ListGroup>
+            <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is3.FromTop" />
+        </Alert>
+    </Column>
+</Row>
+
+@code {
+    [CascadingParameter]
+    public TasksPageContext PageContext { get; set; } = null!;
+
+    [Parameter]
+    public TaskModalContext TaskModalContext { get; set; } = null!;
+
+    private string GetHumanReadableExceptionMessage(string errorMessage)
+    {
+        var formattedMessage = errorMessage;
+        foreach (var module in PageContext.TaskModuleOptions)
+        {
+            formattedMessage = formattedMessage.Replace(module.ShortName, !string.IsNullOrWhiteSpace(module.LongName) ? module.LongName : module.ShortName);
+        }
+
+        return formattedMessage;
+    }
+}

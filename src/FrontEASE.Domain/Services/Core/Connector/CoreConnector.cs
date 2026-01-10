@@ -6,6 +6,7 @@ using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using FrontEASE.DataContracts.Models.Core.Tasks.Info;
 using FrontEASE.Domain.Entities.Management.Core.Packages;
+using FrontEASE.Domain.Infrastructure.Constants.Core;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Shared.Data.Enums.Tasks;
@@ -27,8 +28,6 @@ namespace FrontEASE.Domain.Services.Core.Connector
         private readonly HttpClient _httpClient;
 
         private readonly JsonSerializerOptions _serializerOptions;
-
-        private const string TASK_IDS_PARAM_NAME = "task_ids";
 
         public CoreConnector(
             AppSettings appSettings,
@@ -88,7 +87,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
 
             using var content = new MultipartFormDataContent();
             using var fileContent = new ByteArrayContent(moduleFile.Content);
-            fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(CoreConnectorConstants.CoreFileAPIFormat);
             content.Add(fileContent, nameof(File).ToLower(), moduleFile.Name);
 
             var response = await _httpClient.PostAsync(url, content, cancellationToken);
@@ -129,8 +128,8 @@ namespace FrontEASE.Domain.Services.Core.Connector
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/task/{origTaskID}/duplicate");
             var queryParams = new Dictionary<string, string>()
             {
-                { "new_name", baseName },
-                { "num", copies.ToString() }
+                { CoreConnectorConstants.TaskDuplicateNewNameParam, baseName },
+                { CoreConnectorConstants.TaskDuplicateNumberParam, copies.ToString() }
             };
 
             url = BuildUrlWithParams(url, queryParams);
@@ -196,7 +195,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
 
             var request = new HttpRequestMessage(HttpMethod.Delete, url)
             {
-                Content = new StringContent(JsonSerializer.Serialize(taskIDs), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonSerializer.Serialize(taskIDs), Encoding.UTF8, CoreConnectorConstants.CoreDataAPIFormat)
             };
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
@@ -214,7 +213,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             var mappedInputTask = _mapper.Map<TaskConfigFullCoreDto>(task);
 
             var request = new HttpRequestMessage(HttpMethod.Get, url)
-            { Content = new StringContent(JsonSerializer.Serialize(mappedInputTask), Encoding.UTF8, "application/json") };
+            { Content = new StringContent(JsonSerializer.Serialize(mappedInputTask), Encoding.UTF8, CoreConnectorConstants.CoreDataAPIFormat) };
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
             if (response.IsSuccessStatusCode)
@@ -291,7 +290,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             if (response.IsSuccessStatusCode)
             {
                 var responseData = await response.Content.ReadAsStreamAsync(cancellationToken);
-                return new FileStreamResult(responseData, response.Content.Headers.ContentType?.ToString() ?? "application/octet-stream");
+                return new FileStreamResult(responseData, response.Content.Headers.ContentType?.ToString() ?? CoreConnectorConstants.CoreFileAPIFormat);
             }
             else
             {
@@ -308,7 +307,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             if (response.IsSuccessStatusCode)
             {
                 var responseData = await response.Content.ReadAsStreamAsync(cancellationToken);
-                return new FileStreamResult(responseData, response.Content.Headers.ContentType?.ToString() ?? "application/octet-stream");
+                return new FileStreamResult(responseData, response.Content.Headers.ContentType?.ToString() ?? CoreConnectorConstants.CoreFileAPIFormat);
             }
             else
             {
@@ -358,7 +357,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
 
             if (taskIds != null && taskIds.Count > 0)
             {
-                var query = string.Join("&", taskIds.Select(id => $"{TASK_IDS_PARAM_NAME}={Uri.EscapeDataString(id.ToString())}"));
+                var query = string.Join("&", taskIds.Select(id => $"{CoreConnectorConstants.TaskIdsParamName}={Uri.EscapeDataString(id.ToString())}"));
                 url = $"{baseUrl}?{query}";
             }
 
@@ -383,12 +382,12 @@ namespace FrontEASE.Domain.Services.Core.Connector
 
             if (dateFrom.HasValue)
             {
-                queryParams.Add($"{nameof(dateFrom)}={Uri.EscapeDataString(dateFrom.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ"))}");
+                queryParams.Add($"{nameof(dateFrom)}={Uri.EscapeDataString(dateFrom.Value.ToUniversalTime().ToString(CoreConnectorConstants.CoreTimeFormat))}");
             }
 
             if (taskIDs?.Count > 0)
             {
-                queryParams.AddRange(taskIDs.Select(id => $"{TASK_IDS_PARAM_NAME}={Uri.EscapeDataString(id.ToString())}"));
+                queryParams.AddRange(taskIDs.Select(id => $"{CoreConnectorConstants.TaskIdsParamName}={Uri.EscapeDataString(id.ToString())}"));
             }
 
             var url = queryParams.Count > 0 ? $"{baseUrl}?{string.Join("&", queryParams)}" : baseUrl;
@@ -451,7 +450,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
 
             var request = new HttpRequestMessage(HttpMethod.Delete, url)
             {
-                Content = new StringContent(jsonString, Encoding.UTF8, "application/json")
+                Content = new StringContent(jsonString, Encoding.UTF8, CoreConnectorConstants.CoreDataAPIFormat)
             };
 
             var response = await _httpClient.SendAsync(request, cancellationToken);
@@ -510,14 +509,9 @@ namespace FrontEASE.Domain.Services.Core.Connector
         private static IList<string> ParseValidationMessages(CoreValidationError validationError)
         {
             var messages = new List<string>();
-
             if (validationError?.Detail is not null)
             {
-                foreach (var detail in validationError.Detail)
-                {
-                    var loc = detail.Loc is not null && detail.Loc.Count > 0 ? string.Join(" > ", detail.Loc) : string.Empty;
-                    messages.Add(!string.IsNullOrEmpty(loc) ? detail.Msg : $"{loc}: {detail.Msg}");
-                }
+                messages = [.. validationError.Detail.SelectMany(detail => detail)];
             }
 
             return messages;

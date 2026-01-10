@@ -5,6 +5,7 @@ using FrontEASE.Shared.Data.DTOs.Companies;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
+using FrontEASE.Shared.Data.DTOs.Tasks.Results;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers;
@@ -81,12 +82,15 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
         public async Task<TaskDto?> InsertTask()
         {
             var response = await _client.PostAsJsonAsync<TaskDto?>(TasksControllerConstants.BaseUrl, null);
-            if (response.StatusCode != HttpStatusCode.Created)
+            if (response.StatusCode == HttpStatusCode.Created)
+            {
+                return await response.Content.ReadFromJsonAsync<TaskDto>();
+            }
+            else
             {
                 await _errorHandlingService.HandleErrorResponse(response);
                 return null;
             }
-            return await response.Content.ReadFromJsonAsync<TaskDto>();
         }
 
         public async Task<IList<TaskDto>> CloneTask(Guid taskID, TaskDuplicateActionRequestDto request)
@@ -106,44 +110,53 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
 
         #region Manipulate
 
-        public async Task<TaskDto?> RefreshTaskOptions(Guid taskID, TaskDto refreshTaskDto)
+        public async Task<ITaskOperationResultDto?> RefreshTaskOptions(Guid taskID, TaskDto refreshTaskDto)
         {
-            taskManipulationService.PrepareTaskRequest(refreshTaskDto, false, true);
+            var (_, _, PreservedModules) = taskManipulationService.PrepareTaskRequest(refreshTaskDto, false, true);
             var url = $"{TasksControllerConstants.BaseUrl}/{taskID}";
             var response = await _client.PatchAsJsonAsync(url, refreshTaskDto);
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            switch (response.StatusCode)
             {
-                await _errorHandlingService.HandleErrorResponse(response);
-                return null;
+                case HttpStatusCode.OK:
+                    return await response.Content.ReadFromJsonAsync<TaskDto>();
+                case HttpStatusCode.UnprocessableContent:
+                    taskManipulationService.AssignTaskModules(refreshTaskDto, PreservedModules);
+                    return await response.Content.ReadFromJsonAsync<TaskUnprocessableResultDto>();
+                default:
+                    await _errorHandlingService.HandleErrorResponse(response);
+                    return null;
             }
-            return await response.Content.ReadFromJsonAsync<TaskDto>();
         }
 
         #endregion
 
         #region Update
 
-        public async Task<TaskDto?> UpdateTask(Guid taskID, TaskDto updateTaskDto)
+        public async Task<ITaskOperationResultDto?> UpdateTask(Guid taskID, TaskDto updateTaskDto)
         {
-            var (PreservedMembers, PreservedGroups) = taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
+            var (PreservedMembers, PreservedGroups, PreservedModules) = taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
             var url = $"{TasksControllerConstants.BaseUrl}/{taskID}";
             var response = await _client.PutAsJsonAsync(url, updateTaskDto);
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            switch (response.StatusCode)
             {
-                await _errorHandlingService.HandleErrorResponse(response);
-                return null;
+                case HttpStatusCode.OK:
+                    var task = await response.Content.ReadFromJsonAsync<TaskDto>();
+                    taskManipulationService.AssignTaskImages(task!, PreservedGroups, PreservedMembers);
+                    return task;
+                case HttpStatusCode.UnprocessableContent:
+                    taskManipulationService.AssignTaskModules(updateTaskDto, PreservedModules);
+                    return await response.Content.ReadFromJsonAsync<TaskUnprocessableResultDto>();
+                default:
+                    await _errorHandlingService.HandleErrorResponse(response);
+                    return null;
             }
-
-            var task = await response.Content.ReadFromJsonAsync<TaskDto>();
-            taskManipulationService.AssignTaskImages(task!, PreservedGroups, PreservedMembers);
-            return task;
         }
 
         public async Task<(IList<ApplicationUserDto> Members, IList<CompanyDto> MemberGroups)?> ShareTask(Guid taskID, TaskDto updateTaskDto)
         {
-            var (PreservedMembers, PreservedGroups) = taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
+            var (PreservedMembers, PreservedGroups, _) = taskManipulationService.PrepareTaskRequest(updateTaskDto, true, true);
             var url = $"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.Share}/{taskID}";
             var response = await _client.PatchAsJsonAsync(url, updateTaskDto);
 
