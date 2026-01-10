@@ -9,7 +9,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text.Json.Nodes;
 
-namespace FrontEASE.Client.Services.HelperServices
+namespace FrontEASE.Client.Services.HelperServices.Auth
 {
     public class CustomAuthenticationStateProvider : AuthenticationStateProvider
     {

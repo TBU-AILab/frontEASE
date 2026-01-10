@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIService uiService
 
 <Fields>
 
@@ -49,7 +48,7 @@
 
 @code {
 
-	[CascadingParameter]
+	[Parameter]
 	public UserPreferenceGeneralOptionsDto GeneralPreferencesModel { get; set; } = new();
 
 	[Parameter]

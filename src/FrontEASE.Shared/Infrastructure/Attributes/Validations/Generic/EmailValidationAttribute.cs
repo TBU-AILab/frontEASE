@@ -5,23 +5,16 @@ using System.Text.RegularExpressions;
 
 namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic
 {
-    public partial class EmailValidationAttribute : ValidationAttribute
+    public partial class EmailValidationAttribute(bool nullable = false) : ValidationAttribute
     {
-        private readonly Regex _regexPattern;
-        private readonly bool _nullable;
-
-        public EmailValidationAttribute(bool nullable = false)
-        {
-            _regexPattern = EmailRegex();
-            _nullable = nullable;
-        }
+        private readonly Regex _regexPattern = EmailRegex();
 
         protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
             var serviceProvider = validationContext.GetService(typeof(IResourceHandler));
             if (serviceProvider is IResourceHandler resourceHandler)
             {
-                if (_nullable && (value is null || string.IsNullOrEmpty(value.ToString())))
+                if (nullable && (value is null || string.IsNullOrEmpty(value.ToString())))
                 {
                     return ValidationResult.Success!;
                 }

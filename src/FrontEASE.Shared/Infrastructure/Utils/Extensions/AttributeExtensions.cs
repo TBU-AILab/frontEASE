@@ -28,8 +28,8 @@ namespace FrontEASE.Shared.Infrastructure.Utils.Extensions
 
         public static string GetEnumResourceValue(this Enum enumValue)
         {
-            string typeName = enumValue.GetType().Name;
-            string enumState = enumValue.ToString();
+            var typeName = enumValue.GetType().Name;
+            var enumState = enumValue.ToString();
 
             var displayText = $"{UIConstants.Data}.{typeName}.{PropertyTypeDictionary[PropertyDisplayResourceType.ENUM]}.{enumState}";
             return displayText;

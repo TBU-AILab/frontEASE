@@ -1,2 +1,8 @@
-﻿<TaskInfoDataGeneralInfoViewSection/>
-<TaskInfoDataSolutionsViewSection />
+﻿<TaskInfoDataGeneralInfoViewSection TaskModalContext="TaskModalContext" />
+<TaskInfoDataResultChartSection TaskModalContext="TaskModalContext" />
+<TaskInfoDataSolutionsViewSection TaskModalContext="TaskModalContext" />
+
+@code {
+    [Parameter]
+    public TaskModalContext TaskModalContext { get; set; } = null!;
+}

@@ -8,14 +8,11 @@ using System.Net.Http.Json;
 
 namespace FrontEASE.Client.Services.ApiServices.Shared.Core
 {
-    public class CoreApiService : ApiServiceBase, ICoreApiService
+    public class CoreApiService(
+        HttpClient client,
+        IMapper mapper,
+        IErrorHandlingService errorHandlingService) : ApiServiceBase(client, mapper, errorHandlingService), ICoreApiService
     {
-        public CoreApiService(
-            HttpClient client,
-            IMapper mapper,
-            IErrorHandlingService errorHandlingService) : base(client, mapper, errorHandlingService)
-        { }
-
         public async Task<IList<ModuleImportBulkActionResultDto>> ImportTaskCoreModules(GlobalPreferenceCoreModuleDto modules)
         {
             var url = $"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Module}";

@@ -7,8 +7,13 @@
 
 
 @code {
+    public SpinnerButton()
+    {
+		DisplayText = string.Empty;
+    }
+
     [Parameter]
-    public string DisplayText { get; set; } = string.Empty;
+    public string DisplayText { get; set; }
 
     [Parameter]
     public TextColor? TextColor { get; set; }

@@ -1,11 +1,9 @@
 ﻿@inject ITypelistApiService typelistApiService
 @inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 @inject IUIService uiService
 
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<GlobalPreferenceCoreModuleDto>()))" />
 <Divider Class="divider-main-thin bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is0.FromTop" />
-
 
 @if (!isInitialized)
 {
@@ -14,14 +12,12 @@
 else
 {
     <Row Margin="Margin.Is2.FromTop.Is0.FromStart.Is0.FromEnd">
-        @if (TaskModules.Count > 0)
+        @if (PageContext.ModuleTypes.Count > 0)
         {
-            @foreach (var Module in TaskModules.OrderBy(x => x.PackageType))
+            @foreach (var module in PageContext.ModuleTypes.OrderBy(x => x.PackageType))
             {
                 <Column ColumnSize="ColumnSize.Is3.OnWidescreen.Is4.OnTablet">
-                    <CascadingValue Value="@Module">
-                        <CoreModuleListItem />
-                    </CascadingValue>
+                    <CoreModuleListItem Module="module" />
                 </Column>
             }
         }
@@ -38,7 +34,7 @@ else
 
 @code {
     [CascadingParameter]
-    public IList<TaskModuleNoValidationDto> TaskModules { get; set; } = [];
+    public ManagementPageContext PageContext { get; set; } = null!;
 
     private bool isInitialized = false;
 
@@ -67,8 +63,8 @@ else
         var moduleOptions = await typelistApiService.LoadTaskModuleOptions();
         if (moduleOptions?.Count > 0 == true)
         {
-            TaskModules.Clear();
-            foreach (var option in moduleOptions) { TaskModules.Add(option); }
+            PageContext.ModuleTypes.Clear();
+            foreach (var option in moduleOptions) { PageContext.ModuleTypes.Add(option); }
         }
     }
 }

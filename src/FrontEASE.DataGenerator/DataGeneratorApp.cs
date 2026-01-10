@@ -9,22 +9,15 @@ using Microsoft.Extensions.Hosting;
 namespace FrontEASE.DataGenerator
 {
 
-    public class DataGeneratorApp : WebApplicationFactory<Server.Program>
+    public class DataGeneratorApp(IDictionary<string, string>? additionalSettings = null) : WebApplicationFactory<Server.Program>
     {
-        private readonly string _environment;
-        private readonly IDictionary<string, string>? _additionalSettings;
-
-        public DataGeneratorApp(IDictionary<string, string>? additionalSettings = null)
-        {
-            _environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-            _additionalSettings = additionalSettings;
-        }
+        private readonly string _environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            if (_additionalSettings is not null)
+            if (additionalSettings is not null)
             {
-                foreach (var additionalSetting in _additionalSettings)
+                foreach (var additionalSetting in additionalSettings)
                 {
                     builder.UseSetting(additionalSetting.Key, additionalSetting.Value);
                 }

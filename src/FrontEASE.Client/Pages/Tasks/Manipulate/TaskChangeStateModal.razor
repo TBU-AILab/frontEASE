@@ -1,57 +1,48 @@
 ﻿@inject ITaskApiService taskApiService
 @inject IUIService uiService
-@inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
 
-<CascadingValue Value="Operation">
-    <Modal @ref="@ChangeStateModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
-        @if (isModalVisible)
-        {
-            <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
+<Modal @ref="@ChangeStateModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
+    @if (isModalVisible)
+    {
+        <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
 
-                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{GetTaskStateActionConstant()}")} ({string.Join(", ", AffectedTasks.Select(x => string.IsNullOrWhiteSpace(x.Name) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : x.Name))})")" />
+            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{GetTaskStateActionConstant()}")} ({string.Join(", ", AffectedTasks.Select(x => string.IsNullOrWhiteSpace(x.Name) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : x.Name))})")" />
 
-                <ModalBody Margin="Margin.Is3.FromTop">
-                    <Row>
-                        <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
-                            <Text Class="font-large">
-                                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.StateChange}.{nameof(TaskDto)}.{NewTaskState}.{UIConstants.Question}")
-                            </Text>
-                        </Column>
-                    </Row>
-                    <Row Margin="Margin.Is4.FromTop">
-                        <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile">
-                            <Button Clicked="@ChangeStateTask" Class="btn btn-sized button full-width bg-custom-info text-custom-info" Disabled="@changeInProgress" TextWeight="TextWeight.Bold">
-                                @if (changeInProgress)
-                                {
-                                    <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}"))" TextSize="TextSize.Medium" />
-                                }
-                                else
-                                {
-                                    @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}")
-                                }
-                            </Button>
-                        </Column>
-                        <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile">
-                            <Button Clicked="@HideModal" Class="btn btn-sized button full-width text-custom-primary" TextWeight="TextWeight.Bold" Border="Border.Is1.Rounded">
-                                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}")
-                            </Button>
-                        </Column>
-                    </Row>
-                </ModalBody>
-            </ModalContent>
-        }
-    </Modal>
-</CascadingValue>
+            <ModalBody Margin="Margin.Is3.FromTop">
+                <Row>
+                    <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
+                        <Text Class="font-large">
+                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.StateChange}.{nameof(TaskDto)}.{NewTaskState}.{UIConstants.Question}")
+                        </Text>
+                    </Column>
+                </Row>
+                <Row Margin="Margin.Is4.FromTop">
+                    <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile">
+                        <Button Clicked="@ChangeStateTask" Class="btn btn-sized button full-width bg-custom-info text-custom-info" Disabled="@changeInProgress" TextWeight="TextWeight.Bold">
+                            @if (changeInProgress)
+                            {
+                                <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}"))" TextSize="TextSize.Medium" />
+                            }
+                            else
+                            {
+                                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}")
+                            }
+                        </Button>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile">
+                        <Button Clicked="@HideModal" Class="btn btn-sized button full-width text-custom-primary" TextWeight="TextWeight.Bold" Border="Border.Is1.Rounded">
+                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}")
+                        </Button>
+                    </Column>
+                </Row>
+            </ModalBody>
+        </ModalContent>
+    }
+</Modal>
 
 @code {
-    [CascadingParameter]
-    public ObservableCollection<TaskInfoDto> Tasks { get; set; } = [];
-
-    [Parameter]
-    public DataOperation Operation { get; set; }
-
     public IList<TaskInfoDto> AffectedTasks { get; set; } = [];
 
     private TaskState? NewTaskState = null;

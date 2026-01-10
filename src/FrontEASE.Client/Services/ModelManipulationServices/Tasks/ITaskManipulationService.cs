@@ -1,6 +1,8 @@
-﻿using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs.List.Helpers;
-using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params.Helpers;
-using FrontEASE.Shared.Data.DTOs.Tasks;
+﻿using FrontEASE.Client.Contexts.Specific.Tasks;
+using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Helpers;
+using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs.List.Helpers;
+using FrontEASE.Shared.Data.DTOs.Companies;
+using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
@@ -25,8 +27,9 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 
         void CleanUsersInfo(TaskDto task);
         void CleanCompaniesInfo(TaskDto task);
+        void AssignTaskImages(TaskDto task, IList<CompanyDto> availableCompanies, IList<ApplicationUserDto> availableUsers);
 
-        void PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions);
+        (IList<ApplicationUserDto> PreservedMembers, IList<CompanyDto> PreservedGroups) PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions);
         void PrepareTaskFilter(TaskFilterActionRequestDto filter);
 
         (bool DefaultValuePresent, string? DefaultValue) ExtractDefaultValue(TaskModuleParameterNoValidationDto? parameter);
@@ -37,7 +40,10 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 
 
         TaskModuleParamFlags GetParamFlags(TaskModuleDto? module, TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramValue);
-        ListParamFlags GetListParamFlags(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal);
+        TaskModuleListParamFlags GetListParamFlags(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal);
         string GetListParamInternalDescription(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal);
+
+        TaskModuleParamContext GetParamContext(TaskModuleParameterNoValidationDto parameterOption, TaskModuleParameterDto? paramValue = null, TaskModuleDto? module = null);
+        TaskModuleParamContext GetListParamContext(TaskModuleParameterNoValidationDto parameterOption, TaskModuleParameterDto? paramValue = null, TaskModuleListParamFlags? flags = null);
     }
 }

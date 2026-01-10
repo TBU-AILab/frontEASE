@@ -1,5 +1,4 @@
-﻿@inject IManagementApiService managementApiService
-@inject IManagementManipulationService managementManipulationService
+﻿@inject IManagementManipulationService managementManipulationService
 @inject IUIService uiService
 @inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
@@ -15,7 +14,7 @@
         <Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="@(async (e) => await HandleKeyDown(e))">
             <Validations @ref="Validations" Mode="ValidationMode.Manual" Model="PackageModel">
 
-                <CorePackageDataFormSection Operation="DataOperation.INSERT" FullWidthFields="false" PackageModel="PackageModel" />
+                <CorePackageDataFormSection PackageModel="PackageModel" Operation="DataOperation.INSERT" FullWidthFields="false"/>
 
                 <Fields>
                     <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
@@ -39,7 +38,7 @@
 
 @code {
 
-    [CascadingParameter]
+    [Parameter]
     public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
 
     private GlobalPreferenceCorePackageDto PackageModel = new();

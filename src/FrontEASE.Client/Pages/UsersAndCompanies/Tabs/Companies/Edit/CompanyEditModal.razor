@@ -3,10 +3,9 @@
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
 @inject Blazored.Toast.Services.IToastService toastService
-@inject IUIManager uiManager
 @inject AppSettings appSettings
 
-<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async(e) => await HandleKeyDown(e))">
+<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
     @if (EditModal.Visible)
     {
         <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
@@ -20,8 +19,7 @@
                                Source="@(!string.IsNullOrWhiteSpace(CompanyModel.Image?.ImageData) ?
                                         $"data:{CompanyModel.Image.MimeType};base64,{CompanyModel.Image.ImageData}" : !string.IsNullOrWhiteSpace(CompanyModel.Image?.ImageUrl) ?
                                         $"{appSettings.ApiSettings!.BaseUrl}/{CompanyModel.Image.ImageUrl}" : ImageConstants.CompanyPicDefault)"
-                               Class="full-max-width edit-modal-image"
-                               Loading />
+                           Class="full-max-width edit-modal-image" Loading />
                     </Column>
                 </Row>
 
@@ -29,27 +27,25 @@
                     <Column ColumnSize="ColumnSize.IsFull">
                         <Form>
                             <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@CompanyModel" ValidateOnLoad="false">
-                                <CascadingValue Value="CompanyModel">
 
-                                    <CompanyDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="true" />
-                                    <AddressDataFormSection Operation="DataOperation.UPDATE" FullWidthFields="true" />
-                                    <CompanyDataUserFormSection />
+                                <CompanyDataFormSection CompanyModel="CompanyModel" Operation="DataOperation.UPDATE" FullWidthFields="true" />
+                                <AddressDataFormSection CompanyModel="CompanyModel" Operation="DataOperation.UPDATE" FullWidthFields="true" />
+                                <CompanyDataUserFormSection CompanyModel="CompanyModel" />
 
-                                    <Fields>
-                                        <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
-                                            <Button Clicked="@EditCompany" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
-                                                @if (updateInProgress)
-                                                {
-                                                    <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
-                                                }
-                                                else
-                                                {
-                                                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
-                                                }
-                                            </Button>
-                                        </Field>
-                                    </Fields>
-                                </CascadingValue>
+                                <Fields>
+                                    <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                                        <Button Clicked="@EditCompany" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
+                                        @if (updateInProgress)
+                                            {
+                                                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                                            }
+                                            else
+                                            {
+                                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
+                                            }
+                                        </Button>
+                                    </Field>
+                                </Fields>
                             </Validations>
                         </Form>
                     </Column>
@@ -60,11 +56,8 @@
 </Modal>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public CompanyDto Company { get; set; } = new();
-
-    [CascadingParameter]
-    public IList<CompanyDto> Companies { get; set; } = [];
 
     private Modal EditModal = new();
     private Validations Validations = new();

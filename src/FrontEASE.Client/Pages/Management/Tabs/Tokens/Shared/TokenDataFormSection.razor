@@ -1,6 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIService uiService
-@inject IUIManager uiManager
 
 <Fields>
     <Validation>
@@ -79,9 +77,9 @@
 
 @code {
     [CascadingParameter]
-    public IList<TaskModuleNoValidationDto> ConnectorTypes { get; set; } = [];
+    public ManagementPageContext PageContext { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter]
     public UserPreferenceTokenOptionDto TokenModel { get; set; } = new();
 
     [Parameter]
@@ -99,7 +97,7 @@
     private IList<UserPreferenceTokenOptionConnectorTypeDto> GetTokenConnectorTypes()
     {
         var castedTypes = new List<UserPreferenceTokenOptionConnectorTypeDto>();
-        foreach (var connectorType in ConnectorTypes)
+        foreach (var connectorType in PageContext.ConnectorTypes)
         {
             castedTypes.Add(new UserPreferenceTokenOptionConnectorTypeDto() { ConnectorType = connectorType.ShortName });
         }
@@ -108,7 +106,7 @@
 
     private string GetTokenConnectorName(string shortName)
     {
-        var connectorName = ConnectorTypes.SingleOrDefault(x => x.ShortName == shortName);
+        var connectorName = PageContext.ConnectorTypes.SingleOrDefault(x => x.ShortName == shortName);
         return connectorName?.LongName ?? shortName;
     }
 

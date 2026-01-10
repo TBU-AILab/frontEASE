@@ -1,4 +1,4 @@
-﻿namespace FrontEASE.Client.Infrastructure.Settings.AppSettings.Logging
+﻿namespace FrontEASE.Client.Infrastructure.Settings.Logging
 {
     public class LoggingSettings
     {

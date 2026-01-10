@@ -1,4 +1,5 @@
 ﻿using FrontEASE.Domain.Entities.Shared.Resources;
+using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Companies;
 using FrontEASE.Shared.Data.DTOs.Management;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Modules;
@@ -12,7 +13,6 @@ using FrontEASE.Shared.Data.DTOs.Shared.Images;
 using FrontEASE.Shared.Data.DTOs.Shared.Resources;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Shared.Users.Auth;
-using FrontEASE.Shared.Data.DTOs.Tasks;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs;
@@ -25,6 +25,7 @@ using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Messages;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Shared;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Solutions;
+using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Auth;
 using FrontEASE.Shared.Data.Enums.Shared.Addresses;
 using FrontEASE.Shared.Data.Enums.Shared.General;
@@ -40,6 +41,7 @@ using FrontEASE.Shared.Data.Enums.Users.Visualisation;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Generic;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Specific;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Management;
+using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Tasks.Charts;
 using FrontEASE.Shared.Infrastructure.Utils.Extensions;
 using Microsoft.AspNetCore.Http;
 using System.Net;
@@ -104,6 +106,12 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Login}", Value="Login" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Page}.{UIPageConstants.Error}", Value="Error" },
 
+                /* Charts */
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Generic}.{UIElementConstants.Chart}", Value="Charts" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessEvolutionChart}", Value="Fitness - Evolution" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessConvergenceChart}", Value="Fitness - Convergence" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessEvolutionChart}.{UIStateConstants.Explanation}", Value="Fitness value change over the iterations of this task" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessConvergenceChart}.{UIStateConstants.Explanation}", Value="Highest attained fitness value change over the course of this task" },
             ];
         }
 
@@ -183,8 +191,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.InternalServerError}.{UIStateConstants.Text}", Value="Unclassified error - server failure." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.Forbidden}.{UIStateConstants.Text}", Value="Access has been forbidden." },
 
+                /* ApplicationUser */
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUser)}.{UIExceptionConstants.UserExists}", Value="User with this user name / email already exists." },
+
                 /* ApplicationUserDto */
-                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(ApplicationUserDto)}.{UIExceptionConstants.UserExists}", Value="User with this user name / email already exists." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(ApplicationUserDto)}.{UIElementConstants.Collection}", Value="No users have been found." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(ApplicationUserDto)}.{UIConstants.Question}", Value="Do you really wish to permanently delete this user account?" },
 
@@ -263,6 +273,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Click}", Value="Click" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Hide}", Value="Hide" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Show}", Value="Show" },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}", Value="Share" },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.BackToHomepage}", Value="Return to Home page" },
 
                 /* Data Manipulations */

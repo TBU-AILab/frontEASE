@@ -2,7 +2,6 @@
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
-@inject IUIManager uiManager
 
 <Modal @ref="@DeleteModal" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
     @if (isModalVisible)
@@ -45,10 +44,10 @@
 
 @code {
     [CascadingParameter]
-    public TaskModuleNoValidationDto Module { get; set; } = new();
+    public ManagementPageContext PageContext { get; set; } = null!;
 
-    [CascadingParameter]
-    public IList<TaskModuleNoValidationDto> TaskModules { get; set; } = [];
+    [Parameter]
+    public TaskModuleNoValidationDto Module { get; set; } = new();
 
     private Modal DeleteModal = new();
     private bool deletingInProgress = false;
@@ -76,7 +75,7 @@
         var deleted = await coreApiService.DeleteTaskCoreModule(Module.ShortName);
         if (deleted)
         {
-            TaskModules.Remove(Module);
+            PageContext.ModuleTypes.Remove(Module);
             var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {(!string.IsNullOrWhiteSpace(Module.LongName) ? Module.LongName : (Module.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")))}";
             toastService.ShowSuccess(message);
             await uiService.CallRequestRefreshAsync();

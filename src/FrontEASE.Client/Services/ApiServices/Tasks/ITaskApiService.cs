@@ -1,4 +1,5 @@
-﻿using FrontEASE.Shared.Data.DTOs.Tasks;
+﻿using FrontEASE.Shared.Data.DTOs.Companies;
+using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
@@ -21,6 +22,7 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
 
         #region Update
         Task<TaskDto?> UpdateTask(Guid taskID, TaskDto updateTaskDto);
+        Task<(IList<ApplicationUserDto> Members, IList<CompanyDto> MemberGroups)?> ShareTask(Guid taskID, TaskDto updateTaskDto);
         Task<bool> ChangeTaskStates(IList<Guid> taskIDs, TaskState state);
         #endregion
 

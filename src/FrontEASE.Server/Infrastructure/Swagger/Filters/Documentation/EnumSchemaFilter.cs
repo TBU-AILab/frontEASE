@@ -10,15 +10,15 @@ namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
             if (context.Type.IsEnum)
             {
                 schema.Enum?.Clear();
-                var enumNames = Enum.GetNames(context.Type).Distinct().ToList();
+                var enumNames = Enum.GetNames(context.Type).Distinct();
 
-                enumNames.ForEach(name =>
+                foreach (var enumName in enumNames)
                 {
-                    if (!schema.Enum!.Any(e => e.ToString() == name))
+                    if (!schema.Enum!.Any(e => e.ToString() == enumName))
                     {
-                        schema.Enum?.Add(name);
+                        schema.Enum?.Add(enumName);
                     }
-                });
+                }
             }
         }
     }

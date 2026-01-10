@@ -1,4 +1,6 @@
-﻿using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
+﻿using FrontEASE.Domain.Entities.Companies;
+using FrontEASE.Domain.Entities.Shared.Users;
+using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
 using FrontEASE.Shared.Data.Enums.Tasks;
 
@@ -17,5 +19,6 @@ namespace FrontEASE.Domain.Services.Tasks
         Task<IList<Entities.Tasks.Task>> Duplicate(Entities.Tasks.Task task, string taskName, int copies, CancellationToken cancellationToken);
         Task Delete(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken);
         Task ChangeState(IList<Entities.Tasks.Task> task, TaskState state, CancellationToken cancellationToken);
+        Task<Entities.Tasks.Task> Share(Entities.Tasks.Task task, CancellationToken cancellationToken);
     }
 }

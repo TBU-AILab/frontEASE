@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 
 <CardFooter Border="Border.Is0" Class="bg-custom-secondary">
     <Container Fluid>
@@ -19,6 +18,6 @@
 </CardFooter>
 
 @code {
-    [CascadingParameter]
-    public TaskMessageDto Message { get; set; } = null!;
+    [Parameter]
+    public TaskMessageDto Message { get; set; } = new();
 }

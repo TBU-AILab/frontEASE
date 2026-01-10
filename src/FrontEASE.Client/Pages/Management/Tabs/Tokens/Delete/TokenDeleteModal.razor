@@ -4,7 +4,6 @@
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
-@inject IUIManager uiManager
 
 <Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" @onkeydown="@(async (e) => await HandleKeyDown(e))">
     @if (isModalVisible)
@@ -47,9 +46,9 @@
 
 @code {
     [CascadingParameter]
-    public UserPreferencesDto Options { get; set; } = new();
+    public ManagementPageContext PageContext { get; set; } = null!;
 
-    [CascadingParameter]
+    [Parameter]
     public UserPreferenceTokenOptionDto Token { get; set; } = new();
 
     private Modal DeleteModal = new();
@@ -75,12 +74,12 @@
     {
         deletingInProgress = true;
 
-        Options.TokenOptions.Remove(Token);
-        var editedPreferences = await managementApiService.UpdatePreferences(Options);
+        PageContext.UserPreferences.TokenOptions.Remove(Token);
+        var editedPreferences = await managementApiService.UpdatePreferences(PageContext.UserPreferences);
 
         if (editedPreferences is not null)
         {
-            mapper.Map(editedPreferences, Options);
+            mapper.Map(editedPreferences, PageContext.UserPreferences);
             var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {Token.Token} ({string.Join(", ", Token.ConnectorTypes.Select(x => x.ConnectorType))})";
             toastService.ShowSuccess(message);
 

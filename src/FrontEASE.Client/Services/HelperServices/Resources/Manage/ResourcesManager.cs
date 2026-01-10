@@ -4,27 +4,15 @@ using FrontEASE.Shared.Services.Resources;
 
 namespace FrontEASE.Client.Services.HelperServices.Resources.Manage
 {
-    public class ResourcesManager : IResourcesManager
+    public class ResourcesManager(IResourceHandler resourceHandler, IResourceApiService resourceApiService, AppSettings appSettings) : IResourcesManager
     {
-        private readonly IResourceHandler _resourceHandler;
-        private readonly IResourceApiService _resourceApiService;
-
-        private readonly AppSettings _appSettings;
-
-        public ResourcesManager(IResourceHandler resourceHandler, IResourceApiService resourceApiService, AppSettings appSettings)
-        {
-            _resourceApiService = resourceApiService;
-            _resourceHandler = resourceHandler;
-            _appSettings = appSettings;
-        }
-
         public async Task AssureResourcesInitialized()
         {
-            if (!_resourceHandler.CheckResourcesInitialized())
+            if (!resourceHandler.CheckResourcesInitialized())
             {
-                _resourceHandler.InitLanguage(_appSettings.EnvironmentSettings!.LanguageCode!);
-                var resources = await _resourceApiService.LoadResources(_resourceHandler.CurrentLanguage);
-                _resourceHandler.InitResources(resources);
+                resourceHandler.InitLanguage(appSettings.EnvironmentSettings!.LanguageCode!);
+                var resources = await resourceApiService.LoadResources(resourceHandler.CurrentLanguage);
+                resourceHandler.InitResources(resources);
             }
         }
     }

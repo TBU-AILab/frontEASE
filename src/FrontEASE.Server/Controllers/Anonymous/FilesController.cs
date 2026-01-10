@@ -16,18 +16,12 @@ namespace FrontEASE.Server.Controllers.Anonymous
     /// Controller for file retrieval.
     /// </summary>
     [Authorize]
-    public class FilesController : ApiControllerBase
+    public class FilesController(
+        IFileAppService fileAppService,
+        IResourceHandler resourceHandler,
+        IResourceAppService resourceAppService,
+        AppSettings appSettings) : ApiControllerBase(resourceHandler, resourceAppService, appSettings)
     {
-        private readonly IFileAppService _fileAppService;
-
-        public FilesController(
-            IFileAppService fileAppService,
-            IResourceHandler resourceHandler,
-            IResourceAppService resourceAppService,
-            AppSettings appSettings) : base(resourceHandler, resourceAppService, appSettings)
-        {
-            _fileAppService = fileAppService;
-        }
 
         /// <summary>
         /// Gets the directory as a .zip archive.
@@ -43,7 +37,7 @@ namespace FrontEASE.Server.Controllers.Anonymous
             IActionResult result;
             try
             {
-                var response = await _fileAppService.GetDirectory(id, type, cancellationToken);
+                var response = await fileAppService.GetDirectory(id, type, cancellationToken);
                 return response;
             }
             catch (Exception ex)

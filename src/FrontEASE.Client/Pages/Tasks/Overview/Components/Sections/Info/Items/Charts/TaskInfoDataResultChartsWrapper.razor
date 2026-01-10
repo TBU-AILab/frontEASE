@@ -1,0 +1,11 @@
+﻿<Container Fluid>
+	<Row>
+		<TaskInfoChartValueEvolution TaskModalContext="TaskModalContext" />
+		<TaskInfoChartConvergenceEvolution TaskModalContext="TaskModalContext" />
+	</Row>
+</Container>
+
+@code {
+    [Parameter]
+    public TaskModalContext TaskModalContext { get; set; } = null!;
+}

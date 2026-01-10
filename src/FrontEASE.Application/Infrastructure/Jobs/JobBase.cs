@@ -3,14 +3,9 @@ using FrontEASE.Domain.Repositories.Jobs;
 
 namespace FrontEASE.Application.Infrastructure.Jobs
 {
-    public class JobBase
+    public class JobBase(IJobLogRepository jobLogRepository)
     {
-        protected readonly IJobLogRepository _jobLogRepository;
-
-        public JobBase(IJobLogRepository jobLogRepository)
-        {
-            _jobLogRepository = jobLogRepository;
-        }
+        protected readonly IJobLogRepository _jobLogRepository = jobLogRepository;
 
         protected async Task<JobLog> UpdateJobLog(JobLog log, DateTime? dateEnd, bool success, CancellationToken cancellationToken)
         {

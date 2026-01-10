@@ -13,29 +13,24 @@
 else
 {
     <Row Margin="Margin.Is2.FromTop">
-        @if (Users.Count > 0)
-        {
-            @foreach (var User in Users)
-            {
-                <CascadingValue Value="User">
-                    <UserListItem />
-                </CascadingValue>
-            }
-        }
-        else
-        {
-            <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
-                <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold" Class="text-custom-primary">
-                    @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(ApplicationUserDto)}.{UIElementConstants.Collection}"))
-                </Heading>
-            </Column>
-        }
+        <Virtualize Items="PageContext.Users.ToList()" Context="user">
+            <ItemContent>
+                <UserListItem User="user" />
+            </ItemContent>
+            <EmptyContent>
+                <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                    <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold" Class="text-custom-primary">
+                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(ApplicationUserDto)}.{UIElementConstants.Collection}"))
+                    </Heading>
+                </Column>
+            </EmptyContent>
+        </Virtualize>
     </Row>
 }
 
 @code {
     [CascadingParameter]
-    public IList<ApplicationUserDto> Users { get; set; } = [];
+    public UsersAndCompaniesPageContext PageContext { get; set; } = null!;
 
     private bool isUsersLoading = false;
     private bool isInitialized = false;
@@ -48,7 +43,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         uiService.RefreshRequested += RefreshViewAsync;
-        if (!isInitialized && !(Users?.Count > 0 == true))
+        if (!isInitialized && !(PageContext.Users?.Count > 0 == true))
         {
             isUsersLoading = true;
             await LoadUsers();
@@ -63,8 +58,8 @@ else
         var users = await userApiService.LoadUsers();
         if (users?.Count > 0 == true)
         {
-            Users.Clear();
-            foreach (var user in users) { Users.Add(user); }
+            PageContext.Users.Clear();
+            foreach (var user in users) { PageContext.Users.Add(user); }
         }
     }
 }

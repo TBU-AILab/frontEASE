@@ -32,13 +32,13 @@
 
 @code {
     [CascadingParameter]
+    public TasksPageContext PageContext { get; set; } = null!;
+
+    [Parameter]
     public TaskFilterActionRequestDto Filter { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public Validations Validations { get; set; } = new();
-
-    [CascadingParameter]
-    public ObservableCollection<TaskInfoDto> Tasks { get; set; } = [];
 
     private bool filteringInProgress;
     private bool resetInProgress;
@@ -74,10 +74,10 @@
         if (await Validations.ValidateAll())
         {
             var tasks = await taskApiService.LoadTaskInfos(Filter);
-            Tasks.Clear();
+            PageContext.Tasks.Clear();
             if (tasks?.Count > 0 == true)
             {
-                foreach (var task in tasks) { Tasks.Add(task); }
+                foreach (var task in tasks) { PageContext.Tasks.Add(task); }
             }
         }
 

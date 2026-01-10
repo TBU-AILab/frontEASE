@@ -1,7 +1,6 @@
 ﻿@inject ICompanyManipulationService companyManipulationService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
-@inject IUIManager uiManager
 
 <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
     <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@(async () => await ChangeCollapseState())" Padding="Padding.Is2" Border="Border.Rounded" Shadow="Shadow.Small">
@@ -134,7 +133,7 @@
 
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public CompanyDto CompanyModel { get; set; } = new();
 
     [Parameter]

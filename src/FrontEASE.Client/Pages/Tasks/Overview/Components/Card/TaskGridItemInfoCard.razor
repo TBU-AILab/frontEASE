@@ -1,5 +1,4 @@
 ﻿@inject IMapper mapper
-@inject IUIService uiService
 @inject ITaskApiService taskApiService
 
 <Container Fluid Class="border-custom-light">
@@ -13,10 +12,8 @@
                 else
                 {
                     <Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary task-info-overview-card-scrollable">
-                        <CascadingValue Value="@TaskData">
-                            <TaskGridItemInfoCardHeader />
-                            <TaskGridItemInfoCardBody />
-                        </CascadingValue>
+                        <TaskGridItemInfoCardHeader TaskData="TaskData" />
+                        <TaskGridItemInfoCardBody TaskData="TaskData" />
                     </Row>
                 }
 

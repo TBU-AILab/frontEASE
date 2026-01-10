@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 @inject AppSettings appSettings
 
 <Bar Breakpoint="Breakpoint.Desktop" Mode="BarMode.Horizontal" Class="navbar-backgrounded"
@@ -64,11 +63,3 @@ Shadow="Shadow.Small" Style="z-index: 999;">
         </BarEnd>
     </BarMenu>
 </Bar>
-
-@code {
-    private bool collapseNavMenu = true;
-
-    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
-    private void ToggleNavMenu() => collapseNavMenu = !collapseNavMenu;
-}

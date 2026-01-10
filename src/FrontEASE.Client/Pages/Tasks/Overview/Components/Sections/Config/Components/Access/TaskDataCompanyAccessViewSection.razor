@@ -1,9 +1,8 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 @inject AppSettings appSettings
 
 
-@if (Task.MemberGroups.Count > 0)
+@if (TaskModalContext.Task.MemberGroups.Count > 0)
 {
     <Row>
 
@@ -16,8 +15,8 @@
         <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop" TextAlignment="TextAlignment.Center">
 
             <Container Fluid>
-                    @foreach (var memberGroup in Task.MemberGroups)
-                    {
+                <Virtualize Items="TaskModalContext.Task.MemberGroups.ToList()" Context="memberGroup">
+                    <ItemContent>
                         <Row Margin="Margin.Is4.FromBottom">
                             <Column ColumnSize="ColumnSize.IsFull">
                                 <Image Border="Border.RoundedCircle"
@@ -64,7 +63,8 @@
                                 </Column>
                             }
                         </Row>
-                    }
+                    </ItemContent>
+                </Virtualize>
             </Container>
         </Column>
     </Row>
@@ -72,14 +72,14 @@
 
 @code {
     [CascadingParameter]
-    public TaskDto Task { get; set; } = new();
+    public TasksPageContext PageContext { get; set; } = null!;
 
-    [CascadingParameter]
-    public IList<CompanyDto> AvailableCompanies { get; set; } = [];
+    [Parameter]
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     private string? GetMemberGroupImageUrl(Guid groupID)
     {
-        var groupData = AvailableCompanies.SingleOrDefault(x => x.ID == groupID);
+        var groupData = PageContext.AvailableCompanies.SingleOrDefault(x => x.ID == groupID);
         return string.IsNullOrWhiteSpace(groupData?.Image?.ImageUrl) ?
             ImageConstants.CompanyPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{groupData?.Image?.ImageUrl}";
     }

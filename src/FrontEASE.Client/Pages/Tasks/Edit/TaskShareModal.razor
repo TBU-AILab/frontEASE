@@ -1,0 +1,102 @@
+﻿@inject IMapper mapper
+@inject IUIService uiService
+@inject ITaskApiService taskApiService
+@inject IResourceHandler resourceHandler
+
+<Modal @ref="@TaskModalContext.Modal" @bind-Visible="isModalVisible" Closing="@(async (e) => await OnModalClosing(e))" Class="modal-dialog-wide" Border="Border.Rounded">
+    @if (isModalVisible)
+    {
+        @if (TaskModalContext.TaskMetadata.InitializationInProgres)
+        {
+            <BackgroundLoadSpinner Class="bg-custom-primary text-custom-primary background-load-spinner-overlay" TextSize="TextSize.Large" />
+        }
+
+        <ModalContent Centered Shadow="Shadow.Small">
+            @if (isTaskLoading)
+            {
+                <ContentLoadSpinner />
+            }
+            else
+            {
+                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}")}{(string.IsNullOrWhiteSpace(TaskModalContext.Task.Config?.Name) ? string.Empty : $" - {TaskModalContext.Task.Config.Name}")}")" />
+
+                <ModalBody Padding="Padding.Is0" Class="bg-custom-primary text-custom-primary">
+                    <Container Fluid>
+                        <Row>
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Validations @ref="TaskModalContext.Validations"
+                                             Mode="ValidationMode.Auto"
+                                             ValidateOnLoad="false"
+                                             EditContext="TaskModalContext.EditContext"
+                                             HandlerType="ValidationHandlerType.DataAnnotation">
+                                    <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
+                                        <TaskAccessSubitemsDataFormSection TaskModalContext="TaskModalContext" />
+                                    </Form>
+                                </Validations>
+                            </Column>
+                        </Row>
+
+                    </Container>
+                </ModalBody>
+
+                <TaskShareModalFooter TaskModalContext="TaskModalContext" @ref="@TaskShareModalFooter" />
+            }
+        </ModalContent>
+    }
+</Modal>
+
+@code {
+    [Parameter]
+    public TaskInfoDto TaskInfo { get; set; } = new();
+
+    [Parameter]
+    public DataOperation Operation { get; set; }
+
+    private bool isTaskLoading = false;
+    private bool isModalVisible = false;
+
+    private TaskModalContext TaskModalContext { get; set; }
+    private TaskShareModalFooter TaskShareModalFooter = new();
+
+    public TaskShareModal()
+    {
+        TaskModalContext = new TaskModalContext(new(), TaskInfo, new(), new(), Operation, new());
+    }
+
+    private async Task OnModalClosing(ModalClosingEventArgs e)
+    {
+        e.Cancel = e.CloseReason != CloseReason.UserClosing;
+        if (!e.Cancel)
+        {
+            isModalVisible = false;
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        TaskModalContext.EditContext = new EditContext(TaskModalContext.Task);
+        await base.OnInitializedAsync();
+    }
+
+    private Task ShowModal()
+    {
+        isModalVisible = true;
+        return TaskModalContext.Modal.Show();
+    }
+
+    public async Task Show()
+    {
+        isTaskLoading = true;
+        TaskModalContext.Operation = Operation;
+        await ShowModal();
+
+        var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
+        if (opened is not null)
+        {
+            mapper.Map(opened, TaskModalContext.Task);
+        }
+
+        isTaskLoading = false;
+        await uiService.CallRequestRefreshAsync();
+    }
+}

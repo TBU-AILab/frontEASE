@@ -913,6 +913,10 @@ nav.navbar {
     padding: 5%;
 }
 
+.user-card-header {
+    min-height: 45px;
+}
+
 
 .overview-background-author {
     border: 2px solid var(--b-theme-warning);

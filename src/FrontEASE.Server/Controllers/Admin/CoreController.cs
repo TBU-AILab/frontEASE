@@ -17,18 +17,12 @@ namespace FrontEASE.Server.Controllers.Admin
     /// Controller for core interactions.
     /// </summary>
     [Authorize(Roles = $"{UserRoleNames.AdminRoleName},{UserRoleNames.SuperadminRoleName}")]
-    public class CoreController : ApiControllerBase
+    public class CoreController(
+        ICoreAppService coreAppService,
+        IResourceHandler resourceHandler,
+        IResourceAppService resourceAppService,
+        AppSettings appSettings) : ApiControllerBase(resourceHandler, resourceAppService, appSettings)
     {
-        private readonly ICoreAppService _coreAppService;
-
-        public CoreController(
-            ICoreAppService coreAppService,
-            IResourceHandler resourceHandler,
-            IResourceAppService resourceAppService,
-            AppSettings appSettings) : base(resourceHandler, resourceAppService, appSettings)
-        {
-            _coreAppService = coreAppService;
-        }
 
         /// <summary>
         /// Imports the core module package file (.zip / .py)
@@ -43,7 +37,7 @@ namespace FrontEASE.Server.Controllers.Admin
             try
             {
                 ValidateModel();
-                var response = await _coreAppService.ImportModules(modulesContent, CancellationToken.None);
+                var response = await coreAppService.ImportModules(modulesContent, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.OK, response);
             }
             catch (Exception ex)
@@ -66,7 +60,7 @@ namespace FrontEASE.Server.Controllers.Admin
             IActionResult result;
             try
             {
-                await _coreAppService.DeleteModule(name, CancellationToken.None);
+                await coreAppService.DeleteModule(name, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent);
             }
             catch (Exception ex)
@@ -89,7 +83,7 @@ namespace FrontEASE.Server.Controllers.Admin
             IActionResult result;
             try
             {
-                await _coreAppService.UpdateModels(CancellationToken.None);
+                await coreAppService.UpdateModels(CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent);
             }
             catch (Exception ex)

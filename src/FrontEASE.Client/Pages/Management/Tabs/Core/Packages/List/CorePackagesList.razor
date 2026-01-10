@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 @inject IUIService uiService
 @inject IMapper mapper
 @inject IManagementApiService managementApiService
@@ -29,27 +28,22 @@ else
 
                 @if (!isAddonsPackagesCollapsed)
                 {
-                    <Column ColumnSize="ColumnSize.IsFull">
+                    <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
                         <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
-                            @if (!GlobalPreferences.CorePackages.Any(x => !x.System))
-                            {
-                                <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
-                                    <Heading Size="HeadingSize.Is4" TextColor="TextColor.Dark" TextWeight="TextWeight.Bold">
-                                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(GlobalPreferenceCorePackageDto)}.{ManagementMetadataConstants.System}.{UIElementConstants.Collection}"))
-                                    </Heading>
-                                </Column>
-                            }
-                            else
-                            {
-                                @foreach (var Package in GlobalPreferences.CorePackages.Where(x => !x.System))
-                                {
+                            <Virtualize Items="GlobalPreferences.CorePackages.Where(x => !x.System).ToList()" Context="package">
+                                <ItemContent>
                                     <Column ColumnSize="ColumnSize.Is3.OnWidescreen.Is4.OnTablet">
-                                        <CascadingValue Value="@Package" >
-                                            <CorePackageListItem />
-                                        </CascadingValue>
+                                        <CorePackageListItem Package="package" GlobalPreferences="GlobalPreferences" />
                                     </Column>
-                                }
-                            }
+                                </ItemContent>
+                                <EmptyContent>
+                                    <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                                        <Heading Size="HeadingSize.Is4" TextColor="TextColor.Dark" TextWeight="TextWeight.Bold">
+                                            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(GlobalPreferenceCorePackageDto)}.{ManagementMetadataConstants.System}.{UIElementConstants.Collection}"))
+                                        </Heading>
+                                    </Column>
+                                </EmptyContent>
+                            </Virtualize>
                         </Row>
                     </Column>
                 }
@@ -68,27 +62,22 @@ else
 
             @if (!isSystemPackagesCollapsed)
             {
-                <Column ColumnSize="ColumnSize.IsFull">
+                <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
                     <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
-                        @if (!GlobalPreferences.CorePackages.Any(x => x.System))
-                        {
-                            <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
-                                <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold">
-                                    @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(GlobalPreferenceCorePackageDto)}.{ManagementMetadataConstants.System}.{UIElementConstants.Collection}"))
-                                </Heading>
-                            </Column>
-                        }
-                        else
-                        {
-                            @foreach (var Package in GlobalPreferences.CorePackages.Where(x => x.System))
-                            {
+                        <Virtualize Items="GlobalPreferences.CorePackages.Where(x => x.System).ToList()" Context="package">
+                            <ItemContent>
                                 <Column ColumnSize="ColumnSize.Is3.OnWidescreen.Is4.OnTablet">
-                                    <CascadingValue Value="@Package" >
-                                        <CorePackageListItem />
-                                    </CascadingValue>
+                                    <CorePackageListItem GlobalPreferences="GlobalPreferences" Package="package" />
                                 </Column>
-                            }
-                        }
+                            </ItemContent>
+                            <EmptyContent>
+                                <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                                    <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold">
+                                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(GlobalPreferenceCorePackageDto)}.{ManagementMetadataConstants.System}.{UIElementConstants.Collection}"))
+                                    </Heading>
+                                </Column>
+                            </EmptyContent>
+                        </Virtualize>
                     </Row>
                 </Column>
             }
@@ -97,14 +86,11 @@ else
 }
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
 
     [Parameter]
     public DataOperation Operation { get; set; }
-
-    [Parameter]
-    public bool FullWidthFields { get; set; }
 
     private bool isInitialized = false;
     private bool isSystemPackagesCollapsed;

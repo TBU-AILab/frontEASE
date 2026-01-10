@@ -8,16 +8,16 @@
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591</NoWarn>
+		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591;CA1859</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591</NoWarn>
+		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591;CA1859</NoWarn>
 	</PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.3.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,7 +9,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.CountryCodes.Defaul
         {
             var countryCodes = new List<CountryCode>()
             {
-                new CountryCode() { ID = LanguageCode.EN, Name = LanguageCode.EN.ToString() }
+                new() { ID = LanguageCode.EN, Name = LanguageCode.EN.ToString() }
             };
             return countryCodes;
         }

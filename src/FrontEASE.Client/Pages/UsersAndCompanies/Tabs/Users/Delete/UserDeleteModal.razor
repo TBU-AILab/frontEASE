@@ -2,7 +2,6 @@
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
-@inject IUIManager uiManager
 
 <Modal @ref="@DeleteModal" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async(e) => await HandleKeyDown(e))">
     @if (isModalVisible)
@@ -45,10 +44,10 @@
 
 @code {
     [CascadingParameter]
-    public ApplicationUserDto User { get; set; } = new();
+    public UsersAndCompaniesPageContext PageContext { get; set; } = null!;
 
-    [CascadingParameter]
-    public IList<ApplicationUserDto> Users { get; set; } = [];
+    [Parameter]
+    public ApplicationUserDto User { get; set; } = new();
 
     private Modal DeleteModal = new();
     private bool deletingInProgress = false;
@@ -76,7 +75,7 @@
         var deleted = await userApiService.DeleteUser(User.Id!.Value);
         if (deleted)
         {
-            Users.Remove(User);
+            PageContext.Users.Remove(User);
             var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {User.Role} ({User.Email})";
             toastService.ShowSuccess(message);
             await uiService.CallRequestRefreshAsync();

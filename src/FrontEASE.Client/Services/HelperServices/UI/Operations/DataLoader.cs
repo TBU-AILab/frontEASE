@@ -6,15 +6,8 @@ using FrontEASE.Shared.Infrastructure.Constants.Control;
 
 namespace FrontEASE.Client.Services.HelperServices.UI.Operations
 {
-    public class DataLoader : IDataLoader
+    public class DataLoader(IMapper mapper) : IDataLoader
     {
-        private readonly IMapper _mapper;
-
-        public DataLoader(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
-
         public async Task LoadImage(FileChangedEventArgs args, ImageDto destination)
         {
             var file = args.Files.FirstOrDefault();
@@ -27,7 +20,7 @@ namespace FrontEASE.Client.Services.HelperServices.UI.Operations
                     MimeType = file.Type,
                     Name = file.Name
                 };
-                _mapper.Map(resultImage, destination);
+                mapper.Map(resultImage, destination);
             }
         }
 
@@ -51,7 +44,7 @@ namespace FrontEASE.Client.Services.HelperServices.UI.Operations
             }
         }
 
-        private async Task<byte[]> ReadFileData(IFileEntry file)
+        private static async Task<byte[]> ReadFileData(IFileEntry file)
         {
             var fileSize = (int)file.Size;
             var buffer = new byte[fileSize];

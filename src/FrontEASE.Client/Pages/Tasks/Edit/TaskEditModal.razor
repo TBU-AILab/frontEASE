@@ -1,95 +1,74 @@
 ﻿@inject IMapper mapper
 @inject IUIService uiService
-@inject IUIManager uiManager
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
 
-<CascadingValue Value="Operation" >
-    <Modal @ref="@Modal" @bind-Visible="isModalVisible" Closing="@(async (e) => await OnModalClosing(e))" Class="modal-dialog-wide" Border="Border.Rounded">
-        @if (isModalVisible)
+<Modal @ref="@TaskModalContext.Modal" @bind-Visible="isModalVisible" Closing="@(async (e) => await OnModalClosing(e))" Class="modal-dialog-wide" Border="Border.Rounded">
+    @if (isModalVisible)
+    {
+        @if (TaskModalContext.TaskMetadata.InitializationInProgres)
         {
-            @if (TaskMetadata.InitializationInProgres)
-            {
-                <BackgroundLoadSpinner Class="bg-custom-primary text-custom-primary background-load-spinner-overlay" TextSize="TextSize.Large" />
-            }
-
-            <ModalContent Centered Shadow="Shadow.Small">
-                @if (isTaskLoading)
-                {
-                    <ContentLoadSpinner />
-                }
-                else
-                {
-                    <CascadingValue Value="Task" >
-                        <CascadingValue Value="TaskMetadata" >
-                            <CascadingValue Value="Modal" >
-
-                                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}{(string.IsNullOrWhiteSpace(Task.Config?.Name) ? string.Empty : $" - {Task.Config.Name}")}")" />
-
-                                <ModalBody Padding="Padding.Is0" Class="bg-custom-primary text-custom-primary">
-                                    <Container Fluid>
-                                        <Row>
-                                            <Column ColumnSize="ColumnSize.IsFull">
-                                                <Validations @ref="Validations"
-                                                             Mode="ValidationMode.Auto"
-                                                             ValidateOnLoad="false"
-                                                             EditContext="EditContext"
-                                                             HandlerType="ValidationHandlerType.DataAnnotation">
-                                                    <CascadingValue Value="EditContext" >
-                                                        <CascadingValue Value="Validations">
-                                                            <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
-                                                                <TaskSubitemsDataFormSection />
-                                                            </Form>
-                                                        </CascadingValue>
-                                                    </CascadingValue>
-                                                </Validations>
-                                            </Column>
-                                        </Row>
-
-                                    </Container>
-                                </ModalBody>
-
-                                <TaskEditModalFooter Validations="Validations" @ref="@TaskEditModalFooter" />
-
-                            </CascadingValue>
-                        </CascadingValue>
-                    </CascadingValue>
-                }
-            </ModalContent>
+            <BackgroundLoadSpinner Class="bg-custom-primary text-custom-primary background-load-spinner-overlay" TextSize="TextSize.Large" />
         }
-    </Modal>
-</CascadingValue>
+
+        <ModalContent Centered Shadow="Shadow.Small">
+            @if (isTaskLoading)
+            {
+                <ContentLoadSpinner />
+            }
+            else
+            {
+                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}{(string.IsNullOrWhiteSpace(TaskModalContext.Task.Config?.Name) ? string.Empty : $" - {TaskModalContext.Task.Config.Name}")}")" />
+
+                <ModalBody Padding="Padding.Is0" Class="bg-custom-primary text-custom-primary">
+                    <Container Fluid>
+                        <Row>
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Validations @ref="TaskModalContext.Validations"
+                                             Mode="ValidationMode.Auto"
+                                             ValidateOnLoad="false"
+                                             EditContext="TaskModalContext.EditContext"
+                                             HandlerType="ValidationHandlerType.DataAnnotation">
+
+                                    <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
+                                        <TaskSubitemsDataFormSection TaskModalContext="TaskModalContext" />
+                                    </Form>
+                                </Validations>
+                            </Column>
+                        </Row>
+
+                    </Container>
+                </ModalBody>
+                <TaskEditModalFooter TaskModalContext="TaskModalContext" @ref="@TaskEditModalFooter" />
+
+            }
+        </ModalContent>
+    }
+</Modal>
 
 @code {
-    [CascadingParameter]
-    public ObservableCollection<TaskInfoDto> Tasks { get; set; } = null!;
-
-    [CascadingParameter]
+    [Parameter]
     public TaskInfoDto TaskInfo { get; set; } = new();
 
     [Parameter]
     public DataOperation Operation { get; set; }
 
+    private TaskModalContext TaskModalContext { get; set; }
+    private TaskEditModalFooter TaskEditModalFooter = new();
+
     private bool isTaskLoading = false;
     private bool isModalVisible = false;
     private CancellationTokenSource? cancellationTokenSource;
 
-    private TaskDto Task;
-    private TaskViewMetadataDto TaskMetadata;
-
-    private Modal Modal;
-    private TaskEditModalFooter TaskEditModalFooter = new();
-    private Validations Validations;
-    private EditContext? EditContext;
-
     public TaskEditModal()
     {
-        Task = new();
-        TaskMetadata = new();
+        TaskModalContext = new TaskModalContext(new(), TaskInfo, new(), new(), Operation, new());
+    }
 
-        Modal = new Modal();
-        Validations = new Validations();
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task ResetCancellationToken()
@@ -114,8 +93,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        EditContext = new EditContext(Task);
-        EditContext.OnFieldChanged += OnFieldChanged;
+        TaskModalContext.EditContext = new EditContext(TaskModalContext.Task);
+        TaskModalContext.EditContext.OnFieldChanged += OnFieldChanged;
+        uiService.RefreshRequested += RefreshViewAsync;
         await base.OnInitializedAsync();
     }
 
@@ -124,7 +104,7 @@
         var evaluationNeeded = TaskViewMetadataDto.OptionsReloadNecessary(e.FieldIdentifier.FieldName);
         if (evaluationNeeded)
         {
-            TaskMetadata.InitializationInProgres = true;
+            TaskModalContext.TaskMetadata.InitializationInProgres = true;
             await ResetCancellationToken();
 
             try
@@ -136,10 +116,10 @@
                     {
                         await uiService.CallRequestRefreshAsync();
 
-                        var updated = await taskApiService.RefreshTaskOptions(Task.ID, Task);
+                        var updated = await taskApiService.RefreshTaskOptions(TaskModalContext.Task.ID, TaskModalContext.Task);
                         if (updated is not null && !token.IsCancellationRequested)
                         {
-                            mapper.Map(updated, Task);
+                            mapper.Map(updated, TaskModalContext.Task);
                         }
                     }
 
@@ -149,31 +129,32 @@
             { }
             finally
             {
-                TaskMetadata.InitializationInProgres = false;
+                TaskModalContext.TaskMetadata.InitializationInProgres = false;
                 await uiService.CallRequestRefreshAsync();
             }
         }
     }
 
-    private Task ModalShow()
+    private Task ShowModal()
     {
         isModalVisible = true;
-        return Modal.Show();
+        return TaskModalContext.Modal.Show();
     }
 
     public async Task Show()
     {
         isTaskLoading = true;
+        TaskModalContext.Operation = Operation;
         await ResetCancellationToken();
-        await ModalShow();
+        await ShowModal();
 
         if (Operation == DataOperation.INSERT)
         {
             var inserted = await taskApiService.InsertTask();
             if (inserted is not null)
             {
-                mapper.Map(inserted, Task);
-                TaskInfo = mapper.Map<TaskInfoDto>(inserted);
+                mapper.Map(inserted, TaskModalContext.Task);
+                TaskModalContext.TaskInfo = mapper.Map<TaskInfoDto>(inserted);
             }
         }
         else
@@ -181,7 +162,7 @@
             var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
             if (opened is not null)
             {
-                mapper.Map(opened, Task);
+                mapper.Map(opened, TaskModalContext.Task);
             }
         }
 

@@ -1,5 +1,5 @@
 ﻿using FrontEASE.Domain.Infrastructure.Settings.App.Auth.Defaults.Roles;
-using FrontEASE.Domain.Infrastructure.Settings.App.Auth.Defaults.Superuser;
+using FrontEASE.Domain.Infrastructure.Settings.App.Auth.Defaults.Superadmin;
 
 namespace FrontEASE.Domain.Infrastructure.Settings.App.Auth.Defaults
 {

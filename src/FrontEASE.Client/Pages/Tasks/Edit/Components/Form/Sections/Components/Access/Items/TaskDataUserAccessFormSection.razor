@@ -1,7 +1,6 @@
 ﻿@inject ITaskManipulationService taskManipulationService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
-@inject IUIManager uiManager
 @inject AppSettings appSettings
 
 <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
@@ -23,7 +22,7 @@
                         <Fields>
 
                             <DataGrid TItem="ApplicationUserDto"
-                                      Data="@AvailableUsers"
+                                      Data="@PageContext.AvailableUsers"
                                       SelectionMode="DataGridSelectionMode.Multiple"
                                       SelectedRows="@selectedUsers"
                                       SelectedRowsChanged="(obj => SelectionChanged(obj))"
@@ -32,7 +31,7 @@
                                       FilterMethod="DataGridFilterMethod.Contains"
                                       RowStyling="@StyleRow"
                                       SelectedRowStyling="@StyleRow"
-                                      RowSelectable="@((user) => {return (user.Item.Id != Task?.Author?.Id) && !TaskMetadata.InitializationInProgres;})"
+                                      RowSelectable="@((user) => {return (user.Item.Id != TaskModalContext.Task?.Author?.Id) && !TaskModalContext.TaskMetadata.InitializationInProgres;})"
                                       Class="member-selection-grid text-custom-primary border-custom-light"
                                       Responsive>
 
@@ -86,15 +85,10 @@
 
 @code {
     [CascadingParameter]
-    public TaskDto Task { get; set; } = new();
+    public TasksPageContext PageContext { get; set; } = null!;
 
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
-
-    [CascadingParameter]
-    public IList<ApplicationUserDto> AvailableUsers { get; set; } = [];
-    [CascadingParameter]
-    public IList<CompanyDto> AvailableCompanies { get; set; } = [];
+    [Parameter]
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     private List<ApplicationUserDto> selectedUsers = [];
     private bool isSectionCollapsed = false;
@@ -119,7 +113,7 @@
 
     private void StyleRow(ApplicationUserDto userDto, DataGridRowStyling styling)
     {
-        if (userDto.Id == Task.Author.Id)
+        if (userDto.Id == TaskModalContext.Task.Author.Id)
         {
             styling.Class = "datagrid-row-author";
         }
@@ -127,7 +121,7 @@
 
     private async Task SetInitialCollapse()
     {
-        if (!(Task.Members?.Count > 0))
+        if (!(TaskModalContext.Task.Members?.Count > 0))
         {
             await ChangeCollapseState();
         }
@@ -144,13 +138,13 @@
 
     private void SetInitialData()
     {
-        var selectedUserIDs = Task.Members.Select(x => x.Id);
-        selectedUsers.AddRange(AvailableUsers.Where(x => selectedUserIDs.Contains(x.Id)));
+        var selectedUserIDs = TaskModalContext.Task.Members.Select(x => x.Id);
+        selectedUsers.AddRange(PageContext.AvailableUsers.Where(x => selectedUserIDs.Contains(x.Id)));
     }
 
     private void SelectionChanged(IList<ApplicationUserDto> newSelection)
     {
-        var selectedIDs = Task.Members.Select(x => x.Id);
+        var selectedIDs = TaskModalContext.Task.Members.Select(x => x.Id);
         var newSelectionIDs = newSelection.Select(x => x.Id);
 
         var added = newSelectionIDs.Except(selectedIDs).ToList();
@@ -160,8 +154,8 @@
         {
             foreach (var addedUser in added)
             {
-                var userDto = AvailableUsers.Single(x => x.Id == addedUser);
-                Task.Members.Add(userDto);
+                var userDto = PageContext.AvailableUsers.Single(x => x.Id == addedUser);
+                TaskModalContext.Task.Members.Add(userDto);
             }
         }
 
@@ -169,8 +163,8 @@
         {
             foreach (var removedUser in removed)
             {
-                var removedFromModel = Task.Members.Single(x => x.Id == removedUser);
-                Task.Members.Remove(removedFromModel);
+                var removedFromModel = TaskModalContext.Task.Members.Single(x => x.Id == removedUser);
+                TaskModalContext.Task.Members.Remove(removedFromModel);
             }
         }
     }
@@ -180,14 +174,14 @@
         isSectionCollapsed = !isSectionCollapsed;
 
         if (!isSectionCollapsed)
-        { taskManipulationService.CleanUsersInfo(Task); }
+        { taskManipulationService.CleanUsersInfo(TaskModalContext.Task); }
 
         await uiService.CallRequestRefreshAsync();
     }
 
     private string? GetUserImageUrl(Guid userID)
     {
-        var userData = AvailableUsers.SingleOrDefault(x => x.Id == userID);
+        var userData = PageContext.AvailableUsers.SingleOrDefault(x => x.Id == userID);
         return string.IsNullOrWhiteSpace(userData?.Image?.ImageUrl) ?
         ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{userData?.Image?.ImageUrl}";
     }

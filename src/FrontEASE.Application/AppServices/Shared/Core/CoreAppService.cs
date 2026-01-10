@@ -6,19 +6,8 @@ using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Results;
 
 namespace FrontEASE.Application.AppServices.Shared.Core
 {
-    public class CoreAppService : ICoreAppService
+    public class CoreAppService(ICoreService coreService, ITypelistService typelistService, IMapper mapper) : ICoreAppService
     {
-        private readonly ICoreService _coreService;
-        private readonly ITypelistService _typelistService;
-        private readonly IMapper _mapper;
-
-        public CoreAppService(ICoreService coreService, ITypelistService typelistService, IMapper mapper)
-        {
-            _coreService = coreService;
-            _typelistService = typelistService;
-            _mapper = mapper;
-        }
-
         public async Task<IList<ModuleImportBulkActionResultDto>> ImportModules(GlobalPreferenceCoreModuleDto modulesContent, CancellationToken cancellationToken)
         {
             var resultList = new List<ModuleImportBulkActionResultDto>();
@@ -31,8 +20,8 @@ namespace FrontEASE.Application.AppServices.Shared.Core
 
                 try
                 {
-                    var moduleFile = _mapper.Map<Domain.Entities.Shared.Files.File>(module);
-                    await _coreService.ImportCoreModule(moduleFile, cancellationToken);
+                    var moduleFile = mapper.Map<Domain.Entities.Shared.Files.File>(module);
+                    await coreService.ImportCoreModule(moduleFile, cancellationToken);
                     result.Success = true;
                 }
                 catch (Exception ex)
@@ -44,7 +33,7 @@ namespace FrontEASE.Application.AppServices.Shared.Core
 
             if (resultList.Any(r => r.Success))
             {
-                await _typelistService.LoadModuleTypes(true, cancellationToken);
+                await typelistService.LoadModuleTypes(true, cancellationToken);
             }
 
             return resultList;
@@ -52,10 +41,10 @@ namespace FrontEASE.Application.AppServices.Shared.Core
 
         public async Task DeleteModule(string shortName, CancellationToken cancellationToken)
         {
-            await _coreService.DeleteCoreModule(shortName, cancellationToken);
-            await _typelistService.LoadModuleTypes(true, cancellationToken);
+            await coreService.DeleteCoreModule(shortName, cancellationToken);
+            await typelistService.LoadModuleTypes(true, cancellationToken);
         }
 
-        public async Task UpdateModels(CancellationToken cancellationToken) => await _coreService.UpdateCoreModels(cancellationToken);
+        public async Task UpdateModels(CancellationToken cancellationToken) => await coreService.UpdateCoreModels(cancellationToken);
     }
 }

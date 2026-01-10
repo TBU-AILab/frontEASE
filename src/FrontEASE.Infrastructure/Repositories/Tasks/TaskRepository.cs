@@ -11,17 +11,11 @@ using System.Linq.Expressions;
 
 namespace FrontEASE.Infrastructure.Repositories.Tasks
 {
-    public class TaskRepository : ITaskRepository
+    public class TaskRepository(ApplicationDbContext context) : ITaskRepository
     {
-        private readonly ApplicationDbContext _context;
-        public TaskRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         private IQueryable<Domain.Entities.Tasks.Task> ComposeQuery(TasksQuery query)
         {
-            var tasksQuery = _context.Tasks.AsQueryable();
+            var tasksQuery = context.Tasks.AsQueryable();
 
             if (query.LoadSolutions) { tasksQuery = tasksQuery.Include(x => x.Solutions); }
             if (query.LoadMessages) { tasksQuery = tasksQuery.Include(x => x.Messages); }
@@ -56,7 +50,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
 
         public async Task<IList<TaskMessage>> LoadAllMessagesWhere(Expression<Func<TaskMessage, bool>>? predicate, CancellationToken cancellationToken)
         {
-            var messagesQuery = predicate is not null ? _context.TaskMessages.Include(x => x.TaskSolution).Where(predicate) : _context.TaskMessages;
+            var messagesQuery = predicate is not null ? context.TaskMessages.Include(x => x.TaskSolution).Where(predicate) : context.TaskMessages;
             return await messagesQuery.ToListAsync(cancellationToken);
         }
 
@@ -89,7 +83,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
                                 {
                                     if (param.Value is null && param.ValueID.HasValue)
                                     {
-                                        await _context.Entry(param).Reference(p => p.Value).LoadAsync(cancellationToken);
+                                        await context.Entry(param).Reference(p => p.Value).LoadAsync(cancellationToken);
                                     }
                                     await LoadModuleParameterValueRecursivelyAsync(param.Value, cancellationToken);
                                 }
@@ -122,7 +116,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
         }
 
 
-        public async Task<int> LoadTaskCount(CancellationToken cancellationToken) => await _context.Tasks.CountAsync(cancellationToken);
+        public async Task<int> LoadTaskCount(CancellationToken cancellationToken) => await context.Tasks.CountAsync(cancellationToken);
 
         private static IQueryable<Domain.Entities.Tasks.Task> GetFilterQuery(IQueryable<Domain.Entities.Tasks.Task> tasksQuery, TaskFilterActionRequest filter)
         {
@@ -152,7 +146,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
 
         public async Task<IList<Domain.Entities.Tasks.Task>> LoadInfo(Guid? userID, TaskFilterActionRequest? filter, CancellationToken cancellationToken)
         {
-            var tasksQuery = _context.Tasks
+            var tasksQuery = context.Tasks
                 .AsSplitQuery()
                 .AsNoTracking()
                 .Include(x => x.Config)
@@ -177,7 +171,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
 
         public async Task<IList<Domain.Entities.Tasks.Task>> LoadInfoBase(Guid? userID, TaskFilterActionRequest? filter, CancellationToken cancellationToken)
         {
-            var tasksQuery = _context.Tasks
+            var tasksQuery = context.Tasks
                 .AsSplitQuery()
                 .AsNoTracking()
                 .Include(x => x.Members)
@@ -200,57 +194,57 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
 
         public async Task<Domain.Entities.Tasks.Task> Insert(Domain.Entities.Tasks.Task task, CancellationToken cancellationToken)
         {
-            await _context.Tasks.AddAsync(task, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+            await context.Tasks.AddAsync(task, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
             return task;
         }
 
         public async Task<IList<Domain.Entities.Tasks.Task>> InsertRange(IList<Domain.Entities.Tasks.Task> tasks, bool saveChanges, CancellationToken cancellationToken)
         {
-            await _context.Tasks.AddRangeAsync(tasks, cancellationToken);
+            await context.Tasks.AddRangeAsync(tasks, cancellationToken);
             if (saveChanges)
             {
-                await _context.SaveChangesAsync(cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
             }
             return tasks;
         }
 
         public async Task<Domain.Entities.Tasks.Task> Update(Domain.Entities.Tasks.Task task, CancellationToken cancellationToken)
         {
-            _context.Tasks.Update(task);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.Tasks.Update(task);
+            await context.SaveChangesAsync(cancellationToken);
             return task;
         }
 
         public async Task<IList<Domain.Entities.Tasks.Task>> UpdateRange(IList<Domain.Entities.Tasks.Task> tasks, CancellationToken cancellationToken)
         {
-            _context.Tasks.UpdateRange(tasks);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.Tasks.UpdateRange(tasks);
+            await context.SaveChangesAsync(cancellationToken);
             return tasks;
         }
 
         public async Task Delete(Domain.Entities.Tasks.Task task, CancellationToken cancellationToken)
         {
             task.IsDeleted = true;
-            _context.Tasks.Update(task);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.Tasks.Update(task);
+            await context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task DeleteRange(IList<TaskSolution> solutions, bool saveChanges, CancellationToken cancellationToken)
         {
-            _context.TaskSolutions.RemoveRange(solutions);
+            context.TaskSolutions.RemoveRange(solutions);
             if (saveChanges)
             {
-                await _context.SaveChangesAsync(cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
             }
         }
 
         public async Task DeleteRange(IList<TaskMessage> messages, bool saveChanges, CancellationToken cancellationToken)
         {
-            _context.TaskMessages.RemoveRange(messages);
+            context.TaskMessages.RemoveRange(messages);
             if (saveChanges)
             {
-                await _context.SaveChangesAsync(cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
             }
         }
 
@@ -258,20 +252,20 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
         {
             if (hardDelete)
             {
-                _context.Tasks.RemoveRange(tasks);
+                context.Tasks.RemoveRange(tasks);
             }
             else
             {
                 foreach (var task in tasks)
                 {
                     task.IsDeleted = true;
-                    _context.Tasks.Update(task);
+                    context.Tasks.Update(task);
                 }
             }
 
             if (saveChanges)
             {
-                await _context.SaveChangesAsync(cancellationToken);
+                await context.SaveChangesAsync(cancellationToken);
             }
         }
 
@@ -284,28 +278,28 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
 
             if (value.EnumValue is null && value.EnumValueID.HasValue)
             {
-                await _context.Entry(value).Reference(v => v.EnumValue).LoadAsync(cancellationToken);
+                await context.Entry(value).Reference(v => v.EnumValue).LoadAsync(cancellationToken);
             }
 
             if (value.EnumValue is not null)
             {
                 if (value.EnumValue.ModuleValue is null && value.EnumValue.ModuleValueID.HasValue)
                 {
-                    await _context.Entry(value.EnumValue).Reference(ev => ev.ModuleValue).LoadAsync(cancellationToken);
+                    await context.Entry(value.EnumValue).Reference(ev => ev.ModuleValue).LoadAsync(cancellationToken);
                 }
 
                 if (value.EnumValue.ModuleValue is not null)
                 {
-                    if (!_context.Entry(value.EnumValue.ModuleValue).Collection(m => m.Parameters).IsLoaded)
+                    if (!context.Entry(value.EnumValue.ModuleValue).Collection(m => m.Parameters).IsLoaded)
                     {
-                        await _context.Entry(value.EnumValue.ModuleValue).Collection(m => m.Parameters).LoadAsync(cancellationToken);
+                        await context.Entry(value.EnumValue.ModuleValue).Collection(m => m.Parameters).LoadAsync(cancellationToken);
                     }
 
                     foreach (var nestedParam in value.EnumValue.ModuleValue.Parameters)
                     {
                         if (nestedParam.Value is null && nestedParam.ValueID.HasValue)
                         {
-                            await _context.Entry(nestedParam).Reference(p => p.Value).LoadAsync(cancellationToken);
+                            await context.Entry(nestedParam).Reference(p => p.Value).LoadAsync(cancellationToken);
                         }
                         await LoadModuleParameterValueRecursivelyAsync(nestedParam.Value, cancellationToken);
                     }
@@ -314,28 +308,28 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
 
             if (value.ListValue is null && value.ListValueID.HasValue)
             {
-                await _context.Entry(value).Reference(v => v.ListValue).LoadAsync(cancellationToken);
+                await context.Entry(value).Reference(v => v.ListValue).LoadAsync(cancellationToken);
             }
 
             if (value.ListValue is not null)
             {
-                if (!_context.Entry(value.ListValue).Collection(lv => lv.ParameterValues).IsLoaded)
+                if (!context.Entry(value.ListValue).Collection(lv => lv.ParameterValues).IsLoaded)
                 {
-                    await _context.Entry(value.ListValue).Collection(lv => lv.ParameterValues).LoadAsync(cancellationToken);
+                    await context.Entry(value.ListValue).Collection(lv => lv.ParameterValues).LoadAsync(cancellationToken);
                 }
 
                 foreach (var listItem in value.ListValue.ParameterValues)
                 {
-                    if (!_context.Entry(listItem).Collection(i => i.ParameterItems).IsLoaded)
+                    if (!context.Entry(listItem).Collection(i => i.ParameterItems).IsLoaded)
                     {
-                        await _context.Entry(listItem).Collection(i => i.ParameterItems).LoadAsync(cancellationToken);
+                        await context.Entry(listItem).Collection(i => i.ParameterItems).LoadAsync(cancellationToken);
                     }
 
                     foreach (var paramInListItem in listItem.ParameterItems)
                     {
                         if (paramInListItem.Value is null && paramInListItem.ValueID.HasValue)
                         {
-                            await _context.Entry(paramInListItem).Reference(p => p.Value).LoadAsync(cancellationToken);
+                            await context.Entry(paramInListItem).Reference(p => p.Value).LoadAsync(cancellationToken);
                         }
                         await LoadModuleParameterValueRecursivelyAsync(paramInListItem.Value, cancellationToken);
                     }
@@ -343,8 +337,8 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             }
         }
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken) => await _context.SaveChangesAsync(cancellationToken);
-        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken) => await _context.Database.BeginTransactionAsync(cancellationToken);
+        public async Task SaveChangesAsync(CancellationToken cancellationToken) => await context.SaveChangesAsync(cancellationToken);
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken) => await context.Database.BeginTransactionAsync(cancellationToken);
 
     }
 }

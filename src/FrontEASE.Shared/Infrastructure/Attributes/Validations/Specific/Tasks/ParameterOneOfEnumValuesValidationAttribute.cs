@@ -26,13 +26,11 @@ namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific.Tasks
 
             var validStringValues = enumOptions
                 .Where(e => e.StringValue is not null)
-                .Select(e => e.StringValue!)
-                .ToList();
+                .Select(e => e.StringValue!);
 
             var validModuleShortNames = enumOptions
                 .Where(e => e.ModuleValue is not null)
-                .Select(e => e.ModuleValue!.ShortName)
-                .ToList();
+                .Select(e => e.ModuleValue!.ShortName);
 
             var parameterName = metadata.Name ?? validationContext.MemberName;
 

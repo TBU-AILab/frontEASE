@@ -4,24 +4,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic
 {
-    public class EnumValidationAttribute : ValidationAttribute
+    public class EnumValidationAttribute(Type enumType) : ValidationAttribute
     {
-        private readonly Type _enumType;
-        private readonly bool _isNullable;
-
-        public EnumValidationAttribute(Type enumType)
-        {
-            _enumType = Nullable.GetUnderlyingType(enumType) ?? enumType;
-            _isNullable = Nullable.GetUnderlyingType(enumType) is not null;
-        }
+        private readonly Type _enumType = Nullable.GetUnderlyingType(enumType) ?? enumType;
+        private readonly bool _isNullable = Nullable.GetUnderlyingType(enumType) is not null;
 
         protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
             var serviceProvider = validationContext.GetService(typeof(IResourceHandler));
             if (serviceProvider is IResourceHandler resourceHandler)
             {
-                var propertyName = validationContext.DisplayName;
-
                 if (_isNullable && value is null)
                 {
                     return ValidationResult.Success!;
@@ -31,7 +23,7 @@ namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic
                 {
                     var stringVal = (value is null ? $"{null}" : value.ToString()) ?? $"{null}";
 
-                    var formattedErrorMessage = resourceHandler.GetValidationResource(ValidationKeyConstants.EnumValidationKey, new[] { stringVal });
+                    var formattedErrorMessage = resourceHandler.GetValidationResource(ValidationKeyConstants.EnumValidationKey, [stringVal]);
                     ErrorMessage = formattedErrorMessage;
                     return new ValidationResult(ErrorMessage);
                 }

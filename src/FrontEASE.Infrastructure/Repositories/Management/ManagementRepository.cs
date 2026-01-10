@@ -6,18 +6,11 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FrontEASE.Infrastructure.Repositories.Management
 {
-    public class ManagementRepository : IManagementRepository
+    public class ManagementRepository(ApplicationDbContext context) : IManagementRepository
     {
-        private readonly ApplicationDbContext _context;
-
-        public ManagementRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
         public async Task<UserPreferences?> Load(Guid id, CancellationToken cancellationToken)
         {
-            var query = await _context.Users
+            var query = await context.Users
                 .Include(x => x.UserPreferences)
                     .ThenInclude(x => x.TokenOptions)
                         .ThenInclude(x => x.ConnectorTypes)
@@ -31,12 +24,12 @@ namespace FrontEASE.Infrastructure.Repositories.Management
 
         public async Task<UserPreferences> Update(UserPreferences preferences, CancellationToken cancellationToken)
         {
-            _context.UserPreferences.Update(preferences);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.UserPreferences.Update(preferences);
+            await context.SaveChangesAsync(cancellationToken);
             return preferences;
         }
 
-        public async Task SaveChangesAsync(CancellationToken cancellationToken) => await _context.SaveChangesAsync(cancellationToken);
-        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken) => await _context.Database.BeginTransactionAsync(cancellationToken);
+        public async Task SaveChangesAsync(CancellationToken cancellationToken) => await context.SaveChangesAsync(cancellationToken);
+        public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken) => await context.Database.BeginTransactionAsync(cancellationToken);
     }
 }

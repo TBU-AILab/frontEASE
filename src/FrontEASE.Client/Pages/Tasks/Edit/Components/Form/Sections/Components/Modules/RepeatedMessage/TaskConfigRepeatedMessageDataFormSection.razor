@@ -1,5 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 
 <Row Padding="Padding.Is3.FromBottom" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small" Margin="Margin.Is3.FromTop.Is3.FromBottom" TextOverflow="TextOverflow.Wrap" NoGutters>
     <Column ColumnSize="ColumnSize.IsFull" Display="Display.Flex" Class="justify-content-between align-items-center" Padding="Padding.Is2" Shadow="Shadow.Small">
@@ -16,8 +15,8 @@
                 <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageDto.RepeatedMessageType)))" RequiredIndicator>
                     @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageDto>(nameof(TaskConfigRepeatedMessageDto.RepeatedMessageType), PropertyDisplayResourceType.FIELD)))
                 </FieldLabel>
-                <Select Disabled="@(TaskMetadata.InitializationInProgres)"
-                        @bind-SelectedValue="@Task.Config.RepeatedMessage.RepeatedMessageType"
+                <Select Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                        @bind-SelectedValue="@TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageType"
                         ElementId="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageDto.RepeatedMessageType)))">
                     <ChildContent>
                         @foreach (var messageType in Enum.GetValues(typeof(RepeatedMessageType)))
@@ -40,7 +39,7 @@
                 @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Info}"))
             </FieldLabel>
             <Div>
-                <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Data}.{nameof(RepeatedMessageType)}.{Task.Config.RepeatedMessage.RepeatedMessageType}.{UIStateConstants.Explanation}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
+                <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Data}.{nameof(RepeatedMessageType)}.{TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageType}.{UIStateConstants.Explanation}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
                     <Icon Class="action-icon-sm action-icon-info" Name="IconName.InfoCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                 </Tooltip>
             </Div>
@@ -50,21 +49,14 @@
 
     <Column ColumnSize="ColumnSize.IsFull">
         <Container Fluid>
-            <TaskConfigRepeatedMessageDataItemsFormSection />
+            <TaskConfigRepeatedMessageDataItemsFormSection TaskModalContext="TaskModalContext"/>
         </Container>
     </Column>
 </Row>
 
 @code {
-    [CascadingParameter]
-    public TaskDto Task { get; set; } = new();
+    [Parameter]
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
-    [CascadingParameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = null!;
-
-    [CascadingParameter]
-    public DataOperation Operation { get; set; }
-
-
-    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskConfigRepeatedMessageDto>(elementBase, Operation, Task.ID.ToString());
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskConfigRepeatedMessageDto>(elementBase, TaskModalContext.Operation, TaskModalContext.Task.ID.ToString());
 }

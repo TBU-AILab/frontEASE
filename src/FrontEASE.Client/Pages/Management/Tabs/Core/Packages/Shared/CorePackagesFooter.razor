@@ -1,5 +1,4 @@
-﻿@inject IUIManager uiManager
-@inject IUIService uiService
+﻿@inject IUIService uiService
 @inject IManagementApiService managementApiService
 @inject IMapper mapper
 @inject IResourceHandler resourceHandler
@@ -21,7 +20,7 @@
 </Fields>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
 
     private bool updateInProgress;

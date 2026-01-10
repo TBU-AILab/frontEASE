@@ -7,15 +7,8 @@ using System.Net;
 
 namespace FrontEASE.Client.Services.ApiServices.Shared.Files
 {
-    public class FileApiService : ApiServiceBase, IFileApiService
+    public class FileApiService(HttpClient client, IMapper mapper, IErrorHandlingService errorHandlingService, IJSRuntime jsRuntime) : ApiServiceBase(client, mapper, errorHandlingService), IFileApiService
     {
-        private readonly IJSRuntime _jsRuntime;
-
-        public FileApiService(HttpClient client, IMapper mapper, IErrorHandlingService errorHandlingService, IJSRuntime jsRuntime) : base(client, mapper, errorHandlingService)
-        {
-            _jsRuntime = jsRuntime;
-        }
-
         public async Task<bool> DownloadDirectory(string fileName, Guid identifier, FileSpecification type)
         {
             var url = $"{FilesControllerConstants.BaseUrl}/{FilesControllerConstants.Directory}/{(int)type}/{identifier}";
@@ -30,7 +23,7 @@ namespace FrontEASE.Client.Services.ApiServices.Shared.Files
             using var streamRef = new DotNetStreamReference(contentStream);
 
             var archiveName = $"{fileName}.zip";
-            await _jsRuntime.InvokeVoidAsync("downloadFileFromStream", archiveName, streamRef);
+            await jsRuntime.InvokeVoidAsync("downloadFileFromStream", archiveName, streamRef);
 
             return true;
         }

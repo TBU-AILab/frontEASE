@@ -1,7 +1,6 @@
 ﻿@inject IResourceHandler resourceHandler
 @inject IDataLoader dataLoader
 @inject IUIService uiService
-@inject IUIManager uiManager
 
 <Fields>
     <Field ColumnSize="ColumnSize.IsFull">
@@ -21,7 +20,7 @@
             <FileEdit Display="Display.None"
                       @ref="@filePicker"
                       Filter=".py, .zip"
-                      AutoReset="false"
+                      AutoReset="true"
                       ElementId="@(GetElementIdByOperation(nameof(FileDto.Content)))"
                       MaxFileSize="@(SizeConstants.FiveMegabytes)"
                       Changed="args => FileLoaded(args)"

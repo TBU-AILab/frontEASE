@@ -1,8 +1,7 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 @inject AppSettings appSettings
 
-@if (Task.Members.Count > 0)
+@if (TaskModalContext.Task.Members.Count > 0)
 {
     <Row>
 
@@ -16,29 +15,30 @@
 
             <Container Fluid>
                 <Row>
-                    @foreach (var member in Task.Members)
-                    {
-                        <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is1.FromBottom">
-                            <Image Border="Border.RoundedCircle"
-                                   Source="@(GetUserImageUrl(member.Id!.Value))"
-                                   Class="@($"full-max-width datagrid-item-image-small {(member.Id == Task?.Author?.Id ? "overview-background-author" : string.Empty)}")" Loading />
-                        </Column>
-
-                        @if (!string.IsNullOrEmpty(member.UserName))
-                        {
-                            <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is4.FromBottom">
-                                <Text TextWeight="TextWeight.Bold">
-                                    @member.UserName
-                                </Text>
-                                @if (!string.IsNullOrEmpty(member.Email))
-                                {
-                                    <Span Class="text-custom-muted">
-                                        @($" ({member.Email})")
-                                    </Span>
-                                }
+                    <Virtualize Items="TaskModalContext.Task.Members.ToList()" Context="member">
+                        <ItemContent>
+                            <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is1.FromBottom">
+                                <Image Border="Border.RoundedCircle"
+                                       Source="@(GetUserImageUrl(member.Id!.Value))"
+                                       Class="@($"full-max-width datagrid-item-image-small {(member.Id == TaskModalContext.Task?.Author?.Id ? "overview-background-author" : string.Empty)}")" Loading />
                             </Column>
-                        }
-                    }
+
+                            @if (!string.IsNullOrEmpty(member.UserName))
+                            {
+                                <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is4.FromBottom">
+                                    <Text TextWeight="TextWeight.Bold">
+                                        @member.UserName
+                                    </Text>
+                                    @if (!string.IsNullOrEmpty(member.Email))
+                                    {
+                                        <Span Class="text-custom-muted">
+                                            @($" ({member.Email})")
+                                        </Span>
+                                    }
+                                </Column>
+                            }
+                        </ItemContent>
+                    </Virtualize>
                 </Row>
             </Container>
         </Column>
@@ -47,14 +47,14 @@
 
 @code {
     [CascadingParameter]
-    public TaskDto Task { get; set; } = new();
+    public TasksPageContext PageContext { get; set; } = null!;
 
-    [CascadingParameter]
-    public IList<ApplicationUserDto> AvailableUsers { get; set; } = [];
+    [Parameter]
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     private string? GetUserImageUrl(Guid userID)
     {
-        var userData = AvailableUsers.SingleOrDefault(x => x.Id == userID);
+        var userData = PageContext.AvailableUsers.SingleOrDefault(x => x.Id == userID);
         return string.IsNullOrWhiteSpace(userData?.Image?.ImageUrl) ?
             ImageConstants.UserPicDefault :  $"{appSettings.ApiSettings!.BaseUrl}/{userData?.Image?.ImageUrl}";
     }

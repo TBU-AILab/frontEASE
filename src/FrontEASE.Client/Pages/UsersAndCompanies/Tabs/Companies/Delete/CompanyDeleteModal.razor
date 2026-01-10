@@ -2,7 +2,6 @@
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
-@inject IUIManager uiManager
 
 <Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async(e) => await HandleKeyDown(e))">
     @if (isModalVisible)
@@ -44,12 +43,11 @@
 </Modal>
 
 @code {
-
     [CascadingParameter]
+    public UsersAndCompaniesPageContext PageContext { get; set; } = null!;
+
+    [Parameter]
     public CompanyDto Company { get; set; } = new();
-
-    [CascadingParameter]
-    public IList<CompanyDto> Companies { get; set; } = [];
 
     private Modal DeleteModal = new();
     private bool deletingInProgress = false;
@@ -77,7 +75,7 @@
         var deleted = await companyApiService.DeleteCompany(Company.ID!.Value);
         if (deleted)
         {
-            Companies.Remove(Company);
+            PageContext.Companies.Remove(Company);
             var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {Company.Name}{(string.IsNullOrWhiteSpace(Company.NameAbbreviation) ? string.Empty : $" ({Company.NameAbbreviation})")}";
             toastService.ShowSuccess(message);
             await uiService.CallRequestRefreshAsync();

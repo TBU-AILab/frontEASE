@@ -1,6 +1,5 @@
 ﻿@inject AppSettings appSettings
 @inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 
 <Row Padding="Padding.Is2" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small" Margin="MarginParam" TextOverflow="TextOverflow.Wrap" @onclick:stopPropagation="true">
 
@@ -60,16 +59,23 @@
 </Row>
 
 @code {
-    [Parameter]
-    public IList<TaskKeyValueItemDto> Dictionary { get; set; } = [];
+    public DictionaryExpander()
+    {
+        this.Dictionary = [];
+        this.DisplayName = string.Empty;
+
+        this.isSectionCollapsed = true;
+    }
 
     [Parameter]
-    public IFluentSpacing MarginParam { get; set; } = null!;
+    public IList<TaskKeyValueItemDto> Dictionary { get; set; }
 
     [Parameter]
-    public string DisplayName { get; set; } = string.Empty;
+    public IFluentSpacing? MarginParam { get; set; }
 
-    private bool isSectionCollapsed = true;
+    [Parameter]
+    public string DisplayName { get; set; }
 
+    private bool isSectionCollapsed;
     private void ChangeCollapseState() => isSectionCollapsed = !isSectionCollapsed;
 }

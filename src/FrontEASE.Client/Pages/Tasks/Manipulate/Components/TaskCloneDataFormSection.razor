@@ -1,6 +1,4 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject IUIService uiService
-@inject IUIManager uiManager
 
 <Fields>
     <Validation>
@@ -69,17 +67,14 @@
 </Fields>
 
 @code {
-    [CascadingParameter]
+    [Parameter]
     public TaskInfoDto TaskInfo { get; set; } = new();
 
-    [CascadingParameter]
+    [Parameter]
     public TaskDuplicateActionRequestDto CloneModel { get; set; } = new();
 
-    [CascadingParameter]
-    public DataOperation Operation { get; set; }
-
     [Parameter]
-    public bool FullWidthFields { get; set; }
+    public DataOperation Operation { get; set; }
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<UserPreferenceTokenOptionDto>(elementBase, Operation, null);
 

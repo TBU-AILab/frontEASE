@@ -1,11 +1,16 @@
 ﻿using AutoMapper;
+using Blazorise;
+using FrontEASE.Client.Contexts.Specific.Tasks;
+using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Helpers;
 using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs.List.Helpers;
-using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params.Helpers;
-using FrontEASE.Shared.Data.DTOs.Tasks;
+using FrontEASE.Shared.Data.DTOs.Companies;
+using FrontEASE.Shared.Data.DTOs.Shared.Images;
+using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Metadata;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.Enum;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List.Params;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.RepeatedMessage;
@@ -14,22 +19,14 @@ using FrontEASE.Shared.Data.Enums.Tasks.Config;
 using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.Parameters;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Generic;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Tasks;
+using FrontEASE.Shared.Infrastructure.Utils.Extensions;
 using FrontEASE.Shared.Infrastructure.Utils.Helpers.Tasks;
 using FrontEASE.Shared.Services.Resources;
 
 namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 {
-    public class TaskManipulationService : ITaskManipulationService
+    public class TaskManipulationService(IMapper mapper, IResourceHandler resourceHandler) : ITaskManipulationService
     {
-        private readonly IMapper _mapper;
-        private readonly IResourceHandler resourceHandler;
-
-        public TaskManipulationService(IMapper mapper, IResourceHandler resourceHandler)
-        {
-            _mapper = mapper;
-            this.resourceHandler = resourceHandler;
-        }
-
         public void AddTaskRepeatedMessageItem(TaskDto task) => task.Config.RepeatedMessage.RepeatedMessageItems.Add(new());
         public void RemoveTaskRepeatedMessageItem(TaskDto task, TaskConfigRepeatedMessageItemDto item) => task.Config.RepeatedMessage.RepeatedMessageItems.Remove(item);
 
@@ -47,23 +44,59 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             }
         }
 
-        public void PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions)
+        public (IList<ApplicationUserDto> PreservedMembers, IList<CompanyDto> PreservedGroups) PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions)
         {
+            var preservedMembers = task.Members.Select(m => mapper.Map<ApplicationUserDto>(m)).ToList();
+            var preservedGroups = task.MemberGroups.Select(g => mapper.Map<CompanyDto>(g)).ToList();
+
             if (cleanImages)
             {
-                foreach (var user in task.Members)
-                { user.Image = null; }
-
-                foreach (var group in task.MemberGroups)
+                var sanitizedMembers = task.Members.Select(m =>
                 {
-                    group.Image = null;
-                    foreach (var user in group.Users)
-                    { user.Image = null; }
-                }
+                    var copy = mapper.Map<ApplicationUserDto>(m);
+                    copy.Image = null;
+                    return copy;
+                }).ToList();
+
+                var sanitizedGroups = task.MemberGroups.Select(g =>
+                {
+                    var copy = mapper.Map<CompanyDto>(g);
+                    copy.Image = null;
+                    copy.Users = [.. g.Users.Select(u =>
+                    {
+                        var uCopy = mapper.Map<ApplicationUserDto>(u);
+                        uCopy.Image = null;
+                        return uCopy;
+                    })];
+                    return copy;
+                }).ToList();
+
+                task.Members.Clear();
+                task.Members.AddRange(sanitizedMembers);
+
+                task.MemberGroups.Clear();
+                task.MemberGroups.AddRange(sanitizedGroups);
             }
+
             if (cleanOptions)
             {
                 task.Config.AvailableModules.Clear();
+            }
+
+            return (preservedMembers, preservedGroups);
+        }
+
+        public void AssignTaskImages(TaskDto task, IList<CompanyDto> availableCompanies, IList<ApplicationUserDto> availableUsers)
+        {
+            foreach (var group in task.MemberGroups)
+            {
+                var matchingGroup = availableCompanies.FirstOrDefault(x => x.ID == group.ID);
+                group.Image ??= mapper.Map<ImageDto>(matchingGroup?.Image);
+            }
+            foreach (var member in task.Members)
+            {
+                var matchingMember = availableUsers.FirstOrDefault(x => x.Id == member.Id);
+                member.Image ??= mapper.Map<ImageDto>(matchingMember?.Image);
             }
         }
 
@@ -71,11 +104,11 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
         {
             if (!string.IsNullOrWhiteSpace(source?.ShortName))
             {
-                _mapper.Map(source, destination);
+                mapper.Map(source, destination);
             }
             else
             {
-                _mapper.Map(new TaskModuleDto(), destination);
+                mapper.Map(new TaskModuleDto(), destination);
             }
         }
 
@@ -160,7 +193,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 
                 case ParameterType.ENUM:
                     var enumVal = new TaskModuleParameterEnumOptionDto() { StringValue = defaultValue };
-                    _mapper.Map(enumVal, parameter.Value!.EnumValue);
+                    mapper.Map(enumVal, parameter.Value!.EnumValue);
                     break;
 
                 default:
@@ -223,9 +256,9 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             return flags;
         }
 
-        public ListParamFlags GetListParamFlags(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal)
+        public TaskModuleListParamFlags GetListParamFlags(TaskModuleParameterNoValidationDto paramOption, TaskModuleParameterDto paramVal)
         {
-            var flags = new ListParamFlags()
+            var flags = new TaskModuleListParamFlags()
             {
                 IsDescriptionPresent = CheckDescriptionPresent(paramOption, paramVal),
                 ListParamType = DynamicParamUtils.GetParameterType(paramOption.Type),
@@ -251,6 +284,72 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
                 }
             }
             return internalDescription;
+        }
+
+        public TaskModuleParamContext GetParamContext(TaskModuleParameterNoValidationDto parameterOption, TaskModuleParameterDto? paramValue = null, TaskModuleDto? module = null)
+        {
+            var paramType = DynamicParamUtils.GetParameterType(parameterOption.Type);
+            var paramName = !string.IsNullOrWhiteSpace(parameterOption.LongName) ? parameterOption.LongName : !string.IsNullOrWhiteSpace(parameterOption.ShortName) ? parameterOption.ShortName : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
+            var paramVal = (TaskModuleParameterDto?)null;
+
+            if (module is not null && paramValue is null)
+            {
+                paramVal = module?.Parameters?.SingleOrDefault(x => x.ShortName == parameterOption.ShortName);
+                paramVal = parameterOption.Readonly == true ? InitializeReadonlyParamValue(module, paramVal, parameterOption) : InitializeParamValue(module, paramVal, parameterOption, paramType!.Value);
+            }
+            else if (paramValue is not null)
+            {
+                paramVal = paramValue;
+            }
+            return new TaskModuleParamContext(paramName, parameterOption, paramVal!, paramType);
+        }
+
+        public TaskModuleParamContext GetListParamContext(TaskModuleParameterNoValidationDto parameterOption, TaskModuleParameterDto? paramValue = null, TaskModuleListParamFlags? flags = null)
+        {
+            var paramType = DynamicParamUtils.GetParameterType(parameterOption.Type);
+            var paramName = parameterOption.LongName ?? parameterOption.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}");
+
+            return new TaskModuleParamContext(paramName, parameterOption, paramValue, paramType)
+            {
+                ListFlags = flags,
+            };
+        }
+
+        private TaskModuleParameterDto InitializeParamValue(TaskModuleDto? module, TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption, ParameterType parameterType)
+        {
+            SetParameterValueBaseIfNeeded(module, parameterValue, parameterOption);
+
+            parameterValue!.Value ??= new();
+            parameterValue.Value.Metadata = mapper.Map<TaskModuleParameterNoValidationMetadataDto>(parameterOption);
+
+            parameterValue.Value.ListValue ??= parameterType == ParameterType.LIST ? new() : null;
+            parameterValue.Value.EnumValue ??= parameterType == ParameterType.ENUM ? new() : null;
+            parameterValue.Value.EnumValue?.Metadata = parameterValue.Value.Metadata;
+
+            return parameterValue;
+        }
+
+        private TaskModuleParameterDto InitializeReadonlyParamValue(TaskModuleDto? module, TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption)
+        {
+            SetParameterValueBaseIfNeeded(module, parameterValue, parameterOption);
+
+            mapper.Map(parameterOption.Default, parameterValue!.Value);
+            return parameterValue;
+        }
+
+        private static void SetParameterValueBaseIfNeeded(TaskModuleDto? module, TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption)
+        {
+            if (parameterValue is null && module is not null)
+            {
+                parameterValue = new()
+                {
+                    Key = parameterOption.Key,
+                    ShortName = parameterOption.ShortName,
+                    Type = parameterOption.Type
+                };
+
+                module.Parameters.Add(parameterValue);
+            }
         }
     }
 }

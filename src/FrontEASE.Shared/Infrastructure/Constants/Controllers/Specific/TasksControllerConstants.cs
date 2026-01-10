@@ -8,6 +8,7 @@
 
         public const string Clone = "clone";
         public const string ChangeState = "change-state";
+        public const string Share = "share";
         public const string SimpleMode = "simple";
     }
 }

@@ -9,20 +9,12 @@ using System.Net.Http.Json;
 
 namespace FrontEASE.Client.Services.ApiServices.Shared.Users
 {
-    public class UserApiService : ApiServiceBase, IUserApiService
+    public class UserApiService(
+        HttpClient client,
+        IMapper mapper,
+        IErrorHandlingService errorHandlingService,
+        IUserManipulationService userManipulationService) : ApiServiceBase(client, mapper, errorHandlingService), IUserApiService
     {
-        private readonly IUserManipulationService _userManipulationService;
-
-        public UserApiService(
-            HttpClient client,
-            IMapper mapper,
-            IErrorHandlingService errorHandlingService,
-            IUserManipulationService userManipulationService) :
-            base(client, mapper, errorHandlingService)
-        {
-            _userManipulationService = userManipulationService;
-        }
-
         public async Task<ApplicationUserDto> LoadUser()
         {
             var url = $"{UsersControllerConstants.BaseUrl}";
@@ -55,7 +47,7 @@ namespace FrontEASE.Client.Services.ApiServices.Shared.Users
 
         public async Task<ApplicationUserDto?> AddUser(ApplicationUserDto addUserDto)
         {
-            _userManipulationService.ConsolidateUserModel(addUserDto);
+            userManipulationService.ConsolidateUserModel(addUserDto);
 
             var response = await _client.PostAsJsonAsync(UsersControllerConstants.BaseUrl, addUserDto);
             if (response.StatusCode != HttpStatusCode.Created)
@@ -68,7 +60,7 @@ namespace FrontEASE.Client.Services.ApiServices.Shared.Users
 
         public async Task<ApplicationUserDto?> UpdateUser(ApplicationUserDto editUserDto)
         {
-            _userManipulationService.ConsolidateUserModel(editUserDto);
+            userManipulationService.ConsolidateUserModel(editUserDto);
 
             var response = await _client.PutAsJsonAsync(UsersControllerConstants.BaseUrl, editUserDto);
             if (response.StatusCode != HttpStatusCode.OK)

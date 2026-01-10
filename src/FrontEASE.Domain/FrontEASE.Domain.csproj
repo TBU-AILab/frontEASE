@@ -7,25 +7,25 @@
   </PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591</NoWarn>
+		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591;CA1859</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591</NoWarn>
+		<NoWarn>NU1608;NU1701;NU1702;NU1902;NU1903;CS1591;CA1859</NoWarn>
 	</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.0.0" />
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.3.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.3.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="10.0.0" />
-    <PackageReference Include="Sentry" Version="5.16.2" />
-    <PackageReference Include="Sentry.AspNetCore" Version="5.16.2" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="10.0.1" />
+    <PackageReference Include="Sentry" Version="6.0.0" />
+    <PackageReference Include="Sentry.AspNetCore" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

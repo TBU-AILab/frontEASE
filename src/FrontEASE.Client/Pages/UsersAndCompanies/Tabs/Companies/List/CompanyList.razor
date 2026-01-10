@@ -3,7 +3,6 @@
 @inject IUIService uiService
 @inject ICompanyManipulationService companyManipulationService
 @inject ICompanyApiService companyApiService
-@inject IUIManager uiManager
 
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<CompanyDto>()))" />
 <Divider Class="divider-main-thin bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is0.FromTop" />
@@ -12,31 +11,23 @@
     <ContentLoadSpinner />
 }
 <Row Margin="Margin.Is2.FromTop">
-    @if (Companies.Count > 0)
-    {
-        @foreach (var Company in Companies)
-        {
-            <CascadingValue Value="Company">
-                <CompanyListItem />
-            </CascadingValue>
-        }
-    }
-    else
-    {
-        <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
-            <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold" Class="text-custom-primary">
-                @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(CompanyDto)}.{UIElementConstants.Collection}"))
-            </Heading>
-        </Column>
-    }
+    <Virtualize Items="PageContext.Companies.ToList()" Context="company">
+        <ItemContent>
+            <CompanyListItem Company="company" />
+        </ItemContent>
+        <EmptyContent>
+            <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold" Class="text-custom-primary">
+                    @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(CompanyDto)}.{UIElementConstants.Collection}"))
+                </Heading>
+            </Column>
+        </EmptyContent>
+    </Virtualize>
 </Row>
 
 @code {
     [CascadingParameter]
-    public IList<CompanyDto> Companies { get; set; } = [];
-
-    [CascadingParameter]
-    public IList<ApplicationUserDto> Users { get; set; } = [];
+    public UsersAndCompaniesPageContext PageContext { get; set; } = null!;
 
     private bool isInitialized = false;
 
@@ -53,12 +44,12 @@
             var loadUsersTask = Task.CompletedTask;
             var loadCompaniesTask = Task.CompletedTask;
 
-            if (!(Users?.Count > 0 == true))
+            if (!(PageContext.Users?.Count > 0 == true))
             {
                 loadUsersTask = LoadUsers();
             }
 
-            if (!(Companies?.Count > 0 == true))
+            if (!(PageContext.Companies?.Count > 0 == true))
             {
                 loadCompaniesTask = LoadCompanies();
             }
@@ -66,7 +57,7 @@
             await Task.WhenAll(loadUsersTask, loadCompaniesTask);
         }
 
-        companyManipulationService.SortUsersToCompanies(Users!, Companies!);
+        companyManipulationService.SortUsersToCompanies(PageContext.Users!, PageContext.Companies!);
         await base.OnInitializedAsync();
         isInitialized = true;
     }
@@ -76,8 +67,8 @@
         var companies = await companyApiService.LoadCompanies();
         if (companies?.Count > 0 == true)
         {
-            Companies.Clear();
-            foreach (var company in companies) { Companies.Add(company); }
+            PageContext.Companies.Clear();
+            foreach (var company in companies) { PageContext.Companies.Add(company); }
         }
     }
 
@@ -86,8 +77,8 @@
         var users = await userApiService.LoadUsers();
         if (users?.Count > 0 == true)
         {
-            Users.Clear();
-            foreach (var user in users) { Users.Add(user); }
+            PageContext.Users.Clear();
+            foreach (var user in users) { PageContext.Users.Add(user); }
         }
     }
 }

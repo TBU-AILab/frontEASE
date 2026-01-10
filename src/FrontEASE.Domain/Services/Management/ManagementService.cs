@@ -7,28 +7,17 @@ using FrontEASE.Domain.Services.Core.Connector;
 
 namespace FrontEASE.Domain.Services.Management
 {
-    public class ManagementService : IManagementService
+    public class ManagementService(
+        IManagementRepository managementRepository,
+        ICoreConnector coreService,
+        IMapper mapper) : IManagementService
     {
-        private readonly IManagementRepository _managementRepository;
-        private readonly ICoreConnector _coreService;
-        private readonly IMapper _mapper;
-
-        public ManagementService(
-            IManagementRepository managementRepository,
-            ICoreConnector coreService,
-            IMapper mapper)
-        {
-            _coreService = coreService;
-            _managementRepository = managementRepository;
-            _mapper = mapper;
-        }
-
         public async Task<GlobalPreferences> LoadGlobal(CancellationToken cancellationToken)
         {
-            var packages = await _coreService.GetPackages(cancellationToken);
+            var packages = await coreService.GetPackages(cancellationToken);
             var globalPrefs = new GlobalPreferences()
             {
-                CorePackages = _mapper.Map<IList<GlobalPreferenceCorePackage>>(packages)
+                CorePackages = mapper.Map<IList<GlobalPreferenceCorePackage>>(packages)
             };
 
             return globalPrefs;
@@ -36,16 +25,16 @@ namespace FrontEASE.Domain.Services.Management
 
         public async Task<UserPreferences> Load(Guid id, CancellationToken cancellationToken)
         {
-            var preferences = await _managementRepository.Load(id, cancellationToken) ?? throw new NotFoundException();
+            var preferences = await managementRepository.Load(id, cancellationToken) ?? throw new NotFoundException();
             return preferences;
         }
 
         public async Task<UserPreferences> Update(Guid id, UserPreferences preferences, CancellationToken cancellationToken)
         {
             var updated = await Load(id, cancellationToken);
-            _mapper.Map(preferences, updated);
+            mapper.Map(preferences, updated);
 
-            updated = await _managementRepository.Update(updated, cancellationToken);
+            updated = await managementRepository.Update(updated, cancellationToken);
             return updated!;
         }
 
@@ -68,8 +57,8 @@ namespace FrontEASE.Domain.Services.Management
                 .Where(newPkg => !newPkg.System && !origPackageConfig.Any(orig => orig.Name == newPkg.Name && orig.Version == newPkg.Version))
                 .ToList();
 
-            if (packagesToDelete.Count > 0) { await _coreService.DeletePackages(packagesToDelete, cancellationToken); }
-            if (packagesToInstall.Count > 0) { await _coreService.AddPackages(packagesToInstall, cancellationToken); }
+            if (packagesToDelete.Count > 0) { await coreService.DeletePackages(packagesToDelete, cancellationToken); }
+            if (packagesToInstall.Count > 0) { await coreService.AddPackages(packagesToInstall, cancellationToken); }
         }
     }
 }

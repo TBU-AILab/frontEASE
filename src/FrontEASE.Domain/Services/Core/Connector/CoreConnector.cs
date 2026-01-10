@@ -191,7 +191,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
 
         public async Task<bool> HandleTaskDelete(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken)
         {
-            var taskIDs = tasks.Select(x => x.ID).ToList();
+            var taskIDs = tasks.Select(x => x.ID);
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/batch/delete");
 
             var request = new HttpRequestMessage(HttpMethod.Delete, url)
@@ -239,7 +239,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
 
         public async Task ChangeTaskState(IList<Entities.Tasks.Task> tasks, TaskState state, CancellationToken cancellationToken)
         {
-            var taskIDs = tasks.Select(x => x.ID).ToList();
+            var taskIDs = tasks.Select(x => x.ID);
             var url = $"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/batch";
             switch (state)
             {
@@ -515,7 +515,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
             {
                 foreach (var detail in validationError.Detail)
                 {
-                    string loc = detail.Loc is not null && detail.Loc.Count > 0 ? string.Join(" > ", detail.Loc) : string.Empty;
+                    var loc = detail.Loc is not null && detail.Loc.Count > 0 ? string.Join(" > ", detail.Loc) : string.Empty;
                     messages.Add(!string.IsNullOrEmpty(loc) ? detail.Msg : $"{loc}: {detail.Msg}");
                 }
             }

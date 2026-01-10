@@ -1,58 +1,52 @@
 ﻿@inject ITaskApiService taskApiService
 @inject IUIService uiService
-@inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
 @inject Blazored.Toast.Services.IToastService toastService
 
-<CascadingValue Value="Operation">
-    <Modal @ref="@CloneModal" Closed="@OnModalClosing" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
-        @if (isModalVisible)
-        {
-            <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
+<Modal @ref="@CloneModal" Closed="@OnModalClosing" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
+    @if (isModalVisible)
+    {
+        <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
 
-                <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}")} - {TaskInfo.Name}")" />
+            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}")} - {TaskInfo.Name}")" />
 
-                <ModalBody Margin="Margin.Is3.FromTop">
-                    <Row>
-                        <Column ColumnSize="ColumnSize.IsFull">
-                            <Form Margin="Margin.Is4.FromTop" Class="text-form-size">
-                                <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="CloneModel" ValidateOnLoad="false">
-                                    <CascadingValue Value="CloneModel">
-                                        <TaskCloneDataFormSection FullWidthFields="false" />
+            <ModalBody Margin="Margin.Is3.FromTop">
+                <Row>
+                    <Column ColumnSize="ColumnSize.IsFull">
+                        <Form Margin="Margin.Is4.FromTop" Class="text-form-size">
+                            <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="CloneModel" ValidateOnLoad="false">
+                                <TaskCloneDataFormSection CloneModel="CloneModel" TaskInfo="TaskInfo" Operation="Operation" />
 
-                                        <Fields>
-                                            <Field ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
-                                                <Button Clicked="@CloneTask" Class="btn btn-sized button full-width bg-custom-info text-custom-info" Disabled="@cloneInProgress" TextWeight="TextWeight.Bold">
-                                                    @if (cloneInProgress)
-                                                    {
-                                                        <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))" TextSize="TextSize.Medium" />
-                                                    }
-                                                    else
-                                                    {
-                                                        @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))
-                                                    }
-                                                </Button>
-                                            </Field>
-                                        </Fields>
-                                    </CascadingValue>
-                                </Validations>
-                            </Form>
-                        </Column>
-                    </Row>
-                </ModalBody>
-            </ModalContent>
-        }
-    </Modal>
-</CascadingValue>
+                                <Fields>
+                                    <Field ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                                        <Button Clicked="@CloneTask" Class="btn btn-sized button full-width bg-custom-info text-custom-info" Disabled="@cloneInProgress" TextWeight="TextWeight.Bold">
+                                            @if (cloneInProgress)
+                                            {
+                                                <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))" TextSize="TextSize.Medium" />
+                                            }
+                                            else
+                                            {
+                                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))
+                                            }
+                                        </Button>
+                                    </Field>
+                                </Fields>
+                            </Validations>
+                        </Form>
+                    </Column>
+                </Row>
+            </ModalBody>
+        </ModalContent>
+    }
+</Modal>
 
 @code {
-
     [CascadingParameter]
+    public TasksPageContext PageContext { get; set; } = null!;
+
+    [Parameter]
     public TaskInfoDto TaskInfo { get; set; } = new();
-
-    [CascadingParameter]
-    public ObservableCollection<TaskInfoDto> Tasks { get; set; } = [];
 
     [Parameter]
     public DataOperation Operation { get; set; }
@@ -94,7 +88,7 @@
                 var clonedTaskInfo = mapper.Map<IList<TaskInfoDto>>(cloned);
                 foreach (var clonedTask in clonedTaskInfo)
                 {
-                    Tasks.Insert(0, clonedTask);
+                    PageContext.Tasks.Insert(0, clonedTask);
                 }
                 var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}")}: {TaskInfo.Name}";
                 toastService.ShowSuccess(message);

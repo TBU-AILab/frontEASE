@@ -1,13 +1,8 @@
-﻿@inject IUIManager uiManager
-
-<CascadingValue Value="TaskModules">
-    <Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Shadow="Shadow.Small" Class="rounded-top-right-1 border-custom-light">
-        <CoreModuleAddForm />
-        <CoreModulesList />
-    </Container>
-</CascadingValue>
-
+﻿<Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Shadow="Shadow.Small" Class="rounded-top-right-1 border-custom-light">
+    <CoreModuleAddForm ModuleModel="ModuleModel" />
+    <CoreModulesList />
+</Container>
 
 @code {
-    public IList<TaskModuleNoValidationDto> TaskModules { get; set; } = [];
+    private GlobalPreferenceCoreModuleDto ModuleModel = new();
 }

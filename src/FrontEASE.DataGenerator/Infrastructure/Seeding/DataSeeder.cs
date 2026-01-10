@@ -5,18 +5,12 @@ using System.Reflection;
 
 namespace FrontEASE.DataGenerator.Infrastructure.Seeding
 {
-    public class DataSeeder : IDataSeeder
+    public class DataSeeder(
+        IEnumerable<IEraser> erasers,
+        IEnumerable<IGenerator> generators) : IDataSeeder
     {
-        private readonly IList<IEraser> _erasers;
-        private readonly IList<IGenerator> _generators;
-
-        public DataSeeder(
-            IEnumerable<IEraser> erasers,
-            IEnumerable<IGenerator> generators)
-        {
-            _erasers = [.. erasers.OrderBy(GetOrder)];
-            _generators = [.. generators.OrderBy(GetOrder)];
-        }
+        private readonly IList<IEraser> _erasers = [.. erasers.OrderBy(GetOrder)];
+        private readonly IList<IGenerator> _generators = [.. generators.OrderBy(GetOrder)];
 
         private static int GetOrder<T>(T service)
         {

@@ -1,4 +1,5 @@
 ﻿using Blazored.Toast.Services;
+using FrontEASE.Client.Services.HelperServices.Auth;
 using FrontEASE.Client.Services.HelperServices.UI.Manage;
 using FrontEASE.Client.Shared.Styling.Defaults;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
@@ -14,28 +15,14 @@ using System.Text.Json;
 
 namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
 {
-    public class ErrorHandlingService : IErrorHandlingService
+    public class ErrorHandlingService(
+        IToastService toastService,
+        IResourceHandler resourceHandler,
+        IUIManager uiManager,
+        NavigationManager navManager,
+        AuthenticationStateProvider authStateProvider) : IErrorHandlingService
     {
-        private readonly IToastService _toastService;
-        private readonly IResourceHandler _resourceHandler;
-        private readonly IUIManager _uiManager;
-        private readonly NavigationManager _navManager;
-
-        private readonly CustomAuthenticationStateProvider _authStateProvider;
-
-        public ErrorHandlingService(
-            IToastService toastService,
-            IResourceHandler resourceHandler,
-            IUIManager uiManager,
-            NavigationManager navManager,
-            AuthenticationStateProvider authStateProvider)
-        {
-            _authStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
-            _resourceHandler = resourceHandler;
-            _toastService = toastService;
-            _uiManager = uiManager;
-            _navManager = navManager;
-        }
+        private readonly CustomAuthenticationStateProvider _authStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
 
         public async Task HandleErrorResponse(HttpResponseMessage httpResponse)
         {
@@ -43,7 +30,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
             var uiMessageBody = string.Empty;
             var uiMessageTitle = string.Empty;
 
-            var msgBody = _resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Error}.{httpResponse.StatusCode}.{UIStateConstants.Text}");
+            var msgBody = resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Error}.{httpResponse.StatusCode}.{UIStateConstants.Text}");
             switch (httpResponse.StatusCode)
             {
                 case HttpStatusCode.BadRequest:
@@ -61,7 +48,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                             }
                         }
                         uiMessageBody = $"{msgBody}: {string.Join(", ", problemsList.Select(x => x.Item2))}";
-                        uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
+                        uiMessageTitle = resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                     }
                     break;
                 case HttpStatusCode.UnprocessableContent:
@@ -70,7 +57,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                         var responseMessage = JsonSerializer.Deserialize<UnprocessableResultDto>(responseString);
 
                         uiMessageBody = $"{msgBody}: {string.Join(", ", responseMessage!.Errors)}";
-                        uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
+                        uiMessageTitle = resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                         messageLevel = ToastLevel.Warning;
                     }
                     break;
@@ -79,7 +66,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                         var responseString = await httpResponse.Content.ReadAsStringAsync();
                         var responseMessage = JsonSerializer.Deserialize<NotFoundResultDto>(responseString);
 
-                        uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
+                        uiMessageTitle = resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                         uiMessageBody = msgBody;
                     }
                     break;
@@ -88,19 +75,19 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                         var state = await _authStateProvider.GetAuthenticationStateAsync();
                         if (state.User.Identity?.IsAuthenticated != true)
                         {
-                            uiMessageBody = _resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Error}.{httpResponse.StatusCode}.{UIStateConstants.TokenExpiration}.{UIStateConstants.Explanation}");
+                            uiMessageBody = resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Error}.{httpResponse.StatusCode}.{UIStateConstants.TokenExpiration}.{UIStateConstants.Explanation}");
                             messageLevel = ToastLevel.Info;
 
                             _authStateProvider.Logout();
-                            _uiManager.ChangeTheme(ThemeDefaults.GetThemeDefaults(ColorScheme.LIGHT));
-                            var loginRoute = _resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}");
-                            _navManager.NavigateTo(loginRoute);
+                            uiManager.ChangeTheme(ThemeDefaults.GetThemeDefaults(ColorScheme.LIGHT));
+                            var loginRoute = resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIElementConstants.Route}.{UIRouteConstants.AccountRoute}.{UIRouteConstants.LoginRoute}");
+                            navManager.NavigateTo(loginRoute);
                         }
                         else
                         {
                             var responseMessage = await httpResponse.Content.ReadFromJsonAsync<UnauthorizedResultDto>();
                             uiMessageBody = msgBody;
-                            uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
+                            uiMessageTitle = resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                             messageLevel = ToastLevel.Warning;
                         }
                     }
@@ -108,7 +95,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                 case HttpStatusCode.InternalServerError:
                     {
                         var responseMessage = await httpResponse.Content.ReadFromJsonAsync<InternalErrorResultDto>();
-                        uiMessageTitle = _resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
+                        uiMessageTitle = resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                         uiMessageBody = msgBody;
                     }
                     break;
@@ -116,7 +103,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                     break;
             }
 
-            await VisualizeException(uiMessageTitle ?? _resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}"), uiMessageBody, messageLevel);
+            await VisualizeException(uiMessageTitle ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}"), uiMessageBody, messageLevel);
         }
 
         private async Task VisualizeException(string title, string body, ToastLevel level)
@@ -127,13 +114,13 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
             switch (level)
             {
                 case ToastLevel.Error:
-                    _toastService.ShowError(content);
+                    toastService.ShowError(content);
                     break;
                 case ToastLevel.Warning:
-                    _toastService.ShowWarning(content);
+                    toastService.ShowWarning(content);
                     break;
                 default:
-                    _toastService.ShowInfo(content);
+                    toastService.ShowInfo(content);
                     break;
             }
         }

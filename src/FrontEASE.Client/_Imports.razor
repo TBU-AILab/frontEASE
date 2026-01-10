@@ -15,12 +15,14 @@
 @using Blazorise.Components
 @using Blazorise.DataGrid
 @using Blazorise.Markdown
+@using Blazorise.Charts
 @using Blazored.Toast
 @using Blazored.Toast.Configuration
 @using Blazored.Toast.Services
 @using Markdig
 @using System.Collections.ObjectModel
 @using FrontEASE.Client.Services.HelperServices
+@using FrontEASE.Client.Services.HelperServices.Auth
 @using FrontEASE.Shared.Infrastructure.Constants.Auth
 @using FrontEASE.Shared.Infrastructure.Constants.Control
 @using FrontEASE.Shared.Infrastructure.Constants.Controllers
@@ -28,6 +30,7 @@
 @using FrontEASE.Shared.Infrastructure.Constants.UI.Specific
 @using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Management
 @using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Tasks
+@using FrontEASE.Shared.Infrastructure.Constants.UI.Specific.Tasks.Charts
 @using FrontEASE.Shared.Infrastructure.Constants.Validations
 @using FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic
 @using FrontEASE.Client.Layout.Auth
@@ -63,6 +66,9 @@
 
 @* Shared *@
 @using FrontEASE
+@using FrontEASE.Client.Contexts
+@using FrontEASE.Client.Contexts.Specific
+@using FrontEASE.Client.Contexts.Specific.Tasks
 @using FrontEASE.Client.Infrastructure.Settings
 @using FrontEASE.Client.Services.ApiServices.Shared.Core
 @using FrontEASE.Client.Services.ApiServices.Shared.Files
@@ -100,6 +106,7 @@
 @using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections
 @using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components
 @using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Access
+@using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Access.Items
 @using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules
 @using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params
 @using FrontEASE.Client.Pages.Tasks.Edit.Components.Form.Sections.Components.Modules.Params.Inputs
@@ -125,18 +132,20 @@
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Items
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params
-@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params.Helpers
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.Params.Special
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Config.Components.Modules.RepeatedMessage
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Info
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Info.Items
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Info.Items.Solutions
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Info.Items.Solutions.Items
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Info.Items.Charts
+@using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Info.Items.Charts.Items
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Messages
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Messages.Items
 @using FrontEASE.Client.Pages.Tasks.Overview.Components.Sections.Messages.Items.Components
 @using FrontEASE.Client.Services.ApiServices.Tasks
 @using FrontEASE.Client.Services.ModelManipulationServices.Tasks
+@using FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts
 @using FrontEASE.Shared.Data.DTOs.Tasks
 @using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests
 @using FrontEASE.Shared.Data.DTOs.Tasks.Data

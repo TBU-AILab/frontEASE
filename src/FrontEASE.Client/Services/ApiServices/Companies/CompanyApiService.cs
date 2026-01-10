@@ -9,20 +9,13 @@ using System.Net.Http.Json;
 
 namespace FrontEASE.Client.Services.ApiServices.Companies
 {
-    public class CompanyApiService : ApiServiceBase, ICompanyApiService
+    public class CompanyApiService(
+        HttpClient client,
+        IMapper mapper,
+        IErrorHandlingService errorHandlingService,
+        ICompanyManipulationService companyManipulationService
+            ) : ApiServiceBase(client, mapper, errorHandlingService), ICompanyApiService
     {
-        private readonly ICompanyManipulationService _companyManipulationService;
-
-        public CompanyApiService(
-            HttpClient client,
-            IMapper mapper,
-            IErrorHandlingService errorHandlingService,
-            ICompanyManipulationService companyManipulationService
-            ) : base(client, mapper, errorHandlingService)
-        {
-            _companyManipulationService = companyManipulationService;
-        }
-
         public async Task<IList<CompanyDto>> LoadCompanies()
         {
             var url = $"{CompaniesControllerConstants.BaseUrl}/{ControllerConstants.All}";
@@ -39,7 +32,7 @@ namespace FrontEASE.Client.Services.ApiServices.Companies
 
         public async Task<CompanyDto?> AddCompany(CompanyDto addCompanyDto)
         {
-            _companyManipulationService.ConsolidateCompanyModel(addCompanyDto);
+            companyManipulationService.ConsolidateCompanyModel(addCompanyDto);
 
             var response = await _client.PostAsJsonAsync(CompaniesControllerConstants.BaseUrl, addCompanyDto);
             if (response.StatusCode != HttpStatusCode.Created)
@@ -52,7 +45,7 @@ namespace FrontEASE.Client.Services.ApiServices.Companies
 
         public async Task<CompanyDto?> UpdateCompany(CompanyDto editCompanyDto)
         {
-            _companyManipulationService.ConsolidateCompanyModel(editCompanyDto);
+            companyManipulationService.ConsolidateCompanyModel(editCompanyDto);
 
             var response = await _client.PutAsJsonAsync(CompaniesControllerConstants.BaseUrl, editCompanyDto);
             if (response.StatusCode != HttpStatusCode.OK)

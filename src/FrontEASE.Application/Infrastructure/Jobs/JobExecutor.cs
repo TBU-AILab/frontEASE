@@ -4,16 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FrontEASE.Application.Infrastructure.Jobs
 {
-    public class JobExecutor
+    public class JobExecutor(IServiceProvider services)
     {
-        private readonly IServiceProvider _services;
-
-        public JobExecutor(IServiceProvider services) => _services = services;
-
         [JobDisplayName("{0}")]
         public async Task Execute(Type type, PerformContext context)
         {
-            var job = _services.GetRequiredService(type) as IJob;
+            var job = services.GetRequiredService(type) as IJob;
             var jobName = job!.GetType().Name;
 
             try
