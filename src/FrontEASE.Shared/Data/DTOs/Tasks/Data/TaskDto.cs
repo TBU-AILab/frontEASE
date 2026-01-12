@@ -3,6 +3,7 @@ using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Messages;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Solutions;
+using FrontEASE.Shared.Data.DTOs.Tasks.Results;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using FrontEASE.Shared.Infrastructure.Attributes;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
@@ -12,7 +13,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data
     /// <summary>
     /// DTO for user-created optimisation task
     /// </summary>
-    public class TaskDto
+    public class TaskDto : ITaskOperationResultDto
     {
         public TaskDto()
         {
@@ -23,6 +24,8 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data
             Solutions = [];
             Members = [];
             MemberGroups = [];
+
+            ProcessingErrors = [];
         }
 
         #region Navigation
@@ -108,6 +111,16 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data
         /// </summary>
         [Resource($"{nameof(TaskDto)}.{nameof(IterationsInvalidConsecutive)}")]
         public int IterationsInvalidConsecutive { get; set; }
+
+        #endregion
+
+        #region UI
+
+        /// <summary>
+        /// List of errors during the current task processing - for visualization purposes.
+        /// </summary>
+        [Resource($"{nameof(TaskDto)}.{nameof(ProcessingErrors)}")]
+        public IList<string>? ProcessingErrors { get; set; }
 
         #endregion
     }

@@ -85,8 +85,10 @@ namespace FrontEASE.Server.Controllers
                         break;
                     case ApiInternalExceptionCode.UNPROCESSABLE_ENTITY:
                         {
+                            var exception = apiException as UnprocessableException;
                             var responseDto = new UnprocessableResultDto()
                             {
+                                Errors = exception?.ReasonMessages ?? [],
                                 Message = $"{UIConstants.Base}.{UIConstants.Error}.{HttpStatusCode.UnprocessableContent}"
                             };
                             result = responseDto;
@@ -134,6 +136,7 @@ namespace FrontEASE.Server.Controllers
                 HttpStatusCode.NotFound => NotFound(result),
                 HttpStatusCode.BadRequest => BadRequest(result),
                 HttpStatusCode.Created => CreatedAtAction(action, result),
+                HttpStatusCode.UnprocessableContent => new UnprocessableEntityObjectResult(result) { StatusCode = (int)HttpStatusCode.UnprocessableContent },
                 HttpStatusCode.InternalServerError => new ObjectResult(result) { StatusCode = (int)HttpStatusCode.InternalServerError },
                 _ => result is null ? NoContent() : Ok(result),
             };

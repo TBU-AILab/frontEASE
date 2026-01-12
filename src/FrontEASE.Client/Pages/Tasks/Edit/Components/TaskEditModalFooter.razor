@@ -6,6 +6,10 @@
 
 <ModalFooter Class="bg-custom-secondary border-custom-light">
     <Container Fluid Padding="Padding.Is0">
+        @if (TaskModalContext.Task.ProcessingErrors?.Count > 0)
+        {
+            <TaskEditModalFooterProcessingErrors TaskModalContext="TaskModalContext" />
+        }
         <Row Margin="Margin.Is0">
             <Column ColumnSize="ColumnSize.Is3.OnFullHD.Is4.OnWidescreen.Is5.OnMobile">
                 <Button Clicked="@HideModal" Color="Color.Danger" Class="btn button btn-sized full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
@@ -24,7 +28,7 @@
                 {
                     <Button Clicked="@SaveTask"
                             Class="@($"btn button btn-sized full-width {(TaskModalContext.Operation == DataOperation.INSERT ? "bg-custom-success text-custom-white" : "bg-custom-info text-custom-info")}")"
-                            Disabled="@savingInProgress"
+                            Disabled="@(savingInProgress || TaskModalContext.Task.ProcessingErrors?.Count > 0)"
                             TextWeight="TextWeight.Bold">
                         @if (savingInProgress)
                         {
@@ -71,8 +75,8 @@
 
         if (await TaskModalContext.Validations!.ValidateAll())
         {
-            var updated = await taskApiService.UpdateTask(TaskModalContext.Task.ID, TaskModalContext.Task);
-            if (updated is not null)
+            var updatedInfo = await taskApiService.UpdateTask(TaskModalContext.Task.ID, TaskModalContext.Task);
+            if (updatedInfo is not null && updatedInfo is TaskDto updated)
             {
                 mapper.Map(updated, TaskModalContext.Task);
 
@@ -92,10 +96,19 @@
                 { toastService.ShowSuccess(message); }
 
                 await TaskModalContext.Modal.Hide();
-                await uiService.CallRequestRefreshAsync();
+            }
+            else if (updatedInfo is not null && updatedInfo is TaskUnprocessableResultDto result)
+            {
+                mapper.Map(result.Errors, TaskModalContext.Task.ProcessingErrors);
+                if (!string.IsNullOrWhiteSpace(result.Message))
+                {
+                    message = resourceHandler.GetResource(result.Message);
+                    if (!string.IsNullOrWhiteSpace(message)) { toastService.ShowError(message); }
+                }
             }
         }
 
+        await uiService.CallRequestRefreshAsync();
         savingInProgress = false;
     }
 

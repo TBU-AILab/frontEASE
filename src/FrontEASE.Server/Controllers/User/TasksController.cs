@@ -134,6 +134,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpPatch($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnprocessableResultDto), (int)HttpStatusCode.UnprocessableContent)]
         public async Task<IActionResult> RefreshTaskOptions([Required, FromBody] TaskDto task, CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -157,6 +158,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpPost(TasksControllerConstants.BaseUrl)]
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnprocessableResultDto), (int)HttpStatusCode.UnprocessableContent)]
         public async Task<IActionResult> CreateTask()
         {
             IActionResult result;
@@ -207,6 +209,7 @@ namespace FrontEASE.Server.Controllers.User
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnprocessableResultDto), (int)HttpStatusCode.UnprocessableContent)]
         public async Task<IActionResult> UpdateTask([Required, FromBody] TaskDto task)
         {
             IActionResult result;
@@ -256,6 +259,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpPatch($"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.ChangeState}/{TasksControllerConstants.StateParam}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnprocessableResultDto), (int)HttpStatusCode.UnprocessableContent)]
         public async Task<IActionResult> ChangeTaskState([Required, FromQuery] IList<Guid> taskIDs, [Required, FromRoute] TaskState state)
         {
             IActionResult result;

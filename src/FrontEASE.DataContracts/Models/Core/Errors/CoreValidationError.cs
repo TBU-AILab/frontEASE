@@ -10,6 +10,6 @@ namespace FrontEASE.DataContracts.Models.Core.Errors
         }
 
         [JsonPropertyName("detail")]
-        public IList<CoreValidationErrorDetail> Detail { get; set; }
+        public IList<IList<string>> Detail { get; set; }
     }
 }

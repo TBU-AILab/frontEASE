@@ -4,11 +4,9 @@ using FrontEASE.Domain.Infrastructure.Exceptions.Enums;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Services.Shared.Images;
-using FrontEASE.Domain.Services.Shared.Resources;
 using FrontEASE.Domain.Services.Users;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.Enums.Auth;
-using FrontEASE.Shared.Data.Enums.Shared.Resources;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Generic;
 using FrontEASE.Shared.Infrastructure.Constants.UI.Specific;
 using Microsoft.AspNetCore.Http;
@@ -20,7 +18,6 @@ namespace FrontEASE.Application.AppServices.Users
     public class UserAppService(
         IUserService userService,
         IImageService imageService,
-        IResourceService resourceService,
         IMapper mapper,
         IHttpContextAccessor contextAccessor,
         AppSettings appSettings) : IUserAppService

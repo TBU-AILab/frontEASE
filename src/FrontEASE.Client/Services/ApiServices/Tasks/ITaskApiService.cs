@@ -2,6 +2,7 @@
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
+using FrontEASE.Shared.Data.DTOs.Tasks.Results;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks;
 
@@ -21,7 +22,7 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
         #endregion
 
         #region Update
-        Task<TaskDto?> UpdateTask(Guid taskID, TaskDto updateTaskDto);
+        Task<ITaskOperationResultDto?> UpdateTask(Guid taskID, TaskDto updateTaskDto);
         Task<(IList<ApplicationUserDto> Members, IList<CompanyDto> MemberGroups)?> ShareTask(Guid taskID, TaskDto updateTaskDto);
         Task<bool> ChangeTaskStates(IList<Guid> taskIDs, TaskState state);
         #endregion
@@ -31,7 +32,7 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
         #endregion
 
         #region Manipulate
-        Task<TaskDto?> RefreshTaskOptions(Guid taskID, TaskDto refreshTaskDto);
+        Task<ITaskOperationResultDto?> RefreshTaskOptions(Guid taskID, TaskDto refreshTaskDto);
         #endregion
     }
 }

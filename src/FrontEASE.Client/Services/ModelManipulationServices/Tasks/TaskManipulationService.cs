@@ -44,10 +44,11 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             }
         }
 
-        public (IList<ApplicationUserDto> PreservedMembers, IList<CompanyDto> PreservedGroups) PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions)
+        public (IList<ApplicationUserDto> PreservedMembers, IList<CompanyDto> PreservedGroups, IList<TaskModuleNoValidationDto> PreservedModules) PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions)
         {
-            var preservedMembers = task.Members.Select(m => mapper.Map<ApplicationUserDto>(m)).ToList();
-            var preservedGroups = task.MemberGroups.Select(g => mapper.Map<CompanyDto>(g)).ToList();
+            var preservedMembers = task.Members.Select(mapper.Map<ApplicationUserDto>).ToList();
+            var preservedGroups = task.MemberGroups.Select(mapper.Map<CompanyDto>).ToList();
+            var preservedModules = task.Config.AvailableModules.Select(mapper.Map<TaskModuleNoValidationDto>).ToList();
 
             if (cleanImages)
             {
@@ -82,8 +83,9 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             {
                 task.Config.AvailableModules.Clear();
             }
+            task.ProcessingErrors?.Clear();
 
-            return (preservedMembers, preservedGroups);
+            return (preservedMembers, preservedGroups, preservedModules);
         }
 
         public void AssignTaskImages(TaskDto task, IList<CompanyDto> availableCompanies, IList<ApplicationUserDto> availableUsers)
@@ -98,6 +100,11 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
                 var matchingMember = availableUsers.FirstOrDefault(x => x.Id == member.Id);
                 member.Image ??= mapper.Map<ImageDto>(matchingMember?.Image);
             }
+        }
+
+        public void AssignTaskModules(TaskDto task, IList<TaskModuleNoValidationDto> availableModules)
+        {
+            task.Config.AvailableModules.AddRange(mapper.Map<IList<TaskModuleNoValidationDto>>(availableModules));
         }
 
         public void SwapSelectedModule(TaskModuleNoValidationDto? source, TaskModuleDto destination)

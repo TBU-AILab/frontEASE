@@ -76,8 +76,9 @@ void SetupUIEnhancements()
         options.ChangeSliderOnHold = true;
         options.EnableNumericStep = true;
         options.ShowNumericStepButtons = true;
+        options.ModalFocusTrap = true;
         options.Immediate = false;
-        options.DebounceInterval = 50;
+        options.DebounceInterval = 100;
         options.Debounce = true;
 
         options.ProductToken = settings!.LicenseSettings!.Blazorise!.LicenseToken;

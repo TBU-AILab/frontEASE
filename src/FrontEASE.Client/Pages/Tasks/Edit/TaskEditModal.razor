@@ -101,37 +101,43 @@
 
     private async void OnFieldChanged(object? sender, FieldChangedEventArgs e)
     {
-        var evaluationNeeded = TaskViewMetadataDto.OptionsReloadNecessary(e.FieldIdentifier.FieldName);
-        if (evaluationNeeded)
+        if (!TaskViewMetadataDto.OptionsReloadNecessary(e.FieldIdentifier.FieldName)) { return; }
+        TaskModalContext.TaskMetadata.InitializationInProgres = true;
+        await ResetCancellationToken();
+
+        try
         {
-            TaskModalContext.TaskMetadata.InitializationInProgres = true;
-            await ResetCancellationToken();
+            var token = cancellationTokenSource!.Token;
+            if (token.IsCancellationRequested) { return; }
 
-            try
+            await uiService.CallRequestRefreshAsync();
+            var updatedInfo = await taskApiService.RefreshTaskOptions(TaskModalContext.Task.ID, TaskModalContext.Task);
+
+            if (updatedInfo is null || token.IsCancellationRequested) { return; }
+            switch (updatedInfo)
             {
-                var token = cancellationTokenSource!.Token;
-                await System.Threading.Tasks.Task.Run(async () =>
-                {
-                    if (!token.IsCancellationRequested)
+                case TaskDto updated:
+                    mapper.Map(updated, TaskModalContext.Task);
+                    break;
+
+                case TaskUnprocessableResultDto result:
+                    if (!string.IsNullOrWhiteSpace(result.Message))
                     {
-                        await uiService.CallRequestRefreshAsync();
-
-                        var updated = await taskApiService.RefreshTaskOptions(TaskModalContext.Task.ID, TaskModalContext.Task);
-                        if (updated is not null && !token.IsCancellationRequested)
-                        {
-                            mapper.Map(updated, TaskModalContext.Task);
-                        }
+                        mapper.Map(result.Errors, TaskModalContext.Task.ProcessingErrors);
+                        var message = resourceHandler.GetResource(result.Message);
+                        if (!string.IsNullOrWhiteSpace(message)) { toastService.ShowError(message); }
                     }
-
-                }, token);
+                    break;
             }
-            catch (TaskCanceledException)
-            { }
-            finally
-            {
-                TaskModalContext.TaskMetadata.InitializationInProgres = false;
-                await uiService.CallRequestRefreshAsync();
-            }
+        }
+        catch (TaskCanceledException)
+        {
+            // Expected when operation is cancelled.
+        }
+        finally
+        {
+            TaskModalContext.TaskMetadata.InitializationInProgres = false;
+            await uiService.CallRequestRefreshAsync();
         }
     }
 
