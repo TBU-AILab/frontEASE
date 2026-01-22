@@ -49,6 +49,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./src/FoP_IMT.Core:/app
+      - moderntv_share:/data/ModernTV
     ports:
       - "8086:8086"
     networks:
@@ -57,6 +58,13 @@ services:
 volumes:
   postgres_data:
   images_data:
+  #modernTV mounting
+  moderntv_share:
+    driver: local
+    driver_opts:
+      type: cifs
+      device: //10.5.8.121/ModernTV/sample
+      o: username=${SMB_USER},password=${SMB_PASS},vers=3.0,iocharset=utf8
 
 networks:
   fop-imt-network:
