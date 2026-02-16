@@ -36,15 +36,15 @@
                     </FieldLabel>
                 }
 
-                <MemoEdit ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                <MemoInput ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
                           Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                          @bind-Text="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
+                          @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
                           Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)"
                           Rows="2" AutoSize="true">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
-                </MemoEdit>
+                </MemoInput>
             </Field>
         </Validation>
         break;
@@ -59,7 +59,7 @@
                     </FieldLabel>
                 }
 
-                <NumericEdit TValue="int?"
+                <NumericInput TValue="int?"
                              ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
                              Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                              @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.IntValue"
@@ -69,7 +69,7 @@
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
-                </NumericEdit>
+                </NumericInput>
             </Field>
         </Validation>
         break;
@@ -110,7 +110,7 @@
                     </FieldLabel>
                 }
 
-                <NumericEdit TValue="double?"
+                <NumericInput TValue="double?"
                              ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
                              Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                              @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.FloatValue"
@@ -120,7 +120,7 @@
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
-                </NumericEdit>
+                </NumericInput>
             </Field>
         </Validation>
         break;
@@ -140,9 +140,9 @@
                     <Select TValue="string"
                             Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                             ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                            SelectedValue="@TaskModuleParamContext.ParamValue!.Value!.EnumValue!.StringValue"
-                            SelectedValueExpression="@(() => TaskModuleParamContext.ParamValue.Value!.EnumValue!.StringValue)"
-                            SelectedValueChanged="@(async (value) => await OnStringEnumValueChanged(value))">
+                            Value="@TaskModuleParamContext.ParamValue!.Value!.EnumValue!.StringValue"
+                            ValueExpression="@(() => TaskModuleParamContext.ParamValue.Value!.EnumValue!.StringValue)"
+                            ValueChanged="@(async (value) => await OnStringEnumValueChanged(value))">
                         <ChildContent>
                             <SelectItem Value="string.Empty">
                                 @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
@@ -197,7 +197,7 @@
                 <Check TValue="bool?"
                        ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
                        Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                       @bind-Checked="@TaskModuleParamContext.ParamValue!.Value!.BoolValue">
+                       @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.BoolValue">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>

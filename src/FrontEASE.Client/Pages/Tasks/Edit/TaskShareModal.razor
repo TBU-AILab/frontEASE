@@ -3,7 +3,7 @@
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
 
-<Modal @ref="@TaskModalContext.Modal" @bind-Visible="isModalVisible" Closing="@(async (e) => await OnModalClosing(e))" Class="modal-dialog-wide" Border="Border.Rounded">
+<Modal @ref="@TaskModalContext.Modal" @bind-Visible="isModalVisible" Closing="@(async (e) => await OnModalClosing(e))" Class="modal-dialog-wide" Border="Border.Rounded" Centered>
     @if (isModalVisible)
     {
         @if (TaskModalContext.TaskMetadata.InitializationInProgres)
@@ -11,7 +11,7 @@
             <BackgroundLoadSpinner Class="bg-custom-primary text-custom-primary background-load-spinner-overlay" TextSize="TextSize.Large" />
         }
 
-        <ModalContent Centered Shadow="Shadow.Small">
+        <ModalContent Shadow="Shadow.Small">
             @if (isTaskLoading)
             {
                 <ContentLoadSpinner />

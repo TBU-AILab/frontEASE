@@ -8,14 +8,14 @@
             <FieldLabel For="@(GetElementIdByOperation(nameof(CompanyDto.Name)))" RequiredIndicator>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
-            <TextEdit ElementId="@(GetElementIdByOperation(nameof(CompanyDto.Name)))"
+            <TextInput ElementId="@(GetElementIdByOperation(nameof(CompanyDto.Name)))"
                       Role="TextRole.Text"
                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Text="@CompanyModel.Name">
+                      @bind-Value="@CompanyModel.Name">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
-            </TextEdit>
+            </TextInput>
         </Field>
     </Validation>
 
@@ -24,14 +24,14 @@
             <FieldLabel For="@(GetElementIdByOperation(nameof(CompanyDto.NameAbbreviation)))">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.NameAbbreviation), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
-            <TextEdit ElementId="@(GetElementIdByOperation(nameof(CompanyDto.NameAbbreviation)))"
+            <TextInput ElementId="@(GetElementIdByOperation(nameof(CompanyDto.NameAbbreviation)))"
                       Role="TextRole.Text"
                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.NameAbbreviation), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Text="@CompanyModel.NameAbbreviation">
+                      @bind-Value="@CompanyModel.NameAbbreviation">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
-            </TextEdit>
+            </TextInput>
         </Field>
     </Validation>
 
@@ -50,7 +50,7 @@
                   Class="@($"{(string.IsNullOrEmpty(CompanyModel.Image?.ImageData) ? "text-custom-muted" : "text-custom-primary")}")" TextWeight="TextWeight.Normal" TextSize="TextSize.Small">
                 @(string.IsNullOrEmpty(CompanyModel.Image?.ImageData) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Image), PropertyDisplayResourceType.PLACEHOLDER)) : CompanyModel.Image.Name)
             </Text>
-            <FileEdit Display="Display.None"
+            <FileInput Display="Display.None"
                       @ref="@filePicker"
                       Filter=".jpg, .jpeg, .jfif, .png, .gif, .bmp, .tiff"
                       AutoReset="true"
@@ -81,7 +81,7 @@
     [Parameter]
     public bool FullWidthFields { get; set; }
 
-    private FileEdit filePicker = new();
+    private FileInput filePicker = new();
     private bool imageLoadInProgress = false;
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<CompanyDto>(elementBase, Operation, CompanyModel.ID?.ToString());

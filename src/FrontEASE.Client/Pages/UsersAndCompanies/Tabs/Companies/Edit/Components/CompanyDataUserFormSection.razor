@@ -36,7 +36,7 @@
 
                                     <DataGridColumn TItem="ApplicationUserDto" Field="@nameof(ApplicationUserDto.Image)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.FIELD)))" Sortable="false" Filterable="false">
                                         <DisplayTemplate>
-                                            <Image Border="Border.RoundedCircle" Source="@(string.IsNullOrWhiteSpace(context.Image?.ImageUrl) ? ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{context.Image.ImageUrl}")" Class="full-max-width datagrid-item-image-small" Loading />
+                                            <Image Border="Border.RoundedCircle" Source="@(string.IsNullOrWhiteSpace(context.Item.Image?.ImageUrl) ? ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{context.Item.Image.ImageUrl}")" Class="full-max-width datagrid-item-image-small" Loading />
                                         </DisplayTemplate>
                                     </DataGridColumn>
 
@@ -51,7 +51,7 @@
                                     ValueField="@(role => role.ToString())"
                                     CustomFilter="@OnRoleCustomFilter">
                                         <FilterTemplate>
-                                            <Select TValue="string" SelectedValue="@selectedRoleFilter" SelectedValueChanged="@(value => { selectedRoleFilter = value; context.TriggerFilterChange(selectedRoleFilter); })">
+                                            <Select TValue="string" Value="@selectedRoleFilter" ValueChanged="@(value => { selectedRoleFilter = value; context.TriggerFilterChange(selectedRoleFilter); })">
                                                 <SelectItem Value="string.Empty">
                                                     @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
                                                 </SelectItem>
@@ -62,7 +62,7 @@
                                             </Select>
                                         </FilterTemplate>
                                         <DisplayTemplate>
-                                            @(resourceHandler.GetResource(((UserRole)context.Role).GetEnumResourceValue()))
+                                            @(resourceHandler.GetResource(((UserRole)context.Item.Role).GetEnumResourceValue()))
                                         </DisplayTemplate>
                                     </DataGridSelectColumn>
 

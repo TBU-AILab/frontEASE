@@ -6,14 +6,14 @@
             <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Name)))" RequiredIndicator>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
-            <TextEdit ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Name)))"
+            <TextInput ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Name)))"
                       Role="TextRole.Text"
                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Text="@TokenModel.Name">
+                      @bind-Value="@TokenModel.Name">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
-            </TextEdit>
+            </TextInput>
         </Field>
     </Validation>
 
@@ -22,14 +22,14 @@
             <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Token)))" RequiredIndicator>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
-            <TextEdit ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Token)))"
+            <TextInput ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Token)))"
                       Role="TextRole.Text"
                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Text="@TokenModel.Token">
+                      @bind-Value="@TokenModel.Token">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
-            </TextEdit>
+            </TextInput>
         </Field>
     </Validation>
 
@@ -47,7 +47,7 @@
                         ValueField="@((item) => item.ConnectorType)"
                         Multiple
                         Size="Size.Large"
-                        @bind-SelectedValues="@TokenModel.SelectedTokenConnectorTypes">
+                        @bind-Values="@TokenModel.SelectedTokenConnectorTypes">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
@@ -61,15 +61,15 @@
             <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Description)))">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Description), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
-            <MemoEdit ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Description)))"
+            <MemoInput ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Description)))"
                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Description), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Text="@TokenModel.Description"
+                      @bind-Value="@TokenModel.Description"
                       AutoSize="false"
                       Rows="3">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
-            </MemoEdit>
+            </MemoInput>
         </Field>
     </Validation>
 

@@ -5,10 +5,10 @@
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
 
-<Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" @onkeydown="@(async (e) => await HandleKeyDown(e))">
+<Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" @onkeydown="@(async (e) => await HandleKeyDown(e))" Centered>
     @if (isModalVisible)
     {
-        <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
+        <ModalContent Shadow="Shadow.Small" Class="bg-custom-primary">
 
             <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")} - {Token.Name}")" />
 

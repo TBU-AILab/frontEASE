@@ -16,14 +16,14 @@
                     <FieldLabel For="@(GetElementIdByOperation(nameof(LoginDto.Username)))" RequiredIndicator>
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Username), PropertyDisplayResourceType.FIELD)))
                     </FieldLabel>
-                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(LoginDto.Username)))"
+                    <TextInput ElementId="@(GetElementIdByOperation(nameof(LoginDto.Username)))"
                               Role="TextRole.Text"
                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Username), PropertyDisplayResourceType.PLACEHOLDER)))"
-                              @bind-Text="@LoginModel.Username">
+                              @bind-Value="@LoginModel.Username">
                         <Feedback>
                             <ValidationError Multiline="true" />
                         </Feedback>
-                    </TextEdit>
+                    </TextInput>
                 </Field>
             </Validation>
 
@@ -32,14 +32,14 @@
                     <FieldLabel For="@(GetElementIdByOperation(nameof(LoginDto.Password)))" RequiredIndicator>
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Password), PropertyDisplayResourceType.FIELD)))
                     </FieldLabel>
-                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(LoginDto.Password)))"
+                    <TextInput ElementId="@(GetElementIdByOperation(nameof(LoginDto.Password)))"
                               Role="TextRole.Password"
                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Password), PropertyDisplayResourceType.PLACEHOLDER)))"
-                              @bind-Text="@LoginModel.Password">
+                              @bind-Value="@LoginModel.Password">
                         <Feedback>
                             <ValidationError Multiline="true" />
                         </Feedback>
-                    </TextEdit>
+                    </TextInput>
                 </Field>
             </Validation>
 

@@ -87,18 +87,18 @@
                                  Display="Display.InlineBlock"
                                  Padding="Padding.Is1.FromEnd"
                                  Placement="TooltipPlacement.Top"
-                                 Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Click}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.ID) ? UIActionConstants.Hide : UIActionConstants.Load)}")} {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}")}")">
-                            <Icon Class="@($"action-icon {((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.ID) ? "action-icon-danger" : "action-icon-info")}")"
-                                  Name="@((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.ID) ? IconName.TimesCircle : IconName.InfoCircle)"
+                                 Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Click}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.Item.ID) ? UIActionConstants.Hide : UIActionConstants.Load)}")} {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}")}")">
+                            <Icon Class="@($"action-icon {((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.Item.ID) ? "action-icon-danger" : "action-icon-info")}")"
+                                  Name="@((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.Item.ID) ? IconName.TimesCircle : IconName.InfoCircle)"
                                   IconSize="IconSize.Large"
                                   IconStyle="IconStyle.Solid"
-                                  Clicked="@((async(e) => await OnInfoClick(context, e)))"
+                                  Clicked="@((async(e) => await OnInfoClick(context.Item, e)))"
                                   @onclick:stopPropagation="true" />
                         </Tooltip>
-                        @if (context.ID == PageContext.ViewMetadata.MiniOverviewTaskID)
+                        @if (context.Item.ID == PageContext.ViewMetadata.MiniOverviewTaskID)
                         {
                             <Div Position="Position.Fixed" Style="@($"{cardPositionStyle};")" @onclick:stopPropagation="true" Class="top-layer" Width="Width.Is33.OnDesktop.Is50.OnWidescreen">
-                                <TaskGridItemInfoCard TaskInfo="@context" />
+                                <TaskGridItemInfoCard TaskInfo="@context.Item" />
                             </Div>
                         }
                     </Span>
@@ -112,20 +112,20 @@
                             Sortable="true"
                             CustomFilter="@OnDateCreatedCustomFilter">
                 <FilterTemplate>
-                    <TextEdit Text="@selectedDateCreatedFilter"
-                              TextChanged="@( value => { selectedDateCreatedFilter = value; context.TriggerFilterChange(selectedDateCreatedFilter); } )" />
+                    <TextInput Value="@selectedDateCreatedFilter"
+                              ValueChanged="@( value => { selectedDateCreatedFilter = value; context.TriggerFilterChange(selectedDateCreatedFilter); } )" />
                 </FilterTemplate>
                 <DisplayTemplate>
                     <Container Fluid>
                         <Row>
                             <Column ColumnSize="ColumnSize.IsFull">
                                 <Text>
-                                    @context.DateCreated.ToString("dd.MM.yyyy")
+                                    @context.Item.DateCreated.ToString("dd.MM.yyyy")
                                 </Text>
                             </Column>
                             <Column ColumnSize="ColumnSize.IsFull">
                                 <Text>
-                                    @context.DateCreated.ToString("HH:mm:ss")
+                                    @context.Item.DateCreated.ToString("HH:mm:ss")
                                 </Text>
                             </Column>
                         </Row>
@@ -139,20 +139,20 @@
                             Sortable="false"
                             CustomFilter="@OnAuthorEmailCustomFilter">
                 <FilterTemplate>
-                    <TextEdit Text="@selectedEmailFilter" TextChanged="@(value => { selectedEmailFilter = value; context.TriggerFilterChange(selectedEmailFilter); })" />
+                    <TextInput Value="@selectedEmailFilter" ValueChanged="@(value => { selectedEmailFilter = value; context.TriggerFilterChange(selectedEmailFilter); })" />
                 </FilterTemplate>
                 <DisplayTemplate>
                     <Container Fluid>
                         <Row>
                             <Column ColumnSize="ColumnSize.Is4">
                                 <Image Border="Border.RoundedCircle"
-                                       Source="@(GetUserImageUrl(context.Author!.Id!.Value))"
+                                       Source="@(GetUserImageUrl(context.Item.Author!.Id!.Value))"
                                        Class="full-max-width datagrid-item-image-extrasmall"
                                        Loading />
                             </Column>
                             <Column ColumnSize="ColumnSize.Is8">
                                 <Text>
-                                    @context.Author.Email
+                                    @context.Item.Author.Email
                                 </Text>
                             </Column>
                         </Row>
@@ -168,7 +168,7 @@
                                   ValueField="@(state => state.ToString())"
                                   CustomFilter="@OnStateCustomFilter">
                 <FilterTemplate>
-                    <Select TValue="string" SelectedValue="@selectedStateFilter" SelectedValueChanged="@(value => { selectedStateFilter = value; context.TriggerFilterChange(selectedStateFilter); })">
+                    <Select TValue="string" Value="@selectedStateFilter" ValueChanged="@(value => { selectedStateFilter = value; context.TriggerFilterChange(selectedStateFilter); })">
                         <SelectItem Value="string.Empty">
                             @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
                         </SelectItem>
@@ -179,78 +179,78 @@
                     </Select>
                 </FilterTemplate>
                 <DisplayTemplate>
-                    @(resourceHandler.GetResource(((TaskState)context.State).GetEnumResourceValue()))
+                    @(resourceHandler.GetResource(((TaskState)context.Item.State).GetEnumResourceValue()))
                 </DisplayTemplate>
             </DataGridSelectColumn>
 
             <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.ConnectorType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FIELD)))" Sortable="true">
                 <DisplayTemplate>
-                    @(GetModuleLongName(context.ConnectorType, ModuleType.LLM_CONNECTOR) ?? context.ConnectorType)
+                    @(GetModuleLongName(context.Item.ConnectorType, ModuleType.LLM_CONNECTOR) ?? context.Item.ConnectorType)
                 </DisplayTemplate>
             </DataGridColumn>
 
             <DataGridColumn Field="@nameof(TaskInfoDto.SolutionType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FIELD)))" Sortable="true">
                 <DisplayTemplate>
-                    @(GetModuleLongName(context.SolutionType, ModuleType.SOLUTION) ?? context.SolutionType)
+                    @(GetModuleLongName(context.Item.SolutionType, ModuleType.SOLUTION) ?? context.Item.SolutionType)
                 </DisplayTemplate>
             </DataGridColumn>
 
             <DataGridColumn TItem="TaskInfoDto" Caption="@(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))" Sortable="false" Filterable="false">
                 <DisplayTemplate>
 
-                    @if (runnableTaskStates.Contains(context.State))
+                    @if (runnableTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Run}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-success" Name="IconName.Play" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context }, TaskState.RUN))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-success" Name="IconName.Play" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context.Item }, TaskState.RUN))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (pauseableTaskStates.Contains(context.State))
+                    @if (pauseableTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Pause}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-warning" Name="IconName.Pause" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context }, TaskState.PAUSED))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-warning" Name="IconName.Pause" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context.Item }, TaskState.PAUSED))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (stoppableTaskStates.Contains(context.State))
+                    @if (stoppableTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Stop}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-danger" Name="IconName.Stop" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context }, TaskState.STOP))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-danger" Name="IconName.Stop" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context.Item }, TaskState.STOP))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (overviewTaskStates.Contains(context.State))
+                    @if (overviewTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-info" Name="IconName.Search" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowOverviewModal(context))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-info" Name="IconName.Search" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowOverviewModal(context.Item))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (editableTaskStates.Contains(context.State))
+                    @if (editableTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowEditModal(context))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowEditModal(context.Item))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (shareableTaskStates.Contains(context.State) && ((context.Author?.Id is null || context.Author?.Id == PageContext.LoggedInUser.Id) || PageContext.LoggedInUser.Role == UserRole.OWNER))
+                    @if (shareableTaskStates.Contains(context.Item.State) && ((context.Item.Author?.Id is null || context.Item.Author?.Id == PageContext.LoggedInUser.Id) || PageContext.LoggedInUser.Role == UserRole.OWNER))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-secondary" Name="IconName.Share" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowShareModal(context))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-secondary" Name="IconName.Share" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowShareModal(context.Item))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (cloneableTaskStates.Contains(context.State))
+                    @if (cloneableTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-primary" Name="IconName.Copy" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowCloneModal(context))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-primary" Name="IconName.Copy" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowCloneModal(context.Item))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (deletableTaskStates.Contains(context.State) && ((PageContext.LoggedInUser.Id == context.Author?.Id || context.Author?.Id is null) || PageContext.LoggedInUser.Role == UserRole.OWNER))
+                    @if (deletableTaskStates.Contains(context.Item.State) && ((PageContext.LoggedInUser.Id == context.Item.Author?.Id || context.Item.Author?.Id is null) || PageContext.LoggedInUser.Role == UserRole.OWNER))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowDeleteModal(new List<TaskInfoDto>() { context }))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowDeleteModal(new List<TaskInfoDto>() { context.Item }))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 

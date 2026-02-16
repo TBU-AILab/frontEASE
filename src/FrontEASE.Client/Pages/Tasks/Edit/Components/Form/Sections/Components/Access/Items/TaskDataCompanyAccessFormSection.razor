@@ -38,7 +38,7 @@
                                     <DataGridColumn Filterable="false" TItem="CompanyDto" Field="@nameof(CompanyDto.Image)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Image), PropertyDisplayResourceType.FIELD)))" Sortable="false">
                                         <DisplayTemplate>
                                             <Image Border="Border.RoundedCircle"
-                                                   Source="@(GetMemberGroupImageUrl(context.ID!.Value))"
+                                                   Source="@(GetMemberGroupImageUrl(context.Item.ID!.Value))"
                                                    Class="full-max-width datagrid-item-image-small"
                                                    Loading />
                                         </DisplayTemplate>
@@ -50,21 +50,21 @@
                                     <DataGridColumn TItem="CompanyDto" Field="@nameof(CompanyDto.Address)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Address), PropertyDisplayResourceType.FIELD)))" Sortable="false">
                                         <DisplayTemplate>
                                             <Container>
-                                                @if (context.Address is not null)
+                                                @if (context.Item.Address is not null)
                                                 {
                                                     <Row Margin="Margin.Is2.FromTop">
                                                         <Column ColumnSize="ColumnSize.Is10.OnWidescreen" TextAlignment="TextAlignment.Center">
                                                             <Span Class="font-large">
-                                                                @($"{context.Address.Street} {context.Address.DescriptiveNumber}")
+                                                                @($"{context.Item.Address.Street} {context.Item.Address.DescriptiveNumber}")
                                                             </Span>
-                                                            @if (!string.IsNullOrEmpty(context.Address.OrientationNumber))
+                                                            @if (!string.IsNullOrEmpty(context.Item.Address.OrientationNumber))
                                                             {
                                                                 <Span Class="font-large">
-                                                                    @($" ({context.Address.OrientationNumber})")
+                                                                    @($" ({context.Item.Address.OrientationNumber})")
                                                                 </Span>
                                                             }
                                                             <Span Class="font-large">
-                                                                @($", {context.Address.ZIPCode} {context.Address.City} - {resourceHandler.GetResource(((Country)context.Address.Country).GetEnumResourceValue())}")
+                                                                @($", {context.Item.Address.ZIPCode} {context.Item.Address.City} - {resourceHandler.GetResource(((Country)context.Item.Address.Country).GetEnumResourceValue())}")
                                                             </Span>
                                                         </Column>
                                                     </Row>

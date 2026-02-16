@@ -17,7 +17,7 @@
             <Text Display="Display.InlineBlock" Overflow="Overflow.Hidden" Width="Width.Is100" TextAlignment="TextAlignment.Start" TextWeight="TextWeight.Normal" TextSize="TextSize.Small" Class="@($"{(ModuleModel.Files.Count > 0 ? "text-custom-muted" : "text-custom-primary")}")">
                 @(!(ModuleModel.Files.Count > 0) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Content), PropertyDisplayResourceType.PLACEHOLDER)) : string.Join(", ", ModuleModel.Files.Select(x => x.Name)))
             </Text>
-            <FileEdit Display="Display.None"
+            <FileInput Display="Display.None"
                       @ref="@filePicker"
                       Filter=".py, .zip"
                       AutoReset="true"
@@ -41,7 +41,7 @@
     public bool FullWidthFields { get; set; }
 
     private bool fileLoadInProgress;
-    private FileEdit filePicker = new();
+    private FileInput filePicker = new();
 
     public async Task FileLoaded(FileChangedEventArgs args)
     {

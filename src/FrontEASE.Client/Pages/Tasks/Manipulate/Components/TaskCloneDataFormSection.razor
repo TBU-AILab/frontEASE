@@ -6,14 +6,14 @@
             <FieldLabel For="@(GetElementIdByOperation(nameof(TaskDuplicateActionRequestDto.Name)))" RequiredIndicator>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
-            <TextEdit ElementId="@(GetElementIdByOperation(nameof(TaskDuplicateActionRequestDto.Name)))"
+            <TextInput ElementId="@(GetElementIdByOperation(nameof(TaskDuplicateActionRequestDto.Name)))"
                       Role="TextRole.Text"
                       Placeholder="@(string.IsNullOrWhiteSpace(TaskInfo.Name) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)) : TaskInfo.Name )"
-                      @bind-Text="@CloneModel.Name">
+                      @bind-Value="@CloneModel.Name">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
-            </TextEdit>
+            </TextInput>
         </Field>
     </Validation>
 
@@ -39,11 +39,11 @@
                     <Validation>
                         <Field Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.Is2.OnWidescreen">
 
-                            <NumericEdit @bind-Value="@CloneModel.Copies" Step="1" Min="1" Max="32">
+                            <NumericInput @bind-Value="@CloneModel.Copies" Step="1" Min="1" Max="32">
                                 <Feedback>
                                     <ValidationError Multiline="true" />
                                 </Feedback>
-                            </NumericEdit>
+                            </NumericInput>
                         </Field>
                     </Validation>
 

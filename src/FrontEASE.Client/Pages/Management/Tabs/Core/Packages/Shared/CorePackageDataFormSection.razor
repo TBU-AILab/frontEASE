@@ -6,14 +6,14 @@
             <FieldLabel For="@(GetElementIdByOperation(nameof(GlobalPreferenceCorePackageDto.Name)))" RequiredIndicator>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Name), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
-            <TextEdit ElementId="@(GetElementIdByOperation(nameof(GlobalPreferenceCorePackageDto.Name)))"
+            <TextInput ElementId="@(GetElementIdByOperation(nameof(GlobalPreferenceCorePackageDto.Name)))"
                       Role="TextRole.Text"
                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Text="@PackageModel.Name">
+                      @bind-Value="@PackageModel.Name">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
-            </TextEdit>
+            </TextInput>
         </Field>
     </Validation>
 
@@ -22,14 +22,14 @@
             <FieldLabel For="@(GetElementIdByOperation(nameof(GlobalPreferenceCorePackageDto.Version)))" RequiredIndicator>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Version), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
-            <TextEdit ElementId="@(GetElementIdByOperation(nameof(GlobalPreferenceCorePackageDto.Version)))"
+            <TextInput ElementId="@(GetElementIdByOperation(nameof(GlobalPreferenceCorePackageDto.Version)))"
                       Role="TextRole.Text"
                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<GlobalPreferenceCorePackageDto>(nameof(GlobalPreferenceCorePackageDto.Version), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Text="@PackageModel.Version">
+                      @bind-Value="@PackageModel.Version">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
-            </TextEdit>
+            </TextInput>
         </Field>
     </Validation>
 

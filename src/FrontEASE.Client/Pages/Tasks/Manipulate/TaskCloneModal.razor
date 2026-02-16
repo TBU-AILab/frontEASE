@@ -4,10 +4,10 @@
 @inject IMapper mapper
 @inject Blazored.Toast.Services.IToastService toastService
 
-<Modal @ref="@CloneModal" Closed="@OnModalClosing" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
+<Modal @ref="@CloneModal" Closed="@OnModalClosing" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))" Centered>
     @if (isModalVisible)
     {
-        <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
+        <ModalContent Shadow="Shadow.Small" Class="bg-custom-primary">
 
             <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}")} - {TaskInfo.Name}")" />
 

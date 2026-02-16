@@ -46,9 +46,9 @@
                                     </FieldLabel>
                                     <Select TValue="string"
                                             Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                                            SelectedValue="@module.ShortName"
-                                            SelectedValueExpression="@(() => module.ShortName)"
-                                            SelectedValueChanged="@((value) => TypeSelectionChanged(value, module))"
+                                            Value="@module.ShortName"
+                                            ValueExpression="@(() => module.ShortName)"
+                                            ValueChanged="@((value) => TypeSelectionChanged(value, module))"
                                             ElementId="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName), moduleElemID))">
                                         <ChildContent>
                                             <SelectItem Value="string.Empty">

@@ -25,7 +25,7 @@
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.Country)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Country), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <Select @bind-SelectedValue="@CompanyModel.Address!.Country"
+                                    <Select @bind-Value="@CompanyModel.Address!.Country"
                                             ElementId="@(GetElementIdByOperation(nameof(AddressDto.Country)))">
                                         <ChildContent>
                                             @foreach (var country in Enum.GetValues(typeof(Country)))
@@ -47,14 +47,14 @@
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.City)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.City), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(AddressDto.City)))"
+                                    <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.City)))"
                                               Role="TextRole.Text"
                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.City), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Text="@CompanyModel.Address!.City">
+                                              @bind-Value="@CompanyModel.Address!.City">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </Field>
                             </Validation>
 
@@ -63,14 +63,14 @@
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.ZIPCode)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.ZIPCode), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(AddressDto.ZIPCode)))"
+                                    <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.ZIPCode)))"
                                               Role="TextRole.Text"
                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.ZIPCode), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Text="@CompanyModel.Address!.ZIPCode">
+                                              @bind-Value="@CompanyModel.Address!.ZIPCode">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </Field>
                             </Validation>
 
@@ -79,14 +79,14 @@
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.Street)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Street), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(AddressDto.Street)))"
+                                    <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.Street)))"
                                               Role="TextRole.Text"
                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Street), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Text="@CompanyModel.Address!.Street">
+                                              @bind-Value="@CompanyModel.Address!.Street">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </Field>
                             </Validation>
 
@@ -95,14 +95,14 @@
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.OrientationNumber)))">
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.OrientationNumber), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(AddressDto.OrientationNumber)))"
+                                    <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.OrientationNumber)))"
                                               Role="TextRole.Text"
                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.OrientationNumber), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Text="@CompanyModel.Address!.OrientationNumber">
+                                              @bind-Value="@CompanyModel.Address!.OrientationNumber">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </Field>
                             </Validation>
 
@@ -111,14 +111,14 @@
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.DescriptiveNumber)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.DescriptiveNumber), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(AddressDto.DescriptiveNumber)))"
+                                    <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.DescriptiveNumber)))"
                                               Role="TextRole.Text"
                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.DescriptiveNumber), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Text="@CompanyModel.Address!.DescriptiveNumber">
+                                              @bind-Value="@CompanyModel.Address!.DescriptiveNumber">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </Field>
                             </Validation>
 

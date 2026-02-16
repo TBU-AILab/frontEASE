@@ -1,6 +1,6 @@
 ﻿@inject IResourceHandler resourceHandler
 
-<Row Padding="Padding.Is3.FromBottom" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small" Margin="Margin.Is3.FromTop.Is3.FromBottom" TextOverflow="TextOverflow.Wrap" NoGutters>
+<Row Padding="Padding.Is3.FromBottom" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small" Margin="Margin.Is3.FromTop.Is3.FromBottom" TextOverflow="TextOverflow.Wrap" Gutter="Gutter.Is0">
     <Column ColumnSize="ColumnSize.IsFull" Display="Display.Flex" Class="justify-content-between align-items-center" Padding="Padding.Is2" Shadow="Shadow.Small">
         <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
             <Text TextWeight="TextWeight.Bold" Class="text-center">
@@ -16,7 +16,7 @@
                     @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageDto>(nameof(TaskConfigRepeatedMessageDto.RepeatedMessageType), PropertyDisplayResourceType.FIELD)))
                 </FieldLabel>
                 <Select Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                        @bind-SelectedValue="@TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageType"
+                        @bind-Value="@TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageType"
                         ElementId="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageDto.RepeatedMessageType)))">
                     <ChildContent>
                         @foreach (var messageType in Enum.GetValues(typeof(RepeatedMessageType)))
@@ -49,7 +49,7 @@
 
     <Column ColumnSize="ColumnSize.IsFull">
         <Container Fluid>
-            <TaskConfigRepeatedMessageDataItemsFormSection TaskModalContext="TaskModalContext"/>
+            <TaskConfigRepeatedMessageDataItemsFormSection TaskModalContext="TaskModalContext" />
         </Container>
     </Column>
 </Row>

@@ -16,15 +16,15 @@
                     <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.Name)))" RequiredIndicator>
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.FIELD)))
                     </FieldLabel>
-                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.Name)))"
+                    <TextInput ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.Name)))"
                               Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                               Role="TextRole.Text"
                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
-                              @bind-Text="@TaskModalContext.Task.Config.Name">
+                              @bind-Value="@TaskModalContext.Task.Config.Name">
                         <Feedback>
                             <ValidationError Multiline="true" />
                         </Feedback>
-                    </TextEdit>
+                    </TextInput>
                 </Field>
             </Validation>
         </Fields>
@@ -50,14 +50,14 @@
 
                         <Validation>
                             <Field ColumnSize="ColumnSize.IsFull" Class="input-validation-only">
-                                <MemoEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.SystemMessage)))"
+                                <MemoInput ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.SystemMessage)))"
                                           ReadOnly="true"
                                           Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                          @bind-Text="@TaskModalContext.Task.Config.SystemMessage">
+                                          @bind-Value="@TaskModalContext.Task.Config.SystemMessage">
                                     <Feedback>
                                         <ValidationError Multiline="true" />
                                     </Feedback>
-                                </MemoEdit>
+                                </MemoInput>
                             </Field>
                         </Validation>
 
@@ -83,14 +83,14 @@
 
                         <Validation>
                             <Field ColumnSize="ColumnSize.IsFull" Class="input-validation-only">
-                                <MemoEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.InitialMessage)))"
+                                <MemoInput ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.InitialMessage)))"
                                           ReadOnly="true"
                                           Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitialMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                          @bind-Text="@TaskModalContext.Task.Config.InitialMessage">
+                                          @bind-Value="@TaskModalContext.Task.Config.InitialMessage">
                                     <Feedback>
                                         <ValidationError Multiline="true" />
                                     </Feedback>
-                                </MemoEdit>
+                                </MemoInput>
                             </Field>
                         </Validation>
                     </Fields>
@@ -117,13 +117,13 @@
                         <Validation>
                             <Field Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.Is2.OnWidescreen">
 
-                                <NumericEdit Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                                <NumericInput Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                                              @bind-Value="@TaskModalContext.Task.Config.MaxContextSize"
                                              Step="1" Min="-1" Max="1000">
                                     <Feedback>
                                         <ValidationError Multiline="true" />
                                     </Feedback>
-                                </NumericEdit>
+                                </NumericInput>
                             </Field>
                         </Validation>
 
@@ -149,7 +149,7 @@
         <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromBottom">
             <Field Horizontal Display="Display.InlineFlex">
                 <FieldBody Display="Display.InlineFlex" Style="align-items: center;">
-                    <Check Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)" TValue="bool" @bind-Checked="@TaskModalContext.Task.Config.FeedbackFromSolution" Class="checkbox-medium" ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.FeedbackFromSolution)))" Display="Display.InlineFlex" Margin="Margin.Is2.FromEnd">
+                    <Check Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)" TValue="bool" @bind-Value="@TaskModalContext.Task.Config.FeedbackFromSolution" Class="checkbox-medium" ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.FeedbackFromSolution)))" Display="Display.InlineFlex" Margin="Margin.Is2.FromEnd">
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.FeedbackFromSolution), PropertyDisplayResourceType.FIELD)))
                     </Check>
                 </FieldBody>
