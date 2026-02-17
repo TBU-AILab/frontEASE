@@ -21,7 +21,8 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources
                 .HasForeignKey(e => e.CountryCodeID);
 
             builder.Property(e => e.CountryCodeID)
-               .HasDefaultValue(LanguageCode.EN);
+               .HasDefaultValue(LanguageCode.EN)
+               .HasSentinel(LanguageCode.EN);
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿    <Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Shadow="Shadow.Small" Class="rounded-top-right-1 border-custom-light">
-        <CorePackageAddForm GlobalPreferences="GlobalPreferences" />
-        <CorePackagesList GlobalPreferences="GlobalPreferences" Operation="DataOperation.READ"/>
-        <CorePackagesFooter GlobalPreferences="GlobalPreferences" />
-    </Container>
+﻿<Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Shadow="Shadow.Small" Class="rounded-top-right-1 border-custom-light">
+    <CorePackageAddForm GlobalPreferences="GlobalPreferences" />
+    <CorePackagesList GlobalPreferences="GlobalPreferences" Operation="DataOperation.READ" />
+    <CorePackagesFooter GlobalPreferences="GlobalPreferences" />
+</Container>
 
 @code {
     public GlobalPreferencesDto GlobalPreferences { get; set; } = new();

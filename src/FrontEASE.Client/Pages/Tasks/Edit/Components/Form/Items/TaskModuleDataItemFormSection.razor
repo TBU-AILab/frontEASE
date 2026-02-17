@@ -40,7 +40,7 @@
 
                         <Fields Class="form-group">
                             <Validation>
-                                <Field ColumnSize="@(isDescriptionPresent ? ColumnSize.Is10.OnWidescreen.Is11.OnFullHD : ColumnSize.IsFull)">
+                                <Field ColumnSize="@(isDescriptionPresent? ColumnSize.Is10.OnWidescreen.Is11.OnFullHD : ColumnSize.IsFull)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName), moduleElemID))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.ShortName), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
@@ -89,7 +89,7 @@
                         @if (!string.IsNullOrWhiteSpace(module.ShortName))
                         {
                             var moduleContext = new TaskModuleContext(module, TaskModuleContext.ModuleOptions, TaskModuleContext.ModuleName);
-                            <TaskModuleParamsFormSection TaskModalContext="TaskModalContext" TaskModuleContext="moduleContext"/>
+                            <TaskModuleParamsFormSection TaskModalContext="TaskModalContext" TaskModuleContext="moduleContext" />
                         }
                     </Column>
 

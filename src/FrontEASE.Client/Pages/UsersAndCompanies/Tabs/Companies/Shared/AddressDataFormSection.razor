@@ -21,7 +21,7 @@
                         <Fields>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.Country)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Country), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
@@ -43,14 +43,14 @@
                             </Validation>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.City)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.City), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
                                     <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.City)))"
-                                              Role="TextRole.Text"
-                                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.City), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Value="@CompanyModel.Address!.City">
+                                               Role="TextRole.Text"
+                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.City), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                               @bind-Value="@CompanyModel.Address!.City">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
@@ -59,14 +59,14 @@
                             </Validation>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.ZIPCode)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.ZIPCode), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
                                     <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.ZIPCode)))"
-                                              Role="TextRole.Text"
-                                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.ZIPCode), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Value="@CompanyModel.Address!.ZIPCode">
+                                               Role="TextRole.Text"
+                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.ZIPCode), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                               @bind-Value="@CompanyModel.Address!.ZIPCode">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
@@ -75,14 +75,14 @@
                             </Validation>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.Street)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Street), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
                                     <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.Street)))"
-                                              Role="TextRole.Text"
-                                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Street), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Value="@CompanyModel.Address!.Street">
+                                               Role="TextRole.Text"
+                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Street), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                               @bind-Value="@CompanyModel.Address!.Street">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
@@ -91,14 +91,14 @@
                             </Validation>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.OrientationNumber)))">
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.OrientationNumber), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
                                     <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.OrientationNumber)))"
-                                              Role="TextRole.Text"
-                                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.OrientationNumber), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Value="@CompanyModel.Address!.OrientationNumber">
+                                               Role="TextRole.Text"
+                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.OrientationNumber), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                               @bind-Value="@CompanyModel.Address!.OrientationNumber">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
@@ -107,14 +107,14 @@
                             </Validation>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.DescriptiveNumber)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.DescriptiveNumber), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
                                     <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.DescriptiveNumber)))"
-                                              Role="TextRole.Text"
-                                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.DescriptiveNumber), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Value="@CompanyModel.Address!.DescriptiveNumber">
+                                               Role="TextRole.Text"
+                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.DescriptiveNumber), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                               @bind-Value="@CompanyModel.Address!.DescriptiveNumber">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
@@ -158,7 +158,7 @@
 
     private async Task SetInitialCollapse()
     {
-        if(CompanyModel.Address is null)
+        if (CompanyModel.Address is null)
         {
             await ChangeCollapseState();
         }

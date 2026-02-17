@@ -2,60 +2,102 @@
 
 <Fields>
 
-	<Validation>
-		<Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6)">
-			<FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))" RequiredIndicator>
-				@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.ColorScheme), PropertyDisplayResourceType.FIELD)))
-			</FieldLabel>
-			<Select @bind-Value="@GeneralPreferencesModel.ColorScheme" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))">
-				<ChildContent>
-					@foreach (var colorScheme in Enum.GetValues(typeof(ColorScheme)))
-					{
-						<SelectItem TValue="ColorScheme" Value="@((ColorScheme)colorScheme)">
-							@(resourceHandler.GetResource(((ColorScheme)colorScheme).GetEnumResourceValue()))
-						</SelectItem>
-					}
-				</ChildContent>
-				<Feedback>
-					<ValidationError Multiline="true" />
-				</Feedback>
-			</Select>
-		</Field>
-	</Validation>
+    <Validation>
+        <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6.OnWidescreen)">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))" RequiredIndicator>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.ColorScheme), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <Select @bind-Value="@GeneralPreferencesModel.ColorScheme" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))">
+                <ChildContent>
+                    @foreach (var colorScheme in Enum.GetValues(typeof(ColorScheme)))
+                    {
+                        <SelectItem TValue="ColorScheme" Value="@((ColorScheme)colorScheme)">
+                            @(resourceHandler.GetResource(((ColorScheme)colorScheme).GetEnumResourceValue()))
+                        </SelectItem>
+                    }
+                </ChildContent>
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </Select>
+        </Field>
+    </Validation>
 
-	<Validation>
-		<Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6)">
-			<FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility)))" RequiredIndicator>
-				@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility), PropertyDisplayResourceType.FIELD)))
-			</FieldLabel>
-			<Select @bind-Value="@GeneralPreferencesModel.TokenVisibility" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility)))">
-				<ChildContent>
-					@foreach (var tokenOption in Enum.GetValues(typeof(TokenVisibility)))
-					{
-						<SelectItem TValue="TokenVisibility" Value="@((TokenVisibility)tokenOption)">
-							@(resourceHandler.GetResource(((TokenVisibility)tokenOption).GetEnumResourceValue()))
-						</SelectItem>
-					}
-				</ChildContent>
-				<Feedback>
-					<ValidationError Multiline="true" />
-				</Feedback>
-			</Select>
-		</Field>
-	</Validation>
+    <Validation>
+        <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6.OnWidescreen)">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility)))" RequiredIndicator>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <Select @bind-Value="@GeneralPreferencesModel.TokenVisibility" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility)))">
+                <ChildContent>
+                    @foreach (var tokenOption in Enum.GetValues(typeof(TokenVisibility)))
+                    {
+                        <SelectItem TValue="TokenVisibility" Value="@((TokenVisibility)tokenOption)">
+                            @(resourceHandler.GetResource(((TokenVisibility)tokenOption).GetEnumResourceValue()))
+                        </SelectItem>
+                    }
+                </ChildContent>
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </Select>
+        </Field>
+    </Validation>
+
+    <Validation>
+        <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6.OnWidescreen)">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.UserMessageDisplayFormat)))" RequiredIndicator>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.UserMessageDisplayFormat), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <Select @bind-Value="@GeneralPreferencesModel.UserMessageDisplayFormat" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.UserMessageDisplayFormat)))">
+                <ChildContent>
+                    @foreach (var formatOption in Enum.GetValues(typeof(MessageDisplayFormat)))
+                    {
+                        <SelectItem TValue="MessageDisplayFormat" Value="@((MessageDisplayFormat)formatOption)">
+                            @(resourceHandler.GetResource(((MessageDisplayFormat)formatOption).GetEnumResourceValue()))
+                        </SelectItem>
+                    }
+                </ChildContent>
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </Select>
+        </Field>
+    </Validation>
+
+    <Validation>
+        <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is6.OnWidescreen)">
+            <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.SystemMessageDisplayFormat)))" RequiredIndicator>
+                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.SystemMessageDisplayFormat), PropertyDisplayResourceType.FIELD)))
+            </FieldLabel>
+            <Select @bind-Value="@GeneralPreferencesModel.SystemMessageDisplayFormat" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.SystemMessageDisplayFormat)))">
+                <ChildContent>
+                    @foreach (var formatOption in Enum.GetValues(typeof(MessageDisplayFormat)))
+                    {
+                        <SelectItem TValue="MessageDisplayFormat" Value="@((MessageDisplayFormat)formatOption)">
+                            @(resourceHandler.GetResource(((MessageDisplayFormat)formatOption).GetEnumResourceValue()))
+                        </SelectItem>
+                    }
+                </ChildContent>
+                <Feedback>
+                    <ValidationError Multiline="true" />
+                </Feedback>
+            </Select>
+        </Field>
+    </Validation>
 
 </Fields>
 
 @code {
 
-	[Parameter]
-	public UserPreferenceGeneralOptionsDto GeneralPreferencesModel { get; set; } = new();
+    [Parameter]
+    public UserPreferenceGeneralOptionsDto GeneralPreferencesModel { get; set; } = new();
 
-	[Parameter]
-	public DataOperation Operation { get; set; }
+    [Parameter]
+    public DataOperation Operation { get; set; }
 
-	[Parameter]
-	public bool FullWidthFields { get; set; }
+    [Parameter]
+    public bool FullWidthFields { get; set; }
 
-	private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<UserPreferenceGeneralOptionsDto>(elementBase, Operation, null);
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<UserPreferenceGeneralOptionsDto>(elementBase, Operation, null);
 }

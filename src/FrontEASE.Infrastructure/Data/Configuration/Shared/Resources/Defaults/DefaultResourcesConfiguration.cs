@@ -346,6 +346,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TokenVisibility.TRUNCATED.GetEnumResourceValue(), Value = "Truncated" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TokenVisibility.TRUNCATED_WITH_TOGGLE.GetEnumResourceValue(), Value = "Truncated with display toggle" },
 
+                /* MessageDisplayFormat */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = MessageDisplayFormat.PLAINTEXT.GetEnumResourceValue(), Value = "Plain text" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = MessageDisplayFormat.MARKDOWN.GetEnumResourceValue(), Value = "Markdown" },
+
                 /* RepeatedMessageType */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = RepeatedMessageType.SINGLE.GetEnumResourceValue(), Value = "Single" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = RepeatedMessageType.RANDOM.GetEnumResourceValue(), Value = "Random" },
@@ -452,6 +456,8 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* UserPreferenceGeneralOptionsDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.ColorScheme), PropertyDisplayResourceType.FIELD), Value = "Color scheme" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility), PropertyDisplayResourceType.FIELD), Value = "Token visibility" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.UserMessageDisplayFormat), PropertyDisplayResourceType.FIELD), Value = "User message display format" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.SystemMessageDisplayFormat), PropertyDisplayResourceType.FIELD), Value = "System message display format" },
 
                 /* UserPreferenceTokenOptionDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.FIELD), Value = "Token" },

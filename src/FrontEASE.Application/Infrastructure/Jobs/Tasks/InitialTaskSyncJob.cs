@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using FrontEASE.DataContracts.Models.Core.Tasks.Info;
 using FrontEASE.Domain.DataQueries.Tasks;
 using FrontEASE.Domain.Entities.Tasks.Configs;

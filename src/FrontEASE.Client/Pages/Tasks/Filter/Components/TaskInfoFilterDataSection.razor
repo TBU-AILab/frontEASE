@@ -7,9 +7,9 @@
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.Name), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
             <TextInput ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.Name)))"
-                      Role="TextRole.Text"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Value="@Filter.Name">
+                       Role="TextRole.Text"
+                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                       @bind-Value="@Filter.Name">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
@@ -24,13 +24,13 @@
             </FieldLabel>
             <SelectList ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.State)))"
                         TItem="TaskState"
-                        TValue="TaskState"
+                        TValue="IReadOnlyList<TaskState>"
                         Data="@(Enum.GetValues(typeof(TaskState)).Cast<TaskState>())"
                         TextField="@((item) => resourceHandler.GetResource(item.GetEnumResourceValue()))"
                         ValueField="@((item) => item)"
                         Multiple
                         Size="Size.Large"
-                        @bind-Values="@Filter.SelectedFilterStates">
+                        @bind-Value="@Filter.SelectedFilterStates">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
@@ -66,7 +66,7 @@
 
                     <Addon AddonType="AddonType.End">
                         <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
-                            <Button Color="Color.Light" Clicked="@(()=>dateCreatedFromPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                            <Button Color="Color.Light" Clicked="@(() => dateCreatedFromPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
                                 <Icon Name="IconName.CalendarDay" />
                             </Button>
                         </Column>
@@ -105,7 +105,7 @@
 
                     <Addon AddonType="AddonType.End">
                         <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
-                            <Button Color="Color.Light" Clicked="@(()=>dateCreatedToPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                            <Button Color="Color.Light" Clicked="@(() => dateCreatedToPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
                                 <Icon Name="IconName.CalendarDay" />
                             </Button>
                         </Column>
@@ -144,7 +144,7 @@
 
                     <Addon AddonType="AddonType.End">
                         <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
-                            <Button Color="Color.Light" Clicked="@(()=>dateUpdatedFromPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                            <Button Color="Color.Light" Clicked="@(() => dateUpdatedFromPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
                                 <Icon Name="IconName.CalendarDay" />
                             </Button>
                         </Column>
@@ -183,7 +183,7 @@
 
                     <Addon AddonType="AddonType.End">
                         <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
-                            <Button Color="Color.Light" Clicked="@(()=>dateUpdatedToPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                            <Button Color="Color.Light" Clicked="@(() => dateUpdatedToPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
                                 <Icon Name="IconName.CalendarDay" />
                             </Button>
                         </Column>
@@ -200,9 +200,9 @@
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
             <MemoInput Rows="2"
-                      ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.MessagesContent)))"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Value="@Filter.MessagesContent">
+                       ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.MessagesContent)))"
+                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.PLACEHOLDER)))"
+                       @bind-Value="@Filter.MessagesContent">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>

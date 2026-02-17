@@ -2,17 +2,17 @@
     <Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary">
         @if (!Package.System)
         {
-            <CorePackageListItemHeader GlobalPreferences="GlobalPreferences" Package="Package"/>
+            <CorePackageListItemHeader GlobalPreferences="GlobalPreferences" Package="Package" />
         }
-        <CorePackageListItemBody Package="Package"/>
+        <CorePackageListItemBody Package="Package" />
     </Row>
 </Card>
 
 
 @code {
-	[Parameter]
-	public GlobalPreferenceCorePackageDto Package { get; set; } = new();
+    [Parameter]
+    public GlobalPreferenceCorePackageDto Package { get; set; } = new();
 
-	[Parameter]
-	public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
+    [Parameter]
+    public GlobalPreferencesDto GlobalPreferences { get; set; } = new();
 }

@@ -16,10 +16,8 @@
                 <Row>
                     <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
                         <Image Border="Border.RoundedCircle"
-                               Source="@(!string.IsNullOrWhiteSpace(CompanyModel.Image?.ImageData) ?
-                                        $"data:{CompanyModel.Image.MimeType};base64,{CompanyModel.Image.ImageData}" : !string.IsNullOrWhiteSpace(CompanyModel.Image?.ImageUrl) ?
-                                        $"{appSettings.ApiSettings!.BaseUrl}/{CompanyModel.Image.ImageUrl}" : ImageConstants.CompanyPicDefault)"
-                           Class="full-max-width edit-modal-image" Loading />
+                               Source="@(!string.IsNullOrWhiteSpace(CompanyModel.Image?.ImageData) ? $"data:{CompanyModel.Image.MimeType};base64,{CompanyModel.Image.ImageData}" : !string.IsNullOrWhiteSpace(CompanyModel.Image?.ImageUrl) ?  $"{appSettings.ApiSettings!.BaseUrl}/{CompanyModel.Image.ImageUrl}" : ImageConstants.CompanyPicDefault)"
+                               Class="full-max-width edit-modal-image" Loading />
                     </Column>
                 </Row>
 
@@ -35,7 +33,7 @@
                                 <Fields>
                                     <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
                                         <Button Clicked="@EditCompany" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
-                                        @if (updateInProgress)
+                                            @if (updateInProgress)
                                             {
                                                 <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
                                             }

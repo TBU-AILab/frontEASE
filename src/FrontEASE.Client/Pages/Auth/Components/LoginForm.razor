@@ -17,9 +17,9 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Username), PropertyDisplayResourceType.FIELD)))
                     </FieldLabel>
                     <TextInput ElementId="@(GetElementIdByOperation(nameof(LoginDto.Username)))"
-                              Role="TextRole.Text"
-                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Username), PropertyDisplayResourceType.PLACEHOLDER)))"
-                              @bind-Value="@LoginModel.Username">
+                               Role="TextRole.Text"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Username), PropertyDisplayResourceType.PLACEHOLDER)))"
+                               @bind-Value="@LoginModel.Username">
                         <Feedback>
                             <ValidationError Multiline="true" />
                         </Feedback>
@@ -33,9 +33,9 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Password), PropertyDisplayResourceType.FIELD)))
                     </FieldLabel>
                     <TextInput ElementId="@(GetElementIdByOperation(nameof(LoginDto.Password)))"
-                              Role="TextRole.Password"
-                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Password), PropertyDisplayResourceType.PLACEHOLDER)))"
-                              @bind-Value="@LoginModel.Password">
+                               Role="TextRole.Password"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<LoginDto>(nameof(LoginDto.Password), PropertyDisplayResourceType.PLACEHOLDER)))"
+                               @bind-Value="@LoginModel.Password">
                         <Feedback>
                             <ValidationError Multiline="true" />
                         </Feedback>

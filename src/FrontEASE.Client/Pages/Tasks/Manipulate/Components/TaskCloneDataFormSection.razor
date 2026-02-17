@@ -7,9 +7,9 @@
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
             <TextInput ElementId="@(GetElementIdByOperation(nameof(TaskDuplicateActionRequestDto.Name)))"
-                      Role="TextRole.Text"
-                      Placeholder="@(string.IsNullOrWhiteSpace(TaskInfo.Name) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)) : TaskInfo.Name )"
-                      @bind-Value="@CloneModel.Name">
+                       Role="TextRole.Text"
+                       Placeholder="@(string.IsNullOrWhiteSpace(TaskInfo.Name) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)) : TaskInfo.Name )"
+                       @bind-Value="@CloneModel.Name">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>

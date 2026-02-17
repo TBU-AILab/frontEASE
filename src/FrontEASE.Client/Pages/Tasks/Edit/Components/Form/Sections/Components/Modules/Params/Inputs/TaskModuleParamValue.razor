@@ -54,9 +54,9 @@
         <Field ColumnSize="@(TaskModuleParamContext.ParamFlags!.DisplayActions ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)" Class="input-validation-only">
 
             <MemoInput ElementId="@(GetElementIdByOperation($"{TaskModuleParamContext.ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))"
-                      Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                      @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
-                      Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)">
+                       Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                       @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
+                       Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>

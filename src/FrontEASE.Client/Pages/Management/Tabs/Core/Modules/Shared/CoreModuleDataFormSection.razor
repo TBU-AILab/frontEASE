@@ -13,19 +13,19 @@
                 <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}"))" SmallControlSpinner="true" TextColor="TextColor.Dark" TextSize="TextSize.Medium" />
             </Column>
         }
-        <Label For="@(GetElementIdByOperation(nameof(FileDto.Content)))" Display="@(fileLoadInProgress ? Display.None : Display.Block)" Cursor="@(fileLoadInProgress ? Cursor.Default : Cursor.Pointer)" Border="Border.Is1.Rounded" Class="button btn btn-sized btn-custom-file-picker" Overflow="Overflow.Auto" Margin="Margin.Is0.FromBottom">
+        <Label For="@(GetElementIdByOperation(nameof(FileDto.Content)))" Display="@(fileLoadInProgress? Display.None: Display.Block)" Cursor="@(fileLoadInProgress? Cursor.Default: Cursor.Pointer)" Border="Border.Is1.Rounded" Class="button btn btn-sized btn-custom-file-picker" Overflow="Overflow.Auto" Margin="Margin.Is0.FromBottom">
             <Text Display="Display.InlineBlock" Overflow="Overflow.Hidden" Width="Width.Is100" TextAlignment="TextAlignment.Start" TextWeight="TextWeight.Normal" TextSize="TextSize.Small" Class="@($"{(ModuleModel.Files.Count > 0 ? "text-custom-muted" : "text-custom-primary")}")">
                 @(!(ModuleModel.Files.Count > 0) ? resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Content), PropertyDisplayResourceType.PLACEHOLDER)) : string.Join(", ", ModuleModel.Files.Select(x => x.Name)))
             </Text>
             <FileInput Display="Display.None"
-                      @ref="@filePicker"
-                      Filter=".py, .zip"
-                      AutoReset="true"
-                      ElementId="@(GetElementIdByOperation(nameof(FileDto.Content)))"
-                      MaxFileSize="@(SizeConstants.FiveMegabytes)"
-                      Changed="args => FileLoaded(args)"
-                      Multiple="true"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Content), PropertyDisplayResourceType.PLACEHOLDER)))" />
+                       @ref="@filePicker"
+                       Filter=".py, .zip"
+                       AutoReset="true"
+                       ElementId="@(GetElementIdByOperation(nameof(FileDto.Content)))"
+                       MaxFileSize="@(SizeConstants.FiveMegabytes)"
+                       Changed="args => FileLoaded(args)"
+                       Multiple="true"
+                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<FileDto>(nameof(FileDto.Content), PropertyDisplayResourceType.PLACEHOLDER)))" />
         </Label>
     </Field>
 </Fields>

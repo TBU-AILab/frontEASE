@@ -36,7 +36,7 @@
             <Container Fluid>
                 @if (!string.IsNullOrWhiteSpace(TaskModuleContext.Module.ShortName))
                 {
-                    <TaskModuleParamsViewSection AvailableParams="@TaskModuleContext.ModuleData?.Parameters"/>
+                    <TaskModuleParamsViewSection AvailableParams="@TaskModuleContext.ModuleData?.Parameters" />
                 }
             </Container>
         </Column>

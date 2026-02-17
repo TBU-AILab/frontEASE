@@ -40,11 +40,11 @@
                             @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Weight), PropertyDisplayResourceType.FIELD)))
                         </FieldLabel>
                         <NumericInput ElementId="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageItemDto.Weight), itemID))"
-                                     Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                                     @bind-Value="@repeatedMessageItem.Weight"
-                                     Min="0"
-                                     Max="1"
-                                     Step="@((decimal?)0.01)">
+                                      Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                                      @bind-Value="@repeatedMessageItem.Weight"
+                                      Min="0"
+                                      Max="1"
+                                      Step="@((decimal?)0.01)">
                             <Feedback>
                                 <ValidationError Multiline="true" />
                             </Feedback>
@@ -58,10 +58,10 @@
                             @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.FIELD)))
                         </FieldLabel>
                         <MemoInput ElementId="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageItemDto.Content), itemID))"
-                                  Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                                  AutoSize="false" Rows="1"
-                                  Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                  @bind-Value="@repeatedMessageItem.Content">
+                                   Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                                   AutoSize="false" Rows="1"
+                                   Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                   @bind-Value="@repeatedMessageItem.Content">
                             <Feedback>
                                 <ValidationError Multiline="true" />
                             </Feedback>

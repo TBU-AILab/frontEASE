@@ -44,9 +44,9 @@
         else
         {
             <MemoInput ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                      Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                      @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
-                      Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)">
+                       Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                       @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
+                       Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>

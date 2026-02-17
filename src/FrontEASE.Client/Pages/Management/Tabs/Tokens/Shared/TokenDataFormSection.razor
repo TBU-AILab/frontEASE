@@ -7,9 +7,9 @@
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
             <TextInput ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Name)))"
-                      Role="TextRole.Text"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Value="@TokenModel.Name">
+                       Role="TextRole.Text"
+                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                       @bind-Value="@TokenModel.Name">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
@@ -23,9 +23,9 @@
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
             <TextInput ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Token)))"
-                      Role="TextRole.Text"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Value="@TokenModel.Token">
+                       Role="TextRole.Text"
+                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.PLACEHOLDER)))"
+                       @bind-Value="@TokenModel.Token">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
@@ -41,13 +41,13 @@
 
             <SelectList ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.ConnectorTypes)))"
                         TItem="UserPreferenceTokenOptionConnectorTypeDto"
-                        TValue="string"
+                        TValue="IReadOnlyList<string>"
                         Data="@(GetTokenConnectorTypes())"
                         TextField="@((item) => GetTokenConnectorName(item.ConnectorType))"
                         ValueField="@((item) => item.ConnectorType)"
                         Multiple
                         Size="Size.Large"
-                        @bind-Values="@TokenModel.SelectedTokenConnectorTypes">
+                        @bind-Value="@TokenModel.SelectedTokenConnectorTypes">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
@@ -62,10 +62,10 @@
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Description), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
             <MemoInput ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTokenOptionDto.Description)))"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Description), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Value="@TokenModel.Description"
-                      AutoSize="false"
-                      Rows="3">
+                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Description), PropertyDisplayResourceType.PLACEHOLDER)))"
+                       @bind-Value="@TokenModel.Description"
+                       AutoSize="false"
+                       Rows="3">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>

@@ -17,10 +17,10 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.FIELD)))
                     </FieldLabel>
                     <TextInput ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.Name)))"
-                              Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                              Role="TextRole.Text"
-                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
-                              @bind-Value="@TaskModalContext.Task.Config.Name">
+                               Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                               Role="TextRole.Text"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                               @bind-Value="@TaskModalContext.Task.Config.Name">
                         <Feedback>
                             <ValidationError Multiline="true" />
                         </Feedback>
@@ -51,9 +51,9 @@
                         <Validation>
                             <Field ColumnSize="ColumnSize.IsFull" Class="input-validation-only">
                                 <MemoInput ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.SystemMessage)))"
-                                          ReadOnly="true"
-                                          Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                          @bind-Value="@TaskModalContext.Task.Config.SystemMessage">
+                                           ReadOnly="true"
+                                           Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.SystemMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                           @bind-Value="@TaskModalContext.Task.Config.SystemMessage">
                                     <Feedback>
                                         <ValidationError Multiline="true" />
                                     </Feedback>
@@ -84,9 +84,9 @@
                         <Validation>
                             <Field ColumnSize="ColumnSize.IsFull" Class="input-validation-only">
                                 <MemoInput ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.InitialMessage)))"
-                                          ReadOnly="true"
-                                          Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitialMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                          @bind-Value="@TaskModalContext.Task.Config.InitialMessage">
+                                           ReadOnly="true"
+                                           Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.InitialMessage), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                           @bind-Value="@TaskModalContext.Task.Config.InitialMessage">
                                     <Feedback>
                                         <ValidationError Multiline="true" />
                                     </Feedback>
@@ -118,8 +118,8 @@
                             <Field Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.Is2.OnWidescreen">
 
                                 <NumericInput Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                                             @bind-Value="@TaskModalContext.Task.Config.MaxContextSize"
-                                             Step="1" Min="-1" Max="1000">
+                                              @bind-Value="@TaskModalContext.Task.Config.MaxContextSize"
+                                              Step="1" Min="-1" Max="1000">
                                     <Feedback>
                                         <ValidationError Multiline="true" />
                                     </Feedback>

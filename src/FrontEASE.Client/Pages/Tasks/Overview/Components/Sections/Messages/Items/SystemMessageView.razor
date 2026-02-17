@@ -5,7 +5,22 @@
                 <MessageViewHeader />
 
                 <CardBody Class="throws-shadow bg-custom-primary" Border="Border.Is0">
-                    @Message.Content
+                    @if (!string.IsNullOrWhiteSpace(Message.Content))
+                    {
+                        @switch (PageContext.LoggedInUser.UserPreferences.GeneralOptions.SystemMessageDisplayFormat)
+                        {
+                            case MessageDisplayFormat.MARKDOWN:
+
+                                @((MarkupString)Markdig.Markdown.ToHtml(Message.Content))
+                                break;
+                            case MessageDisplayFormat.PLAINTEXT:
+                            default:
+                                <Text>
+                                    @Message.Content
+                                </Text>
+                                break;
+                        }
+                    }
                 </CardBody>
 
                 <MessageViewFooter />
@@ -16,6 +31,9 @@
 </Container>
 
 @code {
+    [CascadingParameter]
+    public TasksPageContext PageContext { get; set; } = null!;
+
     [Parameter]
     public TaskMessageDto Message { get; set; } = new();
 }

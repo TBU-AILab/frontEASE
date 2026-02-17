@@ -37,10 +37,10 @@
                 }
 
                 <MemoInput ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                          Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                          @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
-                          Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)"
-                          Rows="2" AutoSize="true">
+                           Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                           @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
+                           Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)"
+                           Rows="2" AutoSize="true">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -60,12 +60,12 @@
                 }
 
                 <NumericInput TValue="int?"
-                             ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                             Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                             @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.IntValue"
-                             Placeholder="@(TaskModuleParamContext.ParamOption.Default?.IntValue?.ToString() ?? 0.ToString())"
-                             Min="@(TaskModuleParamContext.ParamOption.MinValue is double intMin ? (int)intMin : int.MinValue)"
-                             Max="@(TaskModuleParamContext.ParamOption.MaxValue is double intMax ? (int)intMax : int.MaxValue)">
+                              ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                              Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                              @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.IntValue"
+                              Placeholder="@(TaskModuleParamContext.ParamOption.Default?.IntValue?.ToString() ?? 0.ToString())"
+                              Min="@(TaskModuleParamContext.ParamOption.MinValue is double intMin ? (int)intMin : int.MinValue)"
+                              Max="@(TaskModuleParamContext.ParamOption.MaxValue is double intMax ? (int)intMax : int.MaxValue)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -111,12 +111,12 @@
                 }
 
                 <NumericInput TValue="double?"
-                             ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                             Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                             @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.FloatValue"
-                             Placeholder="@(TaskModuleParamContext.ParamOption.Default?.FloatValue?.ToString() ?? 0.0.ToString())"
-                             Min="@(TaskModuleParamContext.ParamOption.MinValue is double floatMin ? floatMin : double.MinValue)"
-                             Max="@(TaskModuleParamContext.ParamOption.MaxValue is double floatMax ? floatMax : double.MaxValue)">
+                              ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                              Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                              @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.FloatValue"
+                              Placeholder="@(TaskModuleParamContext.ParamOption.Default?.FloatValue?.ToString() ?? 0.0.ToString())"
+                              Min="@(TaskModuleParamContext.ParamOption.MinValue is double floatMin ? floatMin : double.MinValue)"
+                              Max="@(TaskModuleParamContext.ParamOption.MaxValue is double floatMax ? floatMax : double.MaxValue)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>

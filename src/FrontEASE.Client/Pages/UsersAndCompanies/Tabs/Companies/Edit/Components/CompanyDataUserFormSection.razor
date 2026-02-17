@@ -22,15 +22,15 @@
                         <Fields>
 
                             <DataGrid TItem="ApplicationUserDto"
-                            Data="@PageContext.Users"
-                            SelectionMode="DataGridSelectionMode.Multiple"
-                            SelectedRows="@selectedUsers"
-                            SelectedRowsChanged="(obj => SelectionChanged(obj))"
-                            Filterable="true"
-                            FilterMode="DataGridFilterMode.Default"
-                            FilterMethod="DataGridFilterMethod.Contains"
-                            Class="text-custom-primary border-custom-light"
-                            Responsive>
+                                      Data="@PageContext.Users"
+                                      SelectionMode="DataGridSelectionMode.Multiple"
+                                      SelectedRows="@selectedUsers"
+                                      SelectedRowsChanged="(obj => SelectionChanged(obj))"
+                                      Filterable="true"
+                                      FilterMode="DataGridFilterMode.Default"
+                                      FilterMethod="DataGridFilterMethod.Contains"
+                                      Class="text-custom-primary border-custom-light"
+                                      Responsive>
 
                                 <DataGridColumns>
 
@@ -44,12 +44,12 @@
                                     <DataGridColumn Field="@nameof(ApplicationUserDto.Email)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
 
                                     <DataGridSelectColumn TItem="ApplicationUserDto"
-                                    Field="@nameof(ApplicationUserDto.Role)"
-                                    Sortable="true"
-                                    Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Role), PropertyDisplayResourceType.FIELD)))"
-                                    TextField="@(role => resourceHandler.GetResource(((UserRole)role).GetEnumResourceValue()))"
-                                    ValueField="@(role => role.ToString())"
-                                    CustomFilter="@OnRoleCustomFilter">
+                                                          Field="@nameof(ApplicationUserDto.Role)"
+                                                          Sortable="true"
+                                                          Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Role), PropertyDisplayResourceType.FIELD)))"
+                                                          TextField="@(role => resourceHandler.GetResource(((UserRole)role).GetEnumResourceValue()))"
+                                                          ValueField="@(role => role.ToString())"
+                                                          CustomFilter="@OnRoleCustomFilter">
                                         <FilterTemplate>
                                             <Select TValue="string" Value="@selectedRoleFilter" ValueChanged="@(value => { selectedRoleFilter = value; context.TriggerFilterChange(selectedRoleFilter); })">
                                                 <SelectItem Value="string.Empty">
