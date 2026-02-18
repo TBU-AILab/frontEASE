@@ -101,7 +101,7 @@ frontEASE/
     # Options: true | false
     # If true, the database will be deleted and re-created with the seed data
     # If false, the database will be used as is
-    SEED_DB="false" # optional, defaults to false
+    SEED_DB="true" # true for the initialization
    
     # Set these to the URL that matches server where the backend runs on if its not the local machine from which you access it
     API_BASE_URL="http://localhost:4000"
