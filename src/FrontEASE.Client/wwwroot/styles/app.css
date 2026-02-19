@@ -26,7 +26,7 @@ input, select, textarea {
     }
 
     input[type="range"]::-webkit-slider-runnable-track {
-        background: var(--b-theme-background-light); /* Change this to your desired rail color */
+        background: var(--b-theme-background-light);
     }
 
     /* For Firefox */
@@ -760,6 +760,11 @@ a, .btn-link {
     display: none;
 }
 
+.data-grid-custom {
+    vertical-align: middle;
+    text-align: center;
+}
+
 @media (max-width: 992px) {
     .text-center-desktop {
         text-align: center;
@@ -955,6 +960,11 @@ nav.navbar {
 
 
 /* Tasks */
+
+.task-grid-min-width-author {
+    min-width: 12rem;
+}
+
 .action-icon-section-full-length {
     align-items: center;
     text-align: center;

@@ -24,18 +24,20 @@
                             <DataGrid TItem="ApplicationUserDto"
                                       Data="@PageContext.AvailableUsers"
                                       SelectionMode="DataGridSelectionMode.Multiple"
-                                      SelectedRows="@selectedUsers"
-                                      SelectedRowsChanged="(obj => SelectionChanged(obj))"
+                                      @bind-SelectedRows="selectedUsers"
+                                      @bind-SelectedRows:after="SyncSelection"
                                       Filterable="true"
                                       FilterMode="DataGridFilterMode.Default"
                                       FilterMethod="DataGridFilterMethod.Contains"
                                       RowStyling="@StyleRow"
                                       SelectedRowStyling="@StyleRow"
                                       RowSelectable="@((user) => {return (user.Item.Id != TaskModalContext.Task?.Author?.Id) && !TaskModalContext.TaskMetadata.InitializationInProgres;})"
-                                      Class="member-selection-grid text-custom-primary border-custom-light"
+                                      Class="member-selection-grid text-custom-primary border-custom-light data-grid-custom"
                                       Responsive>
 
                                 <DataGridColumns>
+                                    <DataGridMultiSelectColumn TItem="ApplicationUserDto" Display="Display.None" />
+
                                     <DataGridColumn Filterable="false" TItem="ApplicationUserDto" Field="@nameof(ApplicationUserDto.Image)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.FIELD)))" Sortable="false">
                                         <DisplayTemplate>
                                             <Image Border="Border.RoundedCircle"
@@ -142,10 +144,10 @@
         selectedUsers.AddRange(PageContext.AvailableUsers.Where(x => selectedUserIDs.Contains(x.Id)));
     }
 
-    private void SelectionChanged(IList<ApplicationUserDto> newSelection)
+    private void SyncSelection()
     {
         var selectedIDs = TaskModalContext.Task.Members.Select(x => x.Id);
-        var newSelectionIDs = newSelection.Select(x => x.Id);
+        var newSelectionIDs = selectedUsers.Select(x => x.Id);
 
         var added = newSelectionIDs.Except(selectedIDs).ToList();
         var removed = selectedIDs.Except(newSelectionIDs).ToList();

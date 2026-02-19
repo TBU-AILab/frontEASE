@@ -28,6 +28,7 @@ using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Option
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values.Enum;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values.List;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.RepeatedMessage;
+using FrontEASE.Application.Infrastructure.Mappings.Tasks.Logs;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Messages;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Shared;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Solutions;
@@ -446,6 +447,7 @@ void SetupMappings()
         cfg.AddProfile(new TaskMappingProfile());
         cfg.AddProfile(new TaskSolutionMappingProfile());
         cfg.AddProfile(new TaskMessageMappingProfile());
+        cfg.AddProfile(new TaskLogMappingProfile());
         cfg.AddProfile(new TaskConfigMappingProfile());
         cfg.AddProfile(new TaskConfigRepeatedMessageMappingProfile());
         cfg.AddProfile(new TaskConfigRepeatedMessageItemMappingProfile());

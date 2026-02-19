@@ -32,6 +32,7 @@ namespace FrontEASE.Domain.Services.Tasks
                 LoadConfigRepeatedMessage = true,
                 LoadMessages = true,
                 LoadSolutions = true,
+                LoadLogs = true,
             };
             return query;
         }
@@ -45,6 +46,7 @@ namespace FrontEASE.Domain.Services.Tasks
                 LoadConfigRepeatedMessage = true,
                 LoadMessages = true,
                 LoadSolutions = true,
+                LoadLogs = true,
             };
             return query;
         }

@@ -2,6 +2,7 @@
 using FrontEASE.Domain.Entities.Companies;
 using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Entities.Tasks.Configs;
+using FrontEASE.Domain.Entities.Tasks.Logs;
 using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Shared.Data.Enums.Tasks;
@@ -19,6 +20,7 @@ namespace FrontEASE.Domain.Entities.Tasks
             Solutions = [];
             Members = [];
             MemberGroups = [];
+            Logs = [];
         }
 
         #region Navigation
@@ -32,6 +34,7 @@ namespace FrontEASE.Domain.Entities.Tasks
 
         public IList<TaskMessage> Messages { get; set; }
         public IList<TaskSolution> Solutions { get; set; }
+        public IList<TaskLog> Logs { get; set; }
 
         #endregion
 

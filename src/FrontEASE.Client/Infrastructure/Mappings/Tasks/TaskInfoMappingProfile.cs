@@ -20,7 +20,8 @@ namespace FrontEASE.Client.Infrastructure.Mappings.Tasks
                 .ForMember(x => x.Name, cd => cd.MapFrom(map => map.Config.Name))
                 .ForMember(x => x.Author, cd => cd.MapFrom(map => map.Author))
                 .ForMember(x => x.ConnectorType, cd => cd.MapFrom(map => map.Config.Connector.ShortName))
-                .ForMember(x => x.SolutionType, cd => cd.MapFrom(map => map.Config.Solution.ShortName));
+                .ForMember(x => x.SolutionType, cd => cd.MapFrom(map => map.Config.Solution.ShortName))
+                .ForMember(x => x.Logs, cd => cd.MapFrom(map => map.Logs));
 
         }
     }

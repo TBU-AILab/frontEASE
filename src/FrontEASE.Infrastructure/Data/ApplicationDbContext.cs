@@ -38,6 +38,7 @@ using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.V
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.Values.Enums;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.Values.List;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.RepeatedMessage;
+using FrontEASE.Infrastructure.Data.Configuration.Tasks.Logs;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Messages;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Solutions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -109,6 +110,7 @@ namespace FrontEASE.Infrastructure.Data
             builder.ApplyConfiguration(new TaskConfiguration());
             builder.ApplyConfiguration(new TaskSolutionConfiguration());
             builder.ApplyConfiguration(new TaskMessageConfiguration());
+            builder.ApplyConfiguration(new TaskLogConfiguration());
             builder.ApplyConfiguration(new TaskConfigConfiguration());
             builder.ApplyConfiguration(new TaskConfigRepeatedMessageConfiguration());
             builder.ApplyConfiguration(new TaskConfigRepeatedMessageItemConfiguration());

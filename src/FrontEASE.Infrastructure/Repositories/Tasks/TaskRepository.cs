@@ -19,6 +19,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
 
             if (query.LoadSolutions) { tasksQuery = tasksQuery.Include(x => x.Solutions); }
             if (query.LoadMessages) { tasksQuery = tasksQuery.Include(x => x.Messages); }
+            if (query.LoadLogs) { tasksQuery = tasksQuery.Include(x => x.Logs); }
             if (query.IncludeMembers) { tasksQuery = tasksQuery.Include(x => x.Members); }
             if (query.IncludeGroups) { tasksQuery = tasksQuery.Include(x => x.MemberGroups); }
 
@@ -149,6 +150,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             var tasksQuery = context.Tasks
                 .AsSplitQuery()
                 .AsNoTracking()
+                .Include(x => x.Logs)
                 .Include(x => x.Config)
                     .ThenInclude(x => x.Modules)
                 .Include(x => x.Members)
@@ -174,6 +176,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             var tasksQuery = context.Tasks
                 .AsSplitQuery()
                 .AsNoTracking()
+                .Include(x => x.Logs )
                 .Include(x => x.Members)
                 .Include(x => x.MemberGroups)
                     .ThenInclude(x => x.Users)

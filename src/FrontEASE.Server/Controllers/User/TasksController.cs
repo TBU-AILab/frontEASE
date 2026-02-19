@@ -45,7 +45,7 @@ namespace FrontEASE.Server.Controllers.User
             }
             catch (Exception ex)
             {
-                var response = ProcessApiException(ex);
+                var response = ProcessApiException(ex) ;
                 result = GetHttpResult(response!.StatusCode, response);
             }
             return result;

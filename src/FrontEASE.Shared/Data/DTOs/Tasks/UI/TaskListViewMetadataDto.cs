@@ -9,5 +9,10 @@
         /// ID of the task currently being displayed in the mini overview mode
         /// </summary>
         public Guid? MiniOverviewTaskID { get; set; }
+
+        /// <summary>
+        /// ID of the task currently being displayed in the mini error mode
+        /// </summary>
+        public Guid? MiniErrorTaskID { get; set; }
     }
 }

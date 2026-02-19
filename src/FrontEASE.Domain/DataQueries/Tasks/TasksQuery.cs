@@ -4,6 +4,7 @@
     {
         public bool LoadSolutions { get; set; }
         public bool LoadMessages { get; set; }
+        public bool LoadLogs { get; set; }
         public bool LoadConfig { get; set; }      
         public bool LoadConfigRepeatedMessage { get; set; }
         public bool LoadConfigModules { get; set; }

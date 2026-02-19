@@ -1,6 +1,7 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Companies;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Logs;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Messages;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Solutions;
 using FrontEASE.Shared.Data.DTOs.Tasks.Results;
@@ -22,6 +23,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data
 
             Messages = [];
             Solutions = [];
+            Logs = [];
             Members = [];
             MemberGroups = [];
 
@@ -70,6 +72,12 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data
         /// </summary>
         [Resource($"{nameof(TaskDto)}.{nameof(Solutions)}")]
         public IList<TaskSolutionDto> Solutions { get; set; }
+
+        /// <summary>
+        /// List of task logs - for error tracking purposes.
+        /// </summary>
+        [Resource($"{nameof(TaskDto)}.{nameof(Logs)}")]
+        public IList<TaskLogDto> Logs { get; set; }
 
         #endregion
 

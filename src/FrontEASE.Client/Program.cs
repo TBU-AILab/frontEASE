@@ -23,6 +23,7 @@ using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options.Parameters.Options.Enum;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options.Parameters.Options.List;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.RepeatedMessage;
+using FrontEASE.Client.Infrastructure.Mappings.Tasks.Logs;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Messages;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Shared;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Solutions;
@@ -77,9 +78,7 @@ void SetupUIEnhancements()
         options.EnableNumericStep = true;
         options.ShowNumericStepButtons = true;
         options.ModalFocusTrap = true;
-        options.Immediate = false;
-        options.DebounceInterval = 100;
-        options.Debounce = true;
+        options.Immediate = true;
 
         options.ProductToken = settings!.LicenseSettings!.Blazorise!.LicenseToken;
     }).AddBootstrap5Providers().AddFontAwesomeIcons();
@@ -109,6 +108,7 @@ void SetupMappings()
         cfg.AddProfile(new TaskInfoMappingProfile());
         cfg.AddProfile(new TaskMessageMappingProfile());
         cfg.AddProfile(new TaskSolutionMappingProfile());
+        cfg.AddProfile(new TaskLogMappingProfile());
         cfg.AddProfile(new TaskConfigMappingProfile());
         cfg.AddProfile(new TaskConfigRepeatedMessageProfile());
         cfg.AddProfile(new TaskConfigRepeatedMessageItemProfile());

@@ -41,7 +41,8 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                 var queryDetailsCheck = new TasksQuery()
                 {
                     LoadSolutions = true,
-                    LoadMessages = true
+                    LoadMessages = true,
+                    LoadLogs = true,
                 };
                 var tasksForDataSync = await taskRepository.LoadAllWhere(x => !x.IsDeleted && x.State == TaskState.RUN, queryDetailsCheck, cancellationToken);
                 var tasksForDataSyncIDs = tasksForDataSync.Select(x => x.ID).ToList();

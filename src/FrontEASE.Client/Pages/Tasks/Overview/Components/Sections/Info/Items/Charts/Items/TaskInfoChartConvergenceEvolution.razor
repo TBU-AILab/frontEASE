@@ -38,7 +38,7 @@
         var messageIDs = TaskModalContext.Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
         var solutionsOrdered = TaskModalContext.Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
 
-        var values = taskChartManipulationService.GetValueEvolutionChartData(TaskModalContext.Task.Messages, solutionsOrdered);
+        var values = taskChartManipulationService.GetValueConvergenceChartData(TaskModalContext.Task.Messages, solutionsOrdered);
         Labels = values.Labels;
         Values = values.Values;
     }

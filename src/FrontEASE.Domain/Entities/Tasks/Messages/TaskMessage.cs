@@ -10,7 +10,6 @@ namespace FrontEASE.Domain.Entities.Tasks.Messages
         {
             ID = Guid.NewGuid();
             Content = string.Empty;
-
             Task = null!;
         }
 

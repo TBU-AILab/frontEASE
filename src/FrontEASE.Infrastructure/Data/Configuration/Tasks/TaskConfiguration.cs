@@ -37,6 +37,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Tasks
                 .WithOne(e => e.Task)
                 .HasForeignKey(e => e.TaskID);
 
+            builder.HasMany(e => e.Logs)
+                .WithOne(e => e.Task)
+                .HasForeignKey(e => e.TaskID);
+
             builder.HasMany(e => e.Members)
                 .WithMany(e => e.Tasks);
 

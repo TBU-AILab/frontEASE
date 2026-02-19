@@ -24,16 +24,18 @@
                             <DataGrid TItem="CompanyDto"
                                       Data="@PageContext.AvailableCompanies"
                                       SelectionMode="DataGridSelectionMode.Multiple"
-                                      SelectedRows="@selectedCompanies"
-                                      SelectedRowsChanged="(obj => SelectionChanged(obj))"
+                                      @bind-SelectedRows="selectedCompanies"
+                                      @bind-SelectedRows:after="SyncSelection"
                                       Filterable="true"
                                       RowSelectable="@((company) => {return !TaskModalContext.TaskMetadata.InitializationInProgres;})"
                                       FilterMode="DataGridFilterMode.Default"
                                       FilterMethod="DataGridFilterMethod.Contains"
-                                      Class="text-custom-primary border-custom-light"
+                                      Class="text-custom-primary border-custom-light data-grid-custom"
                                       Responsive>
 
                                 <DataGridColumns>
+
+                                    <DataGridMultiSelectColumn TItem="CompanyDto" Display="Display.None" />
 
                                     <DataGridColumn Filterable="false" TItem="CompanyDto" Field="@nameof(CompanyDto.Image)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Image), PropertyDisplayResourceType.FIELD)))" Sortable="false">
                                         <DisplayTemplate>
@@ -125,10 +127,10 @@
         selectedCompanies.AddRange(PageContext.AvailableCompanies.Where(x => selectedCompanyIDs.Contains(x.ID)));
     }
 
-    private void SelectionChanged(IList<CompanyDto> newSelection)
+    private void SyncSelection()
     {
         var selectedIDs = TaskModalContext.Task.MemberGroups.Select(x => x.ID);
-        var newSelectionIDs = newSelection.Select(x => x.ID);
+        var newSelectionIDs = selectedCompanies.Select(x => x.ID);
 
         var added = newSelectionIDs.Except(selectedIDs).ToList();
         var removed = selectedIDs.Except(newSelectionIDs).ToList();
