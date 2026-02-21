@@ -1,5 +1,6 @@
 ﻿using FrontEASE.Domain.Entities.Base.Manual;
 using FrontEASE.Domain.Entities.Companies;
+using FrontEASE.Domain.Entities.Management.Tags;
 using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Entities.Tasks.Configs;
 using FrontEASE.Domain.Entities.Tasks.Logs;
@@ -21,6 +22,7 @@ namespace FrontEASE.Domain.Entities.Tasks
             Members = [];
             MemberGroups = [];
             Logs = [];
+            Tags = [];
         }
 
         #region Navigation
@@ -35,6 +37,8 @@ namespace FrontEASE.Domain.Entities.Tasks
         public IList<TaskMessage> Messages { get; set; }
         public IList<TaskSolution> Solutions { get; set; }
         public IList<TaskLog> Logs { get; set; }
+
+        public IList<UserPreferenceTagOption> Tags { get; set; }
 
         #endregion
 

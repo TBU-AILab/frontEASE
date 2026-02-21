@@ -3,6 +3,7 @@ using FrontEASE.Domain.Entities.Companies;
 using FrontEASE.Domain.Entities.Jobs;
 using FrontEASE.Domain.Entities.Management;
 using FrontEASE.Domain.Entities.Management.General;
+using FrontEASE.Domain.Entities.Management.Tags;
 using FrontEASE.Domain.Entities.Management.Tokens;
 using FrontEASE.Domain.Entities.Management.Tokens.Connectors;
 using FrontEASE.Domain.Entities.Shared.Addresses;
@@ -64,6 +65,7 @@ namespace FrontEASE.Infrastructure.Data
         /* Management Data */
         public DbSet<UserPreferences> UserPreferences { get; set; }
         public DbSet<UserPreferenceTokenOption> UserPreferenceTokenOptions { get; set; }
+        public DbSet<UserPreferenceTagOption> UserPreferenceTagOptions { get; set; }
         public DbSet<UserPreferenceTokenOptionConnectorType> UserPreferenceTokenOptionConnectorTypes { get; set; }
         public DbSet<UserPreferenceGeneralOptions> UserPreferenceGeneralOptions { get; set; }
 
@@ -104,6 +106,7 @@ namespace FrontEASE.Infrastructure.Data
 
             builder.ApplyConfiguration(new UserPreferencesConfiguration());
             builder.ApplyConfiguration(new UserPreferenceTokenOptionsConfiguration());
+            builder.ApplyConfiguration(new UserPreferenceTagOptionsConfiguration());
             builder.ApplyConfiguration(new UserPreferenceGeneralOptionsConfiguration());
             builder.ApplyConfiguration(new UserPreferenceTokenOptionConnectorTypeConfiguration());
 

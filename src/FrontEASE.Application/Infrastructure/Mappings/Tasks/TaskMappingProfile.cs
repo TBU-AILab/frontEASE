@@ -14,6 +14,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
         private void CreateMaps()
         {
             CreateMap<Domain.Entities.Tasks.Task, TaskDto>()
+                .ForMember(x => x.Tags, cd => cd.MapFrom(map => map.Tags))
                 .ForMember(x => x.Logs, cd => cd.MapFrom(map => map.Logs))
                 .ForMember(x => x.Messages, cd => cd.MapFrom(map => map.Messages))
                 .ForMember(x => x.Solutions, cd => cd.MapFrom(map => map.Solutions))
@@ -25,6 +26,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
 
 
             CreateMap<TaskDto, Domain.Entities.Tasks.Task>()
+                .ForMember(x => x.Tags, cd => cd.MapFrom(map => map.Tags))
                 .ForMember(x => x.Logs, cd => cd.MapFrom(map => map.Logs))
                 .ForMember(x => x.Messages, cd => cd.MapFrom(map => map.Messages))
                 .ForMember(x => x.Solutions, cd => cd.MapFrom(map => map.Solutions))
@@ -47,6 +49,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
                 .ForMember(x => x.Messages, cd => cd.MapFrom(map => map.Messages))
                 .ForMember(x => x.Solutions, cd => cd.MapFrom(map => map.Solutions))
                 .ForMember(x => x.Logs, cd => cd.MapFrom(map => map.Logs))
+                .ForMember(x => x.Tags, cd => cd.MapFrom(map => map.Tags))
                 .ForMember(x => x.MemberGroups, cd => cd.MapFrom(map => map.MemberGroups))
                 .ForMember(x => x.Members, cd => cd.MapFrom(map => map.Members))
                 .ForMember(x => x.Config, cd => cd.MapFrom(map => map.Config));

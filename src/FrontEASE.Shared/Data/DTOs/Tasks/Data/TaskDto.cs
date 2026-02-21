@@ -1,4 +1,5 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Companies;
+using FrontEASE.Shared.Data.DTOs.Management.Tags;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Logs;
@@ -24,6 +25,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data
             Messages = [];
             Solutions = [];
             Logs = [];
+            Tags = [];
             Members = [];
             MemberGroups = [];
 
@@ -78,6 +80,12 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data
         /// </summary>
         [Resource($"{nameof(TaskDto)}.{nameof(Logs)}")]
         public IList<TaskLogDto> Logs { get; set; }
+
+        /// <summary>
+        /// List of tags used to decorate this task.
+        /// </summary>
+        [Resource($"{nameof(TaskDto)}.{nameof(Tags)}")]
+        public IList<UserPreferenceTagOptionDto> Tags { get; set; }
 
         #endregion
 

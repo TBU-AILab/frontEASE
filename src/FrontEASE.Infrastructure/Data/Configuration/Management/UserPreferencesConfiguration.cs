@@ -21,6 +21,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Management
             builder.HasMany(e => e.TokenOptions)
                 .WithOne(e => e.UserPreferences);
 
+            builder.HasMany(e => e.TagOptions)
+                .WithOne(e => e.UserPreferences);
+
             builder.HasOne(e => e.GeneralOptions)
                 .WithOne(e => e.UserPreferences);
         }

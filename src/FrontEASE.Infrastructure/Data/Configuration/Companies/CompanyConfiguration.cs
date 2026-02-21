@@ -26,7 +26,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Companies
                 .WithMany(e => e.Companies);
 
             builder.HasMany(e => e.Tasks)
-            .WithMany(e => e.MemberGroups);
+                .WithMany(e => e.MemberGroups);
         }
     }
 }

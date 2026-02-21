@@ -18,6 +18,11 @@
         /// <summary>
         /// Python core management
         /// </summary>
-        CORE
+        CORE,
+
+        /// <summary>
+        /// Tags management
+        /// </summary>
+        TAGS
     }
 }

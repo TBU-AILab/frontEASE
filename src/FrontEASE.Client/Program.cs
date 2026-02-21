@@ -8,6 +8,7 @@ using FrontEASE.Client.Infrastructure.Mappings.Companies;
 using FrontEASE.Client.Infrastructure.Mappings.Management;
 using FrontEASE.Client.Infrastructure.Mappings.Management.Core;
 using FrontEASE.Client.Infrastructure.Mappings.Management.General;
+using FrontEASE.Client.Infrastructure.Mappings.Management.Tags;
 using FrontEASE.Client.Infrastructure.Mappings.Management.Tokens;
 using FrontEASE.Client.Infrastructure.Mappings.Management.Tokens.Connectors;
 using FrontEASE.Client.Infrastructure.Mappings.Shared.Addresses;
@@ -96,6 +97,7 @@ void SetupMappings()
         cfg.AddProfile(new AddressMappingProfile());
 
         cfg.AddProfile(new UserPreferencesMappingProfile());
+        cfg.AddProfile(new UserPreferenceTagOptionMappingProfile());
         cfg.AddProfile(new UserPreferenceTokenOptionMappingProfile());
         cfg.AddProfile(new UserPreferenceGeneralOptionsMappingProfile());
         cfg.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());

@@ -46,6 +46,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Tasks
 
             builder.HasMany(e => e.MemberGroups)
                 .WithMany(e => e.Tasks);
+
+            builder.HasMany(e => e.Tags)
+                .WithMany(e => e.Tasks);
         }
     }
 }

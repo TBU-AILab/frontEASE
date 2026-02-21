@@ -18,6 +18,7 @@
         /* Management */
         public const string UserPreferences = "UserPreferences";
         public const string UserPreferenceTokens = "UserPreferenceTokens";
+        public const string UserPreferenceTags = "UserPreferenceTags";
         public const string UserPreferenceTokenConnectorTypes = "UserPreferenceTokenConnectorTypes";
         public const string UserPreferenceGeneralOptions = "UserPreferenceGeneralOptions";
 

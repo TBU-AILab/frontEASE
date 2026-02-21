@@ -5,6 +5,7 @@ using FrontEASE.Shared.Data.DTOs.Management;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Modules;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Packages;
 using FrontEASE.Shared.Data.DTOs.Management.General;
+using FrontEASE.Shared.Data.DTOs.Management.Tags;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens.Connectors;
 using FrontEASE.Shared.Data.DTOs.Shared.Addresses;
@@ -296,6 +297,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserCompanyManagementType.COMPANIES.GetEnumResourceValue(), Value = "Organizations" },
 
                 /* UserPreferencesManagementType */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserPreferencesManagementType.TAGS.GetEnumResourceValue(), Value = "Tags" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserPreferencesManagementType.TOKENS.GetEnumResourceValue(), Value = "Tokens" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserPreferencesManagementType.GENERAL.GetEnumResourceValue(), Value = "General" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserPreferencesManagementType.CORE.GetEnumResourceValue(), Value = "Core" },
@@ -420,6 +422,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Solutions), PropertyDisplayResourceType.FIELD), Value = "Solution history" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Messages), PropertyDisplayResourceType.FIELD), Value = "Message history" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Logs), PropertyDisplayResourceType.FIELD), Value = "Logs" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Tags), PropertyDisplayResourceType.FIELD), Value = "Tags" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.ProcessingErrors), PropertyDisplayResourceType.FIELD), Value = "Processing errors" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.DateCreated), PropertyDisplayResourceType.FIELD), Value = "Created" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.DateUpdated), PropertyDisplayResourceType.FIELD), Value = "Updated" },
@@ -453,6 +456,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.ShortName), PropertyDisplayResourceType.FIELD), Value = "Type" },
 
                 /* UserPreferencesDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.TagOptions), PropertyDisplayResourceType.FIELD), Value = "Tags" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.TokenOptions), PropertyDisplayResourceType.FIELD), Value = "Tokens" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.GeneralOptions), PropertyDisplayResourceType.FIELD), Value = "General options" },
 
@@ -467,6 +471,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Description), PropertyDisplayResourceType.FIELD), Value = "Description" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Name), PropertyDisplayResourceType.FIELD), Value = "Token name" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.ConnectorTypes), PropertyDisplayResourceType.FIELD), Value = "Connector types" },
+
+                /* UserPreferenceTagOptionDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.Tag), PropertyDisplayResourceType.FIELD), Value = "Tag" },
 
                 /* UserPreferenceTokenOptionConnectorTypeDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionConnectorTypeDto>(nameof(UserPreferenceTokenOptionConnectorTypeDto.ConnectorType), PropertyDisplayResourceType.FIELD), Value = "Connector type" },

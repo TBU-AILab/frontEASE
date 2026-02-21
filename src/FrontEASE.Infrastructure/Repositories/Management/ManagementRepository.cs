@@ -15,6 +15,8 @@ namespace FrontEASE.Infrastructure.Repositories.Management
                     .ThenInclude(x => x.TokenOptions)
                         .ThenInclude(x => x.ConnectorTypes)
                 .Include(x => x.UserPreferences)
+                    .ThenInclude(x => x.TagOptions)
+                .Include(x => x.UserPreferences)
                     .ThenInclude(x => x.GeneralOptions)
                 .AsSplitQuery()
                 .SingleOrDefaultAsync(x => x.Id == id.ToString(), cancellationToken);
