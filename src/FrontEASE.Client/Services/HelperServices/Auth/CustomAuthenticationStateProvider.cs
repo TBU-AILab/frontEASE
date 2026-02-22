@@ -50,13 +50,9 @@ namespace FrontEASE.Client.Services.HelperServices.Auth
                         new(ClaimTypes.Email, email ?? string.Empty)
                     };
 
-                    if (roles is not null)
+                    if (roles?.Count > 0)
                     {
-                        foreach (var role in roles)
-                        {
-                            var roleClaim = new Claim(ClaimTypes.Role, role!.ToString());
-                            claims.Add(roleClaim);
-                        }
+                        claims.AddRange(roles.Select(x => new Claim(ClaimTypes.Role, x!.ToString())));
                     }
 
                     var identity = new ClaimsIdentity(claims, "Token");

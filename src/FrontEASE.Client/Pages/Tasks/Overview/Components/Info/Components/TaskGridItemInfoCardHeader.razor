@@ -3,12 +3,12 @@
 <Row Class="gx-0 margin-background-offset-top-1">
     <CardHeader Display="Display.Flex" Border="Border.RoundedZero" Class="text-custom-primary bg-custom-secondary" Padding="Padding.Is2.FromEnd.Is2.FromStart">
         <Heading Size="HeadingSize.Is3" TextWeight="TextWeight.Bold" Margin="Margin.Is0">
-            @(string.IsNullOrWhiteSpace(TaskData.Config.Name) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : TaskData.Config.Name)
+            @(string.IsNullOrWhiteSpace(TaskModalContext.Task.Config.Name) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : TaskModalContext.Task.Config.Name)
         </Heading>
     </CardHeader>
 </Row>
 
 @code {
     [Parameter]
-    public TaskDto TaskData { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 }

@@ -38,10 +38,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             var states = filter.SelectedFilterStates.Select(x => x) ?? [];
 
             filter.State.Clear();
-            foreach (var state in states)
-            {
-                filter.State.Add(state);
-            }
+            filter.State.AddRange(states);
         }
 
         public (IList<ApplicationUserDto> PreservedMembers, IList<CompanyDto> PreservedGroups, IList<TaskModuleNoValidationDto> PreservedModules) PrepareTaskRequest(TaskDto task, bool cleanImages, bool cleanOptions)

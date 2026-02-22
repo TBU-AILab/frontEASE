@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FrontEASE.Domain.Entities.Management;
 using FrontEASE.Domain.Entities.Management.Core.Packages;
+using FrontEASE.Domain.Entities.Management.Tags;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Repositories.Management;
 using FrontEASE.Domain.Services.Core.Connector;
@@ -12,6 +13,12 @@ namespace FrontEASE.Domain.Services.Management
         ICoreConnector coreService,
         IMapper mapper) : IManagementService
     {
+        public async Task<IList<UserPreferenceTagOption>> LoadTags(CancellationToken cancellationToken)
+        {
+            var tags = await managementRepository.LoadTags(cancellationToken);
+            return tags.Any() ? tags : throw new NotFoundException();
+        }
+
         public async Task<GlobalPreferences> LoadGlobal(CancellationToken cancellationToken)
         {
             var packages = await coreService.GetPackages(cancellationToken);

@@ -12,8 +12,8 @@
                 else
                 {
                     <Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary task-info-overview-card-scrollable">
-                        <TaskGridItemInfoCardHeader TaskData="TaskData" />
-                        <TaskGridItemInfoCardBody TaskData="TaskData" />
+                        <TaskGridItemInfoCardHeader TaskModalContext="TaskModalContext" />
+                        <TaskGridItemInfoCardBody TaskModalContext="TaskModalContext" />
                     </Row>
                 }
 
@@ -27,7 +27,14 @@
     public TaskInfoDto TaskInfo { get; set; } = new();
 
     private bool isTaskInfoLoading;
+
     private TaskDto TaskData = new();
+    private TaskModalContext TaskModalContext { get; set; }
+
+    public TaskGridItemInfoCard()
+    {
+        TaskModalContext = new TaskModalContext(new(), TaskInfo, new(), new(), DataOperation.READ, null);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,6 +54,7 @@
         if (loaded is not null)
         {
             mapper.Map(loaded, TaskData);
+            mapper.Map(loaded, TaskModalContext.Task);
         }
     }
 }

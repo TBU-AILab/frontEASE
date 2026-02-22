@@ -3,9 +3,9 @@ using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Net;
 
-namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
+namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Operations
 {
-    public class AuthResponsesFilter : IOperationFilter
+    public class AuthResponseOperationFilter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {

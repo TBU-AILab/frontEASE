@@ -3,6 +3,7 @@ using FrontEASE.Shared.Data.DTOs.Companies;
 using FrontEASE.Shared.Data.DTOs.Shared.Addresses;
 using FrontEASE.Shared.Data.DTOs.Shared.Images;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
+using FrontEASE.Shared.Infrastructure.Utils.Extensions;
 
 namespace FrontEASE.Client.Services.ModelManipulationServices.Companies
 {
@@ -35,10 +36,10 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Companies
             foreach (var company in companies)
             {
                 var relevantUserIDs = company.Users.Select(x => x.Id);
-                var relevantUsers = users.Where(x => relevantUserIDs.Contains(x.Id));
+                var relevantUsers = users.Where(x => relevantUserIDs.Contains(x.Id)) ?? [];
 
                 company.Users.Clear();
-                foreach (var user in relevantUsers) { company.Users.Add(user); }
+                company.Users.AddRange(relevantUsers);
             }
         }
     }

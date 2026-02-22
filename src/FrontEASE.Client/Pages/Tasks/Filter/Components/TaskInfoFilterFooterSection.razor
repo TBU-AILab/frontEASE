@@ -77,7 +77,7 @@
             PageContext.Tasks.Clear();
             if (tasks?.Count > 0 == true)
             {
-                foreach (var task in tasks) { PageContext.Tasks.Add(task); }
+                PageContext.Tasks.AddRange(tasks);
             }
         }
 

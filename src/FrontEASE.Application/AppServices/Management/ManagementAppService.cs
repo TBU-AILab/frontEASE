@@ -3,6 +3,7 @@ using FrontEASE.Domain.Entities.Management;
 using FrontEASE.Domain.Services.Management;
 using FrontEASE.Domain.Services.Users;
 using FrontEASE.Shared.Data.DTOs.Management;
+using FrontEASE.Shared.Data.DTOs.Management.Tags;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
@@ -14,6 +15,13 @@ namespace FrontEASE.Application.AppServices.Management
         IManagementService managementService,
         IHttpContextAccessor contextAccessor) : IManagementAppService
     {
+        public async Task<IList<UserPreferenceTagOptionDto>> LoadTags(CancellationToken cancellationToken)
+        {
+            var tagsEntityList = await managementService.LoadTags(cancellationToken);
+            var tagsDtoList = mapper.Map<IList<UserPreferenceTagOptionDto>>(tagsEntityList);
+            return tagsDtoList;
+        }
+
         public async Task<UserPreferencesDto> Load(CancellationToken cancellationToken)
         {
             var id = await GetUserID(cancellationToken);

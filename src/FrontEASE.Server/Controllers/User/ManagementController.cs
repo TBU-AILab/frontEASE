@@ -1,8 +1,10 @@
 ﻿using FrontEASE.Application.AppServices.Management;
 using FrontEASE.Application.AppServices.Shared.Resources;
 using FrontEASE.Domain.Infrastructure.Settings.App;
+using FrontEASE.Server.Infrastructure.Swagger.Attributes;
 using FrontEASE.Shared.Data.DTOs.Management;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Packages;
+using FrontEASE.Shared.Data.DTOs.Management.Tags;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
 using FrontEASE.Shared.Infrastructure.Constants.Auth;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers.Specific;
@@ -26,6 +28,30 @@ namespace FrontEASE.Server.Controllers.User
     {
 
         /// <summary>
+        /// Loads all user-defined tags.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Preferences DTO model.</returns>
+        [HttpGet($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}")]
+        [ProducesResponseType(typeof(IList<UserPreferenceTagOptionDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> LoadTags([ParameterSwaggerIgnore] CancellationToken cancellationToken)
+        {
+            IActionResult result;
+            try
+            {
+                var response = await managementAppService.LoadTags(cancellationToken);
+                result = GetHttpResult(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Loads current user preferences.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
@@ -33,7 +59,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpGet($"{ManagementControllerConstants.BaseUrl}")]
         [ProducesResponseType(typeof(UserPreferencesDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> LoadPreferences(CancellationToken cancellationToken)
+        public async Task<IActionResult> LoadPreferences([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try
@@ -57,7 +83,7 @@ namespace FrontEASE.Server.Controllers.User
         [Authorize(Roles = $"{UserRoleNames.AdminRoleName},{UserRoleNames.SuperadminRoleName}")]
         [HttpGet($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Global}")]
         [ProducesResponseType(typeof(GlobalPreferenceCorePackageDto), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> LoadGlobalPreferences(CancellationToken cancellationToken)
+        public async Task<IActionResult> LoadGlobalPreferences([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try

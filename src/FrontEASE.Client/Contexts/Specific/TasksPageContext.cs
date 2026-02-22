@@ -1,4 +1,5 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Companies;
+using FrontEASE.Shared.Data.DTOs.Management.Tags;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
@@ -18,6 +19,7 @@ namespace FrontEASE.Client.Contexts.Specific
             TaskModuleOptions = [];
             AvailableUsers = [];
             AvailableCompanies = [];
+            AvailableTags = [];
         }
 
         public TaskListViewMetadataDto ViewMetadata { get; set; }
@@ -26,5 +28,6 @@ namespace FrontEASE.Client.Contexts.Specific
         public IList<TaskModuleNoValidationDto> TaskModuleOptions { get; set; }
         public IList<ApplicationUserDto> AvailableUsers { get; set; }
         public IList<CompanyDto> AvailableCompanies { get; set; }
+        public IList<UserPreferenceTagOptionDto> AvailableTags { get; set; }
     }
 }

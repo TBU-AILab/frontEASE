@@ -74,12 +74,6 @@ else
     {
         var connectorTypes = await typelistApiService.LoadTaskModuleOptions();
         PageContext.ConnectorTypes.Clear();
-        foreach (var type in connectorTypes)
-        {
-            if (type.PackageType == ModuleType.LLM_CONNECTOR)
-            {
-                PageContext.ConnectorTypes.Add(type);
-            }
-        }
+        PageContext.ConnectorTypes.AddRange(connectorTypes.Where(x => x.PackageType == ModuleType.LLM_CONNECTOR));
     }
 }

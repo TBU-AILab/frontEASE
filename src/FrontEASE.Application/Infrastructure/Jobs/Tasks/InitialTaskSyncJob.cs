@@ -51,6 +51,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                 LoadMessages = true,
                 LoadSolutions = true,
                 LoadLogs = true,
+                LoadTags = true,
                 IncludeMembers = true,
             };
 

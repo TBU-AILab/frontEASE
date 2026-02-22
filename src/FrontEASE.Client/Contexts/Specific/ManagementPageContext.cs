@@ -1,4 +1,5 @@
-﻿using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
+﻿using FrontEASE.Shared.Data.DTOs.Management.Tags;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 
 namespace FrontEASE.Client.Contexts.Specific
 {
@@ -11,9 +12,11 @@ namespace FrontEASE.Client.Contexts.Specific
 
             ConnectorTypes = [];
             ModuleTypes = [];
+            AllTags = [];
         }
 
         public IList<TaskModuleNoValidationDto> ConnectorTypes { get; set; }
         public IList<TaskModuleNoValidationDto> ModuleTypes { get; set; }
+        public IList<UserPreferenceTagOptionDto> AllTags { get; set; }
     }
 }

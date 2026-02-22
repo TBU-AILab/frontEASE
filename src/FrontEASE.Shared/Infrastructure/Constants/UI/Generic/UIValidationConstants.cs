@@ -21,6 +21,7 @@
         public const string ParameterNumericRange = "ParameterNumericRange";
         public const string ParameterOneOfEnumValues = "ParameterOneOfEnumValues";
         public const string ParameterTimeFormat = "ParameterTimeFormat";
+        public const string ParameterTagFormat = "ParameterTagFormat";
 
         public const string CorePackageAlreadyPresent = "CorePackageAlreadyPresent";
     }

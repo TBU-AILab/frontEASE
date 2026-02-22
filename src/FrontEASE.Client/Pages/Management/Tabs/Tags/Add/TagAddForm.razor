@@ -1,0 +1,86 @@
+﻿@inject IManagementApiService managementApiService
+@inject IManagementManipulationService managementManipulationService
+@inject IUIService uiService
+@inject IUIManager uiManager
+@inject IResourceHandler resourceHandler
+@inject IMapper mapper
+@inject Blazored.Toast.Services.IToastService toastService
+
+<Row Background="@uiManager.Theme.BackgroundOptions.Primary">
+    <Column ColumnSize="ColumnSize.Is12" Margin="Margin.Is2.FromBottom" Padding="Padding.Is0">
+        <Icon Name="@(isFormCollapsed? IconName.PlusCircle: IconName.MinusCircle)" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="@ChangeCollapseState" Class="float-right main-action-icon main-action-icon-primary" />
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12" Display="@(isFormCollapsed? Display.None: Display.Block)" Margin="Margin.Is2.FromTop.Is4.FromBottom">
+        <Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="@(async (e) => await HandleKeyDown(e))">
+            <Validations @ref="Validations" Mode="ValidationMode.Manual" Model="TagModel">
+
+                <TagDataFormSection TagModel="TagModel" Operation="DataOperation.INSERT" FullWidthFields="false" />
+
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                        <Button Color="Color.Success" Clicked="@InsertTag" Class="btn button btn-sized full-width" Disabled="@savingInProgress" TextWeight="TextWeight.Bold">
+                            @if (savingInProgress)
+                            {
+                                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                            }
+                            else
+                            {
+                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
+                            }
+                        </Button>
+                    </Field>
+                </Fields>
+
+            </Validations>
+        </Form>
+    </Column>
+</Row>
+
+@code {
+    [CascadingParameter]
+    public ManagementPageContext PageContext { get; set; } = null!;
+
+    private UserPreferenceTagOptionDto TagModel = new();
+    private Validations Validations = new();
+
+    private bool isFormCollapsed = true;
+    private bool savingInProgress = false;
+
+    public async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+                await InsertTag();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public async Task InsertTag()
+    {
+        savingInProgress = true;
+
+        if (await Validations.ValidateAll())
+        {
+            PageContext.UserPreferences!.TagOptions.Insert(0, mapper.Map<UserPreferenceTagOptionDto>(TagModel));
+            var updated = await managementApiService.UpdatePreferences(PageContext.UserPreferences);
+
+            if (updated is not null)
+            {
+                mapper.Map(updated, PageContext.UserPreferences);
+                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}: {TagModel.Tag})";
+                toastService.ShowSuccess(message);
+
+                managementManipulationService.ReinitializeTagModel(TagModel);
+            }
+        }
+
+        savingInProgress = false;
+        await uiService.CallRequestRefreshAsync();
+    }
+
+    private void ChangeCollapseState() => isFormCollapsed = !isFormCollapsed;
+}

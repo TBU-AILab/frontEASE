@@ -1,6 +1,7 @@
 ﻿using FrontEASE.Application.AppServices.Shared.Resources;
 using FrontEASE.Application.AppServices.Tasks;
 using FrontEASE.Domain.Infrastructure.Settings.App;
+using FrontEASE.Server.Infrastructure.Swagger.Attributes;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
@@ -35,7 +36,7 @@ namespace FrontEASE.Server.Controllers.User
         /// <returns>List of (shortened) task models.</returns>
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}")]
         [ProducesResponseType(typeof(IList<TaskInfoDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetTasks([FromQuery] TaskFilterActionRequestDto? filter, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetTasks([FromQuery] TaskFilterActionRequestDto? filter, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try
@@ -58,7 +59,7 @@ namespace FrontEASE.Server.Controllers.User
         /// <returns>List of (minimalistic) task status models.</returns>
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}/{TasksControllerConstants.StateParam}")]
         [ProducesResponseType(typeof(IList<TaskStatusDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetTaskStatuses(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetTaskStatuses([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try
@@ -83,7 +84,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> LoadTask([Required, FromRoute] Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> LoadTask([Required, FromRoute] Guid id, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try
@@ -108,7 +109,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}/{TasksControllerConstants.SimpleMode}")]
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> LoadTaskSimple([Required, FromRoute] Guid id, CancellationToken cancellationToken)
+        public async Task<IActionResult> LoadTaskSimple([Required, FromRoute] Guid id, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try
@@ -135,7 +136,7 @@ namespace FrontEASE.Server.Controllers.User
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(UnprocessableResultDto), (int)HttpStatusCode.UnprocessableContent)]
-        public async Task<IActionResult> RefreshTaskOptions([Required, FromBody] TaskDto task, CancellationToken cancellationToken)
+        public async Task<IActionResult> RefreshTaskOptions([Required, FromBody] TaskDto task, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try

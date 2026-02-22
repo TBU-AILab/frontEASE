@@ -68,7 +68,7 @@
         if (companies?.Count > 0 == true)
         {
             PageContext.Companies.Clear();
-            foreach (var company in companies) { PageContext.Companies.Add(company); }
+            PageContext.Companies.AddRange(companies);
         }
     }
 
@@ -78,7 +78,7 @@
         if (users?.Count > 0 == true)
         {
             PageContext.Users.Clear();
-            foreach (var user in users) { PageContext.Users.Add(user); }
+            PageContext.Users.AddRange(users);
         }
     }
 }

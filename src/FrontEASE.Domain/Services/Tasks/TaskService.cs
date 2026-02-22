@@ -33,6 +33,7 @@ namespace FrontEASE.Domain.Services.Tasks
                 LoadMessages = true,
                 LoadSolutions = true,
                 LoadLogs = true,
+                LoadTags = true,
             };
             return query;
         }

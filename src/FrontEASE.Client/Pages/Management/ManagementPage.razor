@@ -44,6 +44,9 @@
                             <TabPanel TextAlignment="TextAlignment.Start" Name="@(managementType.ToString())">
                                 @switch (managementTypeSelected)
                                 {
+                                    case UserPreferencesManagementType.TAGS:
+                                        <TagManagementTab />
+                                        break;
                                     case UserPreferencesManagementType.TOKENS:
                                         <TokensManagementTab />
                                         break;

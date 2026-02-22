@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using FrontEASE.Shared.Data.DTOs.Management;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Packages;
+using FrontEASE.Shared.Data.DTOs.Management.Tags;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens.Connectors;
+using FrontEASE.Shared.Infrastructure.Utils.Extensions;
 
 namespace FrontEASE.Client.Services.ModelManipulationServices.Management
 {
@@ -21,12 +23,15 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Management
                 if (item.SelectedTokenConnectorTypes?.Count > 0)
                 {
                     item.ConnectorTypes.Clear();
-                    foreach (var newType in item.SelectedTokenConnectorTypes)
-                    {
-                        item.ConnectorTypes.Add(new UserPreferenceTokenOptionConnectorTypeDto { ConnectorType = newType });
-                    }
+                    item.ConnectorTypes.AddRange(item.SelectedTokenConnectorTypes.Select(x => new UserPreferenceTokenOptionConnectorTypeDto { ConnectorType = x }));
                 }
             }
+        }
+
+        public void ReinitializeTagModel(UserPreferenceTagOptionDto tag)
+        {
+            var cleanModel = new UserPreferenceTagOptionDto();
+            mapper.Map(cleanModel, tag);
         }
 
         public void ReinitializeTokenModel(UserPreferenceTokenOptionDto token)

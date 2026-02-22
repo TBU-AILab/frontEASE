@@ -1,6 +1,7 @@
 ﻿using FrontEASE.Application.AppServices.Files;
 using FrontEASE.Application.AppServices.Shared.Resources;
 using FrontEASE.Domain.Infrastructure.Settings.App;
+using FrontEASE.Server.Infrastructure.Swagger.Attributes;
 using FrontEASE.Shared.Data.Enums.Shared.Files;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers.Specific;
@@ -32,7 +33,7 @@ namespace FrontEASE.Server.Controllers.Anonymous
         /// <returns>.ZIP archive of directory.</returns>
         [HttpGet($"{FilesControllerConstants.BaseUrl}/{FilesControllerConstants.Directory}/{FilesControllerConstants.TypeParam}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(FileStreamResult), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetDirectory([FromRoute, Required] Guid id, [FromRoute, Required] FileSpecification type, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetDirectory([FromRoute, Required] Guid id, [FromRoute, Required] FileSpecification type, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try

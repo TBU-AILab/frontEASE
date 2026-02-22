@@ -1,6 +1,7 @@
 ﻿using FrontEASE.Application.AppServices.Shared.Resources;
 using FrontEASE.Application.AppServices.Users;
 using FrontEASE.Domain.Infrastructure.Settings.App;
+using FrontEASE.Server.Infrastructure.Swagger.Attributes;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Infrastructure.Constants.Auth;
@@ -32,7 +33,7 @@ namespace FrontEASE.Server.Controllers.Admin
         /// <returns></returns>
         [HttpGet($"{UsersControllerConstants.BaseUrl}")]
         [ProducesResponseType(typeof(ApplicationUserDto), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetUser(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUser([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try
@@ -55,7 +56,7 @@ namespace FrontEASE.Server.Controllers.Admin
         /// <returns>List of users.</returns>
         [HttpGet($"{UsersControllerConstants.BaseUrl}/{ControllerConstants.All}")]
         [ProducesResponseType(typeof(IList<ApplicationUserDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetUsers(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetUsers([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try

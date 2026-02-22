@@ -2,6 +2,7 @@
 using FrontEASE.Client.Services.HelperServices.ErrorHandling;
 using FrontEASE.Client.Services.ModelManipulationServices.Management;
 using FrontEASE.Shared.Data.DTOs.Management;
+using FrontEASE.Shared.Data.DTOs.Management.Tags;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers.Specific;
 using System.Net;
 using System.Net.Http.Json;
@@ -26,6 +27,20 @@ namespace FrontEASE.Client.Services.ApiServices.Management
                 return null;
             }
             return await response.Content.ReadFromJsonAsync<GlobalPreferencesDto>();
+        }
+
+        public async Task<IList<UserPreferenceTagOptionDto>> LoadTags()
+        {
+            var url = string.Format($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}");
+            var response = await _client.GetAsync(url);
+            var expectedCodes = new List<HttpStatusCode>() { HttpStatusCode.OK, HttpStatusCode.NotFound };
+
+            if (!expectedCodes.Contains(response.StatusCode))
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return [];
+            }
+            return response.StatusCode == HttpStatusCode.NotFound ? [] : (await response.Content.ReadFromJsonAsync<IList<UserPreferenceTagOptionDto>>())!;
         }
 
         public async Task<UserPreferencesDto?> LoadPreferences()

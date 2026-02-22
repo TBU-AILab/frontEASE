@@ -67,7 +67,9 @@ using FrontEASE.Infrastructure.Repositories.Users;
 using FrontEASE.Server.Infrastructure.Hangfire.Attributes;
 using FrontEASE.Server.Infrastructure.Overrides.Auth;
 using FrontEASE.Server.Infrastructure.Overrides.Auth.Models;
-using FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation;
+using FrontEASE.Server.Infrastructure.Swagger.Filters.Documents;
+using FrontEASE.Server.Infrastructure.Swagger.Filters.Operations;
+using FrontEASE.Server.Infrastructure.Swagger.Filters.Schema;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions;
 using FrontEASE.Shared.Services.Resources;
 using Hangfire;
@@ -369,8 +371,9 @@ void SetupSwaggerGen()
         options.DescribeAllParametersInCamelCase();
         options.SupportNonNullableReferenceTypes();
 
-        options.OperationFilter<AuthResponsesFilter>();
-        options.OperationFilter<FromQueryDictionaryFilter>();
+        options.OperationFilter<AuthResponseOperationFilter>();
+        options.OperationFilter<FromQueryDictionaryOperationFilter>();
+        options.OperationFilter<ParameterIgnoreOperationFilter>();
         options.SchemaFilter<EnumSchemaFilter>();
 
         AddIntegrationAPIDtos(options);

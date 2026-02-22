@@ -961,6 +961,10 @@ nav.navbar {
 
 /* Tasks */
 
+.task-grid-tag {
+    background-color: var(--b-theme-primary);
+}
+
 .task-grid-min-width-author {
     min-width: 12rem;
 }

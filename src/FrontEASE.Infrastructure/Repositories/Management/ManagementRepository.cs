@@ -1,4 +1,5 @@
 ﻿using FrontEASE.Domain.Entities.Management;
+using FrontEASE.Domain.Entities.Management.Tags;
 using FrontEASE.Domain.Repositories.Management;
 using FrontEASE.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,15 @@ namespace FrontEASE.Infrastructure.Repositories.Management
 {
     public class ManagementRepository(ApplicationDbContext context) : IManagementRepository
     {
+        public async Task<IList<UserPreferenceTagOption>> LoadTags(CancellationToken cancellationToken)
+        {
+            var tags = await context.UserPreferenceTagOptions
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
+            return tags;
+        }
+
         public async Task<UserPreferences?> Load(Guid id, CancellationToken cancellationToken)
         {
             var query = await context.Users

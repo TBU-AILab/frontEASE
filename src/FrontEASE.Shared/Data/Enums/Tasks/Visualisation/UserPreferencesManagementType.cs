@@ -11,6 +11,11 @@
         TOKENS,
 
         /// <summary>
+        /// Tags management
+        /// </summary>
+        TAGS,
+
+        /// <summary>
         /// General options management
         /// </summary>
         GENERAL,
@@ -18,11 +23,6 @@
         /// <summary>
         /// Python core management
         /// </summary>
-        CORE,
-
-        /// <summary>
-        /// Tags management
-        /// </summary>
-        TAGS
+        CORE
     }
 }

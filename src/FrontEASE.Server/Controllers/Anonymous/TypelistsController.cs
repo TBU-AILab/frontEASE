@@ -1,6 +1,7 @@
 ﻿using FrontEASE.Application.AppServices.Shared.Resources;
 using FrontEASE.Application.AppServices.Shared.Typelists;
 using FrontEASE.Domain.Infrastructure.Settings.App;
+using FrontEASE.Server.Infrastructure.Swagger.Attributes;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers.Specific;
 using FrontEASE.Shared.Services.Resources;
@@ -28,7 +29,7 @@ namespace FrontEASE.Server.Controllers.Anonymous
         /// <returns>Module dynamic options.</returns>
         [HttpGet($"{TypelistsControllerConstants.BaseUrl}/{TypelistsControllerConstants.ModuleOptions}")]
         [ProducesResponseType(typeof(IList<TaskModuleNoValidationDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetModuleTypes(CancellationToken cancellationToken)
+        public async Task<IActionResult> GetModuleTypes([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try

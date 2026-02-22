@@ -1,0 +1,79 @@
+﻿@inject IResourceHandler resourceHandler
+@inject ITypelistApiService typelistApiService
+@inject IManagementApiService managementApiService
+@inject IUIService uiService
+@inject IMapper mapper
+
+<FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<UserPreferenceTagOptionDto>()))" />
+<Divider Class="divider-main-thin bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is0.FromTop" />
+
+@if (!isInitialized)
+{
+    <ContentLoadSpinner />
+}
+else
+{
+    <Row Margin="Margin.Is2.FromTop">
+        <Virtualize Items="PageContext.UserPreferences.TagOptions.OrderBy(x => x.Tag).ToList()" Context="tag">
+            <ItemContent>
+                @(tag.Tag)
+            </ItemContent>
+            <EmptyContent>
+                <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                    <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold">
+                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(UserPreferenceTagOptionDto)}.{UIElementConstants.Collection}"))
+                    </Heading>
+                </Column>
+            </EmptyContent>
+        </Virtualize>
+    </Row>
+}
+
+@code {
+    [CascadingParameter]
+    public ManagementPageContext PageContext { get; set; } = null!;
+
+    private bool isInitialized = false;
+
+    private async Task RefreshViewAsync()
+    {
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshViewAsync;
+        if (!isInitialized)
+        {
+            var loadTagsTask = Task.CompletedTask;
+            var loadPreferencesTask = Task.CompletedTask;
+
+            if (!(PageContext.AllTags?.Any() == true))
+            {
+                loadTagsTask = LoadTags();
+            }
+
+            loadPreferencesTask = LoadPreferences();
+
+            await Task.WhenAll(loadTagsTask, loadPreferencesTask);
+        }
+        await base.OnInitializedAsync();
+        isInitialized = true;
+    }
+
+    private async Task LoadPreferences()
+    {
+        var preferences = await managementApiService.LoadPreferences();
+        if (preferences is not null)
+        {
+            mapper.Map(preferences, PageContext.UserPreferences);
+        }
+    }
+
+    private async Task LoadTags()
+    {
+        var tags = await managementApiService.LoadTags();
+        PageContext.AllTags.Clear();
+        PageContext.AllTags.AddRange(tags);
+    }
+}

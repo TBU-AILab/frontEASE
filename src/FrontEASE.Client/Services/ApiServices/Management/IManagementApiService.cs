@@ -1,4 +1,5 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Management;
+using FrontEASE.Shared.Data.DTOs.Management.Tags;
 
 namespace FrontEASE.Client.Services.ApiServices.Management
 {
@@ -8,5 +9,6 @@ namespace FrontEASE.Client.Services.ApiServices.Management
         Task<GlobalPreferencesDto?> LoadGlobalPreferences();
         Task<UserPreferencesDto?> UpdatePreferences(UserPreferencesDto editedPreferencesDto);
         Task<GlobalPreferencesDto?> UpdateGlobalPreferences(GlobalPreferencesDto editedGlobalPreferencesDto);
+        Task<IList<UserPreferenceTagOptionDto>> LoadTags();
     }
 }

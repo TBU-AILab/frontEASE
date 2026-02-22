@@ -97,10 +97,7 @@
     private IList<UserPreferenceTokenOptionConnectorTypeDto> GetTokenConnectorTypes()
     {
         var castedTypes = new List<UserPreferenceTokenOptionConnectorTypeDto>();
-        foreach (var connectorType in PageContext.ConnectorTypes)
-        {
-            castedTypes.Add(new UserPreferenceTokenOptionConnectorTypeDto() { ConnectorType = connectorType.ShortName });
-        }
+        castedTypes.AddRange(PageContext.ConnectorTypes.Select(x => new UserPreferenceTokenOptionConnectorTypeDto() { ConnectorType = x.ShortName }));
         return castedTypes;
     }
 

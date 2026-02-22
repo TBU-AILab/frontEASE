@@ -59,7 +59,7 @@ else
         if (users?.Count > 0 == true)
         {
             PageContext.Users.Clear();
-            foreach (var user in users) { PageContext.Users.Add(user); }
+            PageContext.Users.AddRange(users);
         }
     }
 }

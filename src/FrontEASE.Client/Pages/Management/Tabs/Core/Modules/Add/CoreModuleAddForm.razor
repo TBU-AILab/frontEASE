@@ -102,7 +102,7 @@
         if (moduleOptions?.Count > 0 == true)
         {
             PageContext.ModuleTypes.Clear();
-            foreach (var option in moduleOptions) { PageContext.ModuleTypes.Add(option); }
+            PageContext.ModuleTypes.AddRange(moduleOptions);
         }
     }
 
