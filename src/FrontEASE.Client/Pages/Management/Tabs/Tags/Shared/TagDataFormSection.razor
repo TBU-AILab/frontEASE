@@ -7,7 +7,6 @@
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.Tag), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
             <TextInput ElementId="@(GetElementIdByOperation(nameof(UserPreferenceTagOptionDto.Tag)))"
-                       TextTransform="TextTransform.Uppercase"
                        Role="TextRole.Text"
                        Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.Tag), PropertyDisplayResourceType.PLACEHOLDER)))"
                        @bind-Value="@TagModel.Tag">

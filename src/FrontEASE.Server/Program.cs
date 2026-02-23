@@ -38,6 +38,7 @@ using FrontEASE.DataContracts.Models.Core;
 using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Infrastructure.Settings.Connection;
+using FrontEASE.Domain.Infrastructure.Utils.Users;
 using FrontEASE.Domain.Repositories.Companies;
 using FrontEASE.Domain.Repositories.Jobs;
 using FrontEASE.Domain.Repositories.Management;
@@ -509,6 +510,8 @@ void SetupHelperServices()
     builder!.Services.AddSingleton<IMemoryCache, MemoryCache>();
     builder!.Services.AddSingleton<IResourceHandler, ResourceHandler>();
     builder!.Services.AddTransient<ILoggingService, SentryLoggingService>();
+
+    builder!.Services.AddSingleton<IUserHelper, UserHelper>();
 }
 
 void SetupHttpClients()

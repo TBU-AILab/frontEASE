@@ -1,11 +1,12 @@
 ﻿@inject IResourceHandler resourceHandler
-@inject ITypelistApiService typelistApiService
 @inject IManagementApiService managementApiService
 @inject IUIService uiService
 @inject IMapper mapper
 
+
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<UserPreferenceTagOptionDto>()))" />
 <Divider Class="divider-main-thin bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is0.FromTop" />
+
 
 @if (!isInitialized)
 {
@@ -13,19 +14,75 @@
 }
 else
 {
-    <Row Margin="Margin.Is2.FromTop">
-        <Virtualize Items="PageContext.UserPreferences.TagOptions.OrderBy(x => x.Tag).ToList()" Context="tag">
-            <ItemContent>
-                @(tag.Tag)
-            </ItemContent>
-            <EmptyContent>
-                <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
-                    <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold">
-                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(UserPreferenceTagOptionDto)}.{UIElementConstants.Collection}"))
-                    </Heading>
+    <Row Margin="Margin.Is2.FromTop.Is0.FromStart.Is0.FromEnd">
+        @if (PageContext.UserPreferences.TagOptions.Count > 0)
+        {
+            <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
+                <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseStateUser" Padding="Padding.Is2">
+                    <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
+                        <Text TextWeight="TextWeight.Bold" Class="text-center">
+                            @(resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.TagOptions), PropertyDisplayResourceType.FIELD)}.{ManagementMetadataConstants.User}"))
+                        </Text>
+                    </Div>
+                    <Icon Name="@(!isUserTagsCollapsed ? IconName.AngleUp : IconName.AngleDown)" Class="text-custom-primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
                 </Column>
-            </EmptyContent>
-        </Virtualize>
+
+                @if (!isUserTagsCollapsed)
+                {
+                    <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
+                        <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
+                            <Virtualize Items="PageContext.UserPreferences.TagOptions" Context="tag">
+                                <ItemContent>
+                                    <Column ColumnSize="ColumnSize.Is2.OnWidescreen.Is3.OnTablet.Is6.OnMobile">
+                                        <TagListItem Tag="tag" OtherTags="OtherTags" />
+                                    </Column>
+                                </ItemContent>
+                                <EmptyContent>
+                                    <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                                        <Heading Size="HeadingSize.Is4" TextColor="TextColor.Dark" TextWeight="TextWeight.Bold">
+                                            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(UserPreferenceTagOptionDto)}.{ManagementMetadataConstants.User}.{UIElementConstants.Collection}"))
+                                        </Heading>
+                                    </Column>
+                                </EmptyContent>
+                            </Virtualize>
+                        </Row>
+                    </Column>
+                }
+            </Container>
+        }
+
+        <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
+            <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseStateAll" Padding="Padding.Is2">
+                <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
+                    <Text TextWeight="TextWeight.Bold" Class="text-center">
+                        @(resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.TagOptions), PropertyDisplayResourceType.FIELD)}.{ManagementMetadataConstants.All}"))
+                    </Text>
+                </Div>
+                <Icon Name="@(!isAllTagsCollapsed ? IconName.AngleUp : IconName.AngleDown)" Class="text-custom-primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
+            </Column>
+
+            @if (!isAllTagsCollapsed)
+            {
+                <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
+                    <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
+                        <Virtualize Items="OtherTags" Context="tag">
+                            <ItemContent>
+                                <Column ColumnSize="ColumnSize.Is2.OnWidescreen.Is3.OnTablet.Is6.OnMobile">
+                                    <TagListItem Tag="tag" OtherTags="OtherTags" />
+                                </Column>
+                            </ItemContent>
+                            <EmptyContent>
+                                <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                                    <Heading Size="HeadingSize.Is4" TextWeight="TextWeight.Bold">
+                                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(UserPreferenceTagOptionDto)}.{ManagementMetadataConstants.All}.{UIElementConstants.Collection}"))
+                                    </Heading>
+                                </Column>
+                            </EmptyContent>
+                        </Virtualize>
+                    </Row>
+                </Column>
+            }
+        </Container>
     </Row>
 }
 
@@ -33,32 +90,46 @@ else
     [CascadingParameter]
     public ManagementPageContext PageContext { get; set; } = null!;
 
+    [Parameter]
+    public IList<UserPreferenceTagOptionDto> OtherTags { get; set; } = [];
+
     private bool isInitialized = false;
+    private bool isUserTagsCollapsed;
+    private bool isAllTagsCollapsed;
+
+    private void ChangeCollapseStateUser() => isUserTagsCollapsed = !isUserTagsCollapsed;
+    private void ChangeCollapseStateAll() => isAllTagsCollapsed = !isAllTagsCollapsed;
+
+    private void RecalculateOtherTags()
+    {
+        var userTags = new HashSet<string>(PageContext.UserPreferences.TagOptions.Select(ut => ut.Tag));
+        OtherTags.Clear();
+        OtherTags.AddRange(PageContext.AllTags.Where(t => !(userTags.Any(x => string.Equals(x, t.Tag, StringComparison.InvariantCultureIgnoreCase)))));
+    }
 
     private async Task RefreshViewAsync()
     {
+        RecalculateOtherTags();
         await InvokeAsync(StateHasChanged);
     }
 
     protected override async Task OnInitializedAsync()
     {
         uiService.RefreshRequested += RefreshViewAsync;
-        if (!isInitialized)
-        {
-            var loadTagsTask = Task.CompletedTask;
-            var loadPreferencesTask = Task.CompletedTask;
 
-            if (!(PageContext.AllTags?.Any() == true))
-            {
-                loadTagsTask = LoadTags();
-            }
+        var loadTagsTask = Task.CompletedTask;
+        var loadPreferencesTask = Task.CompletedTask;
 
-            loadPreferencesTask = LoadPreferences();
+        loadTagsTask = LoadTags();
 
-            await Task.WhenAll(loadTagsTask, loadPreferencesTask);
-        }
+        loadPreferencesTask = LoadPreferences();
+        await Task.WhenAll(loadTagsTask, loadPreferencesTask);
+
         await base.OnInitializedAsync();
+
         isInitialized = true;
+        isAllTagsCollapsed = true;
+        isUserTagsCollapsed = false;
     }
 
     private async Task LoadPreferences()
@@ -75,5 +146,7 @@ else
         var tags = await managementApiService.LoadTags();
         PageContext.AllTags.Clear();
         PageContext.AllTags.AddRange(tags);
+
+        RecalculateOtherTags();
     }
 }

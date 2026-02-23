@@ -10,19 +10,19 @@
     {
         <ModalContent Shadow="Shadow.Small" Class="bg-custom-primary">
 
-            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")} - {Token.Name}")" />
+            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")} - {Tag.Tag}")" />
 
             <ModalBody Margin="Margin.Is3.FromTop">
                 <Row>
                     <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
                         <Text Class="font-large">
-                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(UserPreferenceTokenOptionDto)}.{UIConstants.Question}")
+                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(UserPreferenceTagOptionDto)}.{UIConstants.Question}")
                         </Text>
                     </Column>
                 </Row>
                 <Row Margin="Margin.Is4.FromTop">
                     <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile">
-                        <Button Clicked="@DeleteToken" Color="Color.Danger" Class="btn btn-sized button full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
+                        <Button Clicked="@DeleteTag" Color="Color.Danger" Class="btn btn-sized button full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
                             @if (deletingInProgress)
                             {
                                 <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" TextSize="TextSize.Medium" />
@@ -49,7 +49,10 @@
     public ManagementPageContext PageContext { get; set; } = null!;
 
     [Parameter]
-    public UserPreferenceTokenOptionDto Token { get; set; } = new();
+    public UserPreferenceTagOptionDto Tag { get; set; } = new();
+
+    [Parameter]
+    public IList<UserPreferenceTagOptionDto> OtherTags { get; set; } = [];
 
     private Modal DeleteModal = new();
     private bool deletingInProgress = false;
@@ -60,7 +63,7 @@
         switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
         {
             case ShortcutKeys.ENTER:
-                await DeleteToken();
+                await DeleteTag();
                 break;
             case ShortcutKeys.ESCAPE:
                 await HideModal();
@@ -70,21 +73,51 @@
         }
     }
 
-    public async Task DeleteToken()
+    public async Task DeleteTag()
     {
         deletingInProgress = true;
 
-        PageContext.UserPreferences.TokenOptions.Remove(Token);
-        var editedPreferences = await managementApiService.UpdatePreferences(PageContext.UserPreferences);
+        var isUserTag = PageContext.UserPreferences.TagOptions.Any(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
+        var deleteSuccess = false;
+        var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {Tag.Tag}";
 
-        if (editedPreferences is not null)
+        if (isUserTag)
         {
-            mapper.Map(editedPreferences, PageContext.UserPreferences);
-            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {Token.Token} ({string.Join(", ", Token.ConnectorTypes.Select(x => x.ConnectorType))})";
-            toastService.ShowSuccess(message);
+            PageContext.UserPreferences.TagOptions.Remove(Tag);
+            var editedPreferences = await managementApiService.UpdatePreferences(PageContext.UserPreferences);
+
+            if (editedPreferences is not null)
+            {
+                mapper.Map(editedPreferences, PageContext.UserPreferences);
+                deleteSuccess = true;
+            }
+        }
+        else
+        {
+            var isDeleted = await managementApiService.DeleteTag(Tag.Tag);
+            if (isDeleted)
+            {
+                deleteSuccess = true;
+            }
+
+        }
+
+        if (deleteSuccess)
+        {
+            var deletedFromAll = PageContext.AllTags.SingleOrDefault(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
+            if (deletedFromAll is not null)
+            {
+                PageContext.AllTags.Remove(deletedFromAll);
+            }
+
+            var deletedFromOther = OtherTags.SingleOrDefault(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
+            if (deletedFromOther is not null)
+            {
+                OtherTags.Remove(deletedFromOther);
+            }
 
             await uiService.CallRequestRefreshAsync();
-            await HideModal();
+            toastService.ShowSuccess(message);
         }
 
         await HideModal();

@@ -1,11 +1,18 @@
 ﻿using AutoMapper;
 using FrontEASE.Domain.Entities.Management;
+using FrontEASE.Domain.Entities.Management.Tags;
+using FrontEASE.Domain.Entities.Shared.Users;
+using FrontEASE.Domain.Infrastructure.Exceptions.Enums;
+using FrontEASE.Domain.Infrastructure.Exceptions.Types;
+using FrontEASE.Domain.Infrastructure.Utils.Users;
 using FrontEASE.Domain.Services.Management;
 using FrontEASE.Domain.Services.Users;
 using FrontEASE.Shared.Data.DTOs.Management;
 using FrontEASE.Shared.Data.DTOs.Management.Tags;
-using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
+using FrontEASE.Shared.Data.Enums.Auth;
+using FrontEASE.Shared.Infrastructure.Constants.UI.Generic;
+using FrontEASE.Shared.Infrastructure.Constants.UI.Specific;
+using System.Net;
 
 namespace FrontEASE.Application.AppServices.Management
 {
@@ -13,8 +20,59 @@ namespace FrontEASE.Application.AppServices.Management
         IMapper mapper,
         IUserService userService,
         IManagementService managementService,
-        IHttpContextAccessor contextAccessor) : IManagementAppService
+        IUserHelper userHelper) : IManagementAppService
     {
+
+        private void CheckPermissionsToDelete(ApplicationUser? currentUser, UserPreferenceTagOption? deletedTag)
+        {
+            /* deleted not found */
+            if (deletedTag is null)
+            { throw new NotFoundException(); }
+
+            if (currentUser is null)
+            { throw new UnauthorizedException(); }
+
+            var currentRole = userHelper.UserRoleGuidToRole(Guid.Parse(currentUser.UserRole!.RoleId ?? Guid.Empty.ToString()));
+
+            /* OWNER can always delete any tag */
+            if (currentRole == UserRole.OWNER)
+            { return; }
+
+            var deletedTagOwner = deletedTag.UserPreferences.User;
+            var isAuthor = currentUser.Id == deletedTagOwner.Id;
+            var hasLinkedTasks = deletedTag.Tasks.Count > 0;
+
+            /* others can delete a tag even if they own it and it does not have any linked tasks */
+            if (!isAuthor || hasLinkedTasks)
+            {
+                throw new UnauthorizedException();
+            }
+        }
+
+        public async Task<UserPreferenceTagOptionDto> Create(UserPreferenceTagOptionDto tag, CancellationToken cancellationToken)
+        {
+            var duplicate = await managementService.LoadTag(tag.Tag, true, cancellationToken);
+            if (duplicate is not null)
+            {
+                throw new BadRequestException()
+                {
+                    InternalExceptionCode = ApiInternalExceptionCode.BAD_REQUEST,
+                    Errors = new Dictionary<string, string[]>()
+                    {{nameof(tag),new string[] { $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(UserPreferenceTagOptionDto)}.{UIExceptionConstants.TagExists}"}}}
+                };
+            }
+
+            var id = await userService.LoadCurrentUserId(cancellationToken);
+            var preferencesEntity = await managementService.Load(id, cancellationToken);
+            var insertedEntity = mapper.Map<UserPreferenceTagOption>(tag);
+
+            preferencesEntity.TagOptions.Add(insertedEntity);
+            await managementService.Update(id, preferencesEntity, cancellationToken);
+            var insertedDto = mapper.Map<UserPreferenceTagOptionDto>(insertedEntity);
+
+            return insertedDto;
+        }
+
         public async Task<IList<UserPreferenceTagOptionDto>> LoadTags(CancellationToken cancellationToken)
         {
             var tagsEntityList = await managementService.LoadTags(cancellationToken);
@@ -24,7 +82,7 @@ namespace FrontEASE.Application.AppServices.Management
 
         public async Task<UserPreferencesDto> Load(CancellationToken cancellationToken)
         {
-            var id = await GetUserID(cancellationToken);
+            var id = await userService.LoadCurrentUserId(cancellationToken);
 
             var preferencesEntity = await managementService.Load(id, cancellationToken);
             var preferencesDto = mapper.Map<UserPreferencesDto>(preferencesEntity);
@@ -40,7 +98,7 @@ namespace FrontEASE.Application.AppServices.Management
 
         public async Task<UserPreferencesDto> Update(UserPreferencesDto preferences, CancellationToken cancellationToken)
         {
-            var id = await GetUserID(cancellationToken);
+            var id = await userService.LoadCurrentUserId(cancellationToken);
             var preferencesEntity = mapper.Map<UserPreferences>(preferences);
 
             var updated = await managementService.Update(id, preferencesEntity, cancellationToken);
@@ -57,12 +115,14 @@ namespace FrontEASE.Application.AppServices.Management
             return updatedDto;
         }
 
-        private async Task<Guid> GetUserID(CancellationToken cancellationToken)
+        public async Task DeleteTag(string tag, CancellationToken cancellationToken)
         {
-            var userMail = contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
-            var user = await userService.Load(userMail, cancellationToken);
+            var currentUser = await userService.LoadCurrentUser(cancellationToken);
+            var deletedEntity = await managementService.LoadTag(tag, false, cancellationToken);
 
-            return Guid.Parse(user!.Id);
+            CheckPermissionsToDelete(currentUser, deletedEntity);
+
+            await managementService.DeleteTag(deletedEntity!, cancellationToken);
         }
     }
 }

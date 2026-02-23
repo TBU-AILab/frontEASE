@@ -28,6 +28,6 @@
         /// <summary>
         /// Default value
         /// </summary>
-        DEFAULT
+        DEFAULT,
     }
 }

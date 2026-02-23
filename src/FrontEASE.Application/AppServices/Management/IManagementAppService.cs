@@ -5,10 +5,12 @@ namespace FrontEASE.Application.AppServices.Management
 {
     public interface IManagementAppService
     {
+        Task<UserPreferenceTagOptionDto> Create(UserPreferenceTagOptionDto tag, CancellationToken cancellationToken);
         Task<UserPreferencesDto> Load(CancellationToken cancellationToken);
         Task<IList<UserPreferenceTagOptionDto>> LoadTags(CancellationToken cancellationToken);
         Task<GlobalPreferencesDto> LoadGlobal(CancellationToken cancellationToken);
         Task<UserPreferencesDto> Update(UserPreferencesDto preferences, CancellationToken cancellationToken);
         Task<GlobalPreferencesDto> UpdateGlobal(GlobalPreferencesDto globalPreferences, CancellationToken cancellationToken);
+        Task DeleteTag(string tag, CancellationToken cancellationToken);
     }
 }

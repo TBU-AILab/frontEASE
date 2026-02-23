@@ -14,7 +14,10 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Management.Tags
         private void CreateMaps()
         {
             CreateMap<UserPreferenceTagOption, UserPreferenceTagOptionDto>()
-                .ReverseMap();
+                .ForMember(x => x.TaskCount, opt => opt.MapFrom(x => x.Tasks.Count));
+
+            CreateMap<UserPreferenceTagOptionDto, UserPreferenceTagOption>()
+                .ForMember(x => x.Tasks, opt => opt.Ignore());
 
             CreateMap<UserPreferenceTagOption, UserPreferenceTagOption>()
                 .ForMember(x => x.ID, opt => opt.Ignore())

@@ -82,5 +82,29 @@ namespace FrontEASE.Client.Services.ApiServices.Management
             }
             return await response.Content.ReadFromJsonAsync<UserPreferencesDto>();
         }
+
+        public async Task<UserPreferenceTagOptionDto?> AddTag(UserPreferenceTagOptionDto addTagDto)
+        {
+            var url = $"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}";
+            var response = await _client.PostAsJsonAsync(url, addTagDto);
+            if (response.StatusCode != HttpStatusCode.Created)
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return null;
+            }
+            return await response.Content.ReadFromJsonAsync<UserPreferenceTagOptionDto>();
+        }
+
+        public async Task<bool> DeleteTag(string tag)
+        {
+            var url = $"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}/{tag}";
+            var response = await _client.DeleteAsync(url);
+            if (response.StatusCode != HttpStatusCode.NoContent)
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return false;
+            }
+            return true;
+        }
     }
 }

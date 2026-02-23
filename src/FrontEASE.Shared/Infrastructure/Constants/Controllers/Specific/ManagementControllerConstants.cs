@@ -6,5 +6,7 @@
 
         public const string Global = "global";
         public const string Tags = "tags";
+
+        public const string TagParam = "tag";
     }
 }

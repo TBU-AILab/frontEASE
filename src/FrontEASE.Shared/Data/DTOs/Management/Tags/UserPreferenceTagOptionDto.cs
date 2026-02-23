@@ -14,15 +14,6 @@ namespace FrontEASE.Shared.Data.DTOs.Management.Tags
             Tag = string.Empty;
         }
 
-        #region Navigation
-
-        /// <summary>
-        /// Tag identifier
-        /// </summary>
-        public Guid ID { get; set; }
-
-        #endregion
-
         #region Data
 
         /// <summary>
@@ -33,6 +24,16 @@ namespace FrontEASE.Shared.Data.DTOs.Management.Tags
         [TagFormatValidation]
         [StringLengthValidation(2, 32)]
         public string Tag { get; set; }
+
+        #endregion
+
+        #region Visualization
+
+        /// <summary>
+        /// UI helper - number of tasks linked to this tag
+        /// </summary>
+        [Resource($"{nameof(UserPreferenceTagOptionDto)}.{nameof(TaskCount)}")]
+        public int TaskCount { get; set; }
 
         #endregion
     }

@@ -26,6 +26,55 @@ namespace FrontEASE.Server.Controllers.User
         IResourceAppService resourceAppService,
         AppSettings appSettings) : ApiControllerBase(resourceHandler, resourceAppService, appSettings)
     {
+        /// <summary>
+        /// Inserts a new task tag.
+        /// </summary>
+        /// <param name="tag">Created tag DTO.</param>
+        /// <returns>Inserted tag DTO.</returns>
+        [HttpPost($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}")]
+        [ProducesResponseType(typeof(UserPreferenceTagOptionDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> InsertTag([FromBody, Required] UserPreferenceTagOptionDto tag)
+        {
+            IActionResult result;
+            try
+            {
+                ValidateModel();
+                var response = await managementAppService.Create(tag, CancellationToken.None);
+                result = GetHttpResult(HttpStatusCode.Created, response, nameof(InsertTag));
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// Deletes a task tag.
+        /// </summary>
+        /// <param name="tag">Deleted tag.</param>
+        [HttpDelete($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}/{ManagementControllerConstants.TagParam}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> DeleteTag([Required, FromRoute] string tag)
+        {
+            IActionResult result;
+            try
+            {
+                await managementAppService.DeleteTag(tag, CancellationToken.None);
+                result = GetHttpResult(HttpStatusCode.NoContent, null);
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
 
         /// <summary>
         /// Loads all user-defined tags.

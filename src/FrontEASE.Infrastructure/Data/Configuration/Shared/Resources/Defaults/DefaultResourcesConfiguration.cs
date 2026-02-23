@@ -212,6 +212,11 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(UserPreferenceTagOptionDto)}.{UIElementConstants.Collection}", Value="No tags have been found." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(UserPreferenceTagOptionDto)}.{UIConstants.Question}", Value="Do you really wish to permanently delete this tag?" },
 
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(UserPreferenceTagOptionDto)}.{ManagementMetadataConstants.User}.{UIElementConstants.Collection}", Value="No user tags have been found." },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(UserPreferenceTagOptionDto)}.{ManagementMetadataConstants.All}.{UIElementConstants.Collection}", Value="No tags have been found." },
+                
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(UserPreferenceTagOptionDto)}.{UIExceptionConstants.TagExists}", Value="This tag already exists." },
+
                 /* UserPreferenceTokenOptionDto */
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(UserPreferenceTokenOptionDto)}.{UIElementConstants.Collection}", Value="No tokens have been found." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(UserPreferenceTokenOptionDto)}.{UIConstants.Question}", Value="Do you really wish to permanently delete this token?" },
@@ -483,6 +488,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
 
                 /* UserPreferenceTagOptionDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.Tag), PropertyDisplayResourceType.FIELD), Value = "Tag" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.TaskCount), PropertyDisplayResourceType.FIELD), Value = "Linked tasks" },
+
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.TagOptions), PropertyDisplayResourceType.FIELD)}.{ManagementMetadataConstants.User}", Value = "My tags" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.TagOptions), PropertyDisplayResourceType.FIELD)}.{ManagementMetadataConstants.All}", Value = "All tags" },
 
                 /* UserPreferenceTokenOptionConnectorTypeDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionConnectorTypeDto>(nameof(UserPreferenceTokenOptionConnectorTypeDto.ConnectorType), PropertyDisplayResourceType.FIELD), Value = "Connector type" },

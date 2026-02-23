@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using FrontEASE.Domain.Entities.Companies;
-using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;

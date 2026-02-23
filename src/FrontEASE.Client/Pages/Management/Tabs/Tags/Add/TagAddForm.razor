@@ -12,7 +12,7 @@
     </Column>
 
     <Column ColumnSize="ColumnSize.Is12" Display="@(isFormCollapsed? Display.None: Display.Block)" Margin="Margin.Is2.FromTop.Is4.FromBottom">
-        <Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="@(async (e) => await HandleKeyDown(e))">
+        <Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="@(async (e) => await HandleKeyDown(e))" @onsubmit:preventDefault>
             <Validations @ref="Validations" Mode="ValidationMode.Manual" Model="TagModel">
 
                 <TagDataFormSection TagModel="TagModel" Operation="DataOperation.INSERT" FullWidthFields="false" />
@@ -41,6 +41,9 @@
     [CascadingParameter]
     public ManagementPageContext PageContext { get; set; } = null!;
 
+    [Parameter]
+    public IList<UserPreferenceTagOptionDto> OtherTags { get; set; } = [];
+
     private UserPreferenceTagOptionDto TagModel = new();
     private Validations Validations = new();
 
@@ -65,21 +68,22 @@
 
         if (await Validations.ValidateAll())
         {
-            PageContext.UserPreferences!.TagOptions.Insert(0, mapper.Map<UserPreferenceTagOptionDto>(TagModel));
-            var updated = await managementApiService.UpdatePreferences(PageContext.UserPreferences);
-
-            if (updated is not null)
+            var inserted = await managementApiService.AddTag(TagModel);
+            if (inserted is not null)
             {
-                mapper.Map(updated, PageContext.UserPreferences);
+                var insertedMapped = mapper.Map<UserPreferenceTagOptionDto>(inserted);
+                PageContext.UserPreferences!.TagOptions.Insert(0, insertedMapped);
+                PageContext.AllTags.Insert(0, insertedMapped);
+ 
                 var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}: {TagModel.Tag})";
                 toastService.ShowSuccess(message);
-
                 managementManipulationService.ReinitializeTagModel(TagModel);
+
+                await uiService.CallRequestRefreshAsync();
             }
         }
 
         savingInProgress = false;
-        await uiService.CallRequestRefreshAsync();
     }
 
     private void ChangeCollapseState() => isFormCollapsed = !isFormCollapsed;

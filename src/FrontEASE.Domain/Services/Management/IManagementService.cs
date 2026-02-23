@@ -5,6 +5,8 @@ namespace FrontEASE.Domain.Services.Management
 {
     public interface IManagementService
     {
+        Task DeleteTag(UserPreferenceTagOption tag, CancellationToken cancellationToken);
+        Task<UserPreferenceTagOption?> LoadTag(string tag, bool supressException, CancellationToken cancellationToken);
         Task<IList<UserPreferenceTagOption>> LoadTags(CancellationToken cancellationToken);
         Task<UserPreferences> Load(Guid id, CancellationToken cancellationToken);
         Task<GlobalPreferences> LoadGlobal(CancellationToken cancellationToken);

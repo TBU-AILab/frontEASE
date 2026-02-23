@@ -13,6 +13,16 @@ namespace FrontEASE.Domain.Services.Management
         ICoreConnector coreService,
         IMapper mapper) : IManagementService
     {
+        public async Task<UserPreferenceTagOption?> LoadTag(string tag, bool suppressException, CancellationToken cancellationToken)
+        {
+            var tagEntity = await managementRepository.LoadTag(tag, cancellationToken);
+            if(tagEntity is null && !suppressException)
+            {
+                throw new NotFoundException();
+            }
+            return tagEntity;
+        }
+
         public async Task<IList<UserPreferenceTagOption>> LoadTags(CancellationToken cancellationToken)
         {
             var tags = await managementRepository.LoadTags(cancellationToken);
@@ -53,6 +63,9 @@ namespace FrontEASE.Domain.Services.Management
             var updatedPrefs = await LoadGlobal(cancellationToken);
             return updatedPrefs!;
         }
+
+        public async Task DeleteTag(UserPreferenceTagOption tag, CancellationToken cancellationToken) => 
+            await managementRepository.Delete(tag, cancellationToken);
 
         private async Task HandleCorePackages(IList<GlobalPreferenceCorePackage> origPackageConfig, IList<GlobalPreferenceCorePackage> newPackageConfig, CancellationToken cancellationToken)
         {

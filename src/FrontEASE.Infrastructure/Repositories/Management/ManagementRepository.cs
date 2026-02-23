@@ -9,9 +9,21 @@ namespace FrontEASE.Infrastructure.Repositories.Management
 {
     public class ManagementRepository(ApplicationDbContext context) : IManagementRepository
     {
+        public async Task<UserPreferenceTagOption?> LoadTag(string tag, CancellationToken cancellationToken)
+        {
+            var tagEntity = await context.UserPreferenceTagOptions
+                .Include(x => x.UserPreferences)
+                    .ThenInclude(x => x.User)
+                .Include(x => x.Tasks)
+                .SingleOrDefaultAsync(x => EF.Functions.ILike(x.Tag, $"{tag}"), cancellationToken);
+
+            return tagEntity;
+        }
+
         public async Task<IList<UserPreferenceTagOption>> LoadTags(CancellationToken cancellationToken)
         {
             var tags = await context.UserPreferenceTagOptions
+                .Include(x => x.Tasks)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
@@ -39,6 +51,12 @@ namespace FrontEASE.Infrastructure.Repositories.Management
             context.UserPreferences.Update(preferences);
             await context.SaveChangesAsync(cancellationToken);
             return preferences;
+        }
+
+        public async Task Delete(UserPreferenceTagOption tag, CancellationToken cancellationToken)
+        {
+            context.UserPreferenceTagOptions.Remove(tag);
+            await context.SaveChangesAsync(cancellationToken);
         }
 
         public async Task SaveChangesAsync(CancellationToken cancellationToken) => await context.SaveChangesAsync(cancellationToken);
