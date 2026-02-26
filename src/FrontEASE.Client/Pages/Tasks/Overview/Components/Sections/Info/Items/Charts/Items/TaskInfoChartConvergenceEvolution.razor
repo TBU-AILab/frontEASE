@@ -1,29 +1,38 @@
-﻿@inject ITaskChartManipulationService taskChartManipulationService
+﻿@using ApexCharts
+
+@inject ITaskChartManipulationService taskChartManipulationService
 @inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 
 <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is2.FromBottom">
-    <LineChart @ref="LineChart" TItem="float" Options="@Options" />
+    <ApexChart @ref="Chart" TItem="ChartDataPoint" Options="@Options">
+        <ApexPointSeries TItem="ChartDataPoint"
+                         Items="Data"
+                         SeriesType="SeriesType.Area"
+                         Name="@seriesName"
+                         XValue="@(e => e.Label)"
+                         YAggregate="@(e => e.Sum(x => x.Value))" />
+    </ApexChart>
 </Column>
 
 @code {
     [Parameter]
     public TaskModalContext TaskModalContext { get; set; } = null!;
 
-    private IList<string> Labels = [];
-    private IList<float> Values = [];
-    private LineChart<float> LineChart = new();
-    private LineChartOptions Options = new();
+    private IList<ChartDataPoint> Data = [];
+    private ApexChart<ChartDataPoint>? Chart;
+    private ApexChartOptions<ChartDataPoint> Options = new();
+
+    private string seriesName = string.Empty;
     private bool needsRedraw;
     private int lastSolutionCount;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await base.OnInitializedAsync();
-
         var titleText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessConvergenceChart}.{UIStateConstants.Explanation}");
         var subtitleText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessConvergenceChart}");
         Options = taskChartManipulationService.PrepareLineChartOptions(titleText, subtitleText);
+
+        seriesName = resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Fitness), PropertyDisplayResourceType.FIELD));
     }
 
     protected override Task OnParametersSetAsync()
@@ -32,6 +41,7 @@
         if (currentCount != lastSolutionCount)
         {
             lastSolutionCount = currentCount;
+            RecalculateValues();
             needsRedraw = true;
         }
         return base.OnParametersSetAsync();
@@ -39,11 +49,10 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await base.OnAfterRenderAsync(firstRender);
-        if (firstRender || needsRedraw)
+        if (!firstRender && needsRedraw && Chart is not null)
         {
             needsRedraw = false;
-            await HandleRedraw();
+            await Chart.UpdateSeriesAsync(true);
         }
     }
 
@@ -51,33 +60,6 @@
     {
         var messageIDs = TaskModalContext.Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
         var solutionsOrdered = TaskModalContext.Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
-
-        var values = taskChartManipulationService.GetValueConvergenceChartData(TaskModalContext.Task.Messages, solutionsOrdered);
-        Labels = values.Labels;
-        Values = values.Values;
-    }
-
-    private async Task HandleRedraw()
-    {
-        RecalculateValues();
-
-        await LineChart.Clear();
-        await LineChart.AddLabelsDatasetsAndUpdate(Labels.ToArray(), GetLineChartDataset());
-    }
-
-    private LineChartDataset<float> GetLineChartDataset()
-    {
-        return new LineChartDataset<float>
-        {
-            Label = resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Fitness), PropertyDisplayResourceType.FIELD)),
-            Data = Values.ToList(),
-            Fill = true,
-            BackgroundColor = new List<string>() { ColorHelper.HtmlToChartRGBA(uiManager.Theme.ColorOptions.Primary, 0.2f) },
-            PointBackgroundColor = new List<string>() { ChartColor.FromHtmlColorCode(uiManager.Theme.ColorOptions.Success) },
-            PointHoverBackgroundColor = new List<string>() { ChartColor.FromHtmlColorCode(uiManager.Theme.ColorOptions.Warning) },
-            Tension = 0.1f,
-            PointRadius = 3,
-            CubicInterpolationMode = "monotone",
-        };
+        Data = taskChartManipulationService.GetValueConvergenceChartData(TaskModalContext.Task.Messages, solutionsOrdered);
     }
 }

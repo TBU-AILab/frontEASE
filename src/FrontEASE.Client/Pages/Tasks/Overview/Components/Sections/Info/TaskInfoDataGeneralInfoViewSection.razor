@@ -34,6 +34,21 @@
                     </Span>
                 </Column>
 
+                @if (TaskModalContext.Task.Tags.Count > 0)
+                {
+                    <Column ColumnSize="ColumnSize.IsFull">
+                        <Text>
+                            @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Tags), PropertyDisplayResourceType.FIELD))):
+                        </Text>
+                        @foreach (var tag in TaskModalContext.Task.Tags)
+                        {
+                            <Span TextWeight="TextWeight.SemiBold" TextColor="TextColor.White" Border="Border.Is2.RoundedPill.Light" Margin="Margin.Is1.FromEnd" Padding="Padding.Is1" Class="task-grid-tag">
+                                @(tag.Tag)
+                            </Span>
+                        }
+                    </Column>
+                }
+
                 <Column ColumnSize="ColumnSize.IsFull">
                     <Text>
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.CurrentIteration), PropertyDisplayResourceType.FIELD))):
