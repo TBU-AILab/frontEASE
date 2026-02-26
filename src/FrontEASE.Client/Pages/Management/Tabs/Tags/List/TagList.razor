@@ -15,7 +15,7 @@
 else
 {
     <Row Margin="Margin.Is2.FromTop.Is0.FromStart.Is0.FromEnd">
-        @if (PageContext.UserPreferences.TagOptions.Count > 0)
+        @if (UserTags.Count > 0)
         {
             <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
                 <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@ChangeCollapseStateUser" Padding="Padding.Is2">
@@ -31,7 +31,7 @@ else
                 {
                     <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
                         <Row Margin="Margin.Is1.FromStart.Is1.FromEnd">
-                            <Virtualize Items="PageContext.UserPreferences.TagOptions" Context="tag">
+                            <Virtualize Items="UserTags" Context="tag">
                                 <ItemContent>
                                     <Column ColumnSize="ColumnSize.Is2.OnWidescreen.Is3.OnTablet.Is6.OnMobile">
                                         <TagListItem Tag="tag" OtherTags="OtherTags" />
@@ -93,6 +93,9 @@ else
     [Parameter]
     public IList<UserPreferenceTagOptionDto> OtherTags { get; set; } = [];
 
+    [Parameter]
+    public IList<UserPreferenceTagOptionDto> UserTags { get; set; } = [];
+
     private bool isInitialized = false;
     private bool isUserTagsCollapsed;
     private bool isAllTagsCollapsed;
@@ -104,7 +107,9 @@ else
     {
         var userTags = new HashSet<string>(PageContext.UserPreferences.TagOptions.Select(ut => ut.Tag));
         OtherTags.Clear();
+        UserTags.Clear();
         OtherTags.AddRange(PageContext.AllTags.Where(t => !(userTags.Any(x => string.Equals(x, t.Tag, StringComparison.InvariantCultureIgnoreCase)))));
+        UserTags.AddRange(PageContext.AllTags.Where(t => (userTags.Any(x => string.Equals(x, t.Tag, StringComparison.InvariantCultureIgnoreCase)))));
     }
 
     private async Task RefreshViewAsync()
@@ -121,11 +126,11 @@ else
         var loadPreferencesTask = Task.CompletedTask;
 
         loadTagsTask = LoadTags();
-
         loadPreferencesTask = LoadPreferences();
         await Task.WhenAll(loadTagsTask, loadPreferencesTask);
 
         await base.OnInitializedAsync();
+        RecalculateOtherTags();
 
         isInitialized = true;
         isAllTagsCollapsed = true;
@@ -145,8 +150,6 @@ else
     {
         var tags = await managementApiService.LoadTags();
         PageContext.AllTags.Clear();
-        PageContext.AllTags.AddRange(tags);
-
-        RecalculateOtherTags();
+        PageContext.AllTags.AddRange(tags);      
     }
 }

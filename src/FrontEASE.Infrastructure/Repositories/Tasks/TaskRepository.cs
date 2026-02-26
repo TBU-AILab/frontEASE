@@ -44,7 +44,7 @@ namespace FrontEASE.Infrastructure.Repositories.Tasks
             }
 
             if (query.WithNoTracking) { tasksQuery = tasksQuery.AsNoTracking(); }
-            tasksQuery = tasksQuery.AsSplitQuery();
+            if (query.AsSplitQuery) { tasksQuery = tasksQuery.AsSplitQuery(); }
 
             return tasksQuery;
         }

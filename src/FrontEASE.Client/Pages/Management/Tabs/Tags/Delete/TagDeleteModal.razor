@@ -20,6 +20,21 @@
                         </Text>
                     </Column>
                 </Row>
+                @if (Tag.TaskCount > 0)
+                {
+                    <Row Margin="Margin.Is4.FromTop">
+                        <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
+                            <Alert Color="Color.Warning" Border="Border.Is0" Visible="@(Tag.TaskCount > 0)">
+                                <AlertMessage>
+                                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.TaskCount), PropertyDisplayResourceType.FIELD))):
+                                </AlertMessage>
+                                <AlertDescription>
+                                    @(string.Format(resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.TaskCount), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Warning}"), Tag.TaskCount))
+                                </AlertDescription>
+                            </Alert>
+                        </Column>
+                    </Row>
+                }
                 <Row Margin="Margin.Is4.FromTop">
                     <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile">
                         <Button Clicked="@DeleteTag" Color="Color.Danger" Class="btn btn-sized button full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
@@ -78,50 +93,31 @@
         deletingInProgress = true;
 
         var isUserTag = PageContext.UserPreferences.TagOptions.Any(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
-        var deleteSuccess = false;
         var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {Tag.Tag}";
 
-        if (isUserTag)
+        var isDeleted = await managementApiService.DeleteTag(Tag.ID!.Value);
+        if (isDeleted)
         {
             PageContext.UserPreferences.TagOptions.Remove(Tag);
-            var editedPreferences = await managementApiService.UpdatePreferences(PageContext.UserPreferences);
 
-            if (editedPreferences is not null)
-            {
-                mapper.Map(editedPreferences, PageContext.UserPreferences);
-                deleteSuccess = true;
-            }
-        }
-        else
-        {
-            var isDeleted = await managementApiService.DeleteTag(Tag.Tag);
-            if (isDeleted)
-            {
-                deleteSuccess = true;
-            }
-
-        }
-
-        if (deleteSuccess)
-        {
-            var deletedFromAll = PageContext.AllTags.SingleOrDefault(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
+            var deletedFromAll = PageContext.AllTags.Where(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
             if (deletedFromAll is not null)
             {
-                PageContext.AllTags.Remove(deletedFromAll);
+                PageContext.AllTags.RemoveRange(deletedFromAll);
             }
 
-            var deletedFromOther = OtherTags.SingleOrDefault(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
+            var deletedFromOther = OtherTags.Where(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
             if (deletedFromOther is not null)
             {
-                OtherTags.Remove(deletedFromOther);
+                OtherTags.RemoveRange(deletedFromOther);
             }
 
             await uiService.CallRequestRefreshAsync();
             toastService.ShowSuccess(message);
         }
 
-        await HideModal();
         deletingInProgress = false;
+        await HideModal();
     }
 
     private Task HideModal()

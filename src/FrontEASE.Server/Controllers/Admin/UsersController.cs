@@ -33,6 +33,7 @@ namespace FrontEASE.Server.Controllers.Admin
         /// <returns></returns>
         [HttpGet($"{UsersControllerConstants.BaseUrl}")]
         [ProducesResponseType(typeof(ApplicationUserDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetUser([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -56,6 +57,7 @@ namespace FrontEASE.Server.Controllers.Admin
         /// <returns>List of users.</returns>
         [HttpGet($"{UsersControllerConstants.BaseUrl}/{ControllerConstants.All}")]
         [ProducesResponseType(typeof(IList<ApplicationUserDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetUsers([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;

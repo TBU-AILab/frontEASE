@@ -81,8 +81,8 @@
             await uiService.CallRequestRefreshAsync();
         }
 
-        await HideModal();
         deletingInProgress = false;
+        await HideModal();
     }
 
     private Task HideModal()

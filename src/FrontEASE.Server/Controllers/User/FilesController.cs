@@ -2,6 +2,7 @@
 using FrontEASE.Application.AppServices.Shared.Resources;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Server.Infrastructure.Swagger.Attributes;
+using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
 using FrontEASE.Shared.Data.Enums.Shared.Files;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers.Specific;
@@ -11,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 
-namespace FrontEASE.Server.Controllers.Anonymous
+namespace FrontEASE.Server.Controllers.User
 {
     /// <summary>
     /// Controller for file retrieval.
@@ -33,6 +34,7 @@ namespace FrontEASE.Server.Controllers.Anonymous
         /// <returns>.ZIP archive of directory.</returns>
         [HttpGet($"{FilesControllerConstants.BaseUrl}/{FilesControllerConstants.Directory}/{FilesControllerConstants.TypeParam}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(FileStreamResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetDirectory([FromRoute, Required] Guid id, [FromRoute, Required] FileSpecification type, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;

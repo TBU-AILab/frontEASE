@@ -3,10 +3,10 @@
 <Row Class="gx-0">
     <CardFooter Display="Display.Flex" Border="Border.RoundedZero" Class="bg-custom-secondary text-custom-primary" Padding="Padding.Is2.FromEnd.Is2.FromStart" Flex="Flex.JustifyContent.Center">
         <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.Start" Class="align-self-center">
-            <Span Class="font-large text-custom-primary fst-italic" TextOverflow="TextOverflow.Wrap" TextColor="TextColor.Muted">
+            <Span Class="font-large text-custom-primary fst-italic" TextOverflow="TextOverflow.Wrap" TextSize="TextSize.Small" TextColor="TextColor.Muted">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.TaskCount), PropertyDisplayResourceType.FIELD))):
             </Span>
-            <Span Class="font-large text-custom-primary fst-italic" TextOverflow="TextOverflow.Wrap" TextColor="TextColor.Muted" TextWeight="TextWeight.Bold">
+            <Span Class="font-large text-custom-primary fst-italic" TextOverflow="TextOverflow.Wrap" TextSize="TextSize.Small" TextColor="TextColor.Muted" TextWeight="TextWeight.Bold">
                 @(Tag.TaskCount)
             </Span>
         </Column>

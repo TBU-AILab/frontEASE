@@ -11,6 +11,6 @@ namespace FrontEASE.Application.AppServices.Management
         Task<GlobalPreferencesDto> LoadGlobal(CancellationToken cancellationToken);
         Task<UserPreferencesDto> Update(UserPreferencesDto preferences, CancellationToken cancellationToken);
         Task<GlobalPreferencesDto> UpdateGlobal(GlobalPreferencesDto globalPreferences, CancellationToken cancellationToken);
-        Task DeleteTag(string tag, CancellationToken cancellationToken);
+        Task DeleteTag(Guid id, CancellationToken cancellationToken);
     }
 }

@@ -95,9 +95,9 @@ namespace FrontEASE.Client.Services.ApiServices.Management
             return await response.Content.ReadFromJsonAsync<UserPreferenceTagOptionDto>();
         }
 
-        public async Task<bool> DeleteTag(string tag)
+        public async Task<bool> DeleteTag(Guid tagID)
         {
-            var url = $"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}/{tag}";
+            var url = $"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}/{tagID}";
             var response = await _client.DeleteAsync(url);
             if (response.StatusCode != HttpStatusCode.NoContent)
             {

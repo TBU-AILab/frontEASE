@@ -14,6 +14,8 @@
     private IList<float> Values = [];
     private LineChart<float> LineChart = new();
     private LineChartOptions Options = new();
+    private bool needsRedraw;
+    private int lastSolutionCount;
 
     protected override async Task OnInitializedAsync()
     {
@@ -24,11 +26,23 @@
         Options = taskChartManipulationService.PrepareLineChartOptions(titleText, subtitleText);
     }
 
+    protected override Task OnParametersSetAsync()
+    {
+        var currentCount = TaskModalContext.Task.Solutions.Count;
+        if (currentCount != lastSolutionCount)
+        {
+            lastSolutionCount = currentCount;
+            needsRedraw = true;
+        }
+        return base.OnParametersSetAsync();
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        if (firstRender)
+        if (firstRender || needsRedraw)
         {
+            needsRedraw = false;
             await HandleRedraw();
         }
     }

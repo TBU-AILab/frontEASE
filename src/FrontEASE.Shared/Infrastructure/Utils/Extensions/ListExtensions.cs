@@ -20,5 +20,16 @@
                     break;
             }
         }
+
+        public static void RemoveRange<T>(this ICollection<T> collection, IEnumerable<T> items)
+        {
+            ArgumentNullException.ThrowIfNull(collection);
+            ArgumentNullException.ThrowIfNull(items);
+
+            foreach (var item in items.ToList())
+            {
+                collection.Remove(item);
+            }
+        }
     }
 }

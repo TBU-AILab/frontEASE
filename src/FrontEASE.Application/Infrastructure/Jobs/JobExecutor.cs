@@ -6,6 +6,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs
 {
     public class JobExecutor(IServiceProvider services)
     {
+        [AutomaticRetry(Attempts = 0)]
         [JobDisplayName("{0}")]
         public async Task Execute(Type type, PerformContext context)
         {

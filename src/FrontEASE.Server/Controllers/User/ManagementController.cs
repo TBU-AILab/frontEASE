@@ -7,6 +7,7 @@ using FrontEASE.Shared.Data.DTOs.Management.Core.Packages;
 using FrontEASE.Shared.Data.DTOs.Management.Tags;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
 using FrontEASE.Shared.Infrastructure.Constants.Auth;
+using FrontEASE.Shared.Infrastructure.Constants.Controllers;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers.Specific;
 using FrontEASE.Shared.Services.Resources;
 using Microsoft.AspNetCore.Authorization;
@@ -34,6 +35,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpPost($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}")]
         [ProducesResponseType(typeof(UserPreferenceTagOptionDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> InsertTag([FromBody, Required] UserPreferenceTagOptionDto tag)
         {
             IActionResult result;
@@ -55,17 +57,17 @@ namespace FrontEASE.Server.Controllers.User
         /// <summary>
         /// Deletes a task tag.
         /// </summary>
-        /// <param name="tag">Deleted tag.</param>
-        [HttpDelete($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}/{ManagementControllerConstants.TagParam}")]
+        /// <param name="id">Deleted tag identifier.</param>
+        [HttpDelete($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}/{ControllerConstants.IdParam}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
-        public async Task<IActionResult> DeleteTag([Required, FromRoute] string tag)
+        public async Task<IActionResult> DeleteTag([Required, FromRoute] Guid id)
         {
             IActionResult result;
             try
             {
-                await managementAppService.DeleteTag(tag, CancellationToken.None);
+                await managementAppService.DeleteTag(id, CancellationToken.None);
                 result = GetHttpResult(HttpStatusCode.NoContent, null);
             }
             catch (Exception ex)
@@ -84,6 +86,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpGet($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}")]
         [ProducesResponseType(typeof(IList<UserPreferenceTagOptionDto>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> LoadTags([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -108,6 +111,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpGet($"{ManagementControllerConstants.BaseUrl}")]
         [ProducesResponseType(typeof(UserPreferencesDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> LoadPreferences([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -132,6 +136,7 @@ namespace FrontEASE.Server.Controllers.User
         [Authorize(Roles = $"{UserRoleNames.AdminRoleName},{UserRoleNames.SuperadminRoleName}")]
         [HttpGet($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Global}")]
         [ProducesResponseType(typeof(GlobalPreferenceCorePackageDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> LoadGlobalPreferences([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -157,6 +162,7 @@ namespace FrontEASE.Server.Controllers.User
         [ProducesResponseType(typeof(UserPreferencesDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> UpdatePreferences([Required, FromBody] UserPreferencesDto preferences)
         {
             IActionResult result;
@@ -184,6 +190,7 @@ namespace FrontEASE.Server.Controllers.User
         [ProducesResponseType(typeof(GlobalPreferencesDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> UpdateGlobalPreferences([Required, FromBody] GlobalPreferencesDto preferences)
         {
             IActionResult result;

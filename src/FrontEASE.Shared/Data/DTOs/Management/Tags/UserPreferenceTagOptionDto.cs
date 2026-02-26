@@ -14,6 +14,15 @@ namespace FrontEASE.Shared.Data.DTOs.Management.Tags
             Tag = string.Empty;
         }
 
+        #region Navigation
+
+        /// <summary>
+        /// Tag option ID
+        /// </summary>
+        public Guid? ID { get; set; }
+
+        #endregion
+
         #region Data
 
         /// <summary>

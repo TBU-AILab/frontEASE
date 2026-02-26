@@ -63,13 +63,13 @@ namespace FrontEASE.Application.AppServices.Management
             }
 
             var id = await userService.LoadCurrentUserId(cancellationToken);
-            var preferencesEntity = await managementService.Load(id, cancellationToken);
+            var preferencesEntity = await managementService.LoadBase(id, cancellationToken);
             var insertedEntity = mapper.Map<UserPreferenceTagOption>(tag);
 
-            preferencesEntity.TagOptions.Add(insertedEntity);
-            await managementService.Update(id, preferencesEntity, cancellationToken);
-            var insertedDto = mapper.Map<UserPreferenceTagOptionDto>(insertedEntity);
+            insertedEntity.UserPreferences = preferencesEntity;
 
+            await managementService.InsertTag(insertedEntity, cancellationToken);
+            var insertedDto = mapper.Map<UserPreferenceTagOptionDto>(insertedEntity);
             return insertedDto;
         }
 
@@ -84,7 +84,7 @@ namespace FrontEASE.Application.AppServices.Management
         {
             var id = await userService.LoadCurrentUserId(cancellationToken);
 
-            var preferencesEntity = await managementService.Load(id, cancellationToken);
+            var preferencesEntity = await managementService.LoadFull(id, cancellationToken);
             var preferencesDto = mapper.Map<UserPreferencesDto>(preferencesEntity);
             return preferencesDto;
         }
@@ -115,10 +115,10 @@ namespace FrontEASE.Application.AppServices.Management
             return updatedDto;
         }
 
-        public async Task DeleteTag(string tag, CancellationToken cancellationToken)
+        public async Task DeleteTag(Guid id, CancellationToken cancellationToken)
         {
             var currentUser = await userService.LoadCurrentUser(cancellationToken);
-            var deletedEntity = await managementService.LoadTag(tag, false, cancellationToken);
+            var deletedEntity = await managementService.LoadTag(id, false, cancellationToken);
 
             CheckPermissionsToDelete(currentUser, deletedEntity);
 

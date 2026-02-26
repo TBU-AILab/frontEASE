@@ -36,6 +36,7 @@ namespace FrontEASE.Server.Controllers.User
         /// <returns>List of (shortened) task models.</returns>
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}")]
         [ProducesResponseType(typeof(IList<TaskInfoDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetTasks([FromQuery] TaskFilterActionRequestDto? filter, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -59,6 +60,7 @@ namespace FrontEASE.Server.Controllers.User
         /// <returns>List of (minimalistic) task status models.</returns>
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.All}/{TasksControllerConstants.StateParam}")]
         [ProducesResponseType(typeof(IList<TaskStatusDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetTaskStatuses([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -84,6 +86,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> LoadTask([Required, FromRoute] Guid id, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -109,6 +112,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpGet($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}/{TasksControllerConstants.SimpleMode}")]
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> LoadTaskSimple([Required, FromRoute] Guid id, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -136,6 +140,7 @@ namespace FrontEASE.Server.Controllers.User
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(UnprocessableResultDto), (int)HttpStatusCode.UnprocessableContent)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> RefreshTaskOptions([Required, FromBody] TaskDto task, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -160,6 +165,7 @@ namespace FrontEASE.Server.Controllers.User
         [ProducesResponseType(typeof(TaskDto), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(UnprocessableResultDto), (int)HttpStatusCode.UnprocessableContent)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> CreateTask()
         {
             IActionResult result;
@@ -185,6 +191,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpPost($"{TasksControllerConstants.BaseUrl}/{ControllerConstants.IdParam}/{TasksControllerConstants.Clone}")]
         [ProducesResponseType(typeof(IList<TaskDto>), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> CloneTask([Required, FromRoute] Guid id, [Required, FromBody] TaskDuplicateActionRequestDto request)
         {
             IActionResult result;
@@ -211,6 +218,7 @@ namespace FrontEASE.Server.Controllers.User
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(UnprocessableResultDto), (int)HttpStatusCode.UnprocessableContent)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> UpdateTask([Required, FromBody] TaskDto task)
         {
             IActionResult result;
@@ -236,6 +244,7 @@ namespace FrontEASE.Server.Controllers.User
         [HttpDelete($"{TasksControllerConstants.BaseUrl}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> DeleteTasks([Required, FromQuery] IList<Guid> taskIDs)
         {
             IActionResult result;
@@ -261,6 +270,7 @@ namespace FrontEASE.Server.Controllers.User
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(UnprocessableResultDto), (int)HttpStatusCode.UnprocessableContent)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> ChangeTaskState([Required, FromQuery] IList<Guid> taskIDs, [Required, FromRoute] TaskState state)
         {
             IActionResult result;

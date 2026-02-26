@@ -1,6 +1,6 @@
 ﻿namespace FrontEASE.Domain.DataQueries.Tasks
 {
-    public class TasksQuery
+    public class TasksQuery : DataQueryBase
     {
         public bool LoadSolutions { get; set; }
         public bool LoadMessages { get; set; }
@@ -11,6 +11,5 @@
         public bool LoadConfigModules { get; set; }
         public bool IncludeMembers { get; set; }
         public bool IncludeGroups { get; set; }
-        public bool WithNoTracking { get; set; }
     }
 }

@@ -127,16 +127,16 @@
                                   TextField="@(item => item.Tag)"
                                   ValueField="@(item => item.Tag)"
                                   Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                  SelectionMode="AutocompleteSelectionMode.Multiple"
                                   Filter="AutocompleteFilter.Contains"
-                                  CustomFilter="@((item, searchValue) => item.Tag.Contains(searchValue, StringComparison.OrdinalIgnoreCase))"
-                                  SelectedValue="@selectedTagFilter"
-                                  SelectedValueChanged="@(value => { selectedTagFilter = value ?? string.Empty; context.TriggerFilterChange(selectedTagFilter); })">
-                    </Autocomplete>
+                                  FreeTyping="false"
+                                  SelectedValues="@selectedTagFilters"
+                                  SelectedValuesChanged="@(values => { selectedTagFilters = values; context.TriggerFilterChange(values); })" />
                 </FilterTemplate>
                 <DisplayTemplate>
                     @foreach (var tag in context.Item.Tags)
                     {
-                        <Span Class="task-grid-tag">
+                        <Span TextSize="TextSize.ExtraSmall" TextWeight="TextWeight.SemiBold" TextColor="TextColor.White" Border="Border.Is2.RoundedPill.Light" Margin="Margin.Is1.FromEnd" Padding="Padding.Is1" Class="task-grid-tag">
                             @(tag.Tag)
                         </Span>
                     }
@@ -390,7 +390,7 @@
     private string selectedStateFilter = string.Empty;
     private string selectedEmailFilter = string.Empty;
     private string selectedDateCreatedFilter = string.Empty;
-    private string selectedTagFilter = string.Empty;
+    private List<string> selectedTagFilters = [];
     private string selectedConnectorTypeFilter = string.Empty;
     private string selectedSolutionTypeFilter = string.Empty;
 
@@ -496,24 +496,19 @@
 
     private bool OnTagsCustomFilter(object itemValue, object searchValue)
     {
-        if (searchValue is string filter && !string.IsNullOrEmpty(filter))
+        if (searchValue is List<string> filters && filters.Count > 0)
         {
             if (itemValue is IList<UserPreferenceTagOptionDto> tags)
             {
-                return tags.Any(t => t.Tag.Contains(filter, StringComparison.OrdinalIgnoreCase));
+                return filters.All(filter =>
+                    tags.Any(t => string.Equals(t.Tag, filter, StringComparison.InvariantCultureIgnoreCase)));
             }
+            return false;
         }
         return true;
     }
 
-    private async Task OnTagsUpdated(TaskInfoDto task, IList<string> selectedTags)
-    {
-        task.Tags = selectedTags.Select(t => new UserPreferenceTagOptionDto { Tag = t }).ToList();
-        foreach (var tag in task.Tags)
-        {
-            Console.WriteLine(tag.Tag);
-        }
-    }
+    private async Task OnTagsUpdated(TaskInfoDto task, IList<string> selectedTags) => task.Tags = selectedTags.Select(t => new UserPreferenceTagOptionDto { Tag = t }).ToList();
 
     private bool OnStateCustomFilter(object itemValue, object searchValue)
     {

@@ -4,7 +4,7 @@ html, body {
     color: var(--b-theme-text-primary);
 }
 
-input, select, textarea {
+input, select, textarea, .dropdown {
     background-color: var(--b-theme-background-secondary) !important;
     color: var(--b-theme-text-primary) !important;
     border: 1px solid var(--b-theme-background-light) !important
@@ -21,7 +21,7 @@ input, select, textarea {
         width: 16px;
         height: 16px;
         background: var(--b-theme-white);
-        border-radius: 50%; /* Make it circular */
+        border-radius: 50%;
         cursor: pointer;
     }
 
@@ -34,12 +34,12 @@ input, select, textarea {
         width: 16px;
         height: 16px;
         background: var(--b-theme-white);
-        border-radius: 50%; /* Make it circular */
+        border-radius: 50%;
         cursor: pointer;
     }
 
     input[type="range"]::-moz-range-track {
-        background: var(--b-theme-background-light); /* Change this to your desired rail color */
+        background: var(--b-theme-background-light);
     }
 
 
@@ -435,8 +435,21 @@ a, .btn-link {
     justify-content: center;
 }
 
-/* CUSTOM CLASSES - SHARED */
+.b-is-autocomplete > .badge > .badge-close {
+    margin-left: 0.5rem;
+    background-color: var(--b-theme-background-danger) !important;
+    border-radius: 10px;
+    padding-left: 3.5px;
+    padding-right: 3.5px;
+    border: 1px solid white;
+}
 
+.b-is-autocomplete > .form-control{
+    border: none !important;
+}
+
+
+/* CUSTOM CLASSES - SHARED */
 .EasyMDEContainer {
     text-align: left;
 }
@@ -804,6 +817,10 @@ nav.navbar {
 .navbar {
     width: 100%;
     z-index: 3;
+}
+
+.navbar-dropdown-menu{
+    border: 0 !important;
 }
 
 .navbar-backgrounded .navbar-nav .nav-link {

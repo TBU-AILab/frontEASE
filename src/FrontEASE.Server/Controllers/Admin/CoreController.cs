@@ -2,6 +2,7 @@
 using FrontEASE.Application.AppServices.Shared.Resources;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Modules;
+using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Results;
 using FrontEASE.Shared.Infrastructure.Constants.Auth;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers.Specific;
@@ -31,6 +32,7 @@ namespace FrontEASE.Server.Controllers.Admin
         /// <returns>Python package options.</returns>
         [HttpPost($"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Module}")]
         [ProducesResponseType(typeof(IList<ModuleImportBulkActionResultDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> ImportCoreModule([FromBody, Required] GlobalPreferenceCoreModuleDto modulesContent)
         {
             IActionResult result;
@@ -55,6 +57,7 @@ namespace FrontEASE.Server.Controllers.Admin
         /// <returns>Python package options.</returns>
         [HttpDelete($"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Module}/{CoreControllerConstants.NameParam}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> DeleteCoreModule([FromRoute, Required] string name)
         {
             IActionResult result;
@@ -78,6 +81,7 @@ namespace FrontEASE.Server.Controllers.Admin
         /// <returns>Python package options.</returns>
         [HttpPatch($"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Models}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> UpdateCoreModels()
         {
             IActionResult result;

@@ -164,13 +164,14 @@
             }
         }
         else
-        {
-            var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
-            if (opened is not null)
             {
-                mapper.Map(opened, TaskModalContext.Task);
+                TaskModalContext.TaskInfo = TaskInfo;
+                var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
+                if (opened is not null)
+                {
+                    mapper.Map(opened, TaskModalContext.Task);
+                }
             }
-        }
 
         isTaskLoading = false;
         await uiService.CallRequestRefreshAsync();

@@ -10,7 +10,7 @@ namespace FrontEASE.Client.Services.ApiServices.Management
         Task<UserPreferencesDto?> UpdatePreferences(UserPreferencesDto editedPreferencesDto);
         Task<GlobalPreferencesDto?> UpdateGlobalPreferences(GlobalPreferencesDto editedGlobalPreferencesDto);
         Task<IList<UserPreferenceTagOptionDto>> LoadTags();
-        Task<bool> DeleteTag(string tag);
+        Task<bool> DeleteTag(Guid tagID);
         Task<UserPreferenceTagOptionDto?> AddTag(UserPreferenceTagOptionDto addTagDto);
     }
 }

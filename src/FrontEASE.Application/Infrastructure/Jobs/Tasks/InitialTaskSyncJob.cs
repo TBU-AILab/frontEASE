@@ -53,6 +53,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                 LoadLogs = true,
                 LoadTags = true,
                 IncludeMembers = true,
+                AsSplitQuery = true
             };
 
             var existingTasks = await taskRepository.LoadAllWhere(x => !x.IsDeleted && coreTaskIDs.Contains(x.ID), query, cancellationToken);
@@ -125,6 +126,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             context.WriteLine($"Inserted {tasksForInsertion.Count} items into the database.");
         }
 
+        [AutomaticRetry(Attempts = 0)]
         public async Task Execute(PerformContext context)
         {
             var currentExecutionStart = DateTime.UtcNow;

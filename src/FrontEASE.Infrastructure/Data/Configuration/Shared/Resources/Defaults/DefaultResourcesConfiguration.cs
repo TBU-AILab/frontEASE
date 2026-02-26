@@ -152,6 +152,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* TaskConfigRepeatedMessageDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{nameof(TaskConfigRepeatedMessageDto.RepeatedMessageItems)}.{UIStateConstants.Explanation}", Value = "When repeated message does not have any explicitly configured item, default base prompt (\"Improve\") will be used" },
 
+                /* UserPreferenceTagOptionDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.TaskCount), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Warning}", Value = "WARNING - this tag is linked to {0} existing tasks. When deleted, it will permanently disappear from them." },
+
                 /* Login Expiration */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Base}.{ UIConstants.Error}.{HttpStatusCode.Unauthorized}.{UIStateConstants.TokenExpiration}.{ UIStateConstants.Explanation}", Value = "Your session has expired. You have been signed out." }
             ];

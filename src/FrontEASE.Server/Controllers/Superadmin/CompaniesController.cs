@@ -33,6 +33,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
         /// <returns>List of companies.</returns>
         [HttpGet($"{CompaniesControllerConstants.BaseUrl}/{ControllerConstants.All}")]
         [ProducesResponseType(typeof(IList<CompanyDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> GetCompanies([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -58,6 +59,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
         [HttpGet($"{CompaniesControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
         [ProducesResponseType(typeof(CompanyDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> LoadCompany([Required, FromRoute] Guid id, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
@@ -83,6 +85,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
         [HttpPost(CompaniesControllerConstants.BaseUrl)]
         [ProducesResponseType(typeof(CompanyDto), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> CreateCompany([Required, FromBody] CompanyDto company)
         {
             IActionResult result;
@@ -110,6 +113,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
         [ProducesResponseType(typeof(CompanyDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> UpdateCompany([Required, FromBody] CompanyDto company)
         {
             IActionResult result;
@@ -135,6 +139,7 @@ namespace FrontEASE.Server.Controllers.Superadmin
         [HttpDelete($"{CompaniesControllerConstants.BaseUrl}/{ControllerConstants.IdParam}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> DeleteCompany([Required, FromRoute] Guid id)
         {
             IActionResult result;

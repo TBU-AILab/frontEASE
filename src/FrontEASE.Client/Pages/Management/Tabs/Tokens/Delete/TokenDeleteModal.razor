@@ -84,11 +84,10 @@
             toastService.ShowSuccess(message);
 
             await uiService.CallRequestRefreshAsync();
-            await HideModal();
         }
 
-        await HideModal();
         deletingInProgress = false;
+        await HideModal();
     }
 
     private Task HideModal()
