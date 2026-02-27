@@ -14,7 +14,8 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
 
         private void CreateMaps()
         {
-            CreateMap<Domain.Entities.Tasks.Task, TaskStatusDto>();
+            CreateMap<Domain.Entities.Tasks.Task, TaskStatusDto>()
+                .ForMember(x => x.Logs, cd => cd.MapFrom(map => map.Logs));
 
             CreateMap<TaskInfoCoreDto, Domain.Entities.Tasks.Task>()
                 .ForMember(x => x.Config, opt => opt.Ignore())

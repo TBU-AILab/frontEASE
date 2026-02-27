@@ -56,6 +56,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
             var resources = new List<Resource>();
 
             resources.AddRange(InitFieldResources());
+            resources.AddRange(InitFieldFilterResources());
             resources.AddRange(InitFieldPlaceholderResources());
             resources.AddRange(InitEnumResources());
             resources.AddRange(InitValueResources());
@@ -217,7 +218,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
 
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(UserPreferenceTagOptionDto)}.{ManagementMetadataConstants.User}.{UIElementConstants.Collection}", Value="No user tags have been found." },
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.NotFound}.{nameof(UserPreferenceTagOptionDto)}.{ManagementMetadataConstants.All}.{UIElementConstants.Collection}", Value="No tags have been found." },
-                
+
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Error}.{HttpStatusCode.BadRequest}.{nameof(UserPreferenceTagOptionDto)}.{UIExceptionConstants.TagExists}", Value="This tag already exists." },
 
                 /* UserPreferenceTokenOptionDto */
@@ -570,6 +571,33 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
             ];
         }
 
+        private static IList<Resource> InitFieldFilterResources()
+        {
+            return
+            [
+                /* TaskInfoDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.FILTER), Value = "Filter authors ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.FILTER), Value = "Filter tags ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FILTER), Value = "Filter names ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FILTER), Value = "Filter creations ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateUpdated), PropertyDisplayResourceType.FILTER), Value = "Filter updates ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FILTER), Value = "Filter S-types ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FILTER), Value = "Filter C-types ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.State), PropertyDisplayResourceType.FILTER), Value = "Filter states ..." },
+
+                /* CompanyDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.FILTER), Value = "Filter companies ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.NameAbbreviation), PropertyDisplayResourceType.FILTER), Value = "Filter abbreviations ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Address), PropertyDisplayResourceType.FILTER), Value = "Filter addresses ..." },
+
+                /* ApplicationUserDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.FILTER), Value = "Filter nicknames ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FILTER), Value = "Filter E-mails ..." },
+
+
+            ];
+        }
+
         private static IList<Resource> InitFieldPlaceholderResources()
         {
             return
@@ -611,16 +639,6 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 /* TaskKeyValueItemDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskKeyValueItemDto>(nameof(TaskKeyValueItemDto.Key), PropertyDisplayResourceType.PLACEHOLDER), Value = "Key" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskKeyValueItemDto>(nameof(TaskKeyValueItemDto.Value), PropertyDisplayResourceType.PLACEHOLDER), Value = "Value" },
-
-                /* TaskInfoDto */
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.PLACEHOLDER), Value = "Filter authors ..." },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.PLACEHOLDER), Value = "Filter tags ..." },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.PLACEHOLDER), Value = "Filter names ..." },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.PLACEHOLDER), Value = "Filter creation ..." },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateUpdated), PropertyDisplayResourceType.PLACEHOLDER), Value = "Filter update ..." },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.PLACEHOLDER), Value = "Filter S-types ..." },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.PLACEHOLDER), Value = "Filter C-types ..." },
-                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.State), PropertyDisplayResourceType.PLACEHOLDER), Value = "Filter states ..." },
 
                 /* TaskDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Tags), PropertyDisplayResourceType.PLACEHOLDER), Value = "Select tags ..." },

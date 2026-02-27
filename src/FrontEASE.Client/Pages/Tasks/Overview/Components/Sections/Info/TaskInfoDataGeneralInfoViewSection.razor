@@ -25,15 +25,6 @@
                     </Column>
                 }
 
-                <Column ColumnSize="ColumnSize.IsFull">
-                    <Text>
-                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.State), PropertyDisplayResourceType.FIELD))):
-                    </Text>
-                    <Span TextWeight="TextWeight.Bold">
-                        @($" {resourceHandler.GetResource(((TaskState)TaskModalContext.Task.State).GetEnumResourceValue())}")
-                    </Span>
-                </Column>
-
                 @if (TaskModalContext.Task.Tags.Count > 0)
                 {
                     <Column ColumnSize="ColumnSize.IsFull">
@@ -46,6 +37,34 @@
                                 @(tag.Tag)
                             </Span>
                         }
+                    </Column>
+                }
+
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.State), PropertyDisplayResourceType.FIELD))):
+                    </Text>
+                    <Span TextWeight="TextWeight.Bold">
+                        @($" {resourceHandler.GetResource(((TaskState)TaskModalContext.Task.State).GetEnumResourceValue())}")
+                    </Span>
+                </Column>
+
+                @if (TaskModalContext.Task.Logs.Count > 0)
+                {
+                    <Column ColumnSize="ColumnSize.IsFull">
+                        <Text>
+                            @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Logs), PropertyDisplayResourceType.FIELD))):
+                        </Text>
+                        <UnorderedList>
+                            @foreach (var log in TaskModalContext.Task.Logs)
+                            {
+                                <UnorderedListItem TextColor="TextColor.Danger" TextSize="TextSize.ExtraSmall">
+                                    <Text TextWeight="TextWeight.SemiBold" TextColor="TextColor.Danger">
+                                        @(log.Message)
+                                    </Text>
+                                </UnorderedListItem>
+                            }
+                        </UnorderedList>
                     </Column>
                 }
 

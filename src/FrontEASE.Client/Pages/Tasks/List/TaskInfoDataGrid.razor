@@ -110,7 +110,7 @@
             <DataGridColumn Field="@nameof(TaskInfoDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true">
                 <FilterTemplate>
                     <TextInput Value="@selectedNameFilter"
-                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FILTER)))"
                                ValueChanged="@(value => { selectedNameFilter = value; context.TriggerFilterChange(selectedNameFilter); })" />
                 </FilterTemplate>
             </DataGridColumn>
@@ -126,7 +126,7 @@
                                   Data="@PageContext.AvailableTags"
                                   TextField="@(item => item.Tag)"
                                   ValueField="@(item => item.Tag)"
-                                  Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                  Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.FILTER)))"
                                   SelectionMode="AutocompleteSelectionMode.Multiple"
                                   Filter="AutocompleteFilter.Contains"
                                   FreeTyping="false"
@@ -149,7 +149,7 @@
                             CustomFilter="@OnDateCreatedCustomFilter">
                 <FilterTemplate>
                     <TextInput Value="@selectedDateCreatedFilter"
-                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.PLACEHOLDER)))"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FILTER)))"
                                ValueChanged="@( value => { selectedDateCreatedFilter = value; context.TriggerFilterChange(selectedDateCreatedFilter); } )" />
                 </FilterTemplate>
                 <DisplayTemplate>
@@ -177,7 +177,7 @@
                             CustomFilter="@OnAuthorEmailCustomFilter">
                 <FilterTemplate>
                     <TextInput Value="@selectedEmailFilter"
-                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.PLACEHOLDER)))"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.FILTER)))"
                                ValueChanged="@(value => { selectedEmailFilter = value; context.TriggerFilterChange(selectedEmailFilter); })" />
                 </FilterTemplate>
                 <DisplayTemplate>
@@ -262,7 +262,7 @@
             <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.ConnectorType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FIELD)))" Sortable="true" CustomFilter="@OnConnectorTypeCustomFilter">
                 <FilterTemplate>
                     <TextInput Value="@selectedConnectorTypeFilter"
-                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.PLACEHOLDER)))"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FILTER)))"
                                ValueChanged="@(value => { selectedConnectorTypeFilter = value; context.TriggerFilterChange(selectedConnectorTypeFilter); })" />
                 </FilterTemplate>
                 <DisplayTemplate>
@@ -273,7 +273,7 @@
             <DataGridColumn Field="@nameof(TaskInfoDto.SolutionType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FIELD)))" Sortable="true" CustomFilter="@OnSolutionTypeCustomFilter">
                 <FilterTemplate>
                     <TextInput Value="@selectedSolutionTypeFilter"
-                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.PLACEHOLDER)))"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FILTER)))"
                                ValueChanged="@(value => { selectedSolutionTypeFilter = value; context.TriggerFilterChange(selectedSolutionTypeFilter); })" />
                 </FilterTemplate>
                 <DisplayTemplate>

@@ -124,6 +124,9 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
                 var matchingStatus = taskStatuses.FirstOrDefault(status => status.ID == task.ID);
                 if (matchingStatus is not null && task.State != matchingStatus.State)
                 {
+                    task.Logs.Clear();
+                    task.Logs.AddRange(matchingStatus.Logs);
+
                     task.State = matchingStatus.State;
                     updated = true;
                 }

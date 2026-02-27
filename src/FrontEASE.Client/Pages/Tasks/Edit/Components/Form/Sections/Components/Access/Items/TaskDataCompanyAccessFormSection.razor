@@ -46,10 +46,27 @@
                                         </DisplayTemplate>
                                     </DataGridColumn>
 
-                                    <DataGridColumn Field="@nameof(CompanyDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
-                                    <DataGridColumn Field="@nameof(CompanyDto.NameAbbreviation)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.NameAbbreviation), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
+                                    <DataGridColumn Field="@nameof(CompanyDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+                                        <FilterTemplate>
+                                            <TextInput Value="@selectedNameFilter"
+                                                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Name), PropertyDisplayResourceType.FILTER)))"
+                                                       ValueChanged="@(value => { selectedNameFilter = value; context.TriggerFilterChange(selectedNameFilter); })" />
+                                        </FilterTemplate>
+                                    </DataGridColumn>
+                                    <DataGridColumn Field="@nameof(CompanyDto.NameAbbreviation)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.NameAbbreviation), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+                                        <FilterTemplate>
+                                            <TextInput Value="@selectedNameAbbreviationFilter"
+                                                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.NameAbbreviation), PropertyDisplayResourceType.FILTER)))"
+                                                       ValueChanged="@(value => { selectedNameAbbreviationFilter = value; context.TriggerFilterChange(selectedNameAbbreviationFilter); })" />
+                                        </FilterTemplate>
+                                    </DataGridColumn>
 
-                                    <DataGridColumn TItem="CompanyDto" Field="@nameof(CompanyDto.Address)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Address), PropertyDisplayResourceType.FIELD)))" Sortable="false">
+                                    <DataGridColumn TItem="CompanyDto" Field="@nameof(CompanyDto.Address)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Address), PropertyDisplayResourceType.FIELD)))" Sortable="false" CustomFilter="@OnAddressCustomFilter">
+                                        <FilterTemplate>
+                                            <TextInput Value="@selectedAddressFilter"
+                                                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<CompanyDto>(nameof(CompanyDto.Address), PropertyDisplayResourceType.FILTER)))"
+                                                       ValueChanged="@(value => { selectedAddressFilter = value; context.TriggerFilterChange(selectedAddressFilter); })" />
+                                        </FilterTemplate>
                                         <DisplayTemplate>
                                             <Container>
                                                 @if (context.Item.Address is not null)
@@ -97,6 +114,10 @@
 
     private List<CompanyDto> selectedCompanies = [];
     private bool isSectionCollapsed = false;
+
+    private string selectedNameFilter = string.Empty;
+    private string selectedNameAbbreviationFilter = string.Empty;
+    private string selectedAddressFilter = string.Empty;
 
     private async Task RefreshViewAsync()
     {
@@ -162,6 +183,20 @@
         { taskManipulationService.CleanCompaniesInfo(TaskModalContext.Task); }
 
         await uiService.CallRequestRefreshAsync();
+    }
+
+    private bool OnAddressCustomFilter(object itemValue, object searchValue)
+    {
+        if (searchValue is string filter && !string.IsNullOrEmpty(filter))
+        {
+            if (itemValue is AddressDto address)
+            {
+                var addressString = $"{address.Street} {address.DescriptiveNumber} {address.OrientationNumber} {address.ZIPCode} {address.City}";
+                return addressString.Contains(filter, StringComparison.OrdinalIgnoreCase);
+            }
+            return false;
+        }
+        return true;
     }
 
     private string? GetMemberGroupImageUrl(Guid groupID)

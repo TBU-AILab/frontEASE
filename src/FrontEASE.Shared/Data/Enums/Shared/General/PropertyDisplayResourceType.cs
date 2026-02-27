@@ -16,6 +16,11 @@
         PLACEHOLDER,
 
         /// <summary>
+        /// Filter
+        /// </summary>
+        FILTER,
+
+        /// <summary>
         /// Enumeration
         /// </summary>
         ENUM,

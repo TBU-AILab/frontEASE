@@ -280,7 +280,13 @@
         timeStringValue = newValue;
         if (TaskModuleParamContext.ParamValue?.Value is not null)
         {
-            TaskModuleParamContext.ParamValue.Value.IntValue = ConvertTimeStringToSeconds(timeStringValue);
+            var convertedValue = ConvertTimeStringToSeconds(timeStringValue);
+            TaskModuleParamContext.ParamValue.Value.IntValue = convertedValue;
+
+            if (convertedValue == -1)
+            {
+                return;
+            }
         }
         await RefreshFlags();
     }

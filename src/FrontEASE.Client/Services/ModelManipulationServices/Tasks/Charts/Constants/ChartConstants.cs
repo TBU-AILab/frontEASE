@@ -11,13 +11,13 @@
         public const string SubtitleFontSize = "0.8rem";
         public const string LabelFormat = "n°{0}: \"{1}\"";
 
-        public const int StrokeWidth = 3;
-        public const int MarkerSize = 3;
+        public const int StrokeWidth = 2;
+        public const int MarkerSize = 2;
         public const int MarkerStrokeWidth = 0;
         public const int MarkerHoverSizeOffset = 3;
         public const int GridStrokeDashArray = 4;
 
-        public const int TitleOffsetY = 5;
+        public const int TitleOffsetY = 10;
 
         public const double GradientShadeIntensity = 1;
         public const double GradientOpacityFrom = 0.75;
