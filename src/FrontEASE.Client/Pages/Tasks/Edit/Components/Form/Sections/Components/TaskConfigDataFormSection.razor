@@ -130,31 +130,18 @@
         <Column ColumnSize="ColumnSize.IsFull">
             <Container Fluid>
                 <Row>
-                    <Fields>
+                    <Fields Style="align-items: center;">
                         <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.MaxContextSize)))" RequiredIndicator>
-                            @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD))}: {TaskModalContext.Task.Config.MaxContextSize}")
+                            @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD))}: {MaxContextSizeDisplayValue}")
                         </FieldLabel>
 
                         <Validation>
-                            <Field Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.Is2.OnWidescreen">
-
-                                <NumericInput Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                                              @bind-Value="@TaskModalContext.Task.Config.MaxContextSize"
-                                              Step="1" Min="-1" Max="1000">
-                                    <Feedback>
-                                        <ValidationError Multiline="true" />
-                                    </Feedback>
-                                </NumericInput>
-                            </Field>
-                        </Validation>
-
-                        <Validation>
-                            <Field ColumnSize="ColumnSize.Is10.OnWidescreen">
+                            <Field ColumnSize="ColumnSize.IsFull">
                                 <Slider ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.MaxContextSize)))"
                                         Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                                         Background="Background.Transparent"
                                         @bind-Value="@TaskModalContext.Task.Config.MaxContextSize"
-                                        Step="1" Min="-1" Max="1000">
+                                        Step="1" Min="-1" Max="50">
                                     <Feedback>
                                         <ValidationError Multiline="true" />
                                     </Feedback>
@@ -186,6 +173,8 @@
 
     [Parameter]
     public TaskModalContext TaskModalContext { get; set; } = null!;
+
+    private string MaxContextSizeDisplayValue => TaskModalContext.Task.Config.MaxContextSize < 0 ? double.PositiveInfinity.ToString() : TaskModalContext.Task.Config.MaxContextSize.ToString();
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskConfigDto>(elementBase, TaskModalContext.Operation, TaskModalContext.Task.ID.ToString());
 

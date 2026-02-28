@@ -36,7 +36,7 @@
     <PackageReference Include="Blazorise.DataGrid" Version="2.0.1" />
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="2.0.1" />
     <PackageReference Include="Blazorise.Markdown" Version="2.0.1" />
-    <PackageReference Include="Markdig" Version="1.0.0" />
+    <PackageReference Include="Markdig" Version="1.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.3" PrivateAssets="all" />

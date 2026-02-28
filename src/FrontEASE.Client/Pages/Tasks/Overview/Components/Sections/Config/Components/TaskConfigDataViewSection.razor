@@ -18,7 +18,7 @@
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD))):
                     </Text>
                     <Span TextWeight="TextWeight.Bold">
-                        @($" {TaskModalContext.Task.Config.MaxContextSize}")
+                        @($" {(TaskModalContext.Task.Config.MaxContextSize > 0 ? TaskModalContext.Task.Config.MaxContextSize.ToString() : double.PositiveInfinity.ToString())}")
                     </Span>
                 </Column>
 

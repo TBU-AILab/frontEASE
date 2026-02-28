@@ -3,99 +3,101 @@
 @inject IUIService uiService
 @inject AppSettings appSettings
 
-<Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
-    <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@(async () => await ChangeCollapseState())" Padding="Padding.Is2">
-        <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
-            <Text TextWeight="TextWeight.Bold" Class="text-center">
-                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Members), PropertyDisplayResourceType.FIELD)))
-            </Text>
-        </Div>
-        <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" Class="text-custom-primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
-    </Column>
-
-    @if (!isSectionCollapsed)
-    {
-        <Column ColumnSize="ColumnSize.IsFull">
-            <Container Fluid Margin="Margin.Is3.FromTop.Is3.FromBottom">
-                <Row>
-                    <Column ColumnSize="ColumnSize.Is12">
-                        <Fields>
-
-                            <DataGrid TItem="ApplicationUserDto"
-                                      Data="@PageContext.AvailableUsers"
-                                      SelectionMode="DataGridSelectionMode.Multiple"
-                                      @bind-SelectedRows="selectedUsers"
-                                      @bind-SelectedRows:after="SyncSelection"
-                                      Filterable="true"
-                                      FilterMode="DataGridFilterMode.Default"
-                                      FilterMethod="DataGridFilterMethod.Contains"
-                                      RowStyling="@StyleRow"
-                                      SelectedRowStyling="@StyleRow"
-                                      RowSelectable="@((user) => {return (user.Item.Id != TaskModalContext.Task?.Author?.Id) && !TaskModalContext.TaskMetadata.InitializationInProgres;})"
-                                      Class="member-selection-grid text-custom-primary border-custom-light data-grid-custom"
-                                      Responsive>
-
-                                <DataGridColumns>
-                                    <DataGridMultiSelectColumn TItem="ApplicationUserDto" Display="Display.None" />
-
-                                    <DataGridColumn Filterable="false" TItem="ApplicationUserDto" Field="@nameof(ApplicationUserDto.Image)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.FIELD)))" Sortable="false">
-                                        <DisplayTemplate>
-                                            <Image Border="Border.RoundedCircle"
-                                                   Source="@(GetUserImageUrl(context.Item.Id!.Value))"
-                                                   Class="full-max-width datagrid-item-image-small" Loading />
-                                        </DisplayTemplate>
-                                    </DataGridColumn>
-
-                                    <DataGridColumn Field="@nameof(ApplicationUserDto.UserName)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.FIELD)))" Sortable="true">
-                                        <FilterTemplate>
-                                            <TextInput Value="@selectedUserNameFilter"
-                                                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.FILTER)))"
-                                                       ValueChanged="@(value => { selectedUserNameFilter = value; context.TriggerFilterChange(selectedUserNameFilter); })" />
-                                        </FilterTemplate>
-                                    </DataGridColumn>
-                                    <DataGridColumn Field="@nameof(ApplicationUserDto.Email)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FIELD)))" Sortable="true">
-                                        <FilterTemplate>
-                                            <TextInput Value="@selectedEmailFilter"
-                                                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FILTER)))"
-                                                       ValueChanged="@(value => { selectedEmailFilter = value; context.TriggerFilterChange(selectedEmailFilter); })" />
-                                        </FilterTemplate>
-                                    </DataGridColumn>
-
-                                    <DataGridSelectColumn TItem="ApplicationUserDto"
-                                                          Field="@nameof(ApplicationUserDto.Role)"
-                                                          Sortable="true"
-                                                          Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Role), PropertyDisplayResourceType.FIELD)))"
-                                                          TextField="@(role => resourceHandler.GetResource(((UserRole)role).GetEnumResourceValue()))"
-                                                          ValueField="@(role => role.ToString())"
-                                                          CustomFilter="@OnRoleCustomFilter">
-                                        <FilterTemplate>
-                                            <Select TValue="string" Value="@selectedRoleFilter" ValueChanged="@(value => { selectedRoleFilter = value; context.TriggerFilterChange(selectedRoleFilter); })">
-                                                <SelectItem Value="string.Empty">
-                                                    @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
-                                                </SelectItem>
-                                                @foreach (var role in Enum.GetValues(typeof(UserRole)))
-                                                {
-                                                    <SelectItem Value="@role.ToString()">@resourceHandler.GetResource(((UserRole)role).GetEnumResourceValue())</SelectItem>
-                                                }
-                                            </Select>
-                                        </FilterTemplate>
-                                        <DisplayTemplate>
-                                            @(resourceHandler.GetResource(((UserRole)context.Item.Role).GetEnumResourceValue()))
-                                        </DisplayTemplate>
-                                    </DataGridSelectColumn>
-
-                                </DataGridColumns>
-
-                            </DataGrid>
-
-                        </Fields>
-                    </Column>
-                </Row>
-            </Container>
+@if (PageContext.AvailableUsers.Count > 0)
+{
+    <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
+        <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@(async () => await ChangeCollapseState())" Padding="Padding.Is2">
+            <Div Display="Display.Flex" Width="Width.Is100" Class="justify-content-center">
+                <Text TextWeight="TextWeight.Bold" Class="text-center">
+                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Members), PropertyDisplayResourceType.FIELD)))
+                </Text>
+            </Div>
+            <Icon Name="@(!isSectionCollapsed ? IconName.AngleUp : IconName.AngleDown)" Class="text-custom-primary" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" />
         </Column>
-    }
-</Container>
 
+        @if (!isSectionCollapsed)
+        {
+            <Column ColumnSize="ColumnSize.IsFull">
+                <Container Fluid Margin="Margin.Is3.FromTop.Is3.FromBottom">
+                    <Row>
+                        <Column ColumnSize="ColumnSize.Is12">
+                            <Fields>
+
+                                <DataGrid TItem="ApplicationUserDto"
+                                          Data="@PageContext.AvailableUsers"
+                                          SelectionMode="DataGridSelectionMode.Multiple"
+                                          @bind-SelectedRows="selectedUsers"
+                                          @bind-SelectedRows:after="SyncSelection"
+                                          Filterable="true"
+                                          FilterMode="DataGridFilterMode.Default"
+                                          FilterMethod="DataGridFilterMethod.Contains"
+                                          RowStyling="@StyleRow"
+                                          SelectedRowStyling="@StyleRow"
+                                          RowSelectable="@((user) => {return (user.Item.Id != TaskModalContext.Task?.Author?.Id) && !TaskModalContext.TaskMetadata.InitializationInProgres;})"
+                                          Class="member-selection-grid text-custom-primary border-custom-light data-grid-custom"
+                                          Responsive>
+
+                                    <DataGridColumns>
+                                        <DataGridMultiSelectColumn TItem="ApplicationUserDto" Display="Display.None" />
+
+                                        <DataGridColumn Filterable="false" TItem="ApplicationUserDto" Field="@nameof(ApplicationUserDto.Image)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Image), PropertyDisplayResourceType.FIELD)))" Sortable="false">
+                                            <DisplayTemplate>
+                                                <Image Border="Border.RoundedCircle"
+                                                       Source="@(GetUserImageUrl(context.Item.Id!.Value))"
+                                                       Class="full-max-width datagrid-item-image-small" Loading />
+                                            </DisplayTemplate>
+                                        </DataGridColumn>
+
+                                        <DataGridColumn Field="@nameof(ApplicationUserDto.UserName)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+                                            <FilterTemplate>
+                                                <TextInput Value="@selectedUserNameFilter"
+                                                           Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.UserName), PropertyDisplayResourceType.FILTER)))"
+                                                           ValueChanged="@(value => { selectedUserNameFilter = value; context.TriggerFilterChange(selectedUserNameFilter); })" />
+                                            </FilterTemplate>
+                                        </DataGridColumn>
+                                        <DataGridColumn Field="@nameof(ApplicationUserDto.Email)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+                                            <FilterTemplate>
+                                                <TextInput Value="@selectedEmailFilter"
+                                                           Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Email), PropertyDisplayResourceType.FILTER)))"
+                                                           ValueChanged="@(value => { selectedEmailFilter = value; context.TriggerFilterChange(selectedEmailFilter); })" />
+                                            </FilterTemplate>
+                                        </DataGridColumn>
+
+                                        <DataGridSelectColumn TItem="ApplicationUserDto"
+                                                              Field="@nameof(ApplicationUserDto.Role)"
+                                                              Sortable="true"
+                                                              Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<ApplicationUserDto>(nameof(ApplicationUserDto.Role), PropertyDisplayResourceType.FIELD)))"
+                                                              TextField="@(role => resourceHandler.GetResource(((UserRole)role).GetEnumResourceValue()))"
+                                                              ValueField="@(role => role.ToString())"
+                                                              CustomFilter="@OnRoleCustomFilter">
+                                            <FilterTemplate>
+                                                <Select TValue="string" Value="@selectedRoleFilter" ValueChanged="@(value => { selectedRoleFilter = value; context.TriggerFilterChange(selectedRoleFilter); })">
+                                                    <SelectItem Value="string.Empty">
+                                                        @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
+                                                    </SelectItem>
+                                                    @foreach (var role in Enum.GetValues(typeof(UserRole)))
+                                                    {
+                                                        <SelectItem Value="@role.ToString()">@resourceHandler.GetResource(((UserRole)role).GetEnumResourceValue())</SelectItem>
+                                                    }
+                                                </Select>
+                                            </FilterTemplate>
+                                            <DisplayTemplate>
+                                                @(resourceHandler.GetResource(((UserRole)context.Item.Role).GetEnumResourceValue()))
+                                            </DisplayTemplate>
+                                        </DataGridSelectColumn>
+
+                                    </DataGridColumns>
+
+                                </DataGrid>
+
+                            </Fields>
+                        </Column>
+                    </Row>
+                </Container>
+            </Column>
+        }
+    </Container>
+}
 
 @code {
     [CascadingParameter]
