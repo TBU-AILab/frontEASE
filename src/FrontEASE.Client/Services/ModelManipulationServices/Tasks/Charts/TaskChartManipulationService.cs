@@ -105,7 +105,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts
                 ],
                 Stroke = new Stroke
                 {
-                    Curve = Curve.Smooth,
+                    Curve = Curve.Straight,
                     Width = ChartConstants.StrokeWidth,
                 },
                 Colors = [uiManager.Theme.ColorOptions.Primary],

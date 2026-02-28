@@ -211,7 +211,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
         public bool CheckDescriptionPresent(TaskModuleParameterNoValidationDto? paramOption, TaskModuleParameterDto paramValue)
         {
             return (!string.IsNullOrWhiteSpace(paramOption?.Description) ||
-                (paramOption?.EnumDescriptions?.Count > 0 && !string.IsNullOrWhiteSpace(paramValue.Value!.EnumValue?.StringValue))) && paramOption?.Readonly != true;
+                (paramOption?.EnumDescriptions?.Count > 0 && !string.IsNullOrWhiteSpace(paramValue.Value?.EnumValue?.StringValue))) && paramOption?.Readonly != true;
         }
 
         public bool RemoveListParameter(TaskModuleParameterListOptionParamsDto listParam, TaskModuleParameterDto paramValue)
@@ -253,9 +253,9 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             if (!string.IsNullOrWhiteSpace(paramValue.Value?.EnumValue?.StringValue))
             {
                 var indexOfSelected = paramOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == paramValue?.Value?.EnumValue?.StringValue);
-                if (indexOfSelected >= 0)
+                if (indexOfSelected >= 0 && paramOption?.EnumDescriptions is not null && indexOfSelected.Value < paramOption.EnumDescriptions.Count)
                 {
-                    flags.InternalDescription = paramOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+                    flags.InternalDescription = paramOption.EnumDescriptions.ElementAt(indexOfSelected.Value);
                 }
             }
 
@@ -285,9 +285,9 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
             if (!string.IsNullOrWhiteSpace(paramVal.Value?.EnumValue?.StringValue))
             {
                 var indexOfSelected = paramOption?.EnumOptions?.Select(x => x.StringValue)?.ToList()?.FindIndex(x => x == paramVal?.Value?.EnumValue?.StringValue);
-                if (indexOfSelected >= 0)
+                if (indexOfSelected >= 0 && paramOption?.EnumDescriptions is not null && indexOfSelected.Value < paramOption.EnumDescriptions.Count)
                 {
-                    internalDescription = paramOption!.EnumDescriptions!.ElementAt(indexOfSelected!.Value);
+                    internalDescription = paramOption.EnumDescriptions.ElementAt(indexOfSelected.Value);
                 }
             }
             return internalDescription;
@@ -324,7 +324,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 
         private TaskModuleParameterDto InitializeParamValue(TaskModuleDto? module, TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption, ParameterType parameterType)
         {
-            SetParameterValueBaseIfNeeded(module, parameterValue, parameterOption);
+            parameterValue = SetParameterValueBaseIfNeeded(module, parameterValue, parameterOption);
 
             parameterValue!.Value ??= new();
             parameterValue.Value.Metadata = mapper.Map<TaskModuleParameterNoValidationMetadataDto>(parameterOption);
@@ -338,13 +338,13 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 
         private TaskModuleParameterDto InitializeReadonlyParamValue(TaskModuleDto? module, TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption)
         {
-            SetParameterValueBaseIfNeeded(module, parameterValue, parameterOption);
+            parameterValue = SetParameterValueBaseIfNeeded(module, parameterValue, parameterOption);
 
             mapper.Map(parameterOption.Default, parameterValue!.Value);
             return parameterValue;
         }
 
-        private static void SetParameterValueBaseIfNeeded(TaskModuleDto? module, TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption)
+        private static TaskModuleParameterDto? SetParameterValueBaseIfNeeded(TaskModuleDto? module, TaskModuleParameterDto? parameterValue, TaskModuleParameterNoValidationDto parameterOption)
         {
             if (parameterValue is null && module is not null)
             {
@@ -357,6 +357,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks
 
                 module.Parameters.Add(parameterValue);
             }
+            return parameterValue;
         }
     }
 }

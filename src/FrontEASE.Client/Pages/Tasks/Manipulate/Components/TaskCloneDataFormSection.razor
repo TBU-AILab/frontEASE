@@ -28,31 +28,25 @@
         </Div>
     </Field>
 
-    <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
+    <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is4.FromTop">
         <Container Fluid>
             <Row>
                 <Fields>
                     <FieldLabel For="@(GetElementIdByOperation(nameof(TaskDuplicateActionRequestDto.Copies)))" RequiredIndicator>
-                        @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Copies), PropertyDisplayResourceType.FIELD))}: {CloneModel.Copies}")
+                        <Span>
+                            @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Copies), PropertyDisplayResourceType.FIELD))}")
+                        </Span>
+                        <Span TextWeight="TextWeight.Bold">
+                            @(CloneModel.Copies)
+                        </Span>
                     </FieldLabel>
 
                     <Validation>
-                        <Field Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.Is2.OnWidescreen">
-
-                            <NumericInput @bind-Value="@CloneModel.Copies" Step="1" Min="1" Max="32">
-                                <Feedback>
-                                    <ValidationError Multiline="true" />
-                                </Feedback>
-                            </NumericInput>
-                        </Field>
-                    </Validation>
-
-                    <Validation>
-                        <Field ColumnSize="ColumnSize.Is10.OnWidescreen">
+                        <Field ColumnSize="ColumnSize.IsFull">
                             <Slider ElementId="@(GetElementIdByOperation(nameof(TaskDuplicateActionRequestDto.Copies)))"
                                     Background="Background.Transparent"
                                     @bind-Value="@CloneModel.Copies"
-                                    Step="1" Min="1" Max="32">
+                                    Step="1" Min="1" Max="15">
                                 <Feedback>
                                     <ValidationError Multiline="true" />
                                 </Feedback>

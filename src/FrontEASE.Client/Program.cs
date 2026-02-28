@@ -76,6 +76,7 @@ void SetupUIEnhancements()
     builder.Services.AddBlazorise(options =>
     {
         options.ChangeSliderOnHold = true;
+        options.SafeJsInvoke = true;
         options.EnableNumericStep = true;
         options.ShowNumericStepButtons = true;
         options.ModalFocusTrap = true;

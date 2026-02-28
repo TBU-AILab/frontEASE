@@ -64,8 +64,8 @@
                               Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                               @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.IntValue"
                               Placeholder="@(TaskModuleParamContext.ParamOption.Default?.IntValue?.ToString() ?? 0.ToString())"
-                              Min="@(TaskModuleParamContext.ParamOption.MinValue is double intMin ? (int)intMin : int.MinValue)"
-                              Max="@(TaskModuleParamContext.ParamOption.MaxValue is double intMax ? (int)intMax : int.MaxValue)">
+                              Min="@(TaskModuleParamContext.ParamOption.MinValue.HasValue ? (int)TaskModuleParamContext.ParamOption.MinValue.Value : null)"
+                              Max="@(TaskModuleParamContext.ParamOption.MaxValue.HasValue ? (int)TaskModuleParamContext.ParamOption.MaxValue.Value : null)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -115,8 +115,8 @@
                               Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                               @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.FloatValue"
                               Placeholder="@(TaskModuleParamContext.ParamOption.Default?.FloatValue?.ToString() ?? 0.0.ToString())"
-                              Min="@(TaskModuleParamContext.ParamOption.MinValue is double floatMin ? floatMin : double.MinValue)"
-                              Max="@(TaskModuleParamContext.ParamOption.MaxValue is double floatMax ? floatMax : double.MaxValue)">
+                              Min="@(TaskModuleParamContext.ParamOption.MinValue.HasValue ? (double)TaskModuleParamContext.ParamOption.MinValue.Value : null)"
+                              Max="@(TaskModuleParamContext.ParamOption.MaxValue.HasValue ? (double)TaskModuleParamContext.ParamOption.MaxValue.Value : null)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -140,8 +140,8 @@
                     <Select TValue="string"
                             Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                             ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                            Value="@TaskModuleParamContext.ParamValue!.Value!.EnumValue!.StringValue"
-                            ValueExpression="@(() => TaskModuleParamContext.ParamValue.Value!.EnumValue!.StringValue)"
+                            Value="@(TaskModuleParamContext.ParamValue?.Value?.EnumValue?.StringValue)"
+                            ValueExpression="@(() => TaskModuleParamContext.ParamValue!.Value!.EnumValue!.StringValue)"
                             ValueChanged="@(async (value) => await OnStringEnumValueChanged(value))">
                         <ChildContent>
                             <SelectItem Value="string.Empty">
@@ -171,11 +171,12 @@
         else if (TaskModuleParamContext.ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null)
         {
             var moduleType = TaskModuleParamContext.ParamOption.EnumOptions.Select(x => x.ModuleValue?.PackageType).FirstOrDefault(x => x.HasValue);
-            if (moduleType is not null)
+            if (moduleType is not null && TaskModuleParamContext.ParamValue?.Value is not null)
             {
-                TaskModuleParamContext.ParamValue!.Value!.EnumValue!.ModuleValue ??= new() { PackageType = moduleType.Value };
+                TaskModuleParamContext.ParamValue.Value.EnumValue ??= new();
+                TaskModuleParamContext.ParamValue.Value.EnumValue.ModuleValue ??= new() { PackageType = moduleType.Value };
                 var moduleContext = new TaskModuleContext(
-                    TaskModuleParamContext.ParamValue.Value!.EnumValue!.ModuleValue!,
+                    TaskModuleParamContext.ParamValue.Value.EnumValue.ModuleValue,
                     TaskModuleParamContext.ParamOption!.EnumOptions.Select(x => x.ModuleValue!).ToList(),
                     TaskModuleParamContext.ParamName);
 
@@ -293,15 +294,18 @@
 
     private async Task RefreshFlags()
     {
-        if (TaskModuleParamContext.ParamFlags is not null)
+        if (TaskModuleParamContext.ParamValue is not null)
         {
-            var flags = taskManipulationService.GetParamFlags(TaskModuleContext.Module, TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
-            mapper.Map(flags, TaskModuleParamContext.ParamFlags);
-        }
-        else if (TaskModuleParamContext.ListFlags is not null)
-        {
-            var listFlags = taskManipulationService.GetListParamFlags(TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
-            mapper.Map(listFlags, TaskModuleParamContext.ListFlags);
+            if (TaskModuleParamContext.ParamFlags is not null)
+            {
+                var flags = taskManipulationService.GetParamFlags(TaskModuleContext?.Module, TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue);
+                mapper.Map(flags, TaskModuleParamContext.ParamFlags);
+            }
+            else if (TaskModuleParamContext.ListFlags is not null)
+            {
+                var listFlags = taskManipulationService.GetListParamFlags(TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue);
+                mapper.Map(listFlags, TaskModuleParamContext.ListFlags);
+            }
         }
         await uiService.CallRequestRefreshAsync();
     }

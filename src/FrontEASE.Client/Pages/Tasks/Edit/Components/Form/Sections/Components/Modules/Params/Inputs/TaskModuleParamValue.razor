@@ -3,9 +3,11 @@
 @inject IUIService uiService
 @inject IMapper mapper
 
-@if (TaskModuleParamContext is not null)
+@implements IDisposable
+
+@if (TaskModuleParamContext?.ParamValue is not null)
 {
-    TaskModuleParamContext.ParamFlags = taskManipulationService.GetParamFlags(TaskModuleContext.Module, TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
+    TaskModuleParamContext.ParamFlags = taskManipulationService.GetParamFlags(TaskModuleContext.Module, TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue);
 }
 
 @if (TaskModuleParamContext?.ParamFlags?.ParamType is not null)
@@ -48,20 +50,23 @@
     </Field>
 }
 
-@if (TaskModuleParamContext?.ParamFlags?.ParamType == ParameterType.MARKDOWN)
+@if (TaskModuleParamContext?.ParamFlags?.ParamType == ParameterType.MARKDOWN && TaskModuleParamContext.ParamValue?.Value is not null)
 {
     <Validation>
-        <Field ColumnSize="@(TaskModuleParamContext.ParamFlags!.DisplayActions ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)" Class="input-validation-only">
+        @if (TaskModuleParamContext?.ParamFlags is not null && TaskModuleParamContext.ParamValue?.Value is not null)
+        {
+            <Field ColumnSize="@(TaskModuleParamContext.ParamFlags.DisplayActions ? ColumnSize.Is10.Is11.OnFullHD : ColumnSize.IsFull)" Class="input-validation-only">
 
-            <MemoInput ElementId="@(GetElementIdByOperation($"{TaskModuleParamContext.ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))"
-                       Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                       @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
-                       Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)">
-                <Feedback>
-                    <ValidationError Multiline="true" />
-                </Feedback>
-            </MemoInput>
-        </Field>
+                <MemoInput ElementId="@(GetElementIdByOperation($"{TaskModuleParamContext.ParamOption.Key}{nameof(Blazorise.Markdown.Markdown)}"))"
+                           Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                           @bind-Value="@TaskModuleParamContext.ParamValue.Value.StringValue"
+                           Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)">
+                    <Feedback>
+                        <ValidationError Multiline="true" />
+                    </Feedback>
+                </MemoInput>
+            </Field>
+        }
     </Validation>
 }
 
@@ -75,8 +80,11 @@
     [Parameter]
     public TaskModuleParamContext TaskModuleParamContext { get; set; } = null!;
 
+    private bool _disposed;
+
     private async Task RefreshViewAsync()
     {
+        if (_disposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -89,8 +97,24 @@
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        var derivedFlags = taskManipulationService.GetParamFlags(TaskModuleContext.Module, TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
-        mapper.Map(derivedFlags, TaskModuleParamContext.ParamFlags);
+        if (TaskModuleParamContext?.ParamValue is not null)
+        {
+            var derivedFlags = taskManipulationService.GetParamFlags(TaskModuleContext.Module, TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue);
+            if (TaskModuleParamContext.ParamFlags is not null)
+            {
+                mapper.Map(derivedFlags, TaskModuleParamContext.ParamFlags);
+            }
+            else
+            {
+                TaskModuleParamContext.ParamFlags = derivedFlags;
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        _disposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
     }
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, TaskModalContext.Operation, $"{TaskModalContext.Task.ID.ToString()}_{TaskModuleParamContext.ParamID.ToString()}");

@@ -30,7 +30,7 @@
 
                         <Column ColumnSize="@(string.IsNullOrWhiteSpace(itemModuleData?.Description) ? ColumnSize.IsFull : ColumnSize.Is10.OnWidescreen)" Margin="Margin.Is2.FromTop.Is2.FromBottom">
                             <Text>
-                                @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.ShortName), PropertyDisplayResourceType.FIELD)))
+                                @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.ShortName), PropertyDisplayResourceType.FIELD))}:")
                             </Text>
                             <Span TextWeight="TextWeight.Bold" Class="fst-italic">
                                 @($" {itemModuleLongName}")
