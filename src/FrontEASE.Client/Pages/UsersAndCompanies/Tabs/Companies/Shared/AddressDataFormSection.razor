@@ -1,6 +1,9 @@
-﻿@inject ICompanyManipulationService companyManipulationService
+@inject ICompanyManipulationService companyManipulationService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
     <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@(async () => await ChangeCollapseState())" Padding="Padding.Is2" Border="Border.Rounded" Shadow="Shadow.Small">
@@ -144,8 +147,11 @@
 
     private bool isSectionCollapsed = false;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -176,5 +182,17 @@
         { companyManipulationService.InitAddressInfo(CompanyModel); }
 
         await uiService.CallRequestRefreshAsync();
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

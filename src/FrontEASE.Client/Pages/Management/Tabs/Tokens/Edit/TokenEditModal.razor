@@ -1,9 +1,12 @@
-﻿@inject IManagementApiService managementApiService
+@inject IManagementApiService managementApiService
 @inject IUIService uiService
 @inject IUIManager uiManager
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
 @inject Blazored.Toast.Services.IToastService toastService
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 <Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))" Centered>
     @if (EditModal.Visible)
@@ -55,8 +58,11 @@
     private bool updateInProgress = false;
     private bool isModalVisible = false;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -118,5 +124,17 @@
         TokenModel = mapper.Map<UserPreferenceTokenOptionDto>(Token);
         isModalVisible = true;
         return EditModal.Show();
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

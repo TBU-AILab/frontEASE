@@ -1,7 +1,10 @@
-﻿@inject ITaskManipulationService taskManipulationService
+@inject ITaskManipulationService taskManipulationService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
 @inject AppSettings appSettings
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 @if (PageContext.AvailableUsers.Count > 0)
 {
@@ -113,8 +116,11 @@
     private string selectedUserNameFilter = string.Empty;
     private string selectedEmailFilter = string.Empty;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -202,5 +208,17 @@
         var userData = PageContext.AvailableUsers.SingleOrDefault(x => x.Id == userID);
         return string.IsNullOrWhiteSpace(userData?.Image?.ImageUrl) ?
         ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{userData?.Image?.ImageUrl}";
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

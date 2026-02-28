@@ -1,5 +1,8 @@
-﻿@inject IResourceHandler resourceHandler
+@inject IResourceHandler resourceHandler
 @inject IUIService uiService
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 @attribute [Authorize]
 @page "/Management"
@@ -76,7 +79,13 @@
     private ManagementPageContext PageContext = null!;
     private UserPreferencesManagementType managementTypeSelected = UserPreferencesManagementType.TOKENS;
 
-    private async Task RefreshViewAsync() => await InvokeAsync(StateHasChanged);
+    private bool isDisposed;
+
+    private async Task RefreshViewAsync()
+    {
+        if (isDisposed) { return; }
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -86,4 +95,16 @@
     }
 
     private void OnSelectedTabChanged(string name) => managementTypeSelected = (UserPreferencesManagementType)Enum.Parse(typeof(UserPreferencesManagementType), name);
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
+    }
 }

@@ -1,9 +1,10 @@
-﻿@inject IResourceHandler resourceHandler
+@inject IResourceHandler resourceHandler
 @inject ITaskManipulationService taskManipulationService
 @inject IUIService uiService
 @inject IMapper mapper
 
 @implements IDisposable
+@implements IAsyncDisposable
 
 @if (TaskModuleParamContext?.ParamValue is not null)
 {
@@ -80,11 +81,11 @@
     [Parameter]
     public TaskModuleParamContext TaskModuleParamContext { get; set; } = null!;
 
-    private bool _disposed;
+    private bool isDisposed;
 
     private async Task RefreshViewAsync()
     {
-        if (_disposed) { return; }
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -113,8 +114,14 @@
 
     public void Dispose()
     {
-        _disposed = true;
+        isDisposed = true;
         uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<TaskModuleParameterDto>(elementBase, TaskModalContext.Operation, $"{TaskModalContext.Task.ID.ToString()}_{TaskModuleParamContext.ParamID.ToString()}");

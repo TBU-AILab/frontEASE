@@ -1,7 +1,10 @@
-﻿@inject ICompanyManipulationService companyManipulationService
+@inject ICompanyManipulationService companyManipulationService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
 @inject AppSettings appSettings
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 @if (PageContext.Users.Count > 0)
 {
@@ -110,8 +113,11 @@
     private string selectedUserNameFilter = string.Empty;
     private string selectedEmailFilter = string.Empty;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -183,5 +189,17 @@
         { companyManipulationService.CleanUsersInfo(CompanyModel); }
 
         await uiService.CallRequestRefreshAsync();
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

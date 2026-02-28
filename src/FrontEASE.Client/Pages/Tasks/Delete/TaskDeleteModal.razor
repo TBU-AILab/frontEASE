@@ -1,7 +1,10 @@
-﻿@inject ITaskApiService taskApiService
+@inject ITaskApiService taskApiService
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 
 <Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))" Centered>
@@ -56,8 +59,11 @@
     private bool deletingInProgress = false;
     private bool isModalVisible = false;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
     protected override async Task OnInitializedAsync()
@@ -123,5 +129,17 @@
     {
         isModalVisible = true;
         return DeleteModal.Show();
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

@@ -1,6 +1,9 @@
-﻿@inject IResourceHandler resourceHandler
+@inject IResourceHandler resourceHandler
 @inject IUIService uiService
 @inject AppSettings appSettings
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 
 @if (SelectedTasks.Count > 1 && isBulkActionEnabled)
@@ -394,6 +397,8 @@
     private string selectedConnectorTypeFilter = string.Empty;
     private string selectedSolutionTypeFilter = string.Empty;
 
+    private bool isDisposed;
+
     private bool IsBulkRunEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => runnableTaskStates.Contains(task.State));
     private bool IsBulkPauseEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => pauseableTaskStates.Contains(task.State));
     private bool IsBulkStopEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => stoppableTaskStates.Contains(task.State));
@@ -432,7 +437,11 @@
         await RefreshViewAsync();
     }
 
-    private async Task RefreshViewAsync() => await InvokeAsync(StateHasChanged);
+    private async Task RefreshViewAsync()
+    {
+        if (isDisposed) { return; }
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -582,5 +591,17 @@
     {
         var matchedModule = PageContext.TaskModuleOptions.FirstOrDefault(x => x.PackageType == packageType && x.ShortName == shortName);
         return matchedModule?.LongName;
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

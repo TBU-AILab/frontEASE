@@ -1,7 +1,10 @@
-﻿@inject ITaskManipulationService taskManipulationService
+@inject ITaskManipulationService taskManipulationService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
 @inject AppSettings appSettings
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 @if (PageContext.AvailableCompanies.Count > 0)
 {
@@ -121,8 +124,11 @@
     private string selectedNameAbbreviationFilter = string.Empty;
     private string selectedAddressFilter = string.Empty;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -206,5 +212,17 @@
         var groupData = PageContext.AvailableCompanies.SingleOrDefault(x => x.ID == groupID);
         return string.IsNullOrWhiteSpace(groupData?.Image?.ImageUrl) ?
             ImageConstants.CompanyPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{groupData?.Image?.ImageUrl}";
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

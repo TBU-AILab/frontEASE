@@ -1,8 +1,11 @@
-﻿@inject IResourceHandler resourceHandler
+@inject IResourceHandler resourceHandler
 @inject IUserApiService userApiService
 @inject IUIService uiService
 @inject ICompanyManipulationService companyManipulationService
 @inject ICompanyApiService companyApiService
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<CompanyDto>()))" />
 <Divider Class="divider-main-thin bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is0.FromTop" />
@@ -31,8 +34,11 @@
 
     private bool isInitialized = false;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -80,5 +86,17 @@
             PageContext.Users.Clear();
             PageContext.Users.AddRange(users);
         }
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

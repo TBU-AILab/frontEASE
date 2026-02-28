@@ -1,8 +1,11 @@
-﻿@inject IMapper mapper
+@inject IMapper mapper
 @inject IUIService uiService
 @inject ITaskApiService taskApiService
 @inject IResourceHandler resourceHandler
 @inject Blazored.Toast.Services.IToastService toastService
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 <Modal @ref="@TaskModalContext.Modal" @bind-Visible="isModalVisible" Closing="@(async (e) => await OnModalClosing(e))" Class="modal-dialog-wide" Border="Border.Rounded" Centered>
     @if (isModalVisible)
@@ -61,6 +64,8 @@
     private bool isModalVisible = false;
     private CancellationTokenSource? cancellationTokenSource;
 
+    private bool isDisposed;
+
     public TaskEditModal()
     {
         TaskModalContext = new TaskModalContext(new(), TaskInfo, new(), new(), Operation, new());
@@ -68,6 +73,7 @@
 
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -175,5 +181,17 @@
 
         isTaskLoading = false;
         await uiService.CallRequestRefreshAsync();
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

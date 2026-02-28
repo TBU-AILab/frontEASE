@@ -1,5 +1,3 @@
-﻿@implements IAsyncDisposable
-
 @inject ITypelistApiService typelistApiService
 @inject ITaskApiService taskApiService
 @inject IUserApiService userApiService
@@ -11,6 +9,9 @@
 @inject IUIService uiService
 @inject IMapper mapper
 @inject AppSettings appSettings
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 <Container Fluid>
     <TaskListHeader />
@@ -51,6 +52,8 @@
     private bool isTaskOptionsLoading;
     private CancellationTokenSource cancellationTokenSource;
 
+    private bool isDisposed;
+
     public TaskList()
     {
         cancellationTokenSource = new();
@@ -58,6 +61,7 @@
 
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -179,8 +183,15 @@
         }
     }
 
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
+        Dispose();
         await cancellationTokenSource.CancelAsync();
         cancellationTokenSource?.Dispose();
     }
