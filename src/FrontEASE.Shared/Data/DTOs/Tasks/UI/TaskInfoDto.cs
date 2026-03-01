@@ -1,4 +1,6 @@
-﻿using FrontEASE.Shared.Data.DTOs.Shared.Users;
+﻿using FrontEASE.Shared.Data.DTOs.Management.Tags;
+using FrontEASE.Shared.Data.DTOs.Shared.Users;
+using FrontEASE.Shared.Data.DTOs.Tasks.Data.Logs;
 using FrontEASE.Shared.Data.Enums.Tasks;
 using FrontEASE.Shared.Infrastructure.Attributes;
 
@@ -16,6 +18,9 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.UI
             SolutionType = string.Empty;
 
             Author = null!;
+
+            Logs = [];
+            Tags = [];
         }
 
         #region Navigation
@@ -70,6 +75,18 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.UI
         /// </summary>
         [Resource($"{nameof(TaskInfoDto)}.{nameof(SolutionType)}")]
         public string SolutionType { get; set; }
+
+        /// <summary>
+        /// Task status info logs
+        /// </summary>
+        [Resource($"{nameof(TaskInfoDto)}.{nameof(Logs)}")]
+        public IList<TaskLogDto> Logs { get; set; }
+
+        /// <summary>
+        /// Task status info tags
+        /// </summary>
+        [Resource($"{nameof(TaskInfoDto)}.{nameof(Tags)}")]
+        public IList<UserPreferenceTagOptionDto> Tags { get; set; }
 
         #endregion
     }

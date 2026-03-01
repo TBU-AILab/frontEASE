@@ -4,47 +4,44 @@ using FrontEASE.Shared.Infrastructure.Constants.Validations;
 using FrontEASE.Shared.Services.Resources;
 using System.ComponentModel.DataAnnotations;
 
-namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific
+namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific.Tasks
 {
-    namespace FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic
+    public class ParameterNumericRangeValidationAttribute(bool nullable = false) : ValidationAttribute
     {
-        public class ParameterNumericRangeValidationAttribute(bool nullable = false) : ValidationAttribute
+        protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
-            protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
+            if (validationContext.ObjectInstance is not TaskModuleParameterValueDto dto)
             {
-                if (validationContext.ObjectInstance is not TaskModuleParameterValueDto dto)
-                {
-                    return new ValidationResult("Invalid object type for validation.");
-                }
-
-                var validatableTypes = new List<ParameterType>() { ParameterType.INT, ParameterType.FLOAT, ParameterType.TIME };
-                var integerTypes = new List<ParameterType>() { ParameterType.INT, ParameterType.TIME };
-
-                if (dto.Metadata is null || dto.Metadata.Readonly || (!validatableTypes.Any(x => x == dto.Metadata.Type)))
-                { return ValidationResult.Success!; }
-
-                if (nullable && (value is null || string.IsNullOrEmpty(value.ToString())))
-                { return ValidationResult.Success!; }
-
-                var minValue = dto.Metadata.MinValue ?? (integerTypes.Contains(dto.Metadata.Type) ? int.MinValue : double.MinValue);
-                var maxValue = dto.Metadata.MaxValue ?? (integerTypes.Contains(dto.Metadata.Type) ? int.MaxValue : double.MaxValue);
-
-                if (value is double doubleValue && (doubleValue < minValue || doubleValue > maxValue) ||
-                    value is int intValue && (intValue < minValue || intValue > maxValue))
-                {
-                    var serviceProvider = validationContext.GetService(typeof(IResourceHandler));
-                    if (serviceProvider is IResourceHandler resourceHandler)
-                    {
-                        var formattedErrorMessage = resourceHandler.GetValidationResource(ValidationKeyConstants.ParameterNumericRangeKey, [minValue.ToString(), maxValue.ToString()]);
-                        ErrorMessage = formattedErrorMessage;
-                    }
-
-                    var propertyName = dto.Metadata.Name ?? validationContext.DisplayName;
-                    return new ValidationResult(ErrorMessage, [propertyName]);
-                }
-
-                return ValidationResult.Success!;
+                return new ValidationResult("Invalid object type for validation.");
             }
+
+            var validatableTypes = new List<ParameterType>() { ParameterType.INT, ParameterType.FLOAT, ParameterType.TIME };
+            var integerTypes = new List<ParameterType>() { ParameterType.INT, ParameterType.TIME };
+
+            if (dto.Metadata is null || dto.Metadata.Readonly || (!validatableTypes.Any(x => x == dto.Metadata.Type)))
+            { return ValidationResult.Success!; }
+
+            if (nullable && (value is null || string.IsNullOrEmpty(value.ToString())))
+            { return ValidationResult.Success!; }
+
+            var minValue = dto.Metadata.MinValue ?? (integerTypes.Contains(dto.Metadata.Type) ? int.MinValue : double.MinValue);
+            var maxValue = dto.Metadata.MaxValue ?? (integerTypes.Contains(dto.Metadata.Type) ? int.MaxValue : double.MaxValue);
+
+            if (value is double doubleValue && (doubleValue < minValue || doubleValue > maxValue) ||
+                value is int intValue && (intValue < minValue || intValue > maxValue))
+            {
+                var serviceProvider = validationContext.GetService(typeof(IResourceHandler));
+                if (serviceProvider is IResourceHandler resourceHandler)
+                {
+                    var formattedErrorMessage = resourceHandler.GetValidationResource(ValidationKeyConstants.ParameterNumericRangeKey, [minValue.ToString(), maxValue.ToString()]);
+                    ErrorMessage = formattedErrorMessage;
+                }
+
+                var propertyName = dto.Metadata.Name ?? validationContext.DisplayName;
+                return new ValidationResult(ErrorMessage, [propertyName]);
+            }
+
+            return ValidationResult.Success!;
         }
     }
 }

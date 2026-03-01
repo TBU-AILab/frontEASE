@@ -11,6 +11,7 @@ namespace FrontEASE.Shared.Infrastructure.Utils.Extensions
         {
             { PropertyDisplayResourceType.FIELD,  UIElementConstants.Field},
             { PropertyDisplayResourceType.PLACEHOLDER, UIElementConstants.Placeholder},
+            { PropertyDisplayResourceType.FILTER, UIElementConstants.Filter},
             { PropertyDisplayResourceType.ENUM, UIElementConstants.Enum },
             { PropertyDisplayResourceType.COLLECTION, UIElementConstants.Collection },
             { PropertyDisplayResourceType.DEFAULT, UIElementConstants.Default },

@@ -5,5 +5,6 @@
         new public const string BaseUrl = $"{ControllerConstants.BaseUrl}/management";
 
         public const string Global = "global";
+        public const string Tags = "tags";
     }
 }

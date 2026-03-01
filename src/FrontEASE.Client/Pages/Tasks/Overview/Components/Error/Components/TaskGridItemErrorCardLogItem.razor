@@ -1,0 +1,11 @@
+﻿<Column ColumnSize="ColumnSize.IsFull">
+    <Alert Margin="Margin.Is0" Color="Color.Danger" Visible>
+        <AlertMessage>@(ErrorLog.Message)</AlertMessage>
+    </Alert>
+
+</Column>
+
+@code {
+    [Parameter]
+    public TaskLogDto ErrorLog { get; set; } = new();
+}

@@ -5,6 +5,8 @@ namespace FrontEASE.Domain.Services.Users
 {
     public interface IUserService
     {
+        Task<Guid> LoadCurrentUserId(CancellationToken cancellationToken);
+        Task<ApplicationUser?> LoadCurrentUser(CancellationToken cancellationToken);
         Task<IList<ApplicationUser>> LoadDuplicities(ApplicationUser user, CancellationToken cancellationToken);
         Task<IList<ApplicationUser>> LoadAll(CancellationToken cancellationToken);
         Task<ApplicationUser?> Load(Guid id, CancellationToken cancellationToken);

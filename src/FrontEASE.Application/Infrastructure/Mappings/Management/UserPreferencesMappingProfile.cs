@@ -14,6 +14,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Management
         private void CreateMaps()
         {
             CreateMap<UserPreferences, UserPreferencesDto>()
+                .ForMember(x => x.TagOptions, cd => cd.MapFrom(map => map.TagOptions))
                 .ForMember(x => x.TokenOptions, cd => cd.MapFrom(map => map.TokenOptions))
                 .ForMember(x => x.GeneralOptions, cd => cd.MapFrom(map => map.GeneralOptions))
                 .ReverseMap();
@@ -23,6 +24,8 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Management
                 .ForMember(x => x.GeneralOptionsID, opt => opt.Ignore())
 
                 .ForMember(x => x.User, opt => opt.Ignore())
+
+                .ForMember(x => x.TagOptions, cd => cd.MapFrom(map => map.TagOptions))
                 .ForMember(x => x.GeneralOptions, cd => cd.MapFrom(map => map.GeneralOptions))
                 .ForMember(x => x.TokenOptions, cd => cd.MapFrom(map => map.TokenOptions));
         }

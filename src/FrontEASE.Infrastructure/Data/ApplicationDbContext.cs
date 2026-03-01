@@ -3,6 +3,7 @@ using FrontEASE.Domain.Entities.Companies;
 using FrontEASE.Domain.Entities.Jobs;
 using FrontEASE.Domain.Entities.Management;
 using FrontEASE.Domain.Entities.Management.General;
+using FrontEASE.Domain.Entities.Management.Tags;
 using FrontEASE.Domain.Entities.Management.Tokens;
 using FrontEASE.Domain.Entities.Management.Tokens.Connectors;
 using FrontEASE.Domain.Entities.Shared.Addresses;
@@ -38,6 +39,7 @@ using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.V
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.Values.Enums;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.Params.Values.List;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Configs.Modules.RepeatedMessage;
+using FrontEASE.Infrastructure.Data.Configuration.Tasks.Logs;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Messages;
 using FrontEASE.Infrastructure.Data.Configuration.Tasks.Solutions;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -63,6 +65,7 @@ namespace FrontEASE.Infrastructure.Data
         /* Management Data */
         public DbSet<UserPreferences> UserPreferences { get; set; }
         public DbSet<UserPreferenceTokenOption> UserPreferenceTokenOptions { get; set; }
+        public DbSet<UserPreferenceTagOption> UserPreferenceTagOptions { get; set; }
         public DbSet<UserPreferenceTokenOptionConnectorType> UserPreferenceTokenOptionConnectorTypes { get; set; }
         public DbSet<UserPreferenceGeneralOptions> UserPreferenceGeneralOptions { get; set; }
 
@@ -103,12 +106,14 @@ namespace FrontEASE.Infrastructure.Data
 
             builder.ApplyConfiguration(new UserPreferencesConfiguration());
             builder.ApplyConfiguration(new UserPreferenceTokenOptionsConfiguration());
+            builder.ApplyConfiguration(new UserPreferenceTagOptionsConfiguration());
             builder.ApplyConfiguration(new UserPreferenceGeneralOptionsConfiguration());
             builder.ApplyConfiguration(new UserPreferenceTokenOptionConnectorTypeConfiguration());
 
             builder.ApplyConfiguration(new TaskConfiguration());
             builder.ApplyConfiguration(new TaskSolutionConfiguration());
             builder.ApplyConfiguration(new TaskMessageConfiguration());
+            builder.ApplyConfiguration(new TaskLogConfiguration());
             builder.ApplyConfiguration(new TaskConfigConfiguration());
             builder.ApplyConfiguration(new TaskConfigRepeatedMessageConfiguration());
             builder.ApplyConfiguration(new TaskConfigRepeatedMessageItemConfiguration());

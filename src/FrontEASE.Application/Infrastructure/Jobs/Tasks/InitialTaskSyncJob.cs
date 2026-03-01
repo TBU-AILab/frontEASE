@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
 using FrontEASE.DataContracts.Models.Core.Tasks.Info;
 using FrontEASE.Domain.DataQueries.Tasks;
 using FrontEASE.Domain.Entities.Tasks.Configs;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
+using FrontEASE.Domain.Entities.Tasks.Logs;
 using FrontEASE.Domain.Entities.Tasks.Messages;
 using FrontEASE.Domain.Entities.Tasks.Solutions;
 using FrontEASE.Domain.Infrastructure.Settings.App;
@@ -50,7 +50,10 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                 LoadConfigRepeatedMessage = true,
                 LoadMessages = true,
                 LoadSolutions = true,
+                LoadLogs = true,
+                LoadTags = true,
                 IncludeMembers = true,
+                AsSplitQuery = true
             };
 
             var existingTasks = await taskRepository.LoadAllWhere(x => !x.IsDeleted && coreTaskIDs.Contains(x.ID), query, cancellationToken);
@@ -61,6 +64,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             var updatesPerformed = 0;
             foreach (var coreTask in coreTaskData)
             {
+                var dateTimeTaskProcessing = DateTime.Now;
                 var taskId = coreTask.TaskInfo!.ID!.Value;
                 var matchingTask = existingTasks.FirstOrDefault(x => x.ID == taskId);
                 if (matchingTask is not null)
@@ -70,6 +74,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 
                     matchingTask.Messages = mapper.Map<IList<TaskMessage>>(coreTask.TaskData?.Messages);
                     matchingTask.Solutions = mapper.Map<IList<TaskSolution>>(coreTask.TaskData?.Solutions);
+                    matchingTask.Logs = coreTask.TaskInfo?.Log?.Select(x => new TaskLog() { Message = x ?? string.Empty })?.ToList() ?? [];
 
                     coreTask.TaskConfig?.Modules?.Clear();
                     matchingTask.Config = mapper.Map<TaskConfig>(coreTask.TaskConfig);
@@ -104,6 +109,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                 var newTask = mapper.Map<Domain.Entities.Tasks.Task>(coreTask.TaskInfo);
                 newTask.Messages = mapper.Map<IList<TaskMessage>>(coreTask.TaskData?.Messages);
                 newTask.Solutions = mapper.Map<IList<TaskSolution>>(coreTask.TaskData?.Solutions);
+                newTask.Logs = coreTask.TaskInfo?.Log?.Select(x => new TaskLog() { Message = x ?? string.Empty })?.ToList() ?? [];
 
                 coreTask.TaskConfig?.Modules?.Clear();
                 newTask.Config = mapper.Map<TaskConfig>(coreTask.TaskConfig);
@@ -120,6 +126,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
             context.WriteLine($"Inserted {tasksForInsertion.Count} items into the database.");
         }
 
+        [AutomaticRetry(Attempts = 0)]
         public async Task Execute(PerformContext context)
         {
             var currentExecutionStart = DateTime.UtcNow;

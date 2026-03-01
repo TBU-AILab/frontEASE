@@ -6,12 +6,12 @@ namespace FrontEASE.Client.Contexts.Specific.Tasks
     public class TaskModuleContext
     {
         public TaskModuleContext(
-            TaskModuleDto module,
+            TaskModuleDto? module,
             IList<TaskModuleNoValidationDto> moduleOptions,
             string? moduleName = null)
         {
             ModuleOptions = moduleOptions;
-            Module = module;
+            Module = module!;
             ModuleName = moduleName;
 
             ModuleData = ModuleOptions.FirstOrDefault(x => x.ShortName == Module?.ShortName);

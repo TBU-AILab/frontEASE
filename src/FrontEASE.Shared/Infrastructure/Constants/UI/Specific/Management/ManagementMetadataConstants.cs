@@ -2,7 +2,12 @@
 {
     public static class ManagementMetadataConstants
     {
+        /* Packages */
         public const string System = "System";
         public const string Addons = "Addons";
+
+        /* Tags */
+        public const string User = "User";
+        public const string All = "All";
     }
 }

@@ -28,5 +28,8 @@ namespace FrontEASE.DataContracts.Models.Core.Tasks.Info
 
         [JsonPropertyName("iterations_invalid_consecutive")]
         public int? IterationsInvalidConsecutive { get; set; }
+
+        [JsonPropertyName("log")]
+        public IList<string>? Log { get; set; }
     }
 }

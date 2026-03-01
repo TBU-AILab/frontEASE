@@ -1,0 +1,134 @@
+﻿@inject IManagementApiService managementApiService
+@inject IUIService uiService
+@inject IMapper mapper
+@inject IUIService uiService
+@inject IResourceHandler resourceHandler
+@inject Blazored.Toast.Services.IToastService toastService
+
+<Modal @ref="@DeleteModal" @bind-Visible="@isModalVisible" @onkeydown="@(async (e) => await HandleKeyDown(e))" Class="modal-dialog-wide" Centered>
+    @if (isModalVisible)
+    {
+        <ModalContent Shadow="Shadow.Small" Class="bg-custom-primary">
+
+            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")} - {Tag.Tag}")" />
+
+            <ModalBody Margin="Margin.Is3.FromTop">
+                <Row>
+                    <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
+                        <Text Class="font-large">
+                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIActionConstants.Delete}.{nameof(UserPreferenceTagOptionDto)}.{UIConstants.Question}")
+                        </Text>
+                    </Column>
+                </Row>
+                @if (Tag.TaskCount > 0)
+                {
+                    <Row Margin="Margin.Is4.FromTop">
+                        <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
+                            <Alert Color="Color.Warning" Border="Border.Is0" Visible="@(Tag.TaskCount > 0)">
+                                <AlertMessage>
+                                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.TaskCount), PropertyDisplayResourceType.FIELD))):
+                                </AlertMessage>
+                                <AlertDescription>
+                                    @(string.Format(resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.TaskCount), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Warning}"), Tag.TaskCount))
+                                </AlertDescription>
+                            </Alert>
+                        </Column>
+                    </Row>
+                }
+                <Row Margin="Margin.Is4.FromTop">
+                    <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile">
+                        <Button Clicked="@DeleteTag" Color="Color.Danger" Class="btn btn-sized button full-width" Disabled="@deletingInProgress" TextWeight="TextWeight.Bold">
+                            @if (deletingInProgress)
+                            {
+                                <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" TextSize="TextSize.Medium" />
+                            }
+                            else
+                            {
+                                @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}")
+                            }
+                        </Button>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile">
+                        <Button Clicked="@HideModal" Class="btn btn-sized button full-width text-custom-primary" TextWeight="TextWeight.Bold" Border="Border.Is1.Rounded">
+                            @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}")
+                        </Button>
+                    </Column>
+                </Row>
+            </ModalBody>
+        </ModalContent>
+    }
+</Modal>
+
+@code {
+    [CascadingParameter]
+    public ManagementPageContext PageContext { get; set; } = null!;
+
+    [Parameter]
+    public UserPreferenceTagOptionDto Tag { get; set; } = new();
+
+    [Parameter]
+    public IList<UserPreferenceTagOptionDto> OtherTags { get; set; } = [];
+
+    private Modal DeleteModal = new();
+    private bool deletingInProgress = false;
+    private bool isModalVisible = false;
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+                await DeleteTag();
+                break;
+            case ShortcutKeys.ESCAPE:
+                await HideModal();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public async Task DeleteTag()
+    {
+        deletingInProgress = true;
+
+        var isUserTag = PageContext.UserPreferences.TagOptions.Any(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
+        var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {Tag.Tag}";
+
+        var isDeleted = await managementApiService.DeleteTag(Tag.ID!.Value);
+        if (isDeleted)
+        {
+            PageContext.UserPreferences.TagOptions.Remove(Tag);
+
+            var deletedFromAll = PageContext.AllTags.Where(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
+            if (deletedFromAll is not null)
+            {
+                PageContext.AllTags.RemoveRange(deletedFromAll);
+            }
+
+            var deletedFromOther = OtherTags.Where(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
+            if (deletedFromOther is not null)
+            {
+                OtherTags.RemoveRange(deletedFromOther);
+            }
+
+            await uiService.CallRequestRefreshAsync();
+            toastService.ShowSuccess(message);
+        }
+
+        deletingInProgress = false;
+        await HideModal();
+    }
+
+    private Task HideModal()
+    {
+        isModalVisible = false;
+        return DeleteModal.Hide();
+    }
+
+    public Task ShowModal()
+    {
+        isModalVisible = true;
+        return DeleteModal.Show();
+    }
+}

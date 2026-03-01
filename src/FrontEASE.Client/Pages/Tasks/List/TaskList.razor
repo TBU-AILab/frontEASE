@@ -1,5 +1,3 @@
-﻿@implements IAsyncDisposable
-
 @inject ITypelistApiService typelistApiService
 @inject ITaskApiService taskApiService
 @inject IUserApiService userApiService
@@ -12,10 +10,13 @@
 @inject IMapper mapper
 @inject AppSettings appSettings
 
+@implements IDisposable
+@implements IAsyncDisposable
+
 <Container Fluid>
     <TaskListHeader />
 
-    @if (isTasksLoading || isUsersLoading || isCompaniesLoading || isTaskOptionsLoading)
+    @if (isTasksLoading || isUsersLoading || isCompaniesLoading || isTaskOptionsLoading || isTagsLoading)
     {
         <ContentLoadSpinner />
     }
@@ -40,15 +41,18 @@
 </Container>
 
 
-@code {
+    @code {
     [CascadingParameter]
     public TasksPageContext PageContext { get; set; } = null!;
 
+    private bool isTagsLoading;
     private bool isTasksLoading;
     private bool isUsersLoading;
     private bool isCompaniesLoading;
     private bool isTaskOptionsLoading;
     private CancellationTokenSource cancellationTokenSource;
+
+    private bool isDisposed;
 
     public TaskList()
     {
@@ -57,6 +61,7 @@
 
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -68,6 +73,10 @@
         var loadUsersTask = Task.CompletedTask;
         var loadCompaniesTask = Task.CompletedTask;
         var loadTaskOptionsTask = Task.CompletedTask;
+        var loadTagsTask = Task.CompletedTask;
+
+        isTagsLoading = true;
+        loadTagsTask = LoadTags();
 
         isTasksLoading = true;
         loadTasksTask = LoadTasks();
@@ -81,8 +90,8 @@
         isTaskOptionsLoading = true;
         loadTaskOptionsTask = LoadTaskModuleOptions();
 
-        await Task.WhenAll(loadTasksTask, loadUsersTask, loadCompaniesTask, loadTaskOptionsTask);
-        isTasksLoading = isUsersLoading = isCompaniesLoading = isTaskOptionsLoading = false;
+        await Task.WhenAll(loadTasksTask, loadUsersTask, loadCompaniesTask, loadTaskOptionsTask, loadTagsTask);
+        isTasksLoading = isUsersLoading = isCompaniesLoading = isTaskOptionsLoading = isTagsLoading = false;
 
         companyManipulationService.SortUsersToCompanies(PageContext.AvailableUsers!, PageContext.AvailableCompanies!);
 
@@ -121,7 +130,7 @@
         if (tasks?.Count > 0 == true)
         {
             PageContext.Tasks.Clear();
-            foreach (var task in tasks) { PageContext.Tasks.Add(task); }
+            PageContext.Tasks.AddRange(tasks);
         }
     }
 
@@ -131,7 +140,7 @@
         if (moduleOptions?.Count > 0 == true)
         {
             PageContext.TaskModuleOptions.Clear();
-            foreach (var option in moduleOptions) { PageContext.TaskModuleOptions.Add(option); }
+            PageContext.TaskModuleOptions.AddRange(moduleOptions);
         }
     }
 
@@ -141,7 +150,7 @@
         if (users?.Count > 0 == true)
         {
             PageContext.AvailableUsers.Clear();
-            foreach (var user in users) { PageContext.AvailableUsers.Add(user); }
+            PageContext.AvailableUsers.AddRange(users);
         }
     }
 
@@ -151,7 +160,7 @@
         if (companies?.Count > 0 == true)
         {
             PageContext.AvailableCompanies.Clear();
-            foreach (var company in companies) { PageContext.AvailableCompanies.Add(company); }
+            PageContext.AvailableCompanies.AddRange(companies);
         }
     }
 
@@ -164,8 +173,25 @@
         }
     }
 
+    private async Task LoadTags()
+    {
+        var tags = await managementApiService.LoadTags();
+        if (tags?.Count > 0 == true)
+        {
+            PageContext.AvailableTags.Clear();
+            PageContext.AvailableTags.AddRange(tags);
+        }
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
+        Dispose();
         await cancellationTokenSource.CancelAsync();
         cancellationTokenSource?.Dispose();
     }

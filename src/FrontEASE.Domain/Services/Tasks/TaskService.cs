@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using FrontEASE.Domain.DataQueries.Tasks;
 using FrontEASE.Domain.Entities.Companies;
+using FrontEASE.Domain.Entities.Management.Tags;
 using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Entities.Tasks.Actions.Filtering;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Repositories.Companies;
+using FrontEASE.Domain.Repositories.Management;
 using FrontEASE.Domain.Repositories.Tasks;
 using FrontEASE.Domain.Repositories.Users;
 using FrontEASE.Domain.Services.Core.Connector;
@@ -16,6 +18,7 @@ namespace FrontEASE.Domain.Services.Tasks
 {
     public class TaskService(
         ITaskRepository taskRepository,
+        IManagementRepository managementRepository,
         IUserRepository userRepository,
         ICompanyRepository companyRepository,
         ICoreConnector coreService,
@@ -32,6 +35,9 @@ namespace FrontEASE.Domain.Services.Tasks
                 LoadConfigRepeatedMessage = true,
                 LoadMessages = true,
                 LoadSolutions = true,
+                LoadLogs = true,
+                LoadTags = true,
+                AsSplitQuery = true
             };
             return query;
         }
@@ -45,6 +51,8 @@ namespace FrontEASE.Domain.Services.Tasks
                 LoadConfigRepeatedMessage = true,
                 LoadMessages = true,
                 LoadSolutions = true,
+                LoadLogs = true,
+                AsSplitQuery = true
             };
             return query;
         }
@@ -184,24 +192,28 @@ namespace FrontEASE.Domain.Services.Tasks
             await taskRepository.UpdateRange(modifiedTasks, cancellationToken);
         }
 
-        private async Task<(IList<ApplicationUser> Users, IList<Company> Companies)> SelectConnectedEntities(Entities.Tasks.Task sourceTask, CancellationToken cancellationToken)
+        private async Task<(IList<ApplicationUser> Users, IList<Company> Companies, IList<UserPreferenceTagOption> Tags)> SelectConnectedEntities(Entities.Tasks.Task sourceTask, CancellationToken cancellationToken)
         {
             var linkedUserIDs = sourceTask.Members.Select(x => x.Id);
-            var linkedUsers = await userRepository.LoadWhere(x => linkedUserIDs.Contains(x.Id), cancellationToken);
-
             var linkedCompanyIDs = sourceTask.MemberGroups.Select(x => x.ID);
-            var linkedCompanies = await companyRepository.LoadWhere(x => linkedCompanyIDs.Contains(x.ID), cancellationToken);
+            var linkedTagIDs = sourceTask.Tags.Select(x => x.ID);
 
-            return new(linkedUsers, linkedCompanies);
+            var linkedUsers = await userRepository.LoadWhere(x => linkedUserIDs.Contains(x.Id), cancellationToken);
+            var linkedCompanies = await companyRepository.LoadWhere(x => linkedCompanyIDs.Contains(x.ID), cancellationToken);
+            var linkedTags = await managementRepository.LoadTagsWhere(x => linkedTagIDs.Contains(x.ID), cancellationToken);
+
+            return new(linkedUsers, linkedCompanies, linkedTags);
         }
 
         #region Task Data Operations
 
-        private static void UpdateConnectedEntities(Entities.Tasks.Task updatedTask, (IList<ApplicationUser> Users, IList<Company> Companies) connectedEntities)
+        private static void UpdateConnectedEntities(Entities.Tasks.Task updatedTask, (IList<ApplicationUser> Users, IList<Company> Companies, IList<UserPreferenceTagOption> Tags) connectedEntities)
         {
             updatedTask.MemberGroups.Clear();
             updatedTask.Members.Clear();
+            updatedTask.Tags.Clear();
 
+            updatedTask.Tags.AddRange(connectedEntities.Tags);
             updatedTask.Members.AddRange(connectedEntities.Users);
             updatedTask.MemberGroups.AddRange(connectedEntities.Companies);
         }
@@ -213,6 +225,7 @@ namespace FrontEASE.Domain.Services.Tasks
             task.State = TaskState.CREATED;
             task.CurrentIteration = task.IterationsValid = task.IterationsInvalidConsecutive = 0;
 
+            task.Logs.Clear();
             task.Messages.Clear();
             task.Solutions.Clear();
         }

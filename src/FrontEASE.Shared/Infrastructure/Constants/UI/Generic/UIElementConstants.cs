@@ -4,6 +4,7 @@
     {
         public const string Placeholder = "Placeholder";
         public const string Field = "Field";
+        public const string Filter = "Filter";
         public const string Collection = "Collection";
         public const string Enum = "Enum";
         public const string Default = "Default";

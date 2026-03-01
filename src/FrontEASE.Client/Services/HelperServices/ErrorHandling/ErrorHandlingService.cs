@@ -22,6 +22,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
         NavigationManager navManager,
         AuthenticationStateProvider authStateProvider) : IErrorHandlingService
     {
+        private static readonly JsonSerializerOptions _serializerOptions = new() { PropertyNameCaseInsensitive = true };
         private readonly CustomAuthenticationStateProvider _authStateProvider = (CustomAuthenticationStateProvider)authStateProvider;
 
         public async Task HandleErrorResponse(HttpResponseMessage httpResponse)
@@ -36,7 +37,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                 case HttpStatusCode.BadRequest:
                     {
                         var responseString = await httpResponse.Content.ReadAsStringAsync();
-                        var responseMessage = JsonSerializer.Deserialize<BadRequestResultDto>(responseString);
+                        var responseMessage = JsonSerializer.Deserialize<BadRequestResultDto>(responseString, _serializerOptions);
 
                         var problemsList = new List<Tuple<string, string>>();
 
@@ -44,7 +45,8 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                         {
                             foreach (var problem in error.Problems)
                             {
-                                problemsList.Add(new Tuple<string, string>(error.Key, problem));
+                                var problemResource = resourceHandler.GetResource(problem);
+                                problemsList.Add(new Tuple<string, string>(error.Key, problemResource));
                             }
                         }
                         uiMessageBody = $"{msgBody}: {string.Join(", ", problemsList.Select(x => x.Item2))}";
@@ -54,7 +56,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                 case HttpStatusCode.UnprocessableContent:
                     {
                         var responseString = await httpResponse.Content.ReadAsStringAsync();
-                        var responseMessage = JsonSerializer.Deserialize<UnprocessableResultDto>(responseString);
+                        var responseMessage = JsonSerializer.Deserialize<UnprocessableResultDto>(responseString, _serializerOptions);
 
                         uiMessageBody = $"{msgBody}: {string.Join(", ", responseMessage!.Errors)}";
                         uiMessageTitle = resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
@@ -64,7 +66,7 @@ namespace FrontEASE.Client.Services.HelperServices.ErrorHandling
                 case HttpStatusCode.NotFound:
                     {
                         var responseString = await httpResponse.Content.ReadAsStringAsync();
-                        var responseMessage = JsonSerializer.Deserialize<NotFoundResultDto>(responseString);
+                        var responseMessage = JsonSerializer.Deserialize<NotFoundResultDto>(responseString, _serializerOptions);
 
                         uiMessageTitle = resourceHandler.GetResource(responseMessage?.Message ?? string.Empty);
                         uiMessageBody = msgBody;

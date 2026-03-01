@@ -8,6 +8,7 @@
         public const string Text = "Text";
         public const string Explanation = "Explanation";
         public const string Validation = "Validation";
+        public const string Warning = "Warning";
         public const string Default = "Default";
 
         public const string ActionSuccess = "ActionSuccess";

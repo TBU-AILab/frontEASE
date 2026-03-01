@@ -2,7 +2,7 @@
 using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Infrastructure.Exceptions.Enums;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
-using FrontEASE.Domain.Infrastructure.Settings.App;
+using FrontEASE.Domain.Infrastructure.Utils.Users;
 using FrontEASE.Domain.Services.Shared.Images;
 using FrontEASE.Domain.Services.Users;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
@@ -20,25 +20,17 @@ namespace FrontEASE.Application.AppServices.Users
         IImageService imageService,
         IMapper mapper,
         IHttpContextAccessor contextAccessor,
-        AppSettings appSettings) : IUserAppService
+        IUserHelper userHelper) : IUserAppService
     {
-        private async Task<ApplicationUser?> LoadCurrentUser(CancellationToken cancellationToken)
-        {
-            var userMail = contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
-            var currentUser = await userService.Load(userMail, cancellationToken);
-
-            return currentUser;
-        }
-
         private void CheckPermissionsToDelete(ApplicationUser? currentUser, ApplicationUser? deletedUser)
         {
             /* deleted not found */
             if (deletedUser is null)
             { throw new NotFoundException(); }
 
-            var currentRole = UserRoleGuidToRole(Guid.Parse(currentUser?.UserRole!.RoleId ?? Guid.Empty.ToString()));
+            var currentRole = userHelper.UserRoleGuidToRole(Guid.Parse(currentUser?.UserRole!.RoleId ?? Guid.Empty.ToString()));
             var deletedRole = deletedUser is not null
-                ? UserRoleGuidToRole(Guid.Parse(deletedUser.UserRole!.RoleId))
+                ? userHelper.UserRoleGuidToRole(Guid.Parse(deletedUser.UserRole!.RoleId))
                 : UserRole.USER;
 
             if (
@@ -54,7 +46,7 @@ namespace FrontEASE.Application.AppServices.Users
 
         private void CheckPermissionToCreate(ApplicationUser? currentUser, UserRole insertedRole)
         {
-            var currentRole = UserRoleGuidToRole(Guid.Parse(currentUser?.UserRole!.RoleId ?? Guid.Empty.ToString()));
+            var currentRole = userHelper.UserRoleGuidToRole(Guid.Parse(currentUser?.UserRole!.RoleId ?? Guid.Empty.ToString()));
             if (
                 currentUser is null ||                                  // anonymous cannot create
                 (currentRole != UserRole.OWNER &&                       // non-OWNER ...
@@ -71,8 +63,8 @@ namespace FrontEASE.Application.AppServices.Users
             if (updatedUser is null)
             { throw new NotFoundException(); }
 
-            var currentRole = UserRoleGuidToRole(Guid.Parse(currentUser?.UserRole!.RoleId ?? Guid.Empty.ToString()));
-            var originalTargetRole = UserRoleGuidToRole(Guid.Parse(updatedUser.UserRole!.RoleId));
+            var currentRole = userHelper.UserRoleGuidToRole(Guid.Parse(currentUser?.UserRole!.RoleId ?? Guid.Empty.ToString()));
+            var originalTargetRole = userHelper.UserRoleGuidToRole(Guid.Parse(updatedUser.UserRole!.RoleId));
 
             if (
                 currentUser is null ||                                                  // anonymous cannot update
@@ -95,7 +87,7 @@ namespace FrontEASE.Application.AppServices.Users
             var user = await userService.Load(Guid.Parse(userID), cancellationToken);
 
             var userDto = mapper.Map<ApplicationUserDto>(user);
-            userDto.Role = UserRoleGuidToRole(Guid.Parse(user!.UserRole!.RoleId));
+            userDto.Role = userHelper.UserRoleGuidToRole(Guid.Parse(user!.UserRole!.RoleId));
             return userDto;
         }
 
@@ -106,7 +98,7 @@ namespace FrontEASE.Application.AppServices.Users
             foreach (var userEntity in userEntities)
             {
                 var userDto = userDtos.Single(x => x.Id.ToString() == userEntity.Id);
-                userDto.Role = UserRoleGuidToRole(Guid.Parse(userEntity.UserRole!.RoleId));
+                userDto.Role = userHelper.UserRoleGuidToRole(Guid.Parse(userEntity.UserRole!.RoleId));
                 userDto.Image ??= new();
             }
             return userDtos;
@@ -114,7 +106,7 @@ namespace FrontEASE.Application.AppServices.Users
 
         public async Task<ApplicationUserDto> Create(ApplicationUserDto user, CancellationToken cancellationToken)
         {
-            var currentUser = await LoadCurrentUser(cancellationToken);
+            var currentUser = await userService.LoadCurrentUser(cancellationToken);
             CheckPermissionToCreate(currentUser, user.Role);
 
             var userEntity = mapper.Map<ApplicationUser>(user);
@@ -131,14 +123,14 @@ namespace FrontEASE.Application.AppServices.Users
 
             var insertedEntity = await userService.Create(userEntity, user.Role, user.Password!, cancellationToken);
             var insertedDto = mapper.Map<ApplicationUserDto>(insertedEntity);
-            insertedDto.Role = UserRoleGuidToRole(Guid.Parse(insertedEntity.UserRole!.RoleId));
+            insertedDto.Role = userHelper.UserRoleGuidToRole(Guid.Parse(insertedEntity.UserRole!.RoleId));
 
             return insertedDto;
         }
 
         public async Task<ApplicationUserDto> Update(ApplicationUserDto user, CancellationToken cancellationToken)
         {
-            var currentUser = await LoadCurrentUser(cancellationToken);
+            var currentUser = await userService.LoadCurrentUser(cancellationToken);
             var editedUserEntity = await userService.Load(user.Id!.Value, cancellationToken);
             CheckPermissionToUpdate(currentUser, editedUserEntity, user.Role);
 
@@ -165,7 +157,7 @@ namespace FrontEASE.Application.AppServices.Users
             editedUserEntity = await userService.Update(editedUserEntity!, user.Role, cancellationToken);
 
             var editedUserDto = mapper.Map<ApplicationUserDto>(editedUserEntity);
-            editedUserDto.Role = UserRoleGuidToRole(Guid.Parse(editedUserEntity.UserRole!.RoleId));
+            editedUserDto.Role = userHelper.UserRoleGuidToRole(Guid.Parse(editedUserEntity.UserRole!.RoleId));
             editedUserDto.Image ??= new();
 
             return editedUserDto;
@@ -173,20 +165,11 @@ namespace FrontEASE.Application.AppServices.Users
 
         public async Task Delete(Guid id, CancellationToken cancellationToken)
         {
-            var currentUser = await LoadCurrentUser(cancellationToken);
+            var currentUser = await userService.LoadCurrentUser(cancellationToken);
             var deletedEntity = await userService.Load(id, cancellationToken);
             CheckPermissionsToDelete(currentUser, deletedEntity);
 
             await userService.Delete(deletedEntity!, cancellationToken);
-        }
-
-        private UserRole UserRoleGuidToRole(Guid roleID)
-        {
-            if (appSettings!.AuthSettings!.Defaults!.Roles!.UserGuid!.Value == roleID) { return UserRole.USER; }
-            else if (appSettings!.AuthSettings!.Defaults!.Roles!.AdminGuid!.Value == roleID) { return UserRole.ADMIN; }
-            else if (appSettings!.AuthSettings!.Defaults!.Roles!.SuperadminGuid!.Value == roleID) { return UserRole.OWNER; }
-
-            return UserRole.USER;
         }
     }
 }

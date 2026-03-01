@@ -20,6 +20,8 @@ namespace FrontEASE.Domain.Entities.Management.General
 
         public ColorScheme ColorScheme { get; set; }
         public TokenVisibility TokenVisibility { get; set; }
+        public MessageDisplayFormat UserMessageDisplayFormat { get; set; }
+        public MessageDisplayFormat SystemMessageDisplayFormat { get; set; }
 
         #endregion
     }

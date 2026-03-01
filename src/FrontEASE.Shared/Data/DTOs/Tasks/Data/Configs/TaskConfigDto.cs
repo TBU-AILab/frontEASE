@@ -119,7 +119,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs
         /// </summary>
         [Resource($"{nameof(TaskConfigDto)}.{nameof(MaxContextSize)}")]
         [RequiredValidation<TaskConfigDto>]
-        [RangeValidation(-1, 1000)]
+        [RangeValidation(-1, 50)]
         public int MaxContextSize { get; set; }
 
         /// <summary>

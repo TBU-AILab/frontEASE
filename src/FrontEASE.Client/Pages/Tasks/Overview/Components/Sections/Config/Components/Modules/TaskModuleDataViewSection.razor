@@ -15,7 +15,11 @@
                     @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.ShortName), PropertyDisplayResourceType.FIELD))}: ")
                 </Text>
                 <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-                    @($" {TaskModuleContext.Module?.LongName ?? TaskModuleContext.Module?.ShortName}")
+                    @{
+                        var moduleLongName = !string.IsNullOrWhiteSpace(TaskModuleContext.ModuleData?.LongName) ? TaskModuleContext.ModuleData.LongName :
+                        (!string.IsNullOrWhiteSpace(TaskModuleContext.Module?.LongName) ? TaskModuleContext.Module.LongName : TaskModuleContext.Module?.ShortName);
+                    }
+                    @($" {moduleLongName}")
                 </Span>
             </Column>
 
@@ -36,7 +40,7 @@
             <Container Fluid>
                 @if (!string.IsNullOrWhiteSpace(TaskModuleContext.Module.ShortName))
                 {
-                    <TaskModuleParamsViewSection AvailableParams="@TaskModuleContext.ModuleData?.Parameters"/>
+                    <TaskModuleParamsViewSection TaskModalContext="TaskModalContext" TaskModuleContext="TaskModuleContext" />
                 }
             </Container>
         </Column>

@@ -1,5 +1,8 @@
-﻿@inject IResourceHandler resourceHandler
+@inject IResourceHandler resourceHandler
 @inject IUIService uiService
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 @attribute [Authorize]
 @page "/Tasks"
@@ -26,8 +29,11 @@
 
     private TasksPageContext PageContext = null!;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -37,5 +43,17 @@
 
         uiService.RefreshRequested += RefreshViewAsync;
         await base.OnInitializedAsync();
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

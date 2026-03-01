@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
+namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Schema
 {
     public class EnumSchemaFilter : ISchemaFilter
     {

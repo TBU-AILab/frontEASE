@@ -11,8 +11,28 @@
     <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
 
         <Container Fluid>
-            <Row>
 
+            <Row>
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD))):
+                    </Text>
+                    <Span TextWeight="TextWeight.Bold">
+                        @($" {(TaskModalContext.Task.Config.MaxContextSize > 0 ? TaskModalContext.Task.Config.MaxContextSize.ToString() : double.PositiveInfinity.ToString())}")
+                    </Span>
+                </Column>
+
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.FeedbackFromSolution), PropertyDisplayResourceType.FIELD))):
+                    </Text>
+                    <Span TextWeight="TextWeight.Bold">
+                        @($" {(TaskModalContext.Task.Config.FeedbackFromSolution ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))}")
+                    </Span>
+                </Column>
+            </Row>
+
+            <Row>
                 @if (!string.IsNullOrEmpty(TaskModalContext.Task.Config.SystemMessage))
                 {
                     <Column ColumnSize="ColumnSize.Is12.OnWidescreen">
@@ -36,31 +56,10 @@
                         </Span>
                     </Column>
                 }
-
             </Row>
 
             <TaskConfigRepeatedMessageViewSection TaskModalContext="TaskModalContext" />
-
-            <Row>
-                <Column ColumnSize="ColumnSize.IsFull">
-                    <Text>
-                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD))):
-                    </Text>
-                    <Span TextWeight="TextWeight.Bold">
-                        @($" {TaskModalContext.Task.Config.MaxContextSize}")
-                    </Span>
-                </Column>
-
-                <Column ColumnSize="ColumnSize.IsFull">
-                    <Text>
-                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.FeedbackFromSolution), PropertyDisplayResourceType.FIELD))):
-                    </Text>
-                    <Span TextWeight="TextWeight.Bold">
-                        @($" {(TaskModalContext.Task.Config.FeedbackFromSolution ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Yes}") : resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}"))}")
-                    </Span>
-                </Column>
-
-            </Row>
+ 
         </Container>
     </Column>
 </Row>

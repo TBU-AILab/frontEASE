@@ -7,7 +7,7 @@
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.CurrentIteration), PropertyDisplayResourceType.FIELD))):
             </Text>
             <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Info">
-                @($" {TaskData.CurrentIteration}")
+                @($" {TaskModalContext.Task.CurrentIteration}")
             </Span>
         </Column>
 
@@ -16,7 +16,7 @@
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsValid), PropertyDisplayResourceType.FIELD))):
             </Text>
             <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Success">
-                @($" {TaskData.IterationsValid}")
+                @($" {TaskModalContext.Task.IterationsValid}")
             </Span>
         </Column>
 
@@ -25,7 +25,7 @@
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.IterationsInvalidConsecutive), PropertyDisplayResourceType.FIELD))):
             </Text>
             <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Danger">
-                @($" {TaskData.IterationsInvalidConsecutive}")
+                @($" {TaskModalContext.Task.IterationsInvalidConsecutive}")
             </Span>
         </Column>
 
@@ -52,7 +52,7 @@
                             <UserMessageView Message="message" IsFullWidth="true" />
                             break;
                         case MessageRole.AI:
-                            <AssistantMessageView Task="TaskData" TaskMetadata="TaskMetadata" Message="message" IsThumbnail="true" IsSelectable="false" IsFullWidth="true" />
+                            <AssistantMessageView TaskModalContext="TaskModalContext" Message="message" IsThumbnail="true" IsSelectable="false" IsFullWidth="true" />
                             break;
                     }
                 </Column>
@@ -66,7 +66,7 @@
                     <Text TextWeight="TextWeight.Bold" Class="mb-1">
                         @($"{resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Solutions), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Last}")}:")
                     </Text>
-                    <TaskSolutionItemView TaskMetadata="TaskMetadata" Task="TaskData" Solution="solution" IsSelectable="false" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
+                    <TaskSolutionItemView TaskModalContext="TaskModalContext" Solution="solution" IsSelectable="false" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
                 </Column>
             }
         }
@@ -76,16 +76,13 @@
 
 @code {
     [Parameter]
-    public TaskDto TaskData { get; set; } = new();
-
-    [Parameter]
-    public TaskViewMetadataDto TaskMetadata { get; set; } = new();
+    public TaskModalContext TaskModalContext { get; set; } = null!;
 
     private IList<Guid> SolutionDownloadsOngoing = [];
 
     private TaskMessageDto? GetLastMessage()
     {
-        var messagesOrdered = TaskData.Messages.OrderByDescending(x => x.DateCreated);
+        var messagesOrdered = TaskModalContext.Task.Messages.OrderByDescending(x => x.DateCreated);
 
         var lastAiMessage = messagesOrdered.FirstOrDefault(x => x.Role == MessageRole.AI);
         var lastSystemMessage = messagesOrdered.FirstOrDefault(x => x.Role == MessageRole.SYSTEM);
@@ -103,7 +100,7 @@
         }
         else
         {
-            var solution = TaskData.Solutions.SingleOrDefault(x => x.TaskMessageID == message.ID);
+            var solution = TaskModalContext.Task.Solutions.SingleOrDefault(x => x.TaskMessageID == message.ID);
             return solution;
         }
     }

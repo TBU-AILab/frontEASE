@@ -5,12 +5,32 @@ using FrontEASE.Domain.Repositories.Users;
 using FrontEASE.Domain.Services.Shared.Images;
 using FrontEASE.Shared.Data.Enums.Auth;
 using FrontEASE.Shared.Data.Enums.Shared.Images;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace FrontEASE.Domain.Services.Users
 {
-    public class UserService(IUserRepository userRepository, IImageService imageService, AppSettings appSettings) : IUserService
+    public class UserService(
+        IUserRepository userRepository,
+        IImageService imageService,
+        IHttpContextAccessor contextAccessor,
+        AppSettings appSettings) : IUserService
     {
+        public async Task<Guid> LoadCurrentUserId(CancellationToken cancellationToken)
+        {
+            var user = await LoadCurrentUser(cancellationToken);
+            return Guid.Parse(user!.Id);
+        }
+
+        public async Task<ApplicationUser?> LoadCurrentUser(CancellationToken cancellationToken)
+        {
+            var userMail = contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
+            var currentUser = await Load(userMail, cancellationToken);
+
+            return currentUser;
+        }
+
         public async Task<IList<ApplicationUser>> LoadAll(CancellationToken cancellationToken)
         {
             var users = await userRepository.LoadAll(cancellationToken);

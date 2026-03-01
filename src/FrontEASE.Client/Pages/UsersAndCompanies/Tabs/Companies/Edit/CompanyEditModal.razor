@@ -1,14 +1,17 @@
-﻿@inject ICompanyApiService companyApiService
+@inject ICompanyApiService companyApiService
 @inject IUIService uiService
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
 @inject Blazored.Toast.Services.IToastService toastService
 @inject AppSettings appSettings
 
-<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
+@implements IDisposable
+@implements IAsyncDisposable
+
+<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))" Centered>
     @if (EditModal.Visible)
     {
-        <ModalContent Centered Shadow="Shadow.Small" Class="bg-custom-primary">
+        <ModalContent Shadow="Shadow.Small" Class="bg-custom-primary">
 
             <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")} - {Company.NameAbbreviation ?? Company.Name}")" />
 
@@ -16,10 +19,8 @@
                 <Row>
                     <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center">
                         <Image Border="Border.RoundedCircle"
-                               Source="@(!string.IsNullOrWhiteSpace(CompanyModel.Image?.ImageData) ?
-                                        $"data:{CompanyModel.Image.MimeType};base64,{CompanyModel.Image.ImageData}" : !string.IsNullOrWhiteSpace(CompanyModel.Image?.ImageUrl) ?
-                                        $"{appSettings.ApiSettings!.BaseUrl}/{CompanyModel.Image.ImageUrl}" : ImageConstants.CompanyPicDefault)"
-                           Class="full-max-width edit-modal-image" Loading />
+                               Source="@(!string.IsNullOrWhiteSpace(CompanyModel.Image?.ImageData) ? $"data:{CompanyModel.Image.MimeType};base64,{CompanyModel.Image.ImageData}" : !string.IsNullOrWhiteSpace(CompanyModel.Image?.ImageUrl) ?  $"{appSettings.ApiSettings!.BaseUrl}/{CompanyModel.Image.ImageUrl}" : ImageConstants.CompanyPicDefault)"
+                               Class="full-max-width edit-modal-image" Loading />
                     </Column>
                 </Row>
 
@@ -35,7 +36,7 @@
                                 <Fields>
                                     <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
                                         <Button Clicked="@EditCompany" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
-                                        @if (updateInProgress)
+                                            @if (updateInProgress)
                                             {
                                                 <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
                                             }
@@ -66,8 +67,11 @@
     private bool updateInProgress = false;
     private bool isModalVisible = false;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -125,5 +129,17 @@
         CompanyModel = mapper.Map<CompanyDto>(Company);
         isModalVisible = true;
         return EditModal.Show();
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

@@ -11,6 +11,11 @@
         TOKENS,
 
         /// <summary>
+        /// Tags management
+        /// </summary>
+        TAGS,
+
+        /// <summary>
         /// General options management
         /// </summary>
         GENERAL,

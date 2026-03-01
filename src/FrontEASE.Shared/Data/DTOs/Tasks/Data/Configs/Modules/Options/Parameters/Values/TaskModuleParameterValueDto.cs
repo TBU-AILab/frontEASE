@@ -3,7 +3,6 @@ using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.O
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Options.List;
 using FrontEASE.Shared.Infrastructure.Attributes;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
-using FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific.FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Specific.Tasks;
 
 namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options.Parameters.Values

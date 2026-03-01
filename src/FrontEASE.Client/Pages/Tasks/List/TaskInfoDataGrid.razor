@@ -1,6 +1,9 @@
-﻿@inject IResourceHandler resourceHandler
+@inject IResourceHandler resourceHandler
 @inject IUIService uiService
 @inject AppSettings appSettings
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 
 @if (SelectedTasks.Count > 1 && isBulkActionEnabled)
@@ -70,62 +73,99 @@
               FixedHeaderDataGridMaxHeight="auto"
               ShowPager="true"
               ShowPageSizes="true"
-              SelectedRowsChanged="OnSelectionChanged"
+              @bind-SelectedRows="SelectedTasks"
               CommandMode="DataGridCommandMode.ButtonRow"
               PagerPosition="DataGridPagerPosition.Bottom"
               SelectionMode="DataGridSelectionMode.Multiple"
               FilterMode="DataGridFilterMode.Default"
               FilterMethod="DataGridFilterMethod.Contains"
-              Class="text-custom-primary border-custom-light"
+              Class="text-custom-primary border-custom-light data-grid-custom"
               Responsive>
         <DataGridColumns>
 
-            <DataGridColumn TItem="TaskInfoDto" Caption="@(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Info}"))" Sortable="false" Filterable="false">
+            <DataGridMultiSelectColumn TItem="TaskInfoDto" Display="Display.None" />
+
+            <DataGridColumn TItem="TaskInfoDto" Caption="@(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Info}"))" Sortable="false" Filterable="false" Editable="false">
                 <DisplayTemplate>
-                    <Span Style="position: relative;">
+                    <Span Position="Position.Relative">
                         <Tooltip Multiline="true"
                                  Display="Display.InlineBlock"
                                  Padding="Padding.Is1.FromEnd"
                                  Placement="TooltipPlacement.Top"
-                                 Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Click}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.ID) ? UIActionConstants.Hide : UIActionConstants.Load)}")} {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}")}")">
-                            <Icon Class="@($"action-icon {((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.ID) ? "action-icon-danger" : "action-icon-info")}")"
-                                  Name="@((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.ID) ? IconName.TimesCircle : IconName.InfoCircle)"
+                                 Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Click}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.Item.ID) ? UIActionConstants.Hide : UIActionConstants.Show)}")} {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}")}")">
+                            <Icon Class="@($"action-icon {((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.Item.ID) ? "action-icon-danger" : "action-icon-info")}")"
+                                  Name="@((PageContext.ViewMetadata.MiniOverviewTaskID is not null && PageContext.ViewMetadata.MiniOverviewTaskID == context.Item.ID) ? IconName.TimesCircle : IconName.InfoCircle)"
                                   IconSize="IconSize.Large"
                                   IconStyle="IconStyle.Solid"
-                                  Clicked="@((async(e) => await OnInfoClick(context, e)))"
+                                  Clicked="@((async(e) => await OnInfoClick(context.Item, e)))"
                                   @onclick:stopPropagation="true" />
                         </Tooltip>
-                        @if (context.ID == PageContext.ViewMetadata.MiniOverviewTaskID)
+                        @if (context.Item.ID == PageContext.ViewMetadata.MiniOverviewTaskID)
                         {
-                            <Div Position="Position.Fixed" Style="@($"{cardPositionStyle};")" @onclick:stopPropagation="true" Class="top-layer" Width="Width.Is33.OnDesktop.Is50.OnWidescreen">
-                                <TaskGridItemInfoCard TaskInfo="@context" />
+                            <Div Position="Position.Fixed" Style="@($"{cardPositionStyle};")" @onclick:stopPropagation="true" Class="top-layer cursor-default" Width="Width.Is33.OnDesktop.Is50.OnWidescreen">
+                                <TaskGridItemInfoCard TaskInfo="@context.Item" />
                             </Div>
                         }
                     </Span>
                 </DisplayTemplate>
             </DataGridColumn>
 
-            <DataGridColumn Field="@nameof(TaskInfoDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true" />
+            <DataGridColumn Field="@nameof(TaskInfoDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+                <FilterTemplate>
+                    <TextInput Value="@selectedNameFilter"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FILTER)))"
+                               ValueChanged="@(value => { selectedNameFilter = value; context.TriggerFilterChange(selectedNameFilter); })" />
+                </FilterTemplate>
+            </DataGridColumn>
+
+            <DataGridColumn TItem="TaskInfoDto"
+                            Field="@nameof(TaskInfoDto.Tags)"
+                            Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.FIELD)))"
+                            Sortable="false"
+                            CustomFilter="@OnTagsCustomFilter">
+                <FilterTemplate>
+                    <Autocomplete TItem="UserPreferenceTagOptionDto"
+                                  TValue="string"
+                                  Data="@PageContext.AvailableTags"
+                                  TextField="@(item => item.Tag)"
+                                  ValueField="@(item => item.Tag)"
+                                  Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.FILTER)))"
+                                  SelectionMode="AutocompleteSelectionMode.Multiple"
+                                  Filter="AutocompleteFilter.Contains"
+                                  FreeTyping="false"
+                                  SelectedValues="@selectedTagFilters"
+                                  SelectedValuesChanged="@(values => { selectedTagFilters = values; context.TriggerFilterChange(values); })" />
+                </FilterTemplate>
+                <DisplayTemplate>
+                    @foreach (var tag in context.Item.Tags)
+                    {
+                        <Span TextSize="TextSize.ExtraSmall" TextWeight="TextWeight.SemiBold" TextColor="TextColor.White" Border="Border.Is2.RoundedPill.Light" Margin="Margin.Is1.FromEnd" Padding="Padding.Is1" Class="task-grid-tag">
+                            @(tag.Tag)
+                        </Span>
+                    }
+                </DisplayTemplate>
+            </DataGridColumn>
 
             <DataGridColumn Field="@nameof(TaskInfoDto.DateCreated)"
                             Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FIELD)))"
                             Sortable="true"
                             CustomFilter="@OnDateCreatedCustomFilter">
                 <FilterTemplate>
-                    <TextEdit Text="@selectedDateCreatedFilter"
-                              TextChanged="@( value => { selectedDateCreatedFilter = value; context.TriggerFilterChange(selectedDateCreatedFilter); } )" />
+                    <TextInput Value="@selectedDateCreatedFilter"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FILTER)))"
+                               ValueChanged="@( value => { selectedDateCreatedFilter = value; context.TriggerFilterChange(selectedDateCreatedFilter); } )" />
                 </FilterTemplate>
                 <DisplayTemplate>
                     <Container Fluid>
                         <Row>
                             <Column ColumnSize="ColumnSize.IsFull">
                                 <Text>
-                                    @context.DateCreated.ToString("dd.MM.yyyy")
+                                    @context.Item.DateCreated.ToString("dd.MM.yyyy")
                                 </Text>
                             </Column>
                             <Column ColumnSize="ColumnSize.IsFull">
                                 <Text>
-                                    @context.DateCreated.ToString("HH:mm:ss")
+                                    @context.Item.DateCreated.ToString("HH:mm:ss")
                                 </Text>
                             </Column>
                         </Row>
@@ -139,20 +179,22 @@
                             Sortable="false"
                             CustomFilter="@OnAuthorEmailCustomFilter">
                 <FilterTemplate>
-                    <TextEdit Text="@selectedEmailFilter" TextChanged="@(value => { selectedEmailFilter = value; context.TriggerFilterChange(selectedEmailFilter); })" />
+                    <TextInput Value="@selectedEmailFilter"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.FILTER)))"
+                               ValueChanged="@(value => { selectedEmailFilter = value; context.TriggerFilterChange(selectedEmailFilter); })" />
                 </FilterTemplate>
                 <DisplayTemplate>
-                    <Container Fluid>
+                    <Container Fluid Class="text-break task-grid-min-width-author">
                         <Row>
-                            <Column ColumnSize="ColumnSize.Is4">
+                            <Column ColumnSize="ColumnSize.IsAuto">
                                 <Image Border="Border.RoundedCircle"
-                                       Source="@(GetUserImageUrl(context.Author!.Id!.Value))"
+                                       Source="@(GetUserImageUrl(context.Item.Author!.Id!.Value))"
                                        Class="full-max-width datagrid-item-image-extrasmall"
                                        Loading />
                             </Column>
-                            <Column ColumnSize="ColumnSize.Is8">
+                            <Column>
                                 <Text>
-                                    @context.Author.Email
+                                    @context.Item.Author.Email
                                 </Text>
                             </Column>
                         </Row>
@@ -168,7 +210,7 @@
                                   ValueField="@(state => state.ToString())"
                                   CustomFilter="@OnStateCustomFilter">
                 <FilterTemplate>
-                    <Select TValue="string" SelectedValue="@selectedStateFilter" SelectedValueChanged="@(value => { selectedStateFilter = value; context.TriggerFilterChange(selectedStateFilter); })">
+                    <Select TValue="string" Value="@selectedStateFilter" ValueChanged="@(value => { selectedStateFilter = value; context.TriggerFilterChange(selectedStateFilter); })">
                         <SelectItem Value="string.Empty">
                             @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
                         </SelectItem>
@@ -179,78 +221,125 @@
                     </Select>
                 </FilterTemplate>
                 <DisplayTemplate>
-                    @(resourceHandler.GetResource(((TaskState)context.State).GetEnumResourceValue()))
+                    @if (context.Item.Logs.Count > 0)
+                    {
+                        <Container Fluid>
+                            <Row>
+                                <Column ColumnSize="ColumnSize.IsFull">
+                                    <Text>
+                                        @(resourceHandler.GetResource(((TaskState)context.Item.State).GetEnumResourceValue()))
+                                    </Text>
+                                </Column>
+                                <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is1.FromTop">
+                                    <Tooltip Multiline="true"
+                                             Display="Display.InlineBlock"
+                                             Placement="TooltipPlacement.Top"
+                                             Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Click}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{((PageContext.ViewMetadata.MiniErrorTaskID is not null && PageContext.ViewMetadata.MiniErrorTaskID == context.Item.ID) ? UIActionConstants.Hide : UIActionConstants.Show)}")} {resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Logs), PropertyDisplayResourceType.FIELD))}")">
+
+                                        <Icon Class="@($"action-icon {((PageContext.ViewMetadata.MiniErrorTaskID is not null && PageContext.ViewMetadata.MiniErrorTaskID == context.Item.ID) ? "action-icon-danger" : "action-icon-warning")}")"
+                                              Name="@((PageContext.ViewMetadata.MiniErrorTaskID is not null && PageContext.ViewMetadata.MiniErrorTaskID == context.Item.ID) ? IconName.TimesCircle : IconName.Comment)"
+                                              IconSize="IconSize.Default"
+                                              IconStyle="IconStyle.Solid"
+                                              Clicked="@(async (MouseEventArgs e) => await OnErrorClick(context.Item, e))"
+                                              @onclick:stopPropagation="true" />
+                               
+                                    </Tooltip>
+                                </Column>
+                            </Row>
+                        </Container>
+
+                        @if (context.Item.ID == PageContext.ViewMetadata.MiniErrorTaskID)
+                        {
+                            <Div Position="Position.Fixed" Style="@($"{errorCardPositionStyle};")" @onclick:stopPropagation="true" Class="top-layer cursor-default" Width="Width.Is33.OnDesktop.Is50.OnWidescreen">
+                                <TaskGridItemErrorCard ErrorLogs="context.Item.Logs" />
+                            </Div>
+                        }
+                    }
+                    else
+                    {
+                        @(resourceHandler.GetResource(((TaskState)context.Item.State).GetEnumResourceValue()))
+                    }
                 </DisplayTemplate>
             </DataGridSelectColumn>
 
-            <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.ConnectorType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+            <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.ConnectorType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FIELD)))" Sortable="true" CustomFilter="@OnConnectorTypeCustomFilter">
+                <FilterTemplate>
+                    <TextInput Value="@selectedConnectorTypeFilter"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FILTER)))"
+                               ValueChanged="@(value => { selectedConnectorTypeFilter = value; context.TriggerFilterChange(selectedConnectorTypeFilter); })" />
+                </FilterTemplate>
                 <DisplayTemplate>
-                    @(GetModuleLongName(context.ConnectorType, ModuleType.LLM_CONNECTOR) ?? context.ConnectorType)
+                    @(GetModuleLongName(context.Item.ConnectorType, ModuleType.LLM_CONNECTOR) ?? context.Item.ConnectorType)
                 </DisplayTemplate>
             </DataGridColumn>
 
-            <DataGridColumn Field="@nameof(TaskInfoDto.SolutionType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+            <DataGridColumn Field="@nameof(TaskInfoDto.SolutionType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FIELD)))" Sortable="true" CustomFilter="@OnSolutionTypeCustomFilter">
+                <FilterTemplate>
+                    <TextInput Value="@selectedSolutionTypeFilter"
+                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FILTER)))"
+                               ValueChanged="@(value => { selectedSolutionTypeFilter = value; context.TriggerFilterChange(selectedSolutionTypeFilter); })" />
+                </FilterTemplate>
                 <DisplayTemplate>
-                    @(GetModuleLongName(context.SolutionType, ModuleType.SOLUTION) ?? context.SolutionType)
+                    @(GetModuleLongName(context.Item.SolutionType, ModuleType.SOLUTION) ?? context.Item.SolutionType)
                 </DisplayTemplate>
             </DataGridColumn>
 
-            <DataGridColumn TItem="TaskInfoDto" Caption="@(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))" Sortable="false" Filterable="false">
+            <DataGridColumn TItem="TaskInfoDto" Caption="@(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))" Sortable="false" Filterable="false" Editable="false">
                 <DisplayTemplate>
 
-                    @if (runnableTaskStates.Contains(context.State))
+                    @if (runnableTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Run}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-success" Name="IconName.Play" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context }, TaskState.RUN))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-success" Name="IconName.Play" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context.Item }, TaskState.RUN))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (pauseableTaskStates.Contains(context.State))
+                    @if (pauseableTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Pause}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-warning" Name="IconName.Pause" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context }, TaskState.PAUSED))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-warning" Name="IconName.Pause" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context.Item }, TaskState.PAUSED))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (stoppableTaskStates.Contains(context.State))
+                    @if (stoppableTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Stop}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-danger" Name="IconName.Stop" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context }, TaskState.STOP))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-danger" Name="IconName.Stop" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowChangeStateModal(new List<TaskInfoDto>() { context.Item }, TaskState.STOP))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (overviewTaskStates.Contains(context.State))
+                    @if (overviewTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Overview}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-info" Name="IconName.Search" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowOverviewModal(context))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-info" Name="IconName.Search" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowOverviewModal(context.Item))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (editableTaskStates.Contains(context.State))
+                    @if (editableTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowEditModal(context))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-info" Name="IconName.Pen" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowEditModal(context.Item))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (shareableTaskStates.Contains(context.State) && ((context.Author?.Id is null || context.Author?.Id == PageContext.LoggedInUser.Id) || PageContext.LoggedInUser.Role == UserRole.OWNER))
+                    @if (shareableTaskStates.Contains(context.Item.State) && ((context.Item.Author?.Id is null || context.Item.Author?.Id == PageContext.LoggedInUser.Id) || PageContext.LoggedInUser.Role == UserRole.OWNER))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Share}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-secondary" Name="IconName.Share" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowShareModal(context))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-secondary" Name="IconName.Share" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowShareModal(context.Item))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (cloneableTaskStates.Contains(context.State))
+                    @if (cloneableTaskStates.Contains(context.Item.State))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Clone}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-primary" Name="IconName.Copy" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowCloneModal(context))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-primary" Name="IconName.Copy" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowCloneModal(context.Item))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
-                    @if (deletableTaskStates.Contains(context.State) && ((PageContext.LoggedInUser.Id == context.Author?.Id || context.Author?.Id is null) || PageContext.LoggedInUser.Role == UserRole.OWNER))
+                    @if (deletableTaskStates.Contains(context.Item.State) && ((PageContext.LoggedInUser.Id == context.Item.Author?.Id || context.Item.Author?.Id is null) || PageContext.LoggedInUser.Role == UserRole.OWNER))
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowDeleteModal(new List<TaskInfoDto>() { context }))" @onclick:stopPropagation="true" />
+                            <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(async () => await ShowDeleteModal(new List<TaskInfoDto>() { context.Item }))" @onclick:stopPropagation="true" />
                         </Tooltip>
                     }
 
@@ -276,8 +365,9 @@
     [CascadingParameter]
     public TasksPageContext PageContext { get; set; } = null!;
 
-    private IList<TaskInfoDto> SelectedTasks = [];
+    private List<TaskInfoDto> SelectedTasks = [];
     private string cardPositionStyle = string.Empty;
+    private string errorCardPositionStyle = string.Empty;
 
     private readonly IList<TaskState> runnableTaskStates = new List<TaskState>() { TaskState.INIT, TaskState.PAUSED };
     private readonly IList<TaskState> pauseableTaskStates = new List<TaskState>() { TaskState.RUN };
@@ -299,9 +389,15 @@
     private DataGrid<TaskInfoDto> TaskInfoGrid { get; set; } = new();
     private readonly IList<int> TaskInfoGridPageSizeOptions = new List<int>() { 10, 20, 50, 100, 250 };
 
+    private string selectedNameFilter = string.Empty;
     private string selectedStateFilter = string.Empty;
     private string selectedEmailFilter = string.Empty;
     private string selectedDateCreatedFilter = string.Empty;
+    private List<string> selectedTagFilters = [];
+    private string selectedConnectorTypeFilter = string.Empty;
+    private string selectedSolutionTypeFilter = string.Empty;
+
+    private bool isDisposed;
 
     private bool IsBulkRunEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => runnableTaskStates.Contains(task.State));
     private bool IsBulkPauseEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => pauseableTaskStates.Contains(task.State));
@@ -311,6 +407,7 @@
 
     private async Task OnInfoClick(TaskInfoDto task, MouseEventArgs e)
     {
+        PageContext.ViewMetadata.MiniErrorTaskID = null;
         if (PageContext.ViewMetadata.MiniOverviewTaskID == task.ID)
         {
             PageContext.ViewMetadata.MiniOverviewTaskID = null;
@@ -324,7 +421,27 @@
         await RefreshViewAsync();
     }
 
-    private async Task RefreshViewAsync() => await InvokeAsync(StateHasChanged);
+    private async Task OnErrorClick(TaskInfoDto task, MouseEventArgs e)
+    {
+        PageContext.ViewMetadata.MiniOverviewTaskID = null;
+        if (PageContext.ViewMetadata.MiniErrorTaskID == task.ID)
+        {
+            PageContext.ViewMetadata.MiniErrorTaskID = null;
+        }
+        else if (PageContext.ViewMetadata.MiniErrorTaskID is null || PageContext.ViewMetadata.MiniErrorTaskID != task.ID)
+        {
+            PageContext.ViewMetadata.MiniErrorTaskID = task.ID;
+        }
+
+        errorCardPositionStyle = $"left: {e.ClientX - 40}px; top: {e.ClientY - 80}px; transform: translateX(-100%)";
+        await RefreshViewAsync();
+    }
+
+    private async Task RefreshViewAsync()
+    {
+        if (isDisposed) { return; }
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -335,6 +452,7 @@
     private async Task ShowShareModal(TaskInfoDto taskInfo)
     {
         PageContext.ViewMetadata.MiniOverviewTaskID = null;
+        PageContext.ViewMetadata.MiniErrorTaskID = null;
 
         TaskInfo = taskInfo;
         await ShareModal.Show();
@@ -343,6 +461,7 @@
     private async Task ShowOverviewModal(TaskInfoDto taskInfo)
     {
         PageContext.ViewMetadata.MiniOverviewTaskID = null;
+        PageContext.ViewMetadata.MiniErrorTaskID = null;
 
         TaskInfo = taskInfo;
         await OverviewModal.Show();
@@ -351,6 +470,7 @@
     private async Task ShowDeleteModal(IList<TaskInfoDto> affectedTasks)
     {
         PageContext.ViewMetadata.MiniOverviewTaskID = null;
+        PageContext.ViewMetadata.MiniErrorTaskID = null;
 
         DeleteModal.AffectedTasks = affectedTasks;
         await DeleteModal.ShowModal();
@@ -359,6 +479,7 @@
     private async Task ShowEditModal(TaskInfoDto taskInfo)
     {
         PageContext.ViewMetadata.MiniOverviewTaskID = null;
+        PageContext.ViewMetadata.MiniErrorTaskID = null;
 
         TaskInfo = taskInfo;
         await EditModal.Show();
@@ -367,6 +488,7 @@
     private async Task ShowCloneModal(TaskInfoDto taskInfo)
     {
         PageContext.ViewMetadata.MiniOverviewTaskID = null;
+        PageContext.ViewMetadata.MiniErrorTaskID = null;
 
         TaskInfo = taskInfo;
         await CloneModal.ShowModal();
@@ -375,24 +497,27 @@
     private async Task ShowChangeStateModal(IList<TaskInfoDto> affectedTasks, TaskState state)
     {
         PageContext.ViewMetadata.MiniOverviewTaskID = null;
+        PageContext.ViewMetadata.MiniErrorTaskID = null;
 
         ChangeStateModal.AffectedTasks = affectedTasks;
         await ChangeStateModal.ShowModal(state);
     }
 
-    private IList<TaskInfoDto> GetExistingTasksSelection(IList<TaskInfoDto> selection)
+    private bool OnTagsCustomFilter(object itemValue, object searchValue)
     {
-        var selectedIDs = selection.Select(x => x.ID);
-        var actualSelection = PageContext.Tasks.Where(x => selectedIDs.Contains(x.ID));
-        return actualSelection.ToList();
+        if (searchValue is List<string> filters && filters.Count > 0)
+        {
+            if (itemValue is IList<UserPreferenceTagOptionDto> tags)
+            {
+                return filters.All(filter =>
+                    tags.Any(t => string.Equals(t.Tag, filter, StringComparison.InvariantCultureIgnoreCase)));
+            }
+            return false;
+        }
+        return true;
     }
 
-    private void OnSelectionChanged(IList<TaskInfoDto> selection)
-    {
-        SelectedTasks.Clear();
-        var actualSelection = GetExistingTasksSelection(selection);
-        foreach (var task in actualSelection) { SelectedTasks.Add(task); }
-    }
+    private async Task OnTagsUpdated(TaskInfoDto task, IList<string> selectedTags) => task.Tags = selectedTags.Select(t => new UserPreferenceTagOptionDto { Tag = t }).ToList();
 
     private bool OnStateCustomFilter(object itemValue, object searchValue)
     {
@@ -436,9 +561,47 @@
             $"{appSettings.ApiSettings!.BaseUrl}/{userData?.Image?.ImageUrl}";
     }
 
+    private bool OnConnectorTypeCustomFilter(object itemValue, object searchValue)
+    {
+        if (searchValue is string filter && !string.IsNullOrEmpty(filter))
+        {
+            if (itemValue is string shortName)
+            {
+                var displayName = GetModuleLongName(shortName, ModuleType.LLM_CONNECTOR) ?? shortName;
+                return displayName.Contains(filter, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+        return true;
+    }
+
+    private bool OnSolutionTypeCustomFilter(object itemValue, object searchValue)
+    {
+        if (searchValue is string filter && !string.IsNullOrEmpty(filter))
+        {
+            if (itemValue is string shortName)
+            {
+                var displayName = GetModuleLongName(shortName, ModuleType.SOLUTION) ?? shortName;
+                return displayName.Contains(filter, StringComparison.OrdinalIgnoreCase);
+            }
+        }
+        return true;
+    }
+
     private string? GetModuleLongName(string shortName, ModuleType packageType)
     {
         var matchedModule = PageContext.TaskModuleOptions.FirstOrDefault(x => x.PackageType == packageType && x.ShortName == shortName);
         return matchedModule?.LongName;
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

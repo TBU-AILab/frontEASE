@@ -1,14 +1,30 @@
 ﻿<Container Fluid>
     <Row>
-        <Column ColumnSize="@(IsFullWidth ? ColumnSize.IsFull : ColumnSize.Is8.OnWidescreen.Is4.WithOffset.OnWidescreen.Is10.OnMobile.Is2.WithOffset.OnMobile)" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
+        <Column ColumnSize="@(IsFullWidth? ColumnSize.IsFull: ColumnSize.Is8.OnWidescreen.Is4.WithOffset.OnWidescreen.Is10.OnMobile.Is2.WithOffset.OnMobile)" TextAlignment="TextAlignment.Start" Padding="Padding.Is0">
             <Card Border="Border.Rounded" Class="border-custom-light">
-                <MessageViewHeader Message="Message"/>
+                <MessageViewHeader Message="Message" />
 
                 <CardBody Class="throws-shadow border-custom-light bg-custom-primary" Border="Border.Is0">
-                    @Message.Content
+                    @if (!string.IsNullOrWhiteSpace(Message.Content))
+                    {
+                        @switch (PageContext.LoggedInUser.UserPreferences.GeneralOptions.UserMessageDisplayFormat)
+                        {
+                            case MessageDisplayFormat.MARKDOWN:
+
+                                @((MarkupString)Markdig.Markdown.ToHtml(Message.Content))
+                                break;
+                            case MessageDisplayFormat.PLAINTEXT:
+                            default:
+                                <Text>
+                                    @Message.Content
+                                </Text>
+                                break;
+                        }
+                    }
+
                 </CardBody>
 
-                <MessageViewFooter Message="Message"/>
+                <MessageViewFooter Message="Message" />
             </Card>
         </Column>
     </Row>
@@ -16,6 +32,9 @@
 </Container>
 
 @code {
+    [CascadingParameter]
+    public TasksPageContext PageContext { get; set; } = null!;
+
     [Parameter]
     public TaskMessageDto Message { get; set; } = new();
 

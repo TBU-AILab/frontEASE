@@ -1,8 +1,11 @@
-﻿@inject IResourceHandler resourceHandler
+@inject IResourceHandler resourceHandler
 @inject ITypelistApiService typelistApiService
 @inject IManagementApiService managementApiService
 @inject IUIService uiService
 @inject IMapper mapper
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<UserPreferenceTokenOptionDto>()))" />
 <Divider Class="divider-main-thin bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is0.FromTop" />
@@ -35,8 +38,11 @@ else
 
     private bool isInitialized = false;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -74,12 +80,18 @@ else
     {
         var connectorTypes = await typelistApiService.LoadTaskModuleOptions();
         PageContext.ConnectorTypes.Clear();
-        foreach (var type in connectorTypes)
-        {
-            if (type.PackageType == ModuleType.LLM_CONNECTOR)
-            {
-                PageContext.ConnectorTypes.Add(type);
-            }
-        }
+        PageContext.ConnectorTypes.AddRange(connectorTypes.Where(x => x.PackageType == ModuleType.LLM_CONNECTOR));
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

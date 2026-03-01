@@ -16,6 +16,11 @@
         PLACEHOLDER,
 
         /// <summary>
+        /// Filter
+        /// </summary>
+        FILTER,
+
+        /// <summary>
         /// Enumeration
         /// </summary>
         ENUM,
@@ -28,6 +33,6 @@
         /// <summary>
         /// Default value
         /// </summary>
-        DEFAULT
+        DEFAULT,
     }
 }

@@ -1,0 +1,19 @@
+﻿<Container Fluid Class="border-custom-light" Padding="Padding.Is3">
+    <Row>
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Card Border="Border.Is2.Rounded" Overflow="Overflow.Hidden" Class="border-custom-light">
+                <Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary task-info-overview-card-scrollable" Padding="Padding.Is3">
+                    @foreach (var log in ErrorLogs)
+                    {
+                        <TaskGridItemErrorCardLogItem ErrorLog="log"/>
+                    }
+                </Row>
+            </Card>
+        </Column>
+    </Row>
+</Container>
+
+@code {
+    [Parameter]
+    public IList<TaskLogDto> ErrorLogs { get; set; } = [];
+}

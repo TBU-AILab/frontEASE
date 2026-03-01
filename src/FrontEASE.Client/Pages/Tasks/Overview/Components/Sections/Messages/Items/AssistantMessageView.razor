@@ -8,14 +8,14 @@
                 <MessageViewHeader Message="Message" />
 
                 <CardBody Border="Border.Is0"
-                          Class="@($"{(TaskModalContext.TaskMetadata.SelectedMessageID == Message.ID ? "bg-custom-info" :"bg-custom-primary")} {(TaskModalContext.TaskMetadata.SelectedMessageID == Message.ID ? "text-custom-info" : "text-custom-primary")}")">
+                          Class="@($"{(TaskModalContext?.TaskMetadata?.SelectedMessageID == Message.ID ? "bg-custom-info" :"bg-custom-primary")} {(TaskModalContext?.TaskMetadata?.SelectedMessageID == Message.ID ? "text-custom-info" : "text-custom-primary")}")">
                     @if (!string.IsNullOrWhiteSpace(Message.Content))
                     {
                         @((MarkupString)Markdig.Markdown.ToHtml(Message.Content))
                     }
 
                     @{
-                        var matchedSolution = TaskModalContext.Task.Solutions.SingleOrDefault(x => x.TaskMessageID == Message.ID);
+                        var matchedSolution = TaskModalContext?.Task?.Solutions?.SingleOrDefault(x => x.TaskMessageID == Message.ID);
                     }
                     @if (matchedSolution is not null)
                     {
@@ -63,7 +63,6 @@
         {
             TaskModalContext.TaskMetadata.SelectedMessageID =
             TaskModalContext.TaskMetadata.SelectedMessageID == Message.ID ? null : Message.ID;
-
             await uiService.CallRequestRefreshAsync();
         }
     }

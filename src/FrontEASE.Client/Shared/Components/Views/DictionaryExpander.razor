@@ -29,7 +29,7 @@
             </Text>
         </Column>
 
-        <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small"/>
+        <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
 
         @foreach (var param in Dictionary)
         {
@@ -45,7 +45,7 @@
                 </Text>
             </Column>
 
-            @if(param.Key == TaskMetadataConstants.Url)
+            @if (param.Key == TaskMetadataConstants.Url)
             {
                 <Column ColumnSize="ColumnSize.IsFull">
                     <Text TextWeight="TextWeight.Bold">

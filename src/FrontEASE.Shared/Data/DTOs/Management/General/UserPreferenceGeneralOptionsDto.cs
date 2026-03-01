@@ -24,6 +24,16 @@ namespace FrontEASE.Shared.Data.DTOs.Management.General
         [EnumValidation(typeof(TokenVisibility))]
         public TokenVisibility TokenVisibility { get; set; }
 
+        [Resource($"{nameof(UserPreferenceGeneralOptionsDto)}.{nameof(UserMessageDisplayFormat)}")]
+        [RequiredValidation<UserPreferenceGeneralOptionsDto>]
+        [EnumValidation(typeof(MessageDisplayFormat))]
+        public MessageDisplayFormat UserMessageDisplayFormat { get; set; }
+
+        [Resource($"{nameof(UserPreferenceGeneralOptionsDto)}.{nameof(SystemMessageDisplayFormat)}")]
+        [RequiredValidation<UserPreferenceGeneralOptionsDto>]
+        [EnumValidation(typeof(MessageDisplayFormat))]
+        public MessageDisplayFormat SystemMessageDisplayFormat { get; set; }
+
         #endregion
     }
 }

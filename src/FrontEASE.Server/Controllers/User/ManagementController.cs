@@ -1,10 +1,13 @@
 ﻿using FrontEASE.Application.AppServices.Management;
 using FrontEASE.Application.AppServices.Shared.Resources;
 using FrontEASE.Domain.Infrastructure.Settings.App;
+using FrontEASE.Server.Infrastructure.Swagger.Attributes;
 using FrontEASE.Shared.Data.DTOs.Management;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Packages;
+using FrontEASE.Shared.Data.DTOs.Management.Tags;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
 using FrontEASE.Shared.Infrastructure.Constants.Auth;
+using FrontEASE.Shared.Infrastructure.Constants.Controllers;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers.Specific;
 using FrontEASE.Shared.Services.Resources;
 using Microsoft.AspNetCore.Authorization;
@@ -24,6 +27,81 @@ namespace FrontEASE.Server.Controllers.User
         IResourceAppService resourceAppService,
         AppSettings appSettings) : ApiControllerBase(resourceHandler, resourceAppService, appSettings)
     {
+        /// <summary>
+        /// Inserts a new task tag.
+        /// </summary>
+        /// <param name="tag">Created tag DTO.</param>
+        /// <returns>Inserted tag DTO.</returns>
+        [HttpPost($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}")]
+        [ProducesResponseType(typeof(UserPreferenceTagOptionDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> InsertTag([FromBody, Required] UserPreferenceTagOptionDto tag)
+        {
+            IActionResult result;
+            try
+            {
+                ValidateModel();
+                var response = await managementAppService.Create(tag, CancellationToken.None);
+                result = GetHttpResult(HttpStatusCode.Created, response, nameof(InsertTag));
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// Deletes a task tag.
+        /// </summary>
+        /// <param name="id">Deleted tag identifier.</param>
+        [HttpDelete($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}/{ControllerConstants.IdParam}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> DeleteTag([Required, FromRoute] Guid id)
+        {
+            IActionResult result;
+            try
+            {
+                await managementAppService.DeleteTag(id, CancellationToken.None);
+                result = GetHttpResult(HttpStatusCode.NoContent, null);
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Loads all user-defined tags.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Preferences DTO model.</returns>
+        [HttpGet($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Tags}")]
+        [ProducesResponseType(typeof(IList<UserPreferenceTagOptionDto>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> LoadTags([ParameterSwaggerIgnore] CancellationToken cancellationToken)
+        {
+            IActionResult result;
+            try
+            {
+                var response = await managementAppService.LoadTags(cancellationToken);
+                result = GetHttpResult(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
 
         /// <summary>
         /// Loads current user preferences.
@@ -33,7 +111,8 @@ namespace FrontEASE.Server.Controllers.User
         [HttpGet($"{ManagementControllerConstants.BaseUrl}")]
         [ProducesResponseType(typeof(UserPreferencesDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> LoadPreferences(CancellationToken cancellationToken)
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> LoadPreferences([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try
@@ -57,7 +136,8 @@ namespace FrontEASE.Server.Controllers.User
         [Authorize(Roles = $"{UserRoleNames.AdminRoleName},{UserRoleNames.SuperadminRoleName}")]
         [HttpGet($"{ManagementControllerConstants.BaseUrl}/{ManagementControllerConstants.Global}")]
         [ProducesResponseType(typeof(GlobalPreferenceCorePackageDto), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> LoadGlobalPreferences(CancellationToken cancellationToken)
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> LoadGlobalPreferences([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try
@@ -82,6 +162,7 @@ namespace FrontEASE.Server.Controllers.User
         [ProducesResponseType(typeof(UserPreferencesDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> UpdatePreferences([Required, FromBody] UserPreferencesDto preferences)
         {
             IActionResult result;
@@ -109,6 +190,7 @@ namespace FrontEASE.Server.Controllers.User
         [ProducesResponseType(typeof(GlobalPreferencesDto), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(NotFoundResultDto), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> UpdateGlobalPreferences([Required, FromBody] GlobalPreferencesDto preferences)
         {
             IActionResult result;

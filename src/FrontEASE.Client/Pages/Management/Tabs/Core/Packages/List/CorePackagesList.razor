@@ -1,7 +1,10 @@
-﻿@inject IResourceHandler resourceHandler
+@inject IResourceHandler resourceHandler
 @inject IUIService uiService
 @inject IMapper mapper
 @inject IManagementApiService managementApiService
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetCollectionResourceValue<GlobalPreferenceCorePackageDto>()))" />
 <Divider Class="divider-main-thin bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is0.FromTop" />
@@ -96,6 +99,8 @@ else
     private bool isSystemPackagesCollapsed;
     private bool isAddonsPackagesCollapsed;
 
+    private bool isDisposed;
+
     private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<GlobalPreferencesDto>(elementBase, Operation, null);
 
     private void ChangeCollapseStateSystem() => isSystemPackagesCollapsed = !isSystemPackagesCollapsed;
@@ -103,6 +108,7 @@ else
 
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -129,5 +135,17 @@ else
         {
             mapper.Map(preferences, GlobalPreferences);
         }
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

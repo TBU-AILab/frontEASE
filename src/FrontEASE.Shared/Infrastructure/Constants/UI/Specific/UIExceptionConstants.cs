@@ -3,5 +3,6 @@
     public class UIExceptionConstants
     {
         public const string UserExists = "UserExists";
+        public const string TagExists = "TagExists";
     }
 }

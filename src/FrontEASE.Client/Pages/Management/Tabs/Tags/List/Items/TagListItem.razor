@@ -1,0 +1,22 @@
+﻿<Card Margin="Margin.Is3.FromBottom" Border="Border.Is2.Rounded" Overflow="Overflow.Hidden" Class="border-custom-light">
+    <TagListItemHeader Tag="Tag" OtherTags="OtherTags" />
+    <Row Class="gx-0 margin-background-offset-top-1 bg-custom-primary">
+        <CardBody>
+            <Column ColumnSize="ColumnSize.IsFull" Padding="Padding.Is2" TextAlignment="TextAlignment.Center">
+                <Heading Size="HeadingSize.Is5" TextWeight="TextWeight.Bold" Margin="Margin.Is0">
+                    @Tag.Tag
+                </Heading>
+            </Column>
+        </CardBody>
+    </Row>
+    <TagListItemBody Tag="Tag" />
+</Card>
+
+
+@code {
+    [Parameter]
+    public UserPreferenceTagOptionDto Tag { get; set; } = new();
+
+    [Parameter]
+    public IList<UserPreferenceTagOptionDto> OtherTags { get; set; } = [];
+}

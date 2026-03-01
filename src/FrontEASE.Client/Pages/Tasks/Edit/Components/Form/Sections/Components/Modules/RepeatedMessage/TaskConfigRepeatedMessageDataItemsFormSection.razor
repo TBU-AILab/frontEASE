@@ -14,9 +14,12 @@
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Data}.{nameof(TaskConfigRepeatedMessageDto.RepeatedMessageItems)}.{UIStateConstants.Explanation}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd">
                             <Icon Class="action-icon-sm action-icon-warning" Name="IconName.ExclamationCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
                         </Tooltip>
-                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                            <Icon Class="action-icon-sm action-icon-success" Name="IconName.PlusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@AddNewTaskRepeatedMessageItem" />
-                        </Tooltip>
+                        @if (!(TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageType == RepeatedMessageType.SINGLE && TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageItems.Count > 0))
+                        {
+                            <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Add}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+                                <Icon Class="action-icon-sm action-icon-success" Name="IconName.PlusCircle" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@AddNewTaskRepeatedMessageItem" />
+                            </Tooltip>
+                        }
                     </Column>
                 }
             </Div>
@@ -39,16 +42,16 @@
                         <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageItemDto.Weight), itemID))" RequiredIndicator>
                             @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Weight), PropertyDisplayResourceType.FIELD)))
                         </FieldLabel>
-                        <NumericEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageItemDto.Weight), itemID))"
-                                     Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                                     @bind-Value="@repeatedMessageItem.Weight"
-                                     Min="0"
-                                     Max="1"
-                                     Step="@((decimal?)0.01)">
+                        <NumericInput ElementId="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageItemDto.Weight), itemID))"
+                                      Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                                      @bind-Value="@repeatedMessageItem.Weight"
+                                      Min="0"
+                                      Max="1"
+                                      Step="@((decimal?)0.01)">
                             <Feedback>
                                 <ValidationError Multiline="true" />
                             </Feedback>
-                        </NumericEdit>
+                        </NumericInput>
                     </Field>
                 </Validation>
 
@@ -57,15 +60,15 @@
                         <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageItemDto.Content), itemID))" RequiredIndicator>
                             @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.FIELD)))
                         </FieldLabel>
-                        <MemoEdit ElementId="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageItemDto.Content), itemID))"
-                                  Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                                  AutoSize="false" Rows="1"
-                                  Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                  @bind-Text="@repeatedMessageItem.Content">
+                        <MemoInput ElementId="@(GetElementIdByOperation(nameof(TaskConfigRepeatedMessageItemDto.Content), itemID))"
+                                   Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                                   AutoSize="false" Rows="1"
+                                   Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Content), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                   @bind-Value="@repeatedMessageItem.Content">
                             <Feedback>
                                 <ValidationError Multiline="true" />
                             </Feedback>
-                        </MemoEdit>
+                        </MemoInput>
                     </Field>
                 </Validation>
 

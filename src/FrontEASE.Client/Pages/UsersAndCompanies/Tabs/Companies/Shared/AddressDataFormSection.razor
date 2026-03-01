@@ -1,6 +1,9 @@
-﻿@inject ICompanyManipulationService companyManipulationService
+@inject ICompanyManipulationService companyManipulationService
 @inject IResourceHandler resourceHandler
 @inject IUIService uiService
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 <Container Fluid Padding="Padding.Is0" Margin="Margin.Is3.FromTop" Border="Border.Is1.Rounded" Class="border-custom-light" Shadow="Shadow.Small">
     <Column ColumnSize="ColumnSize.Is12" Display="Display.Flex" Class="justify-content-between align-items-center cursor-pointer" @onclick="@(async () => await ChangeCollapseState())" Padding="Padding.Is2" Border="Border.Rounded" Shadow="Shadow.Small">
@@ -21,11 +24,11 @@
                         <Fields>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.Country)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Country), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <Select @bind-SelectedValue="@CompanyModel.Address!.Country"
+                                    <Select @bind-Value="@CompanyModel.Address!.Country"
                                             ElementId="@(GetElementIdByOperation(nameof(AddressDto.Country)))">
                                         <ChildContent>
                                             @foreach (var country in Enum.GetValues(typeof(Country)))
@@ -43,82 +46,82 @@
                             </Validation>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.City)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.City), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(AddressDto.City)))"
-                                              Role="TextRole.Text"
-                                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.City), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Text="@CompanyModel.Address!.City">
+                                    <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.City)))"
+                                               Role="TextRole.Text"
+                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.City), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                               @bind-Value="@CompanyModel.Address!.City">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </Field>
                             </Validation>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.ZIPCode)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.ZIPCode), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(AddressDto.ZIPCode)))"
-                                              Role="TextRole.Text"
-                                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.ZIPCode), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Text="@CompanyModel.Address!.ZIPCode">
+                                    <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.ZIPCode)))"
+                                               Role="TextRole.Text"
+                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.ZIPCode), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                               @bind-Value="@CompanyModel.Address!.ZIPCode">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </Field>
                             </Validation>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.Street)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Street), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(AddressDto.Street)))"
-                                              Role="TextRole.Text"
-                                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Street), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Text="@CompanyModel.Address!.Street">
+                                    <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.Street)))"
+                                               Role="TextRole.Text"
+                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Street), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                               @bind-Value="@CompanyModel.Address!.Street">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </Field>
                             </Validation>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.OrientationNumber)))">
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.OrientationNumber), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(AddressDto.OrientationNumber)))"
-                                              Role="TextRole.Text"
-                                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.OrientationNumber), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Text="@CompanyModel.Address!.OrientationNumber">
+                                    <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.OrientationNumber)))"
+                                               Role="TextRole.Text"
+                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.OrientationNumber), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                               @bind-Value="@CompanyModel.Address!.OrientationNumber">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </Field>
                             </Validation>
 
                             <Validation>
-                                <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is4.OnWidescreen)">
+                                <Field ColumnSize="@(FullWidthFields? ColumnSize.IsFull: ColumnSize.Is4.OnWidescreen)">
                                     <FieldLabel For="@(GetElementIdByOperation(nameof(AddressDto.DescriptiveNumber)))" RequiredIndicator>
                                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.DescriptiveNumber), PropertyDisplayResourceType.FIELD)))
                                     </FieldLabel>
-                                    <TextEdit ElementId="@(GetElementIdByOperation(nameof(AddressDto.DescriptiveNumber)))"
-                                              Role="TextRole.Text"
-                                              Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.DescriptiveNumber), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                              @bind-Text="@CompanyModel.Address!.DescriptiveNumber">
+                                    <TextInput ElementId="@(GetElementIdByOperation(nameof(AddressDto.DescriptiveNumber)))"
+                                               Role="TextRole.Text"
+                                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.DescriptiveNumber), PropertyDisplayResourceType.PLACEHOLDER)))"
+                                               @bind-Value="@CompanyModel.Address!.DescriptiveNumber">
                                         <Feedback>
                                             <ValidationError Multiline="true" />
                                         </Feedback>
-                                    </TextEdit>
+                                    </TextInput>
                                 </Field>
                             </Validation>
 
@@ -144,8 +147,11 @@
 
     private bool isSectionCollapsed = false;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -158,7 +164,7 @@
 
     private async Task SetInitialCollapse()
     {
-        if(CompanyModel.Address is null)
+        if (CompanyModel.Address is null)
         {
             await ChangeCollapseState();
         }
@@ -176,5 +182,17 @@
         { companyManipulationService.InitAddressInfo(CompanyModel); }
 
         await uiService.CallRequestRefreshAsync();
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

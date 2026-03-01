@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FrontEASE.DataContracts.Models.Core.Tasks.Info;
+using FrontEASE.Domain.Entities.Tasks.Logs;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 
 namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
@@ -13,7 +14,8 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
 
         private void CreateMaps()
         {
-            CreateMap<Domain.Entities.Tasks.Task, TaskStatusDto>();
+            CreateMap<Domain.Entities.Tasks.Task, TaskStatusDto>()
+                .ForMember(x => x.Logs, cd => cd.MapFrom(map => map.Logs));
 
             CreateMap<TaskInfoCoreDto, Domain.Entities.Tasks.Task>()
                 .ForMember(x => x.Config, opt => opt.Ignore())
@@ -26,6 +28,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
                 .AfterMap((src, dest) =>
                 {
                     dest.Config?.Name = src.Name ?? string.Empty;
+                    dest.Logs = src.Log?.Select(x => new TaskLog() { Message = x })?.ToList() ?? [];
                 })
                 .ReverseMap();
         }

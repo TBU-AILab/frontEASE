@@ -3,7 +3,7 @@
 
 @{
     IsListParam = TaskModuleParamContext.ParamType == ParameterType.LIST;
-    IsTokenParam = TaskModuleContext.Module?.PackageType == ModuleType.LLM_CONNECTOR && TaskModuleParamContext.ParamOption?.ShortName?.Contains(TaskMetadataConstants.Token) == true;
+    IsTokenParam = TaskModuleContext?.Module?.PackageType == ModuleType.LLM_CONNECTOR && TaskModuleParamContext.ParamOption?.ShortName?.Contains(TaskMetadataConstants.Token) == true;
     IsDescriptionPresent = taskManipulationService.CheckDescriptionPresent(TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
     (IsDefaultPresent, var defaultValue) = taskManipulationService.ExtractDefaultValue(TaskModuleParamContext.ParamOption);
     SkipLabel = TaskModuleParamContext.ParamType == ParameterType.ENUM && TaskModuleParamContext.ParamOption?.EnumOptions?.FirstOrDefault()?.ModuleValue is not null;
@@ -118,7 +118,7 @@
                                     var paramOption = TaskModuleParamContext.ParamOption?.Default?.ListValue?.ParameterValues?.FirstOrDefault()?.ParameterItems.SingleOrDefault(x => x.ShortName == paramItem.ShortName);
                                     if (paramOption is not null)
                                     {
-                                        var paramContext = new TaskModuleParamContext(paramItem.ShortName!, paramOption, paramItem, null);
+                                        var paramContext = taskManipulationService.GetParamContext(paramOption, paramItem);
                                         <Fields>
                                             <TaskModuleParamValueView TaskModalContext="TaskModalContext" TaskModuleContext="null!" TaskModuleParamContext="paramContext" />
                                         </Fields>

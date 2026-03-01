@@ -17,7 +17,7 @@ namespace FrontEASE.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("ProductVersion", "10.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -152,12 +152,39 @@ namespace FrontEASE.Infrastructure.Migrations
                     b.Property<int>("ColorScheme")
                         .HasColumnType("integer");
 
+                    b.Property<int>("SystemMessageDisplayFormat")
+                        .HasColumnType("integer");
+
                     b.Property<int>("TokenVisibility")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserMessageDisplayFormat")
                         .HasColumnType("integer");
 
                     b.HasKey("ID");
 
                     b.ToTable("UserPreferenceGeneralOptions", "Data");
+                });
+
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Management.Tags.UserPreferenceTagOption", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid ()");
+
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserPreferencesID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("UserPreferencesID");
+
+                    b.ToTable("UserPreferenceTags", "Data");
                 });
 
             modelBuilder.Entity("FrontEASE.Domain.Entities.Management.Tokens.Connectors.UserPreferenceTokenOptionConnectorType", b =>
@@ -644,6 +671,25 @@ namespace FrontEASE.Infrastructure.Migrations
                     b.ToTable("TaskConfigurations", "Data");
                 });
 
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Logs.TaskLog", b =>
+                {
+                    b.Property<Guid>("ID")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("TaskID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("TaskID");
+
+                    b.ToTable("TaskLogs", "Data");
+                });
+
             modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Messages.TaskMessage", b =>
                 {
                     b.Property<Guid>("ID")
@@ -908,6 +954,21 @@ namespace FrontEASE.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TaskUserPreferenceTagOption", b =>
+                {
+                    b.Property<Guid>("TagsID")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("TasksID")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TagsID", "TasksID");
+
+                    b.HasIndex("TasksID");
+
+                    b.ToTable("TaskUserPreferenceTagOption", "Data");
+                });
+
             modelBuilder.Entity("ApplicationUserCompany", b =>
                 {
                     b.HasOne("FrontEASE.Domain.Entities.Companies.Company", null)
@@ -966,6 +1027,17 @@ namespace FrontEASE.Infrastructure.Migrations
                     b.Navigation("Address");
 
                     b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Management.Tags.UserPreferenceTagOption", b =>
+                {
+                    b.HasOne("FrontEASE.Domain.Entities.Management.UserPreferences", "UserPreferences")
+                        .WithMany("TagOptions")
+                        .HasForeignKey("UserPreferencesID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserPreferences");
                 });
 
             modelBuilder.Entity("FrontEASE.Domain.Entities.Management.Tokens.Connectors.UserPreferenceTokenOptionConnectorType", b =>
@@ -1117,6 +1189,17 @@ namespace FrontEASE.Infrastructure.Migrations
                     b.Navigation("RepeatedMessage");
                 });
 
+            modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Logs.TaskLog", b =>
+                {
+                    b.HasOne("FrontEASE.Domain.Entities.Tasks.Task", "Task")
+                        .WithMany("Logs")
+                        .HasForeignKey("TaskID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Task");
+                });
+
             modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Messages.TaskMessage", b =>
                 {
                     b.HasOne("FrontEASE.Domain.Entities.Tasks.Task", "Task")
@@ -1209,6 +1292,21 @@ namespace FrontEASE.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("TaskUserPreferenceTagOption", b =>
+                {
+                    b.HasOne("FrontEASE.Domain.Entities.Management.Tags.UserPreferenceTagOption", null)
+                        .WithMany()
+                        .HasForeignKey("TagsID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FrontEASE.Domain.Entities.Tasks.Task", null)
+                        .WithMany()
+                        .HasForeignKey("TasksID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("FrontEASE.Domain.Entities.Management.General.UserPreferenceGeneralOptions", b =>
                 {
                     b.Navigation("UserPreferences")
@@ -1222,6 +1320,8 @@ namespace FrontEASE.Infrastructure.Migrations
 
             modelBuilder.Entity("FrontEASE.Domain.Entities.Management.UserPreferences", b =>
                 {
+                    b.Navigation("TagOptions");
+
                     b.Navigation("TokenOptions");
 
                     b.Navigation("User")
@@ -1294,6 +1394,8 @@ namespace FrontEASE.Infrastructure.Migrations
 
             modelBuilder.Entity("FrontEASE.Domain.Entities.Tasks.Task", b =>
                 {
+                    b.Navigation("Logs");
+
                     b.Navigation("Messages");
 
                     b.Navigation("Solutions");

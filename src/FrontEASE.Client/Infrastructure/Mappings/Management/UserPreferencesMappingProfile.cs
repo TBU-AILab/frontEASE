@@ -14,6 +14,7 @@ namespace FrontEASE.Client.Infrastructure.Mappings.Management
         {
             CreateMap<UserPreferencesDto, UserPreferencesDto>()
                 .ForMember(x => x.TokenOptions, cd => cd.MapFrom(map => map.TokenOptions))
+                .ForMember(x => x.TagOptions, cd => cd.MapFrom(map => map.TagOptions))
                 .ForMember(x => x.GeneralOptions, cd => cd.MapFrom(map => map.GeneralOptions));
         }
     }

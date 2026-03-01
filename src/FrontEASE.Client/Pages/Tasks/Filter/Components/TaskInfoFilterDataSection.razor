@@ -6,14 +6,14 @@
             <FieldLabel For="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.Name)))">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.Name), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
-            <TextEdit ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.Name)))"
-                      Role="TextRole.Text"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Text="@Filter.Name">
+            <TextInput ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.Name)))"
+                       Role="TextRole.Text"
+                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.Name), PropertyDisplayResourceType.PLACEHOLDER)))"
+                       @bind-Value="@Filter.Name">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
-            </TextEdit>
+            </TextInput>
         </Field>
     </Validation>
 
@@ -24,13 +24,13 @@
             </FieldLabel>
             <SelectList ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.State)))"
                         TItem="TaskState"
-                        TValue="TaskState"
+                        TValue="IReadOnlyList<TaskState>"
                         Data="@(Enum.GetValues(typeof(TaskState)).Cast<TaskState>())"
                         TextField="@((item) => resourceHandler.GetResource(item.GetEnumResourceValue()))"
                         ValueField="@((item) => item)"
                         Multiple
                         Size="Size.Large"
-                        @bind-SelectedValues="@Filter.SelectedFilterStates">
+                        @bind-Value="@Filter.SelectedFilterStates">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
@@ -54,7 +54,7 @@
                                             StaticPicker="true"
                                             DisplayFormat="dd.MM.yyyy"
                                             Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateCreatedFrom), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                            @bind-Date="@Filter.DateCreatedFrom">
+                                            @bind-Value="@Filter.DateCreatedFrom">
 
                                     <Feedback>
                                         <ValidationError Multiline="true" />
@@ -66,7 +66,7 @@
 
                     <Addon AddonType="AddonType.End">
                         <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
-                            <Button Color="Color.Light" Clicked="@(()=>dateCreatedFromPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                            <Button Color="Color.Light" Clicked="@(() => dateCreatedFromPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
                                 <Icon Name="IconName.CalendarDay" />
                             </Button>
                         </Column>
@@ -93,7 +93,7 @@
                                             StaticPicker="true"
                                             DisplayFormat="dd.MM.yyyy"
                                             Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateCreatedTo), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                            @bind-Date="@Filter.DateCreatedTo">
+                                            @bind-Value="@Filter.DateCreatedTo">
 
                                     <Feedback>
                                         <ValidationError Multiline="true" />
@@ -105,7 +105,7 @@
 
                     <Addon AddonType="AddonType.End">
                         <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
-                            <Button Color="Color.Light" Clicked="@(()=>dateCreatedToPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                            <Button Color="Color.Light" Clicked="@(() => dateCreatedToPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
                                 <Icon Name="IconName.CalendarDay" />
                             </Button>
                         </Column>
@@ -132,7 +132,7 @@
                                             StaticPicker="true"
                                             DisplayFormat="dd.MM.yyyy"
                                             Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedFrom), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                            @bind-Date="@Filter.DateUpdatedFrom">
+                                            @bind-Value="@Filter.DateUpdatedFrom">
 
                                     <Feedback>
                                         <ValidationError Multiline="true" />
@@ -144,7 +144,7 @@
 
                     <Addon AddonType="AddonType.End">
                         <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
-                            <Button Color="Color.Light" Clicked="@(()=>dateUpdatedFromPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                            <Button Color="Color.Light" Clicked="@(() => dateUpdatedFromPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
                                 <Icon Name="IconName.CalendarDay" />
                             </Button>
                         </Column>
@@ -171,7 +171,7 @@
                                             StaticPicker="true"
                                             DisplayFormat="dd.MM.yyyy"
                                             Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.DateUpdatedTo), PropertyDisplayResourceType.PLACEHOLDER)))"
-                                            @bind-Date="@Filter.DateUpdatedTo">
+                                            @bind-Value="@Filter.DateUpdatedTo">
 
                                     <Feedback>
                                         <ValidationError Multiline="true" />
@@ -183,7 +183,7 @@
 
                     <Addon AddonType="AddonType.End">
                         <Column ColumnSize="ColumnSize.Is3.Is2.OnWidescreen">
-                            <Button Color="Color.Light" Clicked="@(()=>dateUpdatedToPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
+                            <Button Color="Color.Light" Clicked="@(() => dateUpdatedToPicker.ToggleAsync())" Margin="Margin.Is2.FromStart" Class="w-100">
                                 <Icon Name="IconName.CalendarDay" />
                             </Button>
                         </Column>
@@ -199,14 +199,14 @@
             <FieldLabel For="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.MessagesContent)))">
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.FIELD)))
             </FieldLabel>
-            <MemoEdit Rows="2"
-                      ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.MessagesContent)))"
-                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.PLACEHOLDER)))"
-                      @bind-Text="@Filter.MessagesContent">
+            <MemoInput Rows="2"
+                       ElementId="@(GetElementIdByOperation(nameof(TaskFilterActionRequestDto.MessagesContent)))"
+                       Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskFilterActionRequestDto>(nameof(TaskFilterActionRequestDto.MessagesContent), PropertyDisplayResourceType.PLACEHOLDER)))"
+                       @bind-Value="@Filter.MessagesContent">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
-            </MemoEdit>
+            </MemoInput>
         </Field>
     </Validation>
 

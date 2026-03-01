@@ -13,6 +13,7 @@ using FrontEASE.Application.Infrastructure.Mappings.Companies;
 using FrontEASE.Application.Infrastructure.Mappings.Management;
 using FrontEASE.Application.Infrastructure.Mappings.Management.Core;
 using FrontEASE.Application.Infrastructure.Mappings.Management.General;
+using FrontEASE.Application.Infrastructure.Mappings.Management.Tags;
 using FrontEASE.Application.Infrastructure.Mappings.Management.Tokens;
 using FrontEASE.Application.Infrastructure.Mappings.Management.Tokens.Connectors;
 using FrontEASE.Application.Infrastructure.Mappings.Shared.Addresses;
@@ -28,6 +29,7 @@ using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Option
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values.Enum;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.Options.Parameters.Values.List;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Configs.Modules.RepeatedMessage;
+using FrontEASE.Application.Infrastructure.Mappings.Tasks.Logs;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Messages;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Shared;
 using FrontEASE.Application.Infrastructure.Mappings.Tasks.Solutions;
@@ -36,6 +38,7 @@ using FrontEASE.DataContracts.Models.Core;
 using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Domain.Infrastructure.Settings.Connection;
+using FrontEASE.Domain.Infrastructure.Utils.Users;
 using FrontEASE.Domain.Repositories.Companies;
 using FrontEASE.Domain.Repositories.Jobs;
 using FrontEASE.Domain.Repositories.Management;
@@ -65,7 +68,9 @@ using FrontEASE.Infrastructure.Repositories.Users;
 using FrontEASE.Server.Infrastructure.Hangfire.Attributes;
 using FrontEASE.Server.Infrastructure.Overrides.Auth;
 using FrontEASE.Server.Infrastructure.Overrides.Auth.Models;
-using FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation;
+using FrontEASE.Server.Infrastructure.Swagger.Filters.Documents;
+using FrontEASE.Server.Infrastructure.Swagger.Filters.Operations;
+using FrontEASE.Server.Infrastructure.Swagger.Filters.Schema;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions;
 using FrontEASE.Shared.Services.Resources;
 using Hangfire;
@@ -367,8 +372,9 @@ void SetupSwaggerGen()
         options.DescribeAllParametersInCamelCase();
         options.SupportNonNullableReferenceTypes();
 
-        options.OperationFilter<AuthResponsesFilter>();
-        options.OperationFilter<FromQueryDictionaryFilter>();
+        options.OperationFilter<AuthResponseOperationFilter>();
+        options.OperationFilter<FromQueryDictionaryOperationFilter>();
+        options.OperationFilter<ParameterIgnoreOperationFilter>();
         options.SchemaFilter<EnumSchemaFilter>();
 
         AddIntegrationAPIDtos(options);
@@ -434,6 +440,7 @@ void SetupMappings()
         cfg.AddProfile(new UserMappingProfile());
 
         cfg.AddProfile(new UserPreferencesMappingProfile());
+        cfg.AddProfile(new UserPreferencesTagOptionMappingProfile());
         cfg.AddProfile(new UserPreferencesTokenOptionMappingProfile());
         cfg.AddProfile(new UserPreferencesGeneralOptionsMappingProfile());
         cfg.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
@@ -446,6 +453,7 @@ void SetupMappings()
         cfg.AddProfile(new TaskMappingProfile());
         cfg.AddProfile(new TaskSolutionMappingProfile());
         cfg.AddProfile(new TaskMessageMappingProfile());
+        cfg.AddProfile(new TaskLogMappingProfile());
         cfg.AddProfile(new TaskConfigMappingProfile());
         cfg.AddProfile(new TaskConfigRepeatedMessageMappingProfile());
         cfg.AddProfile(new TaskConfigRepeatedMessageItemMappingProfile());
@@ -502,6 +510,8 @@ void SetupHelperServices()
     builder!.Services.AddSingleton<IMemoryCache, MemoryCache>();
     builder!.Services.AddSingleton<IResourceHandler, ResourceHandler>();
     builder!.Services.AddTransient<ILoggingService, SentryLoggingService>();
+
+    builder!.Services.AddSingleton<IUserHelper, UserHelper>();
 }
 
 void SetupHttpClients()

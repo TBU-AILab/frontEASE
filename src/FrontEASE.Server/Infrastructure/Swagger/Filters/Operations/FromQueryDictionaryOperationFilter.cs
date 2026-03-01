@@ -2,17 +2,15 @@
 using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
+namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Operations
 {
-    public class FromQueryDictionaryFilter : IOperationFilter
+    public class FromQueryDictionaryOperationFilter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             var description = context.ApiDescription;
             if (!(description.HttpMethod!.ToLower()).Equals(HttpMethod.Get.ToString(), StringComparison.CurrentCultureIgnoreCase))
             {
-                // We only want to do this for GET requests, if this is not a
-                // GET request, leave this operation as is, do not modify
                 return;
             }
 
@@ -21,7 +19,6 @@ namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
 
             if (actionParameters?.Count == apiParameters?.Count)
             {
-                // If no complex query parameters detected, leave this operation as is, do not modify
                 return;
             }
 
@@ -50,7 +47,6 @@ namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
             var operationParamNames = operationParameters?.Select(p => p.Name);
             if (operationParamNames?.Contains(actionParameter.Name) == true)
             {
-                // If param is defined as the action method argument, just pass it through
                 return operationParameters?.First(p => p.Name == actionParameter.Name);
             }
 
@@ -60,7 +56,6 @@ namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Documentation
             }
 
             var generatedSchema = context.SchemaGenerator.GenerateSchema(actionParameter.ParameterType, context.SchemaRepository);
-
             var newParameter = new OpenApiParameter
             {
                 Name = actionParameter.Name,

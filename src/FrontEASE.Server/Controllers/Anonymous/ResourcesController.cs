@@ -1,5 +1,6 @@
 ﻿using FrontEASE.Application.AppServices.Shared.Resources;
 using FrontEASE.Domain.Infrastructure.Settings.App;
+using FrontEASE.Server.Infrastructure.Swagger.Attributes;
 using FrontEASE.Shared.Data.DTOs.Shared.Resources;
 using FrontEASE.Shared.Data.Enums.Shared.Resources;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers;
@@ -30,7 +31,7 @@ namespace FrontEASE.Server.Controllers.Anonymous
         /// <returns>List of resources.</returns>
         [HttpGet($"{ResourcesControllerConstants.BaseUrl}/{ControllerConstants.All}")]
         [ProducesResponseType(typeof(IList<ResourceDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetResources([FromQuery, Required] LanguageCode language, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetResources([FromQuery, Required] LanguageCode language, [ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try

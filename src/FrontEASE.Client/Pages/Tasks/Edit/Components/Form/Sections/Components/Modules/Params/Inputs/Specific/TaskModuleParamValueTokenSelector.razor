@@ -24,7 +24,7 @@
             <Select TValue="string"
                     Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                     ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                    @bind-SelectedValue="@TaskModuleParamContext.ParamValue!.Value!.StringValue">
+                    @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue">
                 <ChildContent>
                     <SelectItem Value="string.Empty">
                         @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
@@ -43,14 +43,14 @@
         }
         else
         {
-            <MemoEdit ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                      Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                      @bind-Text="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
-                      Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)">
+            <MemoInput ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                       Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                       @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
+                       Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)">
                 <Feedback>
                     <ValidationError Multiline="true" />
                 </Feedback>
-            </MemoEdit>
+            </MemoInput>
         }
     </Field>
 </Validation>

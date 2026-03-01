@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using FrontEASE.Domain.DataQueries.Management;
 using FrontEASE.Domain.Entities.Management;
 using FrontEASE.Domain.Entities.Management.Core.Packages;
+using FrontEASE.Domain.Entities.Management.Tags;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Repositories.Management;
 using FrontEASE.Domain.Services.Core.Connector;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrontEASE.Domain.Services.Management
 {
@@ -12,6 +15,38 @@ namespace FrontEASE.Domain.Services.Management
         ICoreConnector coreService,
         IMapper mapper) : IManagementService
     {
+        public async Task<UserPreferenceTagOption?> InsertTag(UserPreferenceTagOption tag, CancellationToken cancellationToken)
+        {
+            var tagEntity = await managementRepository.InsertTag(tag, cancellationToken);
+            return tagEntity;
+        }
+
+        public async Task<UserPreferenceTagOption?> LoadTag(string tag, bool suppressException, CancellationToken cancellationToken)
+        {
+            var tagEntity = await managementRepository.LoadTagWhere(x => EF.Functions.ILike(x.Tag, tag), cancellationToken);
+            if (tagEntity is null && !suppressException)
+            {
+                throw new NotFoundException();
+            }
+            return tagEntity;
+        }
+
+        public async Task<UserPreferenceTagOption?> LoadTag(Guid id, bool suppressException, CancellationToken cancellationToken)
+        {
+            var tagEntity = await managementRepository.LoadTag(id, cancellationToken);
+            if (tagEntity is null && !suppressException)
+            {
+                throw new NotFoundException();
+            }
+            return tagEntity;
+        }
+
+        public async Task<IList<UserPreferenceTagOption>> LoadTags(CancellationToken cancellationToken)
+        {
+            var tags = await managementRepository.LoadTags(cancellationToken);
+            return tags.Any() ? tags : throw new NotFoundException();
+        }
+
         public async Task<GlobalPreferences> LoadGlobal(CancellationToken cancellationToken)
         {
             var packages = await coreService.GetPackages(cancellationToken);
@@ -23,16 +58,42 @@ namespace FrontEASE.Domain.Services.Management
             return globalPrefs;
         }
 
-        public async Task<UserPreferences> Load(Guid id, CancellationToken cancellationToken)
+        public async Task<UserPreferences> LoadBase(Guid id, CancellationToken cancellationToken)
         {
-            var preferences = await managementRepository.Load(id, cancellationToken) ?? throw new NotFoundException();
+            var query = new UserPreferencesQuery();
+            var preferences = await managementRepository.Load(id, query, cancellationToken) ?? throw new NotFoundException();
+            return preferences;
+        }
+
+        public async Task<UserPreferences> LoadFull(Guid id, CancellationToken cancellationToken)
+        {
+            var query = new UserPreferencesQuery
+            {
+                LoadTokenOptions = true,
+                LoadConnectorTypes = true,
+                LoadGeneralOptions = true,
+                LoadTagOptions = true,
+                WithNoTracking = true,
+                AsSplitQuery = true
+            };
+
+            var preferences = await managementRepository.Load(id, query, cancellationToken) ?? throw new NotFoundException();
             return preferences;
         }
 
         public async Task<UserPreferences> Update(Guid id, UserPreferences preferences, CancellationToken cancellationToken)
         {
-            var updated = await Load(id, cancellationToken);
+            var query = new UserPreferencesQuery
+            {
+                LoadTokenOptions = true,
+                LoadConnectorTypes = true,
+                LoadGeneralOptions = true,
+                AsSplitQuery = true
+            };
+
+            var updated = await managementRepository.Load(id, query, cancellationToken) ?? throw new NotFoundException();
             mapper.Map(preferences, updated);
+            HandleDependentEntities(updated);
 
             updated = await managementRepository.Update(updated, cancellationToken);
             return updated!;
@@ -47,6 +108,9 @@ namespace FrontEASE.Domain.Services.Management
             return updatedPrefs!;
         }
 
+        public async Task DeleteTag(UserPreferenceTagOption tag, CancellationToken cancellationToken) =>
+            await managementRepository.Delete(tag, cancellationToken);
+
         private async Task HandleCorePackages(IList<GlobalPreferenceCorePackage> origPackageConfig, IList<GlobalPreferenceCorePackage> newPackageConfig, CancellationToken cancellationToken)
         {
             var packagesToDelete = origPackageConfig
@@ -59,6 +123,11 @@ namespace FrontEASE.Domain.Services.Management
 
             if (packagesToDelete.Count > 0) { await coreService.DeletePackages(packagesToDelete, cancellationToken); }
             if (packagesToInstall.Count > 0) { await coreService.AddPackages(packagesToInstall, cancellationToken); }
+        }
+
+        private static void HandleDependentEntities(UserPreferences preferences)
+        {
+            preferences.TagOptions.Clear();
         }
     }
 }

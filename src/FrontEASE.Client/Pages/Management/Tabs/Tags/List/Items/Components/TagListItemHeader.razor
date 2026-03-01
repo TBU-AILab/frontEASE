@@ -1,0 +1,34 @@
+@inject IResourceHandler resourceHandler
+
+<Row Class="gx-0 margin-background-offset-top-1">
+    <CardHeader Display="Display.Flex" Border="Border.RoundedZero" Class="bg-custom-secondary text-custom-primary" Padding="Padding.Is2.FromEnd.Is2.FromStart">
+        <Column ColumnSize="ColumnSize.Is12" TextAlignment="TextAlignment.End" Class="align-self-center">
+            @if (CanDelete)
+            {
+                <Tooltip Multiline="true" Text="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+                    <Icon Class="action-icon action-icon-danger" Name="IconName.Delete" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => ShowDeleteModal())" />
+                </Tooltip>
+            }
+        </Column>
+    </CardHeader>
+</Row>
+
+<TagDeleteModal @ref="@deleteModal" Tag="Tag" OtherTags="OtherTags" />
+
+@code {
+    [CascadingParameter]
+    public ManagementPageContext PageContext { get; set; } = null!;
+
+    [Parameter]
+    public UserPreferenceTagOptionDto Tag { get; set; } = new();
+
+    [Parameter]
+    public IList<UserPreferenceTagOptionDto> OtherTags { get; set; } = [];
+
+    private TagDeleteModal deleteModal = new();
+
+    private bool IsUserTag => PageContext.UserPreferences.TagOptions.Any(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
+    private bool CanDelete => PageContext.LoggedInUser.Role == UserRole.OWNER || (IsUserTag && Tag.TaskCount == 0);
+
+    private Task ShowDeleteModal() => deleteModal.ShowModal();
+}

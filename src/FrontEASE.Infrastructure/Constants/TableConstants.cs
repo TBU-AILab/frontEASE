@@ -18,6 +18,7 @@
         /* Management */
         public const string UserPreferences = "UserPreferences";
         public const string UserPreferenceTokens = "UserPreferenceTokens";
+        public const string UserPreferenceTags = "UserPreferenceTags";
         public const string UserPreferenceTokenConnectorTypes = "UserPreferenceTokenConnectorTypes";
         public const string UserPreferenceGeneralOptions = "UserPreferenceGeneralOptions";
 
@@ -25,6 +26,7 @@
         public const string Tasks = "Tasks";
         public const string TaskSolutions = "TaskSolutions";
         public const string TaskMessages = "TaskMessages";
+        public const string TaskLogs = "TaskLogs";
         public const string TaskConfigs = "TaskConfigurations";
         public const string TaskConfigRepeatedMessages = "TaskConfigRepeatedMessages";
         public const string TaskConfigRepeatedMessageItems = "TaskConfigRepeatedMessageItems";

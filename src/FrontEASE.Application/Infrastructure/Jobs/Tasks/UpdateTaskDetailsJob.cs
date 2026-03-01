@@ -25,6 +25,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
 
         public string JobName { get; init; } = appSettings.HangfireSettings!.Jobs!.UpdateTaskDetailsJob!.CronName!;
 
+        [AutomaticRetry(Attempts = 0)]
         public async Task Execute(PerformContext context)
         {
             var currentExecutionStart = DateTime.UtcNow;
@@ -41,7 +42,9 @@ namespace FrontEASE.Application.Infrastructure.Jobs.Tasks
                 var queryDetailsCheck = new TasksQuery()
                 {
                     LoadSolutions = true,
-                    LoadMessages = true
+                    LoadMessages = true,
+                    LoadLogs = true,
+                    AsSplitQuery = true
                 };
                 var tasksForDataSync = await taskRepository.LoadAllWhere(x => !x.IsDeleted && x.State == TaskState.RUN, queryDetailsCheck, cancellationToken);
                 var tasksForDataSyncIDs = tasksForDataSync.Select(x => x.ID).ToList();

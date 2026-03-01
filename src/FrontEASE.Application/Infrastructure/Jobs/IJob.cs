@@ -1,4 +1,5 @@
-﻿using Hangfire.Server;
+﻿using Hangfire;
+using Hangfire.Server;
 
 namespace FrontEASE.Application.Infrastructure.Jobs
 {
@@ -6,6 +7,7 @@ namespace FrontEASE.Application.Infrastructure.Jobs
     {
         string JobName { get; init; }
 
+        [AutomaticRetry(Attempts = 0)]
         Task Execute(PerformContext context);
     }
 }

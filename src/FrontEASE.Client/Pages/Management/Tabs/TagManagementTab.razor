@@ -1,0 +1,9 @@
+﻿<Container Fluid Padding="Padding.Is3" Border="Border.Is1.RoundedBottom" Shadow="Shadow.Small" Class="rounded-top-right-1 border-custom-light">
+    <TagAddForm OtherTags="OtherUserTags" />
+    <TagList OtherTags="OtherUserTags" UserTags="UserTagsList" />
+</Container>
+
+@code {
+    private List<UserPreferenceTagOptionDto> OtherUserTags = [];
+    private List<UserPreferenceTagOptionDto> UserTagsList = [];
+}

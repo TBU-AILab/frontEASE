@@ -1,69 +1,65 @@
-﻿@inject ITaskChartManipulationService taskChartManipulationService
+﻿@using ApexCharts
+
+@inject ITaskChartManipulationService taskChartManipulationService
 @inject IResourceHandler resourceHandler
-@inject IUIManager uiManager
 
 <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is2.FromBottom">
-	<LineChart @ref="LineChart" TItem="float" Options="@Options" />
+    <ApexChart @ref="Chart" TItem="ChartDataPoint" Options="@Options">
+        <ApexPointSeries TItem="ChartDataPoint"
+                         Items="Data"
+                         SeriesType="SeriesType.Area"
+                         Name="@seriesName"
+                         XValue="@(e => e.Label)"
+                         YAggregate="@(e => e.Sum(x => x.Value))" />
+    </ApexChart>
 </Column>
 
 @code {
     [Parameter]
     public TaskModalContext TaskModalContext { get; set; } = null!;
 
-	private IList<string> Labels = [];
-	private IList<float> Values = [];
-	private LineChart<float> LineChart = new();
-	private LineChartOptions Options = new();
+    private IList<ChartDataPoint> Data = [];
+    private ApexChart<ChartDataPoint>? Chart;
+    private ApexChartOptions<ChartDataPoint> Options = new();
 
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
+    private string seriesName = string.Empty;
+    private bool needsRedraw;
+    private int lastSolutionCount;
 
-		var titleText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessConvergenceChart}.{UIStateConstants.Explanation}");
-		var subtitleText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessConvergenceChart}");
-		Options = taskChartManipulationService.PrepareLineChartOptions(titleText, subtitleText);
-	}
+    protected override void OnInitialized()
+    {
+        var titleText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessConvergenceChart}.{UIStateConstants.Explanation}");
+        var subtitleText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessConvergenceChart}");
+        Options = taskChartManipulationService.PrepareLineChartOptions(titleText, subtitleText);
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		await base.OnAfterRenderAsync(firstRender);
-		if (firstRender)
-		{
-			await HandleRedraw();
-		}
-	}
+        seriesName = resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Fitness), PropertyDisplayResourceType.FIELD));
+    }
 
-	private void RecalculateValues()
-	{
-		var messageIDs = TaskModalContext.Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
-		var solutionsOrdered = TaskModalContext.Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
+    protected override Task OnParametersSetAsync()
+    {
+        var currentCount = TaskModalContext.Task.Solutions.Count;
+        if (currentCount != lastSolutionCount)
+        {
+            lastSolutionCount = currentCount;
+            RecalculateValues();
+            needsRedraw = true;
+        }
+        return base.OnParametersSetAsync();
+    }
 
-		var values = taskChartManipulationService.GetValueEvolutionChartData(TaskModalContext.Task.Messages, solutionsOrdered);
-		Labels = values.Labels;
-		Values = values.Values;
-	}
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender && needsRedraw && Chart is not null)
+        {
+            needsRedraw = false;
+            await Chart.UpdateSeriesAsync(true);
+        }
+    }
 
-	private async Task HandleRedraw()
-	{
-		RecalculateValues();
-
-		await LineChart.Clear();
-		await LineChart.AddLabelsDatasetsAndUpdate(Labels.ToArray(), GetLineChartDataset());
-	}
-
-	private LineChartDataset<float> GetLineChartDataset()
-	{
-		return new LineChartDataset<float>
-		{
-			Label = resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Fitness), PropertyDisplayResourceType.FIELD)),
-			Data = Values.ToList(),
-			Fill = true,
-			BackgroundColor = new List<string>() { ColorHelper.HtmlToChartRGBA(uiManager.Theme.ColorOptions.Primary, 0.2f) },
-			PointBackgroundColor = new List<string>() { ChartColor.FromHtmlColorCode(uiManager.Theme.ColorOptions.Success) },
-			PointHoverBackgroundColor = new List<string>() { ChartColor.FromHtmlColorCode(uiManager.Theme.ColorOptions.Warning) },
-			Tension = 0.1f,
-			PointRadius = 3,
-			CubicInterpolationMode = "monotone",
-		};
-	}
+    private void RecalculateValues()
+    {
+        var messageIDs = TaskModalContext.Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
+        var solutionsOrdered = TaskModalContext.Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
+        Data = taskChartManipulationService.GetValueConvergenceChartData(TaskModalContext.Task.Messages, solutionsOrdered);
+    }
 }

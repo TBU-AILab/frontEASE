@@ -4,7 +4,7 @@
 @inject IResourceHandler resourceHandler
 @inject AppSettings appSettings
 
-<Modal @ref="@TaskModalContext.Modal" Closing="@(async (e) => await OnModalClosing(e))" @bind-Visible="@isModalVisible" Class="modal-dialog-extrawide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))">
+<Modal @ref="@TaskModalContext.Modal" Closing="@(async (e) => await OnModalClosing(e))" @bind-Visible="@isModalVisible" Class="modal-dialog-extrawide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))" Centered>
     @if (isModalVisible)
     {
         @if (TaskModalContext.TaskMetadata.ReloadInProgress)
@@ -12,7 +12,7 @@
             <BackgroundLoadSpinner TextColor="TextColor.White" TextSize="TextSize.Large" />
         }
 
-        <ModalContent Centered Shadow="Shadow.Small">
+        <ModalContent Shadow="Shadow.Small">
             @if (isTaskLoading)
             {
                 <ContentLoadSpinner />

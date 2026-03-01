@@ -1,6 +1,8 @@
-﻿using Blazorise.Charts;
+﻿using ApexCharts;
 using FrontEASE.Client.Infrastructure.Utils;
 using FrontEASE.Client.Services.HelperServices.UI.Manage;
+using FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts.Constants;
+using FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts.Models;
 using FrontEASE.Client.Shared.Styling.Constants;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Messages;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Solutions;
@@ -13,83 +15,132 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts
         IResourceHandler resourceHandler,
         IUIManager uiManager) : ITaskChartManipulationService
     {
-        public (IList<float> Values, IList<string> Labels) GetValueEvolutionChartData(IList<TaskMessageDto> messages, IList<TaskSolutionDto> solutions)
+        public IList<ChartDataPoint> GetValueEvolutionChartData(IList<TaskMessageDto> messages, IList<TaskSolutionDto> solutions)
         {
-            var labels = new List<string>();
-            var values = new List<float>();
+            var dataPoints = new List<ChartDataPoint>();
 
             var i = 0;
             foreach (var solution in solutions)
             {
                 var message = messages.FirstOrDefault(m => m.ID == solution.TaskMessageID);
 
-                var fitness = (float)(solution.Fitness ?? float.NegativeInfinity);
-                values.Add(fitness);
-
+                var fitness = (decimal)(solution.Fitness ?? (double)ChartConstants.DefaultFitness);
                 var messageContent = string.IsNullOrEmpty(message?.Content) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : message.Content;
-                labels.Add($"n°{++i}: \"{TextHelper.TruncateString(messageContent, TextConstants.TaskChartMessageDisplayLength)}\"");
+                var label = string.Format(ChartConstants.LabelFormat, ++i, TextHelper.TruncateString(messageContent, TextConstants.TaskChartMessageDisplayLength));
+
+                dataPoints.Add(new ChartDataPoint { Order = i, Label = label, Value = fitness });
             }
 
-            return new(values, [.. labels]);
+            return dataPoints;
         }
 
-        public (IList<float> Values, IList<string> Labels) GetValueConvergenceChartData(IList<TaskMessageDto> messages, IList<TaskSolutionDto> solutions)
+        public IList<ChartDataPoint> GetValueConvergenceChartData(IList<TaskMessageDto> messages, IList<TaskSolutionDto> solutions)
         {
-            var labels = new List<string>();
-            var values = new List<float>();
+            var dataPoints = new List<ChartDataPoint>();
 
-            var bestSoFar = float.NegativeInfinity;
+            var bestSoFar = ChartConstants.DefaultFitness;
             var i = 0;
             foreach (var solution in solutions)
             {
                 var message = messages.FirstOrDefault(m => m.ID == solution.TaskMessageID);
 
-                var fitness = (float)(solution.Fitness ?? float.NegativeInfinity);
+                var fitness = (decimal)(solution.Fitness ?? (double)ChartConstants.DefaultFitness);
                 bestSoFar = Math.Max(bestSoFar, fitness);
-                values.Add(bestSoFar);
-
                 var messageContent = string.IsNullOrEmpty(message?.Content) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : message.Content;
-                labels.Add($"n°{++i}: \"{TextHelper.TruncateString(messageContent, TextConstants.TaskChartMessageDisplayLength)}\"");
+                var label = string.Format(ChartConstants.LabelFormat, ++i, TextHelper.TruncateString(messageContent, TextConstants.TaskChartMessageDisplayLength));
+
+                dataPoints.Add(new ChartDataPoint { Order = i, Label = label, Value = bestSoFar });
             }
 
-            return new(values, [.. labels]);
+            return dataPoints;
         }
 
-        public LineChartOptions PrepareLineChartOptions(string titleText, string subtitleText)
+        public ApexChartOptions<ChartDataPoint> PrepareLineChartOptions(string titleText, string subtitleText)
         {
-            var options = new LineChartOptions()
+            var options = new ApexChartOptions<ChartDataPoint>
             {
-                MaintainAspectRatio = true,
-                Responsive = true,
-                Plugins = new()
+                Chart = new Chart
                 {
-                    Legend = new()
+                    Background = ChartConstants.ChartBackground,
+                    ForeColor = ChartConstants.ChartForeColor,
+                    Toolbar = new Toolbar { Show = false },
+                },
+                Title = new Title
+                {
+                    Text = subtitleText,
+                    Align = Align.Center,
+                    OffsetY = ChartConstants.TitleOffsetY,
+                    Style = new TitleStyle
                     {
-                        FullSize = true,
-                        Display = true,
-                        Title = new()
-                        {
-                            Text = titleText,
-                            Display = true,
-                            Font = new()
-                            {
-                                Style = "italic"
-                            }
-                        }
-                    },
-                    Subtitle = new()
-                    {
-                        Text = subtitleText,
-                        Color = new List<string>() { ChartColor.FromHtmlColorCode(uiManager.Theme.ColorOptions.Primary) },
-                        Display = true,
+                        Color = uiManager.Theme.ColorOptions.Primary,
+                        FontSize = ChartConstants.TitleFontSize
                     }
                 },
-                Scales = new()
+                Subtitle = new Subtitle
                 {
-                    X = new()
+                    Text = titleText,
+                    Align = Align.Center,
+                    Style = new SubtitleStyle
                     {
-                        Display = false
+                        Color = ChartConstants.MutedColor,
+                        FontSize = ChartConstants.SubtitleFontSize
                     }
+                },
+                Xaxis = new XAxis
+                {
+                    Labels = new XAxisLabels
+                    {
+                        Show = false,
+                    }
+                },
+                Yaxis =
+                [
+                    new YAxis
+                    {
+                        Labels = new YAxisLabels
+                        {
+                            Style = new AxisLabelStyle { Colors = ChartConstants.MutedColor }
+                        }
+                    }
+                ],
+                Stroke = new Stroke
+                {
+                    Curve = Curve.Straight,
+                    Width = ChartConstants.StrokeWidth,
+                },
+                Colors = [uiManager.Theme.ColorOptions.Primary],
+                Fill = new Fill
+                {
+                    Type = [FillType.Gradient],
+                    Gradient = new FillGradient
+                    {
+                        ShadeIntensity = ChartConstants.GradientShadeIntensity,
+                        OpacityFrom = ChartConstants.GradientOpacityFrom,
+                        OpacityTo = ChartConstants.GradientOpacityTo,
+                        Stops = [ChartConstants.GradientStopStart, ChartConstants.GradientStopMiddle, ChartConstants.GradientStopEnd]
+                    }
+                },
+                Markers = new Markers
+                {
+                    Size = ChartConstants.MarkerSize,
+                    Colors = [uiManager.Theme.ColorOptions.Success],
+                    StrokeColors = [uiManager.Theme.ColorOptions.Success],
+                    StrokeWidth = ChartConstants.MarkerStrokeWidth,
+                    Hover = new MarkersHover { SizeOffset = ChartConstants.MarkerHoverSizeOffset }
+                },
+                Legend = new Legend { Show = true },
+                Grid = new Grid
+                {
+                    BorderColor = ChartConstants.GridBorderColor,
+                    StrokeDashArray = ChartConstants.GridStrokeDashArray
+                },
+                Tooltip = new Tooltip
+                {
+                    Theme = Mode.Dark
+                },
+                Theme = new Theme
+                {
+                    Mode = Mode.Dark
                 }
             };
 

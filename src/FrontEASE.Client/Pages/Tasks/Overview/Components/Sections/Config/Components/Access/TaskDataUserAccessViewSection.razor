@@ -56,6 +56,6 @@
     {
         var userData = PageContext.AvailableUsers.SingleOrDefault(x => x.Id == userID);
         return string.IsNullOrWhiteSpace(userData?.Image?.ImageUrl) ?
-            ImageConstants.UserPicDefault :  $"{appSettings.ApiSettings!.BaseUrl}/{userData?.Image?.ImageUrl}";
+            ImageConstants.UserPicDefault : $"{appSettings.ApiSettings!.BaseUrl}/{userData?.Image?.ImageUrl}";
     }
 }

@@ -12,7 +12,8 @@ namespace FrontEASE.Client.Infrastructure.Mappings.Tasks
 
         private void CreateMaps()
         {
-            CreateMap<TaskStatusDto, TaskStatusDto>();
+            CreateMap<TaskStatusDto, TaskStatusDto>()
+                .ForMember(x => x.Logs, cd => cd.MapFrom(map => map.Logs));
         }
     }
 }

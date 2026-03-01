@@ -36,15 +36,15 @@
                     </FieldLabel>
                 }
 
-                <MemoEdit ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                          Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                          @bind-Text="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
-                          Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)"
-                          Rows="2" AutoSize="true">
+                <MemoInput ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                           Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                           @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.StringValue"
+                           Placeholder="@(TaskModuleParamContext.ParamOption.Default?.StringValue ?? TaskModuleParamContext.ParamOption.LongName ?? string.Empty)"
+                           Rows="2" AutoSize="true">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
-                </MemoEdit>
+                </MemoInput>
             </Field>
         </Validation>
         break;
@@ -59,17 +59,17 @@
                     </FieldLabel>
                 }
 
-                <NumericEdit TValue="int?"
-                             ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                             Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                             @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.IntValue"
-                             Placeholder="@(TaskModuleParamContext.ParamOption.Default?.IntValue?.ToString() ?? 0.ToString())"
-                             Min="@(TaskModuleParamContext.ParamOption.MinValue is double intMin ? (int)intMin : int.MinValue)"
-                             Max="@(TaskModuleParamContext.ParamOption.MaxValue is double intMax ? (int)intMax : int.MaxValue)">
+                <NumericInput TValue="int?"
+                              ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                              Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                              @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.IntValue"
+                              Placeholder="@(TaskModuleParamContext.ParamOption.Default?.IntValue?.ToString() ?? 0.ToString())"
+                              Min="@(TaskModuleParamContext.ParamOption.MinValue.HasValue ? (int)TaskModuleParamContext.ParamOption.MinValue.Value : null)"
+                              Max="@(TaskModuleParamContext.ParamOption.MaxValue.HasValue ? (int)TaskModuleParamContext.ParamOption.MaxValue.Value : null)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
-                </NumericEdit>
+                </NumericInput>
             </Field>
         </Validation>
         break;
@@ -110,17 +110,17 @@
                     </FieldLabel>
                 }
 
-                <NumericEdit TValue="double?"
-                             ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                             Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                             @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.FloatValue"
-                             Placeholder="@(TaskModuleParamContext.ParamOption.Default?.FloatValue?.ToString() ?? 0.0.ToString())"
-                             Min="@(TaskModuleParamContext.ParamOption.MinValue is double floatMin ? floatMin : double.MinValue)"
-                             Max="@(TaskModuleParamContext.ParamOption.MaxValue is double floatMax ? floatMax : double.MaxValue)">
+                <NumericInput TValue="double?"
+                              ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
+                              Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                              @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.FloatValue"
+                              Placeholder="@(TaskModuleParamContext.ParamOption.Default?.FloatValue?.ToString() ?? 0.0.ToString())"
+                              Min="@(TaskModuleParamContext.ParamOption.MinValue.HasValue ? (double)TaskModuleParamContext.ParamOption.MinValue.Value : null)"
+                              Max="@(TaskModuleParamContext.ParamOption.MaxValue.HasValue ? (double)TaskModuleParamContext.ParamOption.MaxValue.Value : null)">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
-                </NumericEdit>
+                </NumericInput>
             </Field>
         </Validation>
         break;
@@ -140,9 +140,9 @@
                     <Select TValue="string"
                             Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
                             ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
-                            SelectedValue="@TaskModuleParamContext.ParamValue!.Value!.EnumValue!.StringValue"
-                            SelectedValueExpression="@(() => TaskModuleParamContext.ParamValue.Value!.EnumValue!.StringValue)"
-                            SelectedValueChanged="@(async (value) => await OnStringEnumValueChanged(value))">
+                            Value="@(TaskModuleParamContext.ParamValue?.Value?.EnumValue?.StringValue)"
+                            ValueExpression="@(() => TaskModuleParamContext.ParamValue!.Value!.EnumValue!.StringValue)"
+                            ValueChanged="@(async (value) => await OnStringEnumValueChanged(value))">
                         <ChildContent>
                             <SelectItem Value="string.Empty">
                                 @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
@@ -171,11 +171,12 @@
         else if (TaskModuleParamContext.ParamOption.EnumOptions?.FirstOrDefault()?.ModuleValue is not null)
         {
             var moduleType = TaskModuleParamContext.ParamOption.EnumOptions.Select(x => x.ModuleValue?.PackageType).FirstOrDefault(x => x.HasValue);
-            if (moduleType is not null)
+            if (moduleType is not null && TaskModuleParamContext.ParamValue?.Value is not null)
             {
-                TaskModuleParamContext.ParamValue!.Value!.EnumValue!.ModuleValue ??= new() { PackageType = moduleType.Value };
+                TaskModuleParamContext.ParamValue.Value.EnumValue ??= new();
+                TaskModuleParamContext.ParamValue.Value.EnumValue.ModuleValue ??= new() { PackageType = moduleType.Value };
                 var moduleContext = new TaskModuleContext(
-                    TaskModuleParamContext.ParamValue.Value!.EnumValue!.ModuleValue!,
+                    TaskModuleParamContext.ParamValue.Value.EnumValue.ModuleValue,
                     TaskModuleParamContext.ParamOption!.EnumOptions.Select(x => x.ModuleValue!).ToList(),
                     TaskModuleParamContext.ParamName);
 
@@ -197,7 +198,7 @@
                 <Check TValue="bool?"
                        ElementId="@(GetElementIdByOperation(TaskModuleParamContext.ParamOption.Key))"
                        Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                       @bind-Checked="@TaskModuleParamContext.ParamValue!.Value!.BoolValue">
+                       @bind-Value="@TaskModuleParamContext.ParamValue!.Value!.BoolValue">
                     <Feedback>
                         <ValidationError Multiline="true" />
                     </Feedback>
@@ -280,22 +281,31 @@
         timeStringValue = newValue;
         if (TaskModuleParamContext.ParamValue?.Value is not null)
         {
-            TaskModuleParamContext.ParamValue.Value.IntValue = ConvertTimeStringToSeconds(timeStringValue);
+            var convertedValue = ConvertTimeStringToSeconds(timeStringValue);
+            TaskModuleParamContext.ParamValue.Value.IntValue = convertedValue;
+
+            if (convertedValue == -1)
+            {
+                return;
+            }
         }
         await RefreshFlags();
     }
 
     private async Task RefreshFlags()
     {
-        if (TaskModuleParamContext.ParamFlags is not null)
+        if (TaskModuleParamContext.ParamValue is not null)
         {
-            var flags = taskManipulationService.GetParamFlags(TaskModuleContext.Module, TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
-            mapper.Map(flags, TaskModuleParamContext.ParamFlags);
-        }
-        else if (TaskModuleParamContext.ListFlags is not null)
-        {
-            var listFlags = taskManipulationService.GetListParamFlags(TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue!);
-            mapper.Map(listFlags, TaskModuleParamContext.ListFlags);
+            if (TaskModuleParamContext.ParamFlags is not null)
+            {
+                var flags = taskManipulationService.GetParamFlags(TaskModuleContext?.Module, TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue);
+                mapper.Map(flags, TaskModuleParamContext.ParamFlags);
+            }
+            else if (TaskModuleParamContext.ListFlags is not null)
+            {
+                var listFlags = taskManipulationService.GetListParamFlags(TaskModuleParamContext.ParamOption, TaskModuleParamContext.ParamValue);
+                mapper.Map(listFlags, TaskModuleParamContext.ListFlags);
+            }
         }
         await uiService.CallRequestRefreshAsync();
     }

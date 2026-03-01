@@ -14,49 +14,14 @@
 
 <TaskConfigDataViewSection TaskModalContext="TaskModalContext" />
 
-<TaskModuleDataViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(
-    TaskModalContext.Task.Config.Solution,
-    solutionOptions,
-    resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Solution), PropertyDisplayResourceType.FIELD))))" />
+<TaskModuleDataViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(TaskModalContext.Task.Config.Solution, solutionOptions, resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Solution), PropertyDisplayResourceType.FIELD))))" />
+<TaskModuleDataViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(TaskModalContext.Task.Config.Connector, connectorOptions, resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Connector), PropertyDisplayResourceType.FIELD))))" />
+<TaskModuleDataViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(TaskModalContext.Task.Config.Evaluator, evaluatorOptions, resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Evaluator), PropertyDisplayResourceType.FIELD))))" />
 
-<TaskModuleDataViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(
-    TaskModalContext.Task.Config.Connector,
-    connectorOptions,
-    resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Connector), PropertyDisplayResourceType.FIELD))))" />
-
-<TaskModuleDataViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(
-    TaskModalContext.Task.Config.Evaluator,
-    evaluatorOptions,
-    resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Evaluator), PropertyDisplayResourceType.FIELD))))" />
-
-
-<TaskModuleDataItemViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(
-        new TaskModuleDto(),
-        stoppingConditionOptions,
-        resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.StoppingConditions), PropertyDisplayResourceType.FIELD))))"
-    Modules="TaskModalContext.Task.Config.StoppingConditions"
-    CollectionName="@(nameof(TaskConfigDto.StoppingConditions))" />
-
-<TaskModuleDataItemViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(
-        new TaskModuleDto(),
-        testsOptions,
-        resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Tests), PropertyDisplayResourceType.FIELD))))"
-    Modules="TaskModalContext.Task.Config.Tests"
-    CollectionName="@(nameof(TaskConfigDto.Tests))" />
-
-<TaskModuleDataItemViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(
-        new TaskModuleDto(),
-        analysesOptions,
-        resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Analyses), PropertyDisplayResourceType.FIELD))))"
-    Modules="TaskModalContext.Task.Config.Analyses"
-    CollectionName="@(nameof(TaskConfigDto.Analyses))" />
-
-<TaskModuleDataItemViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(
-        new TaskModuleDto(),
-        statOptions,
-        resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Stats), PropertyDisplayResourceType.FIELD))))"
-    Modules="TaskModalContext.Task.Config.Stats"
-    CollectionName="@(nameof(TaskConfigDto.Stats))" />
+<TaskModuleDataItemViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(new TaskModuleDto(), stoppingConditionOptions, resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.StoppingConditions), PropertyDisplayResourceType.FIELD))))" Modules="TaskModalContext.Task.Config.StoppingConditions" CollectionName="@(nameof(TaskConfigDto.StoppingConditions))" />
+<TaskModuleDataItemViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(new TaskModuleDto(), testsOptions, resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Tests), PropertyDisplayResourceType.FIELD))))" Modules="TaskModalContext.Task.Config.Tests" CollectionName="@(nameof(TaskConfigDto.Tests))" />
+<TaskModuleDataItemViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(new TaskModuleDto(), analysesOptions, resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Analyses), PropertyDisplayResourceType.FIELD))))" Modules="TaskModalContext.Task.Config.Analyses" CollectionName="@(nameof(TaskConfigDto.Analyses))" />
+<TaskModuleDataItemViewSection TaskModalContext="TaskModalContext" TaskModuleContext="@(new TaskModuleContext(new TaskModuleDto(), statOptions, resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Stats), PropertyDisplayResourceType.FIELD))))" Modules="TaskModalContext.Task.Config.Stats" CollectionName="@(nameof(TaskConfigDto.Stats))" />
 
 <TaskDataUserAccessViewSection TaskModalContext="TaskModalContext" />
 <TaskDataCompanyAccessViewSection TaskModalContext="TaskModalContext" />

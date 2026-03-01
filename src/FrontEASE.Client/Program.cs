@@ -8,6 +8,7 @@ using FrontEASE.Client.Infrastructure.Mappings.Companies;
 using FrontEASE.Client.Infrastructure.Mappings.Management;
 using FrontEASE.Client.Infrastructure.Mappings.Management.Core;
 using FrontEASE.Client.Infrastructure.Mappings.Management.General;
+using FrontEASE.Client.Infrastructure.Mappings.Management.Tags;
 using FrontEASE.Client.Infrastructure.Mappings.Management.Tokens;
 using FrontEASE.Client.Infrastructure.Mappings.Management.Tokens.Connectors;
 using FrontEASE.Client.Infrastructure.Mappings.Shared.Addresses;
@@ -23,6 +24,7 @@ using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options.Parameters.Options.Enum;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.Options.Parameters.Options.List;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Configs.ConfigParts.Modules.RepeatedMessage;
+using FrontEASE.Client.Infrastructure.Mappings.Tasks.Logs;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Messages;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Shared;
 using FrontEASE.Client.Infrastructure.Mappings.Tasks.Solutions;
@@ -74,12 +76,11 @@ void SetupUIEnhancements()
     builder.Services.AddBlazorise(options =>
     {
         options.ChangeSliderOnHold = true;
+        options.SafeJsInvoke = true;
         options.EnableNumericStep = true;
         options.ShowNumericStepButtons = true;
         options.ModalFocusTrap = true;
-        options.Immediate = false;
-        options.DebounceInterval = 100;
-        options.Debounce = true;
+        options.Immediate = true;
 
         options.ProductToken = settings!.LicenseSettings!.Blazorise!.LicenseToken;
     }).AddBootstrap5Providers().AddFontAwesomeIcons();
@@ -97,6 +98,7 @@ void SetupMappings()
         cfg.AddProfile(new AddressMappingProfile());
 
         cfg.AddProfile(new UserPreferencesMappingProfile());
+        cfg.AddProfile(new UserPreferenceTagOptionMappingProfile());
         cfg.AddProfile(new UserPreferenceTokenOptionMappingProfile());
         cfg.AddProfile(new UserPreferenceGeneralOptionsMappingProfile());
         cfg.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
@@ -109,6 +111,7 @@ void SetupMappings()
         cfg.AddProfile(new TaskInfoMappingProfile());
         cfg.AddProfile(new TaskMessageMappingProfile());
         cfg.AddProfile(new TaskSolutionMappingProfile());
+        cfg.AddProfile(new TaskLogMappingProfile());
         cfg.AddProfile(new TaskConfigMappingProfile());
         cfg.AddProfile(new TaskConfigRepeatedMessageProfile());
         cfg.AddProfile(new TaskConfigRepeatedMessageItemProfile());

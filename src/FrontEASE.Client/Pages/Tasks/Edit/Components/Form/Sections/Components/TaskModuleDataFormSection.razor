@@ -19,9 +19,9 @@
                     </FieldLabel>
                     <Select TValue="string"
                             Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                            SelectedValue="@TaskModuleContext.Module.ShortName"
-                            SelectedValueExpression="@(() => TaskModuleContext.Module.ShortName)"
-                            SelectedValueChanged="@(async (value) => await SelectionChanged(value))"
+                            Value="@TaskModuleContext.Module.ShortName"
+                            ValueExpression="@(() => TaskModuleContext.Module.ShortName)"
+                            ValueChanged="@(async (value) => await SelectionChanged(value))"
                             ElementId="@(GetElementIdByOperation(nameof(TaskModuleDto.ShortName)))">
                         <ChildContent>
                             <SelectItem Value="string.Empty">

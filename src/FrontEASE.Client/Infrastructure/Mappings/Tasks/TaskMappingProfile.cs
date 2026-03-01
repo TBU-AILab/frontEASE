@@ -13,6 +13,8 @@ namespace FrontEASE.Client.Infrastructure.Mappings.Tasks
         private void CreateMaps()
         {
             CreateMap<TaskDto, TaskDto>()
+                .ForMember(x => x.Tags, cd => cd.MapFrom(map => map.Tags))
+                .ForMember(x => x.Logs, cd => cd.MapFrom(map => map.Logs))
                 .ForMember(x => x.Messages, cd => cd.MapFrom(map => map.Messages))
                 .ForMember(x => x.Solutions, cd => cd.MapFrom(map => map.Solutions))
                 .ForMember(x => x.Author, cd => cd.MapFrom(map => map.Author))

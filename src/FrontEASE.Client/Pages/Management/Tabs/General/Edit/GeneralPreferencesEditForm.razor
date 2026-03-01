@@ -1,9 +1,12 @@
-﻿@inject IManagementApiService managementApiService
+@inject IManagementApiService managementApiService
 @inject IResourceHandler resourceHandler
 @inject IMapper mapper
 @inject IUIService uiService
 @inject IUIManager uiManager
 @inject Blazored.Toast.Services.IToastService toastService
+
+@implements IDisposable
+@implements IAsyncDisposable
 
 
 <FormSectionHeader DisplayText="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.GeneralOptions), PropertyDisplayResourceType.FIELD)))" />
@@ -18,21 +21,21 @@ else
     <Row Margin="Margin.Is2.FromTop.Is2.Is3.FromBottom">
         <Form>
             <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@PageContext.UserPreferences.GeneralOptions" ValidateOnLoad="false">
-                    <GeneralPreferencesDataFormSection GeneralPreferencesModel="PageContext.UserPreferences.GeneralOptions" Operation="DataOperation.UPDATE" FullWidthFields="false" />
-                    <Fields>
-                        <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
-                            <Button Clicked="@EditSettings" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
-                                @if (updateInProgress)
-                                {
-                                    <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
-                                }
-                                else
-                                {
-                                    @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
-                                }
-                            </Button>
-                        </Field>
-                    </Fields>
+                <GeneralPreferencesDataFormSection GeneralPreferencesModel="PageContext.UserPreferences.GeneralOptions" Operation="DataOperation.UPDATE" FullWidthFields="false" />
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                        <Button Clicked="@EditSettings" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
+                            @if (updateInProgress)
+                            {
+                                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                            }
+                            else
+                            {
+                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
+                            }
+                        </Button>
+                    </Field>
+                </Fields>
             </Validations>
         </Form>
     </Row>
@@ -46,8 +49,11 @@ else
     private bool updateInProgress = false;
     private bool isInitialized = false;
 
+    private bool isDisposed;
+
     private async Task RefreshViewAsync()
     {
+        if (isDisposed) { return; }
         await InvokeAsync(StateHasChanged);
     }
 
@@ -95,5 +101,17 @@ else
 
         updateInProgress = false;
         await uiService.CallRequestRefreshAsync();
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
     }
 }

@@ -22,6 +22,8 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
                     map.Config.Modules != null && map.Config.Modules.Any(m => m.PackageType == ModuleType.SOLUTION) ?
                     map.Config.Modules.First(m => m.PackageType == ModuleType.SOLUTION).ShortName : string.Empty))
                 .ForMember(x => x.Author, cd => cd.MapFrom(map => map.Members.FirstOrDefault(m => m.Id == map.AuthorID.ToString())))
+                .ForMember(x => x.Logs, cd => cd.MapFrom(map => map.Logs))
+                .ForMember(x => x.Tags, cd => cd.MapFrom(map => map.Tags))
                 .ReverseMap();
         }
     }

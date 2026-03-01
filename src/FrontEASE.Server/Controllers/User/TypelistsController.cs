@@ -1,6 +1,8 @@
 ﻿using FrontEASE.Application.AppServices.Shared.Resources;
 using FrontEASE.Application.AppServices.Shared.Typelists;
 using FrontEASE.Domain.Infrastructure.Settings.App;
+using FrontEASE.Server.Infrastructure.Swagger.Attributes;
+using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 using FrontEASE.Shared.Infrastructure.Constants.Controllers.Specific;
 using FrontEASE.Shared.Services.Resources;
@@ -8,7 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace FrontEASE.Server.Controllers.Anonymous
+namespace FrontEASE.Server.Controllers.User
 {
     /// <summary>
     /// Controller for typelists retrieval.
@@ -20,7 +22,6 @@ namespace FrontEASE.Server.Controllers.Anonymous
         IResourceAppService resourceAppService,
         AppSettings appSettings) : ApiControllerBase(resourceHandler, resourceAppService, appSettings)
     {
-
         /// <summary>
         /// Gets the module types typelist.
         /// </summary>
@@ -28,7 +29,8 @@ namespace FrontEASE.Server.Controllers.Anonymous
         /// <returns>Module dynamic options.</returns>
         [HttpGet($"{TypelistsControllerConstants.BaseUrl}/{TypelistsControllerConstants.ModuleOptions}")]
         [ProducesResponseType(typeof(IList<TaskModuleNoValidationDto>), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetModuleTypes(CancellationToken cancellationToken)
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> GetModuleTypes([ParameterSwaggerIgnore] CancellationToken cancellationToken)
         {
             IActionResult result;
             try
