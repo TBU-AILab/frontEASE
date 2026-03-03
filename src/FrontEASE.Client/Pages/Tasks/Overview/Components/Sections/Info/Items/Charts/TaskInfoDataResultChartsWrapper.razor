@@ -1,11 +1,18 @@
 ﻿<Container Fluid>
     <Row>
-        <TaskInfoChartValueEvolution TaskModalContext="TaskModalContext" />
-        <TaskInfoChartConvergenceEvolution TaskModalContext="TaskModalContext" />
+        <Column ColumnSize="@(IsFullWidth? ColumnSize.IsFull: ColumnSize.IsHalf.OnWidescreen)" Margin="Margin.Is2.FromBottom">
+            <TaskInfoChartValueEvolution TaskModalContext="TaskModalContext" />
+        </Column>
+        <Column ColumnSize="@(IsFullWidth? ColumnSize.IsFull: ColumnSize.IsHalf.OnWidescreen)" Margin="Margin.Is2.FromBottom">
+            <TaskInfoChartConvergenceEvolution TaskModalContext="TaskModalContext" />
+        </Column>
     </Row>
 </Container>
 
 @code {
     [Parameter]
     public TaskModalContext TaskModalContext { get; set; } = null!;
+    
+    [Parameter]
+    public bool IsFullWidth { get; set; }
 }
