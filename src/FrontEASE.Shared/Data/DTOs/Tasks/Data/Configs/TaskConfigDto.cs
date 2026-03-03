@@ -29,7 +29,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs
             InitialMessage = string.Empty;
             SystemMessage = string.Empty;
 
-            MaxContextSize = 100;
+            MaxContextSize = 0;
         }
 
         #region Navigation
