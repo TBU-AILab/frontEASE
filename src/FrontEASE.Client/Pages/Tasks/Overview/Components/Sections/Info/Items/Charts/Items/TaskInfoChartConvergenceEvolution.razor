@@ -3,16 +3,15 @@
 @inject ITaskChartManipulationService taskChartManipulationService
 @inject IResourceHandler resourceHandler
 
-<Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is2.FromBottom">
-    <ApexChart @ref="Chart" TItem="ChartDataPoint" Options="@Options">
-        <ApexPointSeries TItem="ChartDataPoint"
-                         Items="Data"
-                         SeriesType="SeriesType.Area"
-                         Name="@seriesName"
-                         XValue="@(e => e.Label)"
-                         YAggregate="@(e => e.Sum(x => x.Value))" />
-    </ApexChart>
-</Column>
+
+<ApexChart @ref="Chart" TItem="ChartDataPoint" Options="@Options">
+    <ApexPointSeries TItem="ChartDataPoint"
+                     Items="Data"
+                     SeriesType="SeriesType.Area"
+                     Name="@seriesName"
+                     XValue="@(e => e.Label)"
+                     YAggregate="@(e => e.Sum(x => x.Value))" />
+</ApexChart>
 
 @code {
     [Parameter]

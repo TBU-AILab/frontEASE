@@ -30,46 +30,28 @@
         </Column>
 
         @{
-            var message = GetLastMessage();
-            var solution = GetMessageAssociatedSolution(message);
+            var solution = GetMessageAssociatedSolution(GetLastMessage());
         }
-        @if (message is not null || solution is not null)
+
+        @if (solution is not null)
         {
-            @if (message is not null)
-            {
-                <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" />
+            <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" />
 
-                <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is2.FromBottom">
-                    <Text TextWeight="TextWeight.Bold" Class="mb-1">
-                        @($"{resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Messages), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Last}")}:")
-                    </Text>
-                    @switch (message.Role)
-                    {
-                        case MessageRole.SYSTEM:
-                            <SystemMessageView Message="message" />
-                            break;
-                        case MessageRole.USER:
-                            <UserMessageView Message="message" IsFullWidth="true" />
-                            break;
-                        case MessageRole.AI:
-                            <AssistantMessageView TaskModalContext="TaskModalContext" Message="message" IsThumbnail="true" IsSelectable="false" IsFullWidth="true" />
-                            break;
-                    }
-                </Column>
-            }
-
-            @if (solution is not null)
-            {
-                <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" />
-
-                <Column ColumnSize="ColumnSize.IsFull">
-                    <Text TextWeight="TextWeight.Bold" Class="mb-1">
-                        @($"{resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Solutions), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Last}")}:")
-                    </Text>
-                    <TaskSolutionItemView TaskModalContext="TaskModalContext" Solution="solution" IsSelectable="false" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
-                </Column>
-            }
+            <Column ColumnSize="ColumnSize.IsFull">
+                <Text TextWeight="TextWeight.Bold" Class="mb-1">
+                    @($"{resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<TaskDto>(nameof(TaskDto.Solutions), PropertyDisplayResourceType.FIELD)}.{UIStateConstants.Last}")}:")
+                </Text>
+                <TaskSolutionItemView TaskModalContext="TaskModalContext" Solution="solution" IsSelectable="false" SolutionDownloadsOngoing="SolutionDownloadsOngoing" />
+            </Column>
         }
+
+        @if (TaskModalContext.Task.Solutions.Any(x => x.Fitness is not null))
+        {
+            <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" Margin="Margin.Is2.FromTop.Is2.FromBottom" />
+
+            <TaskInfoDataResultChartsWrapper TaskModalContext="TaskModalContext" IsFullWidth="false" />
+        }
+
     </Row>
 </Container>
 
