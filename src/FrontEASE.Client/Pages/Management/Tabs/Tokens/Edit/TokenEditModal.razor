@@ -8,7 +8,7 @@
 @implements IDisposable
 @implements IAsyncDisposable
 
-<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))" Centered>
+<Modal @ref="@EditModal" @bind-Visible="@isModalVisible" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))"Centered>
     @if (EditModal.Visible)
     {
         <ModalContent Shadow="Shadow.Small" Class="bg-custom-primary">
@@ -18,7 +18,7 @@
             <ModalBody Border="Border.Rounded">
                 <Row Margin="Margin.Is3" Padding="Margin.Is3.FromStart.Is3.FromEnd" Border="Border.Rounded" Class="user-modal-form">
                     <Column ColumnSize="ColumnSize.IsFull">
-                        <Form>
+                        <Form @onsubmit:preventDefault>
                             <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@TokenModel" ValidateOnLoad="false">
                                 <TokenDataFormSection TokenModel="TokenModel" Operation="DataOperation.UPDATE" FullWidthFields="true" />
                                 <Fields>

@@ -1,0 +1,128 @@
+@inject IUIService uiService
+@inject IUIManager uiManager
+@inject IResourceHandler resourceHandler
+@inject ITypelistApiService typelistApiService
+@inject IMapper mapper
+@inject ICoreApiService coreApiService
+@inject Blazored.Toast.Services.IToastService toastService
+
+@implements IDisposable
+@implements IAsyncDisposable
+
+<Row Background="@uiManager.Theme.BackgroundOptions.Primary">
+    <Column ColumnSize="ColumnSize.Is12" Margin="Margin.Is2.FromBottom" Padding="Padding.Is0">
+        <Icon Name="@(isFormCollapsed? IconName.PlusCircle: IconName.MinusCircle)" IconSize="IconSize.x2" IconStyle="IconStyle.Solid" @onclick="ChangeCollapseState" Class="float-right main-action-icon main-action-icon-primary" />
+    </Column>
+
+    <Column ColumnSize="ColumnSize.Is12" Display="@(isFormCollapsed? Display.None: Display.Block)" Margin="Margin.Is2.FromTop.Is4.FromBottom">
+        <Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="@(async (e) => await HandleKeyDown(e))" @onsubmit:preventDefault>
+            <CoreModuleDataFormSection Operation="DataOperation.INSERT" FullWidthFields="false" ModuleModel="@ModuleModel" />
+
+            <Fields>
+                <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                    <Button Color="Color.Success" Clicked="@AddModule" Class="btn button btn-sized full-width" Disabled="@(addInProgress || ModuleModel.Files.Count == 0)" TextWeight="TextWeight.Bold">
+                        @if (addInProgress)
+                        {
+                            <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Import}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                        }
+                        else
+                        {
+                            @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Import}"))
+                        }
+                    </Button>
+                </Field>
+            </Fields>
+        </Form>
+    </Column>
+</Row>
+
+@code {
+    [CascadingParameter]
+    public ManagementPageContext PageContext { get; set; } = null!;
+
+    [Parameter]
+    public GlobalPreferenceCoreModuleDto ModuleModel { get; set; } = new();
+
+    private bool isFormCollapsed = true;
+    private bool addInProgress = false;
+
+    private bool isDisposed;
+
+    private async Task RefreshViewAsync()
+    {
+        if (isDisposed) { return; }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshViewAsync;
+        await base.OnInitializedAsync();
+    }
+
+    public async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ENTER:
+                await AddModule();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public async Task AddModule()
+    {
+        addInProgress = true;
+
+        if (ModuleModel.Files.All(x => x.Content.Length > 0))
+        {
+            var resultData = await coreApiService.ImportTaskCoreModules(ModuleModel);
+            foreach (var result in resultData)
+            {
+                var file = ModuleModel.Files.First(x => string.Equals(x.Name, result.Name, StringComparison.InvariantCultureIgnoreCase));
+                if (result.Success)
+                {
+                    var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Import}")}: {file.Name}";
+                    toastService.ShowSuccess(message);
+                }
+                else
+                {
+                    var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionFail}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.StateChange}")}: {file.Name}";
+                    message = $"{message}{(string.IsNullOrWhiteSpace(result.ExceptionMessage) ? string.Empty : $" ({result.ExceptionMessage})")}";
+                    toastService.ShowError(message);
+                }
+            }
+
+            mapper.Map(new GlobalPreferenceCoreModuleDto(), ModuleModel);
+        }
+
+        addInProgress = false;
+        await uiService.CallRequestRefreshAsync();
+    }
+
+    private async Task LoadTaskModuleOptions()
+    {
+        var moduleOptions = await typelistApiService.LoadTaskModuleOptions();
+        if (moduleOptions?.Count > 0 == true)
+        {
+            PageContext.ModuleTypes.Clear();
+            PageContext.ModuleTypes.AddRange(moduleOptions);
+        }
+    }
+
+    private void ChangeCollapseState() => isFormCollapsed = !isFormCollapsed;
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
+    }
+}

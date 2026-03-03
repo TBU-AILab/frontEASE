@@ -26,7 +26,7 @@
 
                 <Row Margin="Margin.Is3" Padding="Margin.Is3.FromStart.Is3.FromEnd" Border="Border.Rounded" Class="user-modal-form">
                     <Column ColumnSize="ColumnSize.IsFull">
-                        <Form>
+                        <Form @onsubmit:preventDefault>
                             <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@CompanyModel" ValidateOnLoad="false">
 
                                 <CompanyDataFormSection CompanyModel="CompanyModel" Operation="DataOperation.UPDATE" FullWidthFields="true" />
