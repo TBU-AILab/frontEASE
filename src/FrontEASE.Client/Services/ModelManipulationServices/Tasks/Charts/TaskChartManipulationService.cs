@@ -18,13 +18,14 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts
         public IList<ChartDataPoint> GetValueEvolutionChartData(IList<TaskMessageDto> messages, IList<TaskSolutionDto> solutions)
         {
             var dataPoints = new List<ChartDataPoint>();
+            var precision = DetermineDecimalPrecision(solutions);
 
             var i = 0;
             foreach (var solution in solutions)
             {
                 var message = messages.FirstOrDefault(m => m.ID == solution.TaskMessageID);
 
-                var fitness = (decimal)(solution.Fitness ?? (double)ChartConstants.DefaultFitness);
+                var fitness = Math.Round((decimal)(solution.Fitness ?? (double)ChartConstants.DefaultFitness), precision);
                 var messageContent = string.IsNullOrEmpty(message?.Content) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : message.Content;
                 var label = string.Format(ChartConstants.LabelFormat, ++i, TextHelper.TruncateString(messageContent, TextConstants.TaskChartMessageDisplayLength));
 
@@ -37,6 +38,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts
         public IList<ChartDataPoint> GetValueConvergenceChartData(IList<TaskMessageDto> messages, IList<TaskSolutionDto> solutions)
         {
             var dataPoints = new List<ChartDataPoint>();
+            var precision = DetermineDecimalPrecision(solutions);
 
             var bestSoFar = ChartConstants.DefaultFitness;
             var i = 0;
@@ -44,7 +46,7 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts
             {
                 var message = messages.FirstOrDefault(m => m.ID == solution.TaskMessageID);
 
-                var fitness = (decimal)(solution.Fitness ?? (double)ChartConstants.DefaultFitness);
+                var fitness = Math.Round((decimal)(solution.Fitness ?? (double)ChartConstants.DefaultFitness), precision);
                 bestSoFar = Math.Max(bestSoFar, fitness);
                 var messageContent = string.IsNullOrEmpty(message?.Content) ? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}") : message.Content;
                 var label = string.Format(ChartConstants.LabelFormat, ++i, TextHelper.TruncateString(messageContent, TextConstants.TaskChartMessageDisplayLength));
@@ -145,6 +147,33 @@ namespace FrontEASE.Client.Services.ModelManipulationServices.Tasks.Charts
             };
 
             return options;
+        }
+
+        private static int DetermineDecimalPrecision(IList<TaskSolutionDto> solutions)
+        {
+            var fitnessValues = solutions.Select(s => (decimal)(s.Fitness ?? (double)ChartConstants.DefaultFitness)).ToList();
+            if (fitnessValues.Count < 2)
+            { return ChartConstants.MinPrecision; }
+
+            var uniqueValues = fitnessValues.Distinct().OrderBy(v => v).ToList();
+            if (uniqueValues.Count < 2)
+            { return ChartConstants.MinPrecision; }
+
+            var minDiff = decimal.MaxValue;
+            for (var i = 1; i < uniqueValues.Count; i++)
+            {
+                var diff = uniqueValues[i] - uniqueValues[i - 1];
+                if (diff > 0 && diff < minDiff)
+                {
+                    minDiff = diff;
+                }
+            }
+
+            if (minDiff == decimal.MaxValue)
+            { return ChartConstants.MinPrecision; }
+
+            var precision = (int)Math.Ceiling(-Math.Log10((double)minDiff)) + 1;
+            return Math.Clamp(precision, ChartConstants.MinPrecision, ChartConstants.MaxPrecision);
         }
     }
 }

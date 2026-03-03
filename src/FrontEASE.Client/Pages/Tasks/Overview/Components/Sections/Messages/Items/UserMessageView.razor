@@ -7,7 +7,7 @@
                 <CardBody Class="throws-shadow border-custom-light bg-custom-primary" Border="Border.Is0">
                     @if (!string.IsNullOrWhiteSpace(Message.Content))
                     {
-                        @switch (PageContext.LoggedInUser.UserPreferences.GeneralOptions.UserMessageDisplayFormat)
+                        @switch (PageContext.UserPreferences.GeneralOptions.UserMessageDisplayFormat)
                         {
                             case MessageDisplayFormat.MARKDOWN:
 

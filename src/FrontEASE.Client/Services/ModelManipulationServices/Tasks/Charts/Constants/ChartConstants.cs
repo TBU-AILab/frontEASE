@@ -27,5 +27,8 @@
         public const double GradientStopEnd = 100;
 
         public const decimal DefaultFitness = 0m;
+
+        public const int MinPrecision = 2;
+        public const int MaxPrecision = 6;
     }
 }
