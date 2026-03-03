@@ -22,7 +22,7 @@
                                      Mode="ValidationMode.Auto"
                                      ValidateOnLoad="false"
                                      HandlerType="ValidationHandlerType.DataAnnotation">
-                            <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3">
+                            <Form Margin="Margin.Is1.FromTop.Is3.FromBottom" Class="text-form-size" Padding="Padding.Is3" @onsubmit:preventDefault>
                                 <TaskInfoFilterDataSection Filter="Filter" />
                                 <TaskInfoFilterFooterSection Filter="Filter" Validations="Validations" @ref="@FilterFooterSection" />
                             </Form>

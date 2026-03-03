@@ -14,7 +14,7 @@
             <ModalBody Margin="Margin.Is3.FromTop">
                 <Row>
                     <Column ColumnSize="ColumnSize.IsFull">
-                        <Form Margin="Margin.Is4.FromTop" Class="text-form-size">
+                        <Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onsubmit:preventDefault>
                             <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="CloneModel" ValidateOnLoad="false">
                                 <TaskCloneDataFormSection CloneModel="CloneModel" TaskInfo="TaskInfo" Operation="Operation" />
 

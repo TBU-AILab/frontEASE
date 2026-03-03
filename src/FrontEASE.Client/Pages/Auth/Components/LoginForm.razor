@@ -8,7 +8,7 @@
 @inject AuthenticationStateProvider authStateProvider
 @inject NavigationManager navManager
 
-<Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="(async (e) => await HandleKeyDown(e))">
+<Form Margin="Margin.Is4.FromTop" Class="text-form-size" @onkeydown="HandleKeyDown" @onsubmit:preventDefault>
     <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="LoginModel" ValidateOnLoad="false">
         <Fields>
             <Validation>
