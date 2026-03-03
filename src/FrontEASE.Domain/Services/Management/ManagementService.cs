@@ -44,7 +44,7 @@ namespace FrontEASE.Domain.Services.Management
         public async Task<IList<UserPreferenceTagOption>> LoadTags(CancellationToken cancellationToken)
         {
             var tags = await managementRepository.LoadTags(cancellationToken);
-            return tags.Any() ? tags : throw new NotFoundException();
+            return tags ?? [];
         }
 
         public async Task<GlobalPreferences> LoadGlobal(CancellationToken cancellationToken)
