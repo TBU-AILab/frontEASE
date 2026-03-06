@@ -2,6 +2,7 @@
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Logs;
 using FrontEASE.Shared.Data.Enums.Tasks;
+using FrontEASE.Shared.Data.Enums.Tasks.Config;
 using FrontEASE.Shared.Infrastructure.Attributes;
 
 namespace FrontEASE.Shared.Data.DTOs.Tasks.UI
@@ -63,6 +64,12 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.UI
         /// </summary>
         [Resource($"{nameof(TaskInfoDto)}.{nameof(State)}")]
         public TaskState State { get; set; }
+
+        /// <summary>
+        /// Primary goal of the optimization process
+        /// </summary>
+        [Resource($"{nameof(TaskInfoDto)}.{nameof(OptimizationGoal)}")]
+        public OptimizationGoalType OptimizationGoal { get; set; }
 
         /// <summary>
         /// Gets the large language model currently set for this task

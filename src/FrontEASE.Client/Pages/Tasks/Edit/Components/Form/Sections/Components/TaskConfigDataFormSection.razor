@@ -28,6 +28,27 @@
                     </TextInput>
                 </Field>
             </Validation>
+
+            <Validation>
+                <Field ColumnSize="ColumnSize.IsFull">
+                    <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.OptimizationGoal)))" RequiredIndicator>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.OptimizationGoal), PropertyDisplayResourceType.FIELD)))
+                    </FieldLabel>
+                    <Select @bind-Value="@TaskModalContext.Task.Config.OptimizationGoal" ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.OptimizationGoal)))">
+                        <ChildContent>
+                            @foreach (var goal in Enum.GetValues(typeof(OptimizationGoalType)))
+                            {
+                                <SelectItem TValue="OptimizationGoalType" Value="@((OptimizationGoalType)goal)">
+                                    @(resourceHandler.GetResource(((OptimizationGoalType)goal).GetEnumResourceValue()))
+                                </SelectItem>
+                            }
+                        </ChildContent>
+                        <Feedback>
+                            <ValidationError Multiline="true" />
+                        </Feedback>
+                    </Select>
+                </Field>
+            </Validation>
         </Fields>
 
         @if (PageContext.AvailableTags.Count > 0)
@@ -132,28 +153,26 @@
 
         <Column ColumnSize="ColumnSize.IsFull">
             <Container Fluid>
-                <Row>
-                    <Fields Style="align-items: center;">
-                        <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.MaxContextSize)))" RequiredIndicator>
-                            @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD))}: {MaxContextSizeDisplayValue}")
-                        </FieldLabel>
+                <Fields Style="align-items: center;">
 
-                        <Validation>
-                            <Field ColumnSize="ColumnSize.IsFull">
-                                <Slider ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.MaxContextSize)))"
-                                        Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
-                                        Background="Background.Transparent"
-                                        @bind-Value="@TaskModalContext.Task.Config.MaxContextSize"
-                                        Step="1" Min="-1" Max="50">
-                                    <Feedback>
-                                        <ValidationError Multiline="true" />
-                                    </Feedback>
-                                </Slider>
-                            </Field>
-                        </Validation>
+                    <FieldLabel For="@(GetElementIdByOperation(nameof(TaskConfigDto.MaxContextSize)))" RequiredIndicator>
+                        @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD))}: {MaxContextSizeDisplayValue}")
+                    </FieldLabel>
 
-                    </Fields>
-                </Row>
+                    <Validation>
+                        <Field ColumnSize="ColumnSize.IsFull">
+                            <Slider ElementId="@(GetElementIdByOperation(nameof(TaskConfigDto.MaxContextSize)))"
+                                    Disabled="@(TaskModalContext.TaskMetadata.InitializationInProgres)"
+                                    Background="Background.Transparent"
+                                    @bind-Value="@TaskModalContext.Task.Config.MaxContextSize"
+                                    Step="1" Min="-1" Max="50">
+                                <Feedback>
+                                    <ValidationError Multiline="true" />
+                                </Feedback>
+                            </Slider>
+                        </Field>
+                    </Validation>
+                </Fields>
             </Container>
         </Column>
 

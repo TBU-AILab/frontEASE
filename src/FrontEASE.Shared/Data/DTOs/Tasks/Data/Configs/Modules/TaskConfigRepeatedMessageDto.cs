@@ -32,6 +32,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules
         /// Selected type for repeated message
         /// </summary>
         [Resource($"{nameof(TaskConfigRepeatedMessageDto)}.{nameof(RepeatedMessageType)}")]
+        [RequiredValidation<TaskConfigRepeatedMessageDto>]
         [EnumValidation(typeof(RepeatedMessageType))]
         public RepeatedMessageType RepeatedMessageType { get; set; }
 

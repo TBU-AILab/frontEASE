@@ -14,8 +14,8 @@
         <Text>
             @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageDto>(nameof(TaskConfigRepeatedMessageDto.RepeatedMessageType), PropertyDisplayResourceType.FIELD))):
         </Text>
-        <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-            @($" {TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageType}")
+        <Span TextWeight="TextWeight.Bold">
+            @($" {(resourceHandler.GetResource(((RepeatedMessageType)TaskModalContext.Task.Config.RepeatedMessage.RepeatedMessageType).GetEnumResourceValue()))}")
         </Span>
     </Column>
 
@@ -27,7 +27,7 @@
             <Text>
                 @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigRepeatedMessageItemDto>(nameof(TaskConfigRepeatedMessageItemDto.Weight), PropertyDisplayResourceType.FIELD))):
             </Text>
-            <Span TextWeight="TextWeight.Bold" Class="fst-italic" TextColor="TextColor.Info">
+            <Span TextWeight="TextWeight.Bold" TextColor="TextColor.Info">
                 @($" {messageItem.Weight}")
             </Span>
         </Column>

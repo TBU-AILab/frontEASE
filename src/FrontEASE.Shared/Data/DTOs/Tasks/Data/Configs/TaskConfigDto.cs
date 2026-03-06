@@ -1,6 +1,7 @@
 ﻿using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs.Modules.Options;
 using FrontEASE.Shared.Data.Enums.Tasks.Config;
+using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.RepeatedMessage;
 using FrontEASE.Shared.Infrastructure.Attributes;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
 
@@ -136,6 +137,14 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs
         [RequiredValidation<TaskConfigDto>]
         [StringLengthValidation(4, 8192)]
         public string InitialMessage { get; set; }
+
+        /// <summary>
+        /// Primary goal of the optimization process
+        /// </summary>
+        [Resource($"{nameof(TaskConfigDto)}.{nameof(OptimizationGoal)}")]
+        [RequiredValidation<TaskConfigDto>]
+        [EnumValidation(typeof(OptimizationGoalType))]
+        public OptimizationGoalType OptimizationGoal { get; set; }
 
         #endregion
     }

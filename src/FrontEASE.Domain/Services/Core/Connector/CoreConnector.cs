@@ -157,7 +157,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
                 else
                 {
                     var failResult = await response.Content.ReadAsStringAsync(cancellationToken);
-                    throw new ApplicationException($"{nameof(HandleTaskCreate)} - Call FAILED - Exception: {failResult}");
+                    throw new ApplicationException($"{nameof(HandleTaskDuplicate)} - Call FAILED - Exception: {failResult}");
                 }
             }
         }

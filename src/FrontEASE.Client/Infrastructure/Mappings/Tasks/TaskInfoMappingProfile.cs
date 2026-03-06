@@ -18,6 +18,7 @@ namespace FrontEASE.Client.Infrastructure.Mappings.Tasks
 
             CreateMap<TaskDto, TaskInfoDto>()
                 .ForMember(x => x.Name, cd => cd.MapFrom(map => map.Config.Name))
+                .ForMember(x => x.OptimizationGoal, cd => cd.MapFrom(map => map.Config.OptimizationGoal))
                 .ForMember(x => x.Author, cd => cd.MapFrom(map => map.Author))
                 .ForMember(x => x.ConnectorType, cd => cd.MapFrom(map => map.Config.Connector.ShortName))
                 .ForMember(x => x.SolutionType, cd => cd.MapFrom(map => map.Config.Solution.ShortName))

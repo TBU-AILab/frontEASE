@@ -15,6 +15,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
         {
             CreateMap<Domain.Entities.Tasks.Task, TaskInfoDto>()
                 .ForMember(x => x.Name, cd => cd.MapFrom(map => map.Config.Name))
+                .ForMember(x => x.OptimizationGoal, cd => cd.MapFrom(map => map.Config.OptimizationGoal))
                 .ForMember(x => x.ConnectorType, cd => cd.MapFrom(map =>
                     map.Config.Modules != null && map.Config.Modules.Any(m => m.PackageType == ModuleType.LLM_CONNECTOR) ?
                     map.Config.Modules.First(m => m.PackageType == ModuleType.LLM_CONNECTOR).ShortName : string.Empty))

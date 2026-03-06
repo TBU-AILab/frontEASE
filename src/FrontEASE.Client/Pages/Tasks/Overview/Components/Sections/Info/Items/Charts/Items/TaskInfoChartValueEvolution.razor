@@ -1,6 +1,7 @@
 ﻿@using ApexCharts
 
 @inject ITaskChartManipulationService taskChartManipulationService
+@inject IChartHelper chartHelper
 @inject IResourceHandler resourceHandler
 
 
@@ -29,7 +30,7 @@
     {
         var titleText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessEvolutionChart}.{UIStateConstants.Explanation}");
         var subtitleText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIElementConstants.Chart}.{UITaskChartConstants.FitnessEvolutionChart}");
-        Options = taskChartManipulationService.PrepareLineChartOptions(titleText, subtitleText);
+        Options = chartHelper.PrepareLineChartOptions(titleText, subtitleText);
 
         seriesName = resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskSolutionDto>(nameof(TaskSolutionDto.Fitness), PropertyDisplayResourceType.FIELD));
     }
@@ -59,6 +60,6 @@
     {
         var messageIDs = TaskModalContext.Task.Messages.OrderBy(x => x.DateCreated).Select(x => x.ID).ToList();
         var solutionsOrdered = TaskModalContext.Task.Solutions.OrderBy(s => messageIDs.IndexOf(s.TaskMessageID)).ToList();
-        Data = taskChartManipulationService.GetValueEvolutionChartData(TaskModalContext.Task.Messages, solutionsOrdered);
+        Data = taskChartManipulationService.GetValueEvolutionChartData(TaskModalContext.Task.Config.OptimizationGoal, TaskModalContext.Task.Messages, solutionsOrdered);
     }
 }
