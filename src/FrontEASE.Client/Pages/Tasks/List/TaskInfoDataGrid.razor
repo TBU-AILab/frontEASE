@@ -116,6 +116,27 @@
                                Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FILTER)))"
                                ValueChanged="@(value => { selectedNameFilter = value; context.TriggerFilterChange(selectedNameFilter); })" />
                 </FilterTemplate>
+                <DisplayTemplate>
+                    <Container Fluid Class="text-break task-grid-min-width-author">
+                        <Row>
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Span>
+                                    <Tooltip Multiline="true" Text="@(resourceHandler.GetResource(((OptimizationGoalType)context.Item.OptimizationGoal).GetEnumResourceValue()))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+                                        <Icon Name="@(context.Item.OptimizationGoal == OptimizationGoalType.MAXIMIZATION ? IconName.ArrowUp : IconName.ArrowDown)"
+                                              TextColor="@(context.Item.OptimizationGoal == OptimizationGoalType.MAXIMIZATION ? TextColor.Success : TextColor.Danger)"
+                                              IconSize="IconSize.Default"
+                                              IconStyle="IconStyle.Solid" />
+                                    </Tooltip>
+                                </Span>
+                                <Span>
+                                    <Text>
+                                        @(context.Item.Name ?? string.Empty)
+                                    </Text>
+                                </Span>
+                            </Column>
+                        </Row>
+                    </Container>
+                </DisplayTemplate>
             </DataGridColumn>
 
             <DataGridColumn TItem="TaskInfoDto"

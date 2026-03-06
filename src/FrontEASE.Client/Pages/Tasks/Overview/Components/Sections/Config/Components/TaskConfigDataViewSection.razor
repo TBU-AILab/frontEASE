@@ -15,6 +15,15 @@
             <Row>
                 <Column ColumnSize="ColumnSize.IsFull">
                     <Text>
+                        @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.OptimizationGoal), PropertyDisplayResourceType.FIELD))):
+                    </Text>
+                    <Span TextWeight="TextWeight.Bold">
+                        @($" {(resourceHandler.GetResource(((OptimizationGoalType)TaskModalContext.Task.Config.OptimizationGoal).GetEnumResourceValue()))}")
+                    </Span>
+                </Column>
+
+                <Column ColumnSize="ColumnSize.IsFull">
+                    <Text>
                         @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD))):
                     </Text>
                     <Span TextWeight="TextWeight.Bold">

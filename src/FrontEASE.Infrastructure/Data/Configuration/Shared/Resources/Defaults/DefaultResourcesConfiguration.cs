@@ -370,6 +370,10 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = MessageDisplayFormat.PLAINTEXT.GetEnumResourceValue(), Value = "Plain text" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = MessageDisplayFormat.MARKDOWN.GetEnumResourceValue(), Value = "Markdown" },
 
+                /* OptimizationGoalType */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = OptimizationGoalType.MINIMIZATION.GetEnumResourceValue(), Value = "Minimization" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = OptimizationGoalType.MAXIMIZATION.GetEnumResourceValue(), Value = "Maximization" },
+
                 /* RepeatedMessageType */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = RepeatedMessageType.SINGLE.GetEnumResourceValue(), Value = "Single" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = RepeatedMessageType.RANDOM.GetEnumResourceValue(), Value = "Random" },
@@ -428,6 +432,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FIELD), Value = "Created" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateUpdated), PropertyDisplayResourceType.FIELD), Value = "Updated" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FIELD), Value = "Name" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.OptimizationGoal), PropertyDisplayResourceType.FIELD), Value = "Optimization goal" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.State), PropertyDisplayResourceType.FIELD), Value = "State" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FIELD), Value = "Connector type" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FIELD), Value = "Solution type" },
@@ -468,6 +473,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.FeedbackFromSolution), PropertyDisplayResourceType.FIELD), Value = "Get feedback from solution" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.MaxContextSize), PropertyDisplayResourceType.FIELD), Value = "Max. context size (messages)" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.Name), PropertyDisplayResourceType.FIELD), Value = "Name" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskConfigDto>(nameof(TaskConfigDto.OptimizationGoal), PropertyDisplayResourceType.FIELD), Value = "Optimization goal" },
                 
                 /* TaskModuleDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskModuleDto>(nameof(TaskModuleDto.Parameters), PropertyDisplayResourceType.FIELD), Value = "Parameters" },
@@ -579,6 +585,7 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.FILTER), Value = "Filter authors ..." },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.FILTER), Value = "Filter tags ..." },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FILTER), Value = "Filter names ..." },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.OptimizationGoal), PropertyDisplayResourceType.FILTER), Value = "Filter goals ..." },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FILTER), Value = "Filter creations ..." },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateUpdated), PropertyDisplayResourceType.FILTER), Value = "Filter updates ..." },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FILTER), Value = "Filter S-types ..." },

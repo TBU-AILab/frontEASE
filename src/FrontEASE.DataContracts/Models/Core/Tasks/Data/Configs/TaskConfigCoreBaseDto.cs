@@ -1,4 +1,5 @@
 ﻿using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules.RepeatedMessage;
+using FrontEASE.Shared.Data.Enums.Tasks.Config;
 using System.Text.Json.Serialization;
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs
@@ -25,5 +26,8 @@ namespace FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs
 
         [JsonPropertyName("initial_message")]
         public string? InitialMessage { get; set; }
+
+        [JsonPropertyName("optimization_goal")]
+        public OptimizationGoalType? OptimizationGoal { get; set; }
     }
 }

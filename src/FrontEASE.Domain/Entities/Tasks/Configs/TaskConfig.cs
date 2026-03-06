@@ -1,6 +1,7 @@
 ﻿using FrontEASE.Domain.Entities.Base.Tracked;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules;
 using FrontEASE.Domain.Entities.Tasks.Configs.Modules.Options;
+using FrontEASE.Shared.Data.Enums.Tasks.Config;
 
 namespace FrontEASE.Domain.Entities.Tasks.Configs
 {
@@ -37,6 +38,7 @@ namespace FrontEASE.Domain.Entities.Tasks.Configs
         public int MaxContextSize { get; set; }
         public string? SystemMessage { get; set; }
         public string InitialMessage { get; set; }
+        public OptimizationGoalType OptimizationGoal { get; set; }
 
         #endregion
     }

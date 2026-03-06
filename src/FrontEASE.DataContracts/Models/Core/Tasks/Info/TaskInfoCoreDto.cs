@@ -1,4 +1,5 @@
 ﻿using FrontEASE.Shared.Data.Enums.Tasks;
+using FrontEASE.Shared.Data.Enums.Tasks.Config;
 using System.Text.Json.Serialization;
 
 namespace FrontEASE.DataContracts.Models.Core.Tasks.Info
@@ -28,6 +29,9 @@ namespace FrontEASE.DataContracts.Models.Core.Tasks.Info
 
         [JsonPropertyName("iterations_invalid_consecutive")]
         public int? IterationsInvalidConsecutive { get; set; }
+
+        [JsonPropertyName("optimization_goal")]
+        public OptimizationGoalType? OptimizationGoal { get; set; }
 
         [JsonPropertyName("log")]
         public IList<string>? Log { get; set; }

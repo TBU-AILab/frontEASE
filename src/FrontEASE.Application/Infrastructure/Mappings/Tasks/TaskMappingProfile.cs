@@ -57,6 +57,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
 
             CreateMap<Domain.Entities.Tasks.Task, TaskConfigCoreDto>()
                 .ForMember(x => x.Name, cd => cd.MapFrom(map => map.Config.Name))
+                .ForMember(x => x.OptimizationGoal, cd => cd.MapFrom(map => map.Config.OptimizationGoal))
                 .ForMember(x => x.FeedbackFromSolution, cd => cd.MapFrom(map => map.Config.FeedbackFromSolution))
                 .ForMember(x => x.MaxContextSize, cd => cd.MapFrom(map => map.Config.MaxContextSize))
                 .ForMember(x => x.SystemMessage, cd => cd.MapFrom(map => map.Config.SystemMessage))
@@ -68,6 +69,7 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Tasks
 
             CreateMap<Domain.Entities.Tasks.Task, TaskConfigFullCoreDto>()
                 .ForMember(x => x.Name, cd => cd.MapFrom(map => map.Config.Name))
+                .ForMember(x => x.OptimizationGoal, cd => cd.MapFrom(map => map.Config.OptimizationGoal))
                 .ForMember(x => x.FeedbackFromSolution, cd => cd.MapFrom(map => map.Config.FeedbackFromSolution))
                 .ForMember(x => x.MaxContextSize, cd => cd.MapFrom(map => map.Config.MaxContextSize))
                 .ForMember(x => x.SystemMessage, cd => cd.MapFrom(map => map.Config.SystemMessage))

@@ -40,6 +40,7 @@ using FrontEASE.Client.Services.ApiServices.Tasks;
 using FrontEASE.Client.Services.HelperServices.Auth;
 using FrontEASE.Client.Services.HelperServices.ErrorHandling;
 using FrontEASE.Client.Services.HelperServices.Resources.Manage;
+using FrontEASE.Client.Services.HelperServices.UI.Charts;
 using FrontEASE.Client.Services.HelperServices.UI.Manage;
 using FrontEASE.Client.Services.HelperServices.UI.Operations;
 using FrontEASE.Client.Services.HelperServices.UI.Signals;
@@ -152,16 +153,17 @@ void SetupLogging()
 void SetupUtils()
 {
     builder!.Services.AddSingleton<IResourceHandler, ResourceHandler>();
-    builder!.Services.AddScoped<IResourcesManager, ResourcesManager>();
     builder!.Services.AddSingleton<IUIManager, UIManager>();
+    builder!.Services.AddScoped<IResourcesManager, ResourcesManager>();
     builder!.Services.AddScoped<IUIService, UIService>();
 }
 
 void SetupHelperServices()
 {
-    builder!.Services.AddTransient<IErrorHandlingService, ErrorHandlingService>();
-    builder!.Services.AddScoped<IDataLoader, DataLoader>();
     builder!.Services.AddSingleton<IMemoryCache, MemoryCache>();
+    builder!.Services.AddSingleton<IChartHelper, ChartHelper>();
+    builder!.Services.AddScoped<IDataLoader, DataLoader>();
+    builder!.Services.AddTransient<IErrorHandlingService, ErrorHandlingService>();
 }
 
 void SetupApiServices()
