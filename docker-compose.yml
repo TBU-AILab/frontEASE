@@ -30,6 +30,7 @@ services:
     networks:
       - fop-imt-network
     environment:
+      - ConnectionStrings__DefaultConnection=Server=postgres;Database=FrontEASE;Port=5432;User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};Pooling=true;
       - SEED_DB=${SEED_DB:-false}
   
   dotnet-client:
