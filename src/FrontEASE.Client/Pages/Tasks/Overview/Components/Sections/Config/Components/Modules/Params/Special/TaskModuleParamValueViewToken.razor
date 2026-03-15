@@ -1,7 +1,7 @@
 ﻿@inject IResourceHandler resourceHandler
 
 @{
-    var displayActions = ((IsDescriptionPresent && !SkipLabel) || IsDefaultPresent) || (!string.IsNullOrWhiteSpace(TaskModuleParamContext.ParamValue?.Value?.StringValue) && PageContext.UserPreferences.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE);
+    var displayActions = ((IsDescriptionPresent && !SkipLabel) || IsDefaultPresent) || (!string.IsNullOrWhiteSpace(TaskModuleParamContext.ParamValue?.Value?.StringValue) && PageContext.LoggedInUser.UserPreferences.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE);
 }
 
 <Field ColumnSize="@(displayActions? ColumnSize.Is10.OnWidescreen : ColumnSize.IsFull)" Padding="Padding.Is1.FromTop">
@@ -15,7 +15,7 @@
     @if (!string.IsNullOrWhiteSpace(TaskModuleParamContext.ParamValue?.Value?.StringValue))
     {
         <Span TextWeight="TextWeight.Bold" Class="fst-italic">
-            @switch (PageContext.UserPreferences.GeneralOptions.TokenVisibility)
+            @switch (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TokenVisibility)
             {
                 case TokenVisibility.VISIBLE:
                     @($" {TaskModuleParamContext.ParamValue.Value!.StringValue}")
@@ -41,7 +41,7 @@
 {
     <Field ColumnSize="ColumnSize.Is2.OnWidescreen" TextAlignment="TextAlignment.End" Class="align-self-center" Padding="Padding.Is0.FromEnd.Is0.FromStart" Margin="Margin.Is2.FromTop">
         <Div>
-            @if (PageContext.UserPreferences.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE)
+            @if (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE)
             {
                 <Tooltip Multiline="true" Text="@(resourceHandler.GetResource(isTokenShown ? $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Hide}" : $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Show}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                     <Icon Class="action-icon-sm action-icon-secondary" Name="@(isTokenShown? IconName.EyeSlash: IconName.Eye)" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" Clicked="@(() => SwitchTokenVisibility())" />

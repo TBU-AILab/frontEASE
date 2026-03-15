@@ -1,7 +1,7 @@
 ﻿@inject IResourceHandler resourceHandler
 
 @{
-    var matchingTokens = PageContext.UserPreferences.TokenOptions.Where(x => x.ConnectorTypes.Any(z => z.ConnectorType == TaskModuleContext.Module?.ShortName))?.ToList() ?? [];
+    var matchingTokens = PageContext.LoggedInUser.UserPreferences.TokenOptions.Where(x => x.ConnectorTypes.Any(z => z.ConnectorType == TaskModuleContext.Module?.ShortName))?.ToList() ?? [];
     var selectedToken = matchingTokens.SingleOrDefault(x => x.Token == TaskModuleParamContext.ParamValue?.Value?.StringValue);
     var displayActions = !string.IsNullOrWhiteSpace(selectedToken?.Description) || !string.IsNullOrWhiteSpace(TaskModuleParamContext.ParamOption?.Description);
 

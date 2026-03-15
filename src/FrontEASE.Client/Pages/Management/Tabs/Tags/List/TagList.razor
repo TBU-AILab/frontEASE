@@ -109,9 +109,10 @@ else
 
     private void RecalculateOtherTags()
     {
-        var userTags = new HashSet<string>(PageContext.UserPreferences.TagOptions.Select(ut => ut.Tag));
+        var userTags = new HashSet<string>(PageContext.LoggedInUser.UserPreferences.TagOptions.Select(ut => ut.Tag));
         OtherTags.Clear();
         UserTags.Clear();
+
         OtherTags.AddRange(PageContext.AllTags.Where(t => !(userTags.Any(x => string.Equals(x, t.Tag, StringComparison.InvariantCultureIgnoreCase)))));
         UserTags.AddRange(PageContext.AllTags.Where(t => (userTags.Any(x => string.Equals(x, t.Tag, StringComparison.InvariantCultureIgnoreCase)))));
     }
@@ -128,27 +129,15 @@ else
         uiService.RefreshRequested += RefreshViewAsync;
 
         var loadTagsTask = Task.CompletedTask;
-        var loadPreferencesTask = Task.CompletedTask;
 
         loadTagsTask = LoadTags();
-        loadPreferencesTask = LoadPreferences();
-        await Task.WhenAll(loadTagsTask, loadPreferencesTask);
+        await Task.WhenAll(loadTagsTask);
 
         await base.OnInitializedAsync();
         RecalculateOtherTags();
 
-        isInitialized = true;
-        isAllTagsCollapsed = true;
+        isInitialized = isAllTagsCollapsed = true;
         isUserTagsCollapsed = false;
-    }
-
-    private async Task LoadPreferences()
-    {
-        var preferences = await managementApiService.LoadPreferences();
-        if (preferences is not null)
-        {
-            mapper.Map(preferences, PageContext.UserPreferences);
-        }
     }
 
     private async Task LoadTags()

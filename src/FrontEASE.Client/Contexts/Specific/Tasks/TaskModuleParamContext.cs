@@ -5,28 +5,18 @@ using FrontEASE.Shared.Data.Enums.Tasks.Config.Modules.Parameters;
 
 namespace FrontEASE.Client.Contexts.Specific.Tasks
 {
-    public class TaskModuleParamContext
+    public class TaskModuleParamContext(
+        string paramName,
+        TaskModuleParameterNoValidationDto paramOption,
+        TaskModuleParameterDto? paramValue,
+        ParameterType? paramType)
     {
-        public TaskModuleParamContext(
-            string paramName,
-            TaskModuleParameterNoValidationDto paramOption,
-            TaskModuleParameterDto? paramValue,
-            ParameterType? paramType)
-        {
-            ParamOption = paramOption;
-            ParamValue = paramValue;
-            ParamName = paramName;
-            ParamType = paramType;
-
-            ParamID = Guid.NewGuid();
-        }
-
-        public Guid ParamID { get; set; }
-        public TaskModuleParameterNoValidationDto ParamOption { get; set; }
-        public TaskModuleParameterDto? ParamValue { get; set; }
+        public Guid ParamID { get; set; } = Guid.NewGuid();
+        public TaskModuleParameterNoValidationDto ParamOption { get; set; } = paramOption;
+        public TaskModuleParameterDto? ParamValue { get; set; } = paramValue;
         public TaskModuleParamFlags? ParamFlags { get; set; }
         public TaskModuleListParamFlags? ListFlags { get; set; }
-        public string ParamName { get; set; }
-        public ParameterType? ParamType { get; set; }
+        public string ParamName { get; set; } = paramName;
+        public ParameterType? ParamType { get; set; } = paramType;
     }
 }

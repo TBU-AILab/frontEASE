@@ -92,13 +92,13 @@
     {
         deletingInProgress = true;
 
-        var isUserTag = PageContext.UserPreferences.TagOptions.Any(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
+        var isUserTag = PageContext.LoggedInUser.UserPreferences.TagOptions.Any(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
         var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {Tag.Tag}";
 
         var isDeleted = await managementApiService.DeleteTag(Tag.ID!.Value);
         if (isDeleted)
         {
-            PageContext.UserPreferences.TagOptions.Remove(Tag);
+            PageContext.LoggedInUser.UserPreferences.TagOptions.Remove(Tag);
 
             var deletedFromAll = PageContext.AllTags.Where(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
             if (deletedFromAll is not null)

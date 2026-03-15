@@ -72,7 +72,7 @@
             if (inserted is not null)
             {
                 var insertedMapped = mapper.Map<UserPreferenceTagOptionDto>(inserted);
-                PageContext.UserPreferences!.TagOptions.Insert(0, insertedMapped);
+                PageContext.LoggedInUser.UserPreferences!.TagOptions.Insert(0, insertedMapped);
                 PageContext.AllTags.Insert(0, insertedMapped);
  
                 var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}: {TagModel.Tag})";

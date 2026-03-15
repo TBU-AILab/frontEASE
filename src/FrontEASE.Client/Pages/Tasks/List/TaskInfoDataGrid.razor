@@ -110,7 +110,7 @@
                 </DisplayTemplate>
             </DataGridColumn>
 
-            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.NAME))
+            @if (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.NAME))
             {
                 <DataGridColumn Field="@nameof(TaskInfoDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true">
                     <FilterTemplate>
@@ -142,7 +142,7 @@
                 </DataGridColumn>
             }
 
-            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.TAGS))
+            @if (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.TAGS))
             {
                 <DataGridColumn TItem="TaskInfoDto"
                                 Field="@nameof(TaskInfoDto.Tags)"
@@ -173,7 +173,7 @@
                 </DataGridColumn>
             }
 
-            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.DATE_CREATED))
+            @if (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.DATE_CREATED))
             {
                 <DataGridColumn Field="@nameof(TaskInfoDto.DateCreated)"
                                 Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FIELD)))"
@@ -203,7 +203,7 @@
                 </DataGridColumn>
             }
 
-            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.DATE_UPDATED))
+            @if (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.DATE_UPDATED))
             {
                 <DataGridColumn Field="@nameof(TaskInfoDto.DateUpdated)"
                                 Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateUpdated), PropertyDisplayResourceType.FIELD)))"
@@ -236,7 +236,7 @@
                 </DataGridColumn>
             }
 
-            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.AUTHOR))
+            @if (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.AUTHOR))
             {
                 <DataGridColumn TItem="TaskInfoDto"
                                 Field="@nameof(TaskInfoDto.Author)"
@@ -268,7 +268,7 @@
                 </DataGridColumn>
             }
 
-            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.STATE))
+            @if (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.STATE))
             {
                 <DataGridSelectColumn TItem="TaskInfoDto"
                                       Field="@nameof(TaskInfoDto.State)"
@@ -331,7 +331,7 @@
                 </DataGridSelectColumn>
             }
 
-            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.CONNECTOR))
+            @if (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.CONNECTOR))
             {
                 <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.ConnectorType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FIELD)))" Sortable="true" CustomFilter="@OnConnectorTypeCustomFilter">
                     <FilterTemplate>
@@ -345,7 +345,7 @@
                 </DataGridColumn>
             }
 
-            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.SOLUTION))
+            @if (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.SOLUTION))
             {
                 <DataGridColumn Field="@nameof(TaskInfoDto.SolutionType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FIELD)))" Sortable="true" CustomFilter="@OnSolutionTypeCustomFilter">
                     <FilterTemplate>

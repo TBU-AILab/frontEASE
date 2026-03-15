@@ -17,7 +17,7 @@
 else
 {
     <Row Margin="Margin.Is2.FromTop">
-        <Virtualize Items="PageContext.UserPreferences.TokenOptions.OrderBy(x => x.Priority).ToList()" Context="token">
+        <Virtualize Items="PageContext.LoggedInUser.UserPreferences.TokenOptions.OrderBy(x => x.Priority).ToList()" Context="token">
             <ItemContent>
                 <TokenListItem Token="token" />
             </ItemContent>
@@ -52,28 +52,16 @@ else
         if (!isInitialized)
         {
             var loadTypelistsTask = Task.CompletedTask;
-            var loadPreferencesTask = Task.CompletedTask;
 
             if (!(PageContext.ConnectorTypes?.Any() == true))
             {
                 loadTypelistsTask = LoadTypelists();
             }
 
-            loadPreferencesTask = LoadPreferences();
-
-            await Task.WhenAll(loadTypelistsTask, loadPreferencesTask);
+            await Task.WhenAll(loadTypelistsTask);
         }
         await base.OnInitializedAsync();
         isInitialized = true;
-    }
-
-    private async Task LoadPreferences()
-    {
-        var preferences = await managementApiService.LoadPreferences();
-        if (preferences is not null)
-        {
-            mapper.Map(preferences, PageContext.UserPreferences);
-        }
     }
 
     private async Task LoadTypelists()
