@@ -110,200 +110,254 @@
                 </DisplayTemplate>
             </DataGridColumn>
 
-            <DataGridColumn Field="@nameof(TaskInfoDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true">
-                <FilterTemplate>
-                    <TextInput Value="@selectedNameFilter"
-                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FILTER)))"
-                               ValueChanged="@(value => { selectedNameFilter = value; context.TriggerFilterChange(selectedNameFilter); })" />
-                </FilterTemplate>
-                <DisplayTemplate>
-                    <Container Fluid Class="text-break task-grid-min-width-author">
-                        <Row>
-                            <Column ColumnSize="ColumnSize.IsFull">
-                                <Span>
-                                    <Tooltip Multiline="true" Text="@(resourceHandler.GetResource(((OptimizationGoalType)context.Item.OptimizationGoal).GetEnumResourceValue()))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
-                                        <Icon Name="@(context.Item.OptimizationGoal == OptimizationGoalType.MAXIMIZATION ? IconName.ArrowUp : IconName.ArrowDown)"
-                                              TextColor="@(context.Item.OptimizationGoal == OptimizationGoalType.MAXIMIZATION ? TextColor.Success : TextColor.Danger)"
-                                              IconSize="IconSize.Default"
-                                              IconStyle="IconStyle.Solid" />
-                                    </Tooltip>
-                                </Span>
-                                <Span>
-                                    <Text>
-                                        @(context.Item.Name ?? string.Empty)
-                                    </Text>
-                                </Span>
-                            </Column>
-                        </Row>
-                    </Container>
-                </DisplayTemplate>
-            </DataGridColumn>
+            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.NAME))
+            {
+                <DataGridColumn Field="@nameof(TaskInfoDto.Name)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FIELD)))" Sortable="true">
+                    <FilterTemplate>
+                        <TextInput Value="@selectedNameFilter"
+                                   Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Name), PropertyDisplayResourceType.FILTER)))"
+                                   ValueChanged="@(value => { selectedNameFilter = value; context.TriggerFilterChange(selectedNameFilter); })" />
+                    </FilterTemplate>
+                    <DisplayTemplate>
+                        <Container Fluid Class="text-break task-grid-min-width-author">
+                            <Row>
+                                <Column ColumnSize="ColumnSize.IsFull">
+                                    <Span>
+                                        <Tooltip Multiline="true" Text="@(resourceHandler.GetResource(((OptimizationGoalType)context.Item.OptimizationGoal).GetEnumResourceValue()))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
+                                            <Icon Name="@(context.Item.OptimizationGoal == OptimizationGoalType.MAXIMIZATION ? IconName.ArrowUp : IconName.ArrowDown)"
+                                                  TextColor="@(context.Item.OptimizationGoal == OptimizationGoalType.MAXIMIZATION ? TextColor.Success : TextColor.Danger)"
+                                                  IconSize="IconSize.Default"
+                                                  IconStyle="IconStyle.Solid" />
+                                        </Tooltip>
+                                    </Span>
+                                    <Span>
+                                        <Text>
+                                            @(context.Item.Name ?? string.Empty)
+                                        </Text>
+                                    </Span>
+                                </Column>
+                            </Row>
+                        </Container>
+                    </DisplayTemplate>
+                </DataGridColumn>
+            }
 
-            <DataGridColumn TItem="TaskInfoDto"
-                            Field="@nameof(TaskInfoDto.Tags)"
-                            Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.FIELD)))"
-                            Sortable="false"
-                            CustomFilter="@OnTagsCustomFilter">
-                <FilterTemplate>
-                    <Autocomplete TItem="UserPreferenceTagOptionDto"
-                                  TValue="string"
-                                  Data="@PageContext.AvailableTags"
-                                  TextField="@(item => item.Tag)"
-                                  ValueField="@(item => item.Tag)"
-                                  Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.FILTER)))"
-                                  SelectionMode="AutocompleteSelectionMode.Multiple"
-                                  Filter="AutocompleteFilter.Contains"
-                                  FreeTyping="false"
-                                  SelectedValues="@selectedTagFilters"
-                                  SelectedValuesChanged="@(values => { selectedTagFilters = values; context.TriggerFilterChange(values); })" />
-                </FilterTemplate>
-                <DisplayTemplate>
-                    @foreach (var tag in context.Item.Tags)
-                    {
-                        <Span TextSize="TextSize.ExtraSmall" TextWeight="TextWeight.SemiBold" TextColor="TextColor.White" Border="Border.Is2.RoundedPill.Light" Margin="Margin.Is1.FromEnd" Padding="Padding.Is1" Class="task-grid-tag">
-                            @(tag.Tag)
-                        </Span>
-                    }
-                </DisplayTemplate>
-            </DataGridColumn>
-
-            <DataGridColumn Field="@nameof(TaskInfoDto.DateCreated)"
-                            Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FIELD)))"
-                            Sortable="true"
-                            CustomFilter="@OnDateCreatedCustomFilter">
-                <FilterTemplate>
-                    <TextInput Value="@selectedDateCreatedFilter"
-                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FILTER)))"
-                               ValueChanged="@( value => { selectedDateCreatedFilter = value; context.TriggerFilterChange(selectedDateCreatedFilter); } )" />
-                </FilterTemplate>
-                <DisplayTemplate>
-                    <Container Fluid>
-                        <Row>
-                            <Column ColumnSize="ColumnSize.IsFull">
-                                <Text>
-                                    @context.Item.DateCreated.ToString("dd.MM.yyyy")
-                                </Text>
-                            </Column>
-                            <Column ColumnSize="ColumnSize.IsFull">
-                                <Text>
-                                    @context.Item.DateCreated.ToString("HH:mm:ss")
-                                </Text>
-                            </Column>
-                        </Row>
-                    </Container>
-                </DisplayTemplate>
-            </DataGridColumn>
-
-            <DataGridColumn TItem="TaskInfoDto"
-                            Field="@nameof(TaskInfoDto.Author)"
-                            Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.FIELD)))"
-                            Sortable="false"
-                            CustomFilter="@OnAuthorEmailCustomFilter">
-                <FilterTemplate>
-                    <TextInput Value="@selectedEmailFilter"
-                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.FILTER)))"
-                               ValueChanged="@(value => { selectedEmailFilter = value; context.TriggerFilterChange(selectedEmailFilter); })" />
-                </FilterTemplate>
-                <DisplayTemplate>
-                    <Container Fluid Class="text-break task-grid-min-width-author">
-                        <Row>
-                            <Column ColumnSize="ColumnSize.IsAuto">
-                                <Image Border="Border.RoundedCircle"
-                                       Source="@(GetUserImageUrl(context.Item.Author!.Id!.Value))"
-                                       Class="full-max-width datagrid-item-image-extrasmall"
-                                       Loading />
-                            </Column>
-                            <Column>
-                                <Text>
-                                    @context.Item.Author.Email
-                                </Text>
-                            </Column>
-                        </Row>
-                    </Container>
-                </DisplayTemplate>
-            </DataGridColumn>
-
-            <DataGridSelectColumn TItem="TaskInfoDto"
-                                  Field="@nameof(TaskInfoDto.State)"
-                                  Sortable="true"
-                                  Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.State), PropertyDisplayResourceType.FIELD)))"
-                                  TextField="@(state => resourceHandler.GetResource(((TaskState)state).GetEnumResourceValue()))"
-                                  ValueField="@(state => state.ToString())"
-                                  CustomFilter="@OnStateCustomFilter">
-                <FilterTemplate>
-                    <Select TValue="string" Value="@selectedStateFilter" ValueChanged="@(value => { selectedStateFilter = value; context.TriggerFilterChange(selectedStateFilter); })">
-                        <SelectItem Value="string.Empty">
-                            @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
-                        </SelectItem>
-                        @foreach (var state in Enum.GetValues(typeof(TaskState)))
+            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.TAGS))
+            {
+                <DataGridColumn TItem="TaskInfoDto"
+                                Field="@nameof(TaskInfoDto.Tags)"
+                                Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.FIELD)))"
+                                Sortable="false"
+                                CustomFilter="@OnTagsCustomFilter">
+                    <FilterTemplate>
+                        <Autocomplete TItem="UserPreferenceTagOptionDto"
+                                      TValue="string"
+                                      Data="@PageContext.AvailableTags"
+                                      TextField="@(item => item.Tag)"
+                                      ValueField="@(item => item.Tag)"
+                                      Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Tags), PropertyDisplayResourceType.FILTER)))"
+                                      SelectionMode="AutocompleteSelectionMode.Multiple"
+                                      Filter="AutocompleteFilter.Contains"
+                                      FreeTyping="false"
+                                      SelectedValues="@selectedTagFilters"
+                                      SelectedValuesChanged="@(values => { selectedTagFilters = values; context.TriggerFilterChange(values); })" />
+                    </FilterTemplate>
+                    <DisplayTemplate>
+                        @foreach (var tag in context.Item.Tags)
                         {
-                            <SelectItem Value="@state.ToString()">@resourceHandler.GetResource(((TaskState)state).GetEnumResourceValue())</SelectItem>
+                            <Span TextSize="TextSize.ExtraSmall" TextWeight="TextWeight.SemiBold" TextColor="TextColor.White" Border="Border.Is2.RoundedPill.Light" Margin="Margin.Is1.FromEnd" Padding="Padding.Is1" Class="task-grid-tag">
+                                @(tag.Tag)
+                            </Span>
                         }
-                    </Select>
-                </FilterTemplate>
-                <DisplayTemplate>
-                    @if (context.Item.Logs.Count > 0)
-                    {
+                    </DisplayTemplate>
+                </DataGridColumn>
+            }
+
+            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.DATE_CREATED))
+            {
+                <DataGridColumn Field="@nameof(TaskInfoDto.DateCreated)"
+                                Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FIELD)))"
+                                Sortable="true"
+                                CustomFilter="@OnDateCreatedCustomFilter">
+                    <FilterTemplate>
+                        <TextInput Value="@selectedDateCreatedFilter"
+                                   Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateCreated), PropertyDisplayResourceType.FILTER)))"
+                                   ValueChanged="@( value => { selectedDateCreatedFilter = value; context.TriggerFilterChange(selectedDateCreatedFilter); } )" />
+                    </FilterTemplate>
+                    <DisplayTemplate>
                         <Container Fluid>
                             <Row>
                                 <Column ColumnSize="ColumnSize.IsFull">
                                     <Text>
-                                        @(resourceHandler.GetResource(((TaskState)context.Item.State).GetEnumResourceValue()))
+                                        @context.Item.DateCreated.ToString("dd.MM.yyyy")
                                     </Text>
                                 </Column>
-                                <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is1.FromTop">
-                                    <Tooltip Multiline="true"
-                                             Display="Display.InlineBlock"
-                                             Placement="TooltipPlacement.Top"
-                                             Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Click}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{((PageContext.ViewMetadata.MiniErrorTaskID is not null && PageContext.ViewMetadata.MiniErrorTaskID == context.Item.ID) ? UIActionConstants.Hide : UIActionConstants.Show)}")} {resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Logs), PropertyDisplayResourceType.FIELD))}")">
-
-                                        <Icon Class="@($"action-icon {((PageContext.ViewMetadata.MiniErrorTaskID is not null && PageContext.ViewMetadata.MiniErrorTaskID == context.Item.ID) ? "action-icon-danger" : "action-icon-warning")}")"
-                                              Name="@((PageContext.ViewMetadata.MiniErrorTaskID is not null && PageContext.ViewMetadata.MiniErrorTaskID == context.Item.ID) ? IconName.TimesCircle : IconName.Comment)"
-                                              IconSize="IconSize.Default"
-                                              IconStyle="IconStyle.Solid"
-                                              Clicked="@(async (MouseEventArgs e) => await OnErrorClick(context.Item, e))"
-                                              @onclick:stopPropagation="true" />
-                               
-                                    </Tooltip>
+                                <Column ColumnSize="ColumnSize.IsFull">
+                                    <Text>
+                                        @context.Item.DateCreated.ToString("HH:mm:ss")
+                                    </Text>
                                 </Column>
                             </Row>
                         </Container>
+                    </DisplayTemplate>
+                </DataGridColumn>
+            }
 
-                        @if (context.Item.ID == PageContext.ViewMetadata.MiniErrorTaskID)
+            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.DATE_UPDATED))
+            {
+                <DataGridColumn Field="@nameof(TaskInfoDto.DateUpdated)"
+                                Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateUpdated), PropertyDisplayResourceType.FIELD)))"
+                                Sortable="true"
+                                CustomFilter="@OnDateUpdatedCustomFilter">
+                    <FilterTemplate>
+                        <TextInput Value="@selectedDateUpdatedFilter"
+                                   Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.DateUpdated), PropertyDisplayResourceType.FILTER)))"
+                                   ValueChanged="@((string value) => { selectedDateUpdatedFilter = value; context.TriggerFilterChange(selectedDateUpdatedFilter); })" />
+                    </FilterTemplate>
+                    <DisplayTemplate>
+                        <Container Fluid>
+                            <Row>
+                                @if (context.Item.DateUpdated is DateTime dateUpdated)
+                                {
+                                    <Column ColumnSize="ColumnSize.IsFull">
+                                        <Text>
+                                            @dateUpdated.ToString("dd.MM.yyyy")
+                                        </Text>
+                                    </Column>
+                                    <Column ColumnSize="ColumnSize.IsFull">
+                                        <Text>
+                                            @dateUpdated.ToString("HH:mm:ss")
+                                        </Text>
+                                    </Column>
+                                }
+                            </Row>
+                        </Container>
+                    </DisplayTemplate>
+                </DataGridColumn>
+            }
+
+            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.AUTHOR))
+            {
+                <DataGridColumn TItem="TaskInfoDto"
+                                Field="@nameof(TaskInfoDto.Author)"
+                                Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.FIELD)))"
+                                Sortable="false"
+                                CustomFilter="@OnAuthorEmailCustomFilter">
+                    <FilterTemplate>
+                        <TextInput Value="@selectedEmailFilter"
+                                   Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Author), PropertyDisplayResourceType.FILTER)))"
+                                   ValueChanged="@(value => { selectedEmailFilter = value; context.TriggerFilterChange(selectedEmailFilter); })" />
+                    </FilterTemplate>
+                    <DisplayTemplate>
+                        <Container Fluid Class="text-break task-grid-min-width-author">
+                            <Row>
+                                <Column ColumnSize="ColumnSize.IsAuto">
+                                    <Image Border="Border.RoundedCircle"
+                                           Source="@(GetUserImageUrl(context.Item.Author!.Id!.Value))"
+                                           Class="full-max-width datagrid-item-image-extrasmall"
+                                           Loading />
+                                </Column>
+                                <Column>
+                                    <Text>
+                                        @context.Item.Author.Email
+                                    </Text>
+                                </Column>
+                            </Row>
+                        </Container>
+                    </DisplayTemplate>
+                </DataGridColumn>
+            }
+
+            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.STATE))
+            {
+                <DataGridSelectColumn TItem="TaskInfoDto"
+                                      Field="@nameof(TaskInfoDto.State)"
+                                      Sortable="true"
+                                      Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.State), PropertyDisplayResourceType.FIELD)))"
+                                      TextField="@(state => resourceHandler.GetResource(((TaskState)state).GetEnumResourceValue()))"
+                                      ValueField="@(state => state.ToString())"
+                                      CustomFilter="@OnStateCustomFilter">
+                    <FilterTemplate>
+                        <Select TValue="string" Value="@selectedStateFilter" ValueChanged="@(value => { selectedStateFilter = value; context.TriggerFilterChange(selectedStateFilter); })">
+                            <SelectItem Value="string.Empty">
+                                @(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Empty}"))
+                            </SelectItem>
+                            @foreach (var state in Enum.GetValues(typeof(TaskState)))
+                            {
+                                <SelectItem Value="@state.ToString()">@resourceHandler.GetResource(((TaskState)state).GetEnumResourceValue())</SelectItem>
+                            }
+                        </Select>
+                    </FilterTemplate>
+                    <DisplayTemplate>
+                        @if (context.Item.Logs.Count > 0)
                         {
-                            <Div Position="Position.Fixed" Style="@($"{errorCardPositionStyle};")" @onclick:stopPropagation="true" Class="top-layer cursor-default" Width="Width.Is33.OnDesktop.Is50.OnWidescreen">
-                                <TaskGridItemErrorCard ErrorLogs="context.Item.Logs" />
-                            </Div>
+                            <Container Fluid>
+                                <Row>
+                                    <Column ColumnSize="ColumnSize.IsFull">
+                                        <Text>
+                                            @(resourceHandler.GetResource(((TaskState)context.Item.State).GetEnumResourceValue()))
+                                        </Text>
+                                    </Column>
+                                    <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is1.FromTop">
+                                        <Tooltip Multiline="true"
+                                                 Display="Display.InlineBlock"
+                                                 Placement="TooltipPlacement.Top"
+                                                 Text="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Click}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{((PageContext.ViewMetadata.MiniErrorTaskID is not null && PageContext.ViewMetadata.MiniErrorTaskID == context.Item.ID) ? UIActionConstants.Hide : UIActionConstants.Show)}")} {resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.Logs), PropertyDisplayResourceType.FIELD))}")">
+
+                                            <Icon Class="@($"action-icon {((PageContext.ViewMetadata.MiniErrorTaskID is not null && PageContext.ViewMetadata.MiniErrorTaskID == context.Item.ID) ? "action-icon-danger" : "action-icon-warning")}")"
+                                                  Name="@((PageContext.ViewMetadata.MiniErrorTaskID is not null && PageContext.ViewMetadata.MiniErrorTaskID == context.Item.ID) ? IconName.TimesCircle : IconName.Comment)"
+                                                  IconSize="IconSize.Default"
+                                                  IconStyle="IconStyle.Solid"
+                                                  Clicked="@(async (MouseEventArgs e) => await OnErrorClick(context.Item, e))"
+                                                  @onclick:stopPropagation="true" />
+                               
+                                        </Tooltip>
+                                    </Column>
+                                </Row>
+                            </Container>
+
+                            @if (context.Item.ID == PageContext.ViewMetadata.MiniErrorTaskID)
+                            {
+                                <Div Position="Position.Fixed" Style="@($"{errorCardPositionStyle};")" @onclick:stopPropagation="true" Class="top-layer cursor-default" Width="Width.Is33.OnDesktop.Is50.OnWidescreen">
+                                    <TaskGridItemErrorCard ErrorLogs="context.Item.Logs" />
+                                </Div>
+                            }
                         }
-                    }
-                    else
-                    {
-                        @(resourceHandler.GetResource(((TaskState)context.Item.State).GetEnumResourceValue()))
-                    }
-                </DisplayTemplate>
-            </DataGridSelectColumn>
+                        else
+                        {
+                            @(resourceHandler.GetResource(((TaskState)context.Item.State).GetEnumResourceValue()))
+                        }
+                    </DisplayTemplate>
+                </DataGridSelectColumn>
+            }
 
-            <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.ConnectorType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FIELD)))" Sortable="true" CustomFilter="@OnConnectorTypeCustomFilter">
-                <FilterTemplate>
-                    <TextInput Value="@selectedConnectorTypeFilter"
-                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FILTER)))"
-                               ValueChanged="@(value => { selectedConnectorTypeFilter = value; context.TriggerFilterChange(selectedConnectorTypeFilter); })" />
-                </FilterTemplate>
-                <DisplayTemplate>
-                    @(GetModuleLongName(context.Item.ConnectorType, ModuleType.LLM_CONNECTOR) ?? context.Item.ConnectorType)
-                </DisplayTemplate>
-            </DataGridColumn>
+            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.CONNECTOR))
+            {
+                <DataGridColumn TItem="TaskInfoDto" Field="@nameof(TaskInfoDto.ConnectorType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FIELD)))" Sortable="true" CustomFilter="@OnConnectorTypeCustomFilter">
+                    <FilterTemplate>
+                        <TextInput Value="@selectedConnectorTypeFilter"
+                                   Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.ConnectorType), PropertyDisplayResourceType.FILTER)))"
+                                   ValueChanged="@(value => { selectedConnectorTypeFilter = value; context.TriggerFilterChange(selectedConnectorTypeFilter); })" />
+                    </FilterTemplate>
+                    <DisplayTemplate>
+                        @(GetModuleLongName(context.Item.ConnectorType, ModuleType.LLM_CONNECTOR) ?? context.Item.ConnectorType)
+                    </DisplayTemplate>
+                </DataGridColumn>
+            }
 
-            <DataGridColumn Field="@nameof(TaskInfoDto.SolutionType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FIELD)))" Sortable="true" CustomFilter="@OnSolutionTypeCustomFilter">
-                <FilterTemplate>
-                    <TextInput Value="@selectedSolutionTypeFilter"
-                               Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FILTER)))"
-                               ValueChanged="@(value => { selectedSolutionTypeFilter = value; context.TriggerFilterChange(selectedSolutionTypeFilter); })" />
-                </FilterTemplate>
-                <DisplayTemplate>
-                    @(GetModuleLongName(context.Item.SolutionType, ModuleType.SOLUTION) ?? context.Item.SolutionType)
-                </DisplayTemplate>
-            </DataGridColumn>
+            @if (PageContext.UserPreferences.GeneralOptions.TaskGridColumns.Any(x => x.Column == TaskGridColumnsVisibility.SOLUTION))
+            {
+                <DataGridColumn Field="@nameof(TaskInfoDto.SolutionType)" Caption="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FIELD)))" Sortable="true" CustomFilter="@OnSolutionTypeCustomFilter">
+                    <FilterTemplate>
+                        <TextInput Value="@selectedSolutionTypeFilter"
+                                   Placeholder="@(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskInfoDto>(nameof(TaskInfoDto.SolutionType), PropertyDisplayResourceType.FILTER)))"
+                                   ValueChanged="@(value => { selectedSolutionTypeFilter = value; context.TriggerFilterChange(selectedSolutionTypeFilter); })" />
+                    </FilterTemplate>
+                    <DisplayTemplate>
+                        @(GetModuleLongName(context.Item.SolutionType, ModuleType.SOLUTION) ?? context.Item.SolutionType)
+                    </DisplayTemplate>
+                </DataGridColumn>
+            }
 
             <DataGridColumn TItem="TaskInfoDto" Caption="@(resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.Actions}"))" Sortable="false" Filterable="false" Editable="false">
                 <DisplayTemplate>
@@ -414,6 +468,7 @@
     private string selectedStateFilter = string.Empty;
     private string selectedEmailFilter = string.Empty;
     private string selectedDateCreatedFilter = string.Empty;
+    private string selectedDateUpdatedFilter = string.Empty;
     private List<string> selectedTagFilters = [];
     private string selectedConnectorTypeFilter = string.Empty;
     private string selectedSolutionTypeFilter = string.Empty;
@@ -567,9 +622,29 @@
         {
             if (itemValue is DateTime date)
             {
-                string formattedDate = date.ToString("dd.MM.yyyy");
+                var formattedDate = date.ToString("dd.MM.yyyy");
                 return formattedDate.Contains(filter, StringComparison.OrdinalIgnoreCase);
             }
+        }
+        return true;
+    }
+
+    private bool OnDateUpdatedCustomFilter(object? itemValue, object searchValue)
+    {
+        if (searchValue is string filter && !string.IsNullOrEmpty(filter))
+        {
+            if (itemValue is null)
+            {
+                return false;
+            }
+
+            if (itemValue is DateTime date)
+            {
+                var formattedDate = date.ToString("dd.MM.yyyy");
+                return formattedDate.Contains(filter, StringComparison.OrdinalIgnoreCase);
+            }
+
+            return false;
         }
         return true;
     }

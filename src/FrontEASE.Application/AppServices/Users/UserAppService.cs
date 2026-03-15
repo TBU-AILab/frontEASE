@@ -3,6 +3,7 @@ using FrontEASE.Domain.Entities.Shared.Users;
 using FrontEASE.Domain.Infrastructure.Exceptions.Enums;
 using FrontEASE.Domain.Infrastructure.Exceptions.Types;
 using FrontEASE.Domain.Infrastructure.Utils.Users;
+using FrontEASE.Domain.Services.Management;
 using FrontEASE.Domain.Services.Shared.Images;
 using FrontEASE.Domain.Services.Users;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
@@ -20,7 +21,8 @@ namespace FrontEASE.Application.AppServices.Users
         IImageService imageService,
         IMapper mapper,
         IHttpContextAccessor contextAccessor,
-        IUserHelper userHelper) : IUserAppService
+        IUserHelper userHelper,
+        IManagementService managementService) : IUserAppService
     {
         private void CheckPermissionsToDelete(ApplicationUser? currentUser, ApplicationUser? deletedUser)
         {
@@ -85,8 +87,11 @@ namespace FrontEASE.Application.AppServices.Users
         {
             var userID = contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             var user = await userService.Load(Guid.Parse(userID), cancellationToken);
+            var userPreferences = await managementService.LoadFull(Guid.Parse(userID), cancellationToken);
 
+            user!.UserPreferences = userPreferences;
             var userDto = mapper.Map<ApplicationUserDto>(user);
+
             userDto.Role = userHelper.UserRoleGuidToRole(Guid.Parse(user!.UserRole!.RoleId));
             return userDto;
         }

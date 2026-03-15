@@ -72,6 +72,7 @@ namespace FrontEASE.Domain.Services.Management
                 LoadTokenOptions = true,
                 LoadConnectorTypes = true,
                 LoadGeneralOptions = true,
+                LoadTaskGridColumns = true,
                 LoadTagOptions = true,
                 WithNoTracking = true,
                 AsSplitQuery = true
@@ -88,6 +89,7 @@ namespace FrontEASE.Domain.Services.Management
                 LoadTokenOptions = true,
                 LoadConnectorTypes = true,
                 LoadGeneralOptions = true,
+                LoadTaskGridColumns = true,
                 AsSplitQuery = true
             };
 

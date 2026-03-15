@@ -5,6 +5,7 @@ using FrontEASE.Shared.Data.DTOs.Management;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Modules;
 using FrontEASE.Shared.Data.DTOs.Management.Core.Packages;
 using FrontEASE.Shared.Data.DTOs.Management.General;
+using FrontEASE.Shared.Data.DTOs.Management.General.Columns;
 using FrontEASE.Shared.Data.DTOs.Management.Tags;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens;
 using FrontEASE.Shared.Data.DTOs.Management.Tokens.Connectors;
@@ -309,6 +310,16 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
         {
             return
             [
+                /* TaskGridColumnsVisibility */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TaskGridColumnsVisibility.NAME.GetEnumResourceValue(), Value = "Name" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TaskGridColumnsVisibility.TAGS.GetEnumResourceValue(), Value = "Tags" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TaskGridColumnsVisibility.AUTHOR.GetEnumResourceValue(), Value = "Author" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TaskGridColumnsVisibility.DATE_CREATED.GetEnumResourceValue(), Value = "Date created" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TaskGridColumnsVisibility.DATE_UPDATED.GetEnumResourceValue(), Value = "Date updated" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TaskGridColumnsVisibility.STATE.GetEnumResourceValue(), Value = "State" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TaskGridColumnsVisibility.CONNECTOR.GetEnumResourceValue(), Value = "Connector type" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = TaskGridColumnsVisibility.SOLUTION.GetEnumResourceValue(), Value = "Solution type" },
+
                 /* UserCompanyManagementType */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserCompanyManagementType.USERS.GetEnumResourceValue(), Value = "Users" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = UserCompanyManagementType.COMPANIES.GetEnumResourceValue(), Value = "Organizations" },
@@ -484,11 +495,18 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.TokenOptions), PropertyDisplayResourceType.FIELD), Value = "Tokens" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.GeneralOptions), PropertyDisplayResourceType.FIELD), Value = "General options" },
 
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.GeneralOptions), PropertyDisplayResourceType.FIELD)}.{ManagementMetadataConstants.General}", Value = "General" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = $"{AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.GeneralOptions), PropertyDisplayResourceType.FIELD)}.{ManagementMetadataConstants.Tasks}", Value = "Tasks page" },
+
                 /* UserPreferenceGeneralOptionsDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.ColorScheme), PropertyDisplayResourceType.FIELD), Value = "Color scheme" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility), PropertyDisplayResourceType.FIELD), Value = "Token visibility" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.UserMessageDisplayFormat), PropertyDisplayResourceType.FIELD), Value = "User message display format" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.SystemMessageDisplayFormat), PropertyDisplayResourceType.FIELD), Value = "System message display format" },
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.TaskGridColumns), PropertyDisplayResourceType.FIELD), Value = "Visible task grid columns" },
+
+                /* UserPreferenceGeneralOptionTaskGridColumnDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionTaskGridColumnDto>(nameof(UserPreferenceGeneralOptionTaskGridColumnDto.Column), PropertyDisplayResourceType.FIELD), Value = "Column" },
 
                 /* UserPreferenceTokenOptionDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTokenOptionDto>(nameof(UserPreferenceTokenOptionDto.Token), PropertyDisplayResourceType.FIELD), Value = "Token" },
@@ -630,6 +648,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.DescriptiveNumber), PropertyDisplayResourceType.PLACEHOLDER), Value = "4511" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.OrientationNumber), PropertyDisplayResourceType.PLACEHOLDER), Value = "7114/1A" },
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<AddressDto>(nameof(AddressDto.Street), PropertyDisplayResourceType.PLACEHOLDER), Value = "Nad Stráněmi" },
+
+                /* UserPreferenceGeneralOptionDto */
+                new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.TaskGridColumns), PropertyDisplayResourceType.PLACEHOLDER), Value = "Select display columns ... " },
 
                 /* UserPreferenceTagOptionDto */
                 new Resource() { CountryCodeID = LanguageCode.EN, ResourceCode = AttributeExtensions.GetResourceFieldValue<UserPreferenceTagOptionDto>(nameof(UserPreferenceTagOptionDto.Tag), PropertyDisplayResourceType.PLACEHOLDER), Value = "BEST_OBTAINED_RESULT" },

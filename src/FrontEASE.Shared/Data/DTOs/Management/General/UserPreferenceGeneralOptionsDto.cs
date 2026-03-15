@@ -1,4 +1,5 @@
-﻿using FrontEASE.Shared.Data.Enums.Users.Preferences.GeneralOptions;
+﻿using FrontEASE.Shared.Data.DTOs.Management.General.Columns;
+using FrontEASE.Shared.Data.Enums.Users.Preferences.GeneralOptions;
 using FrontEASE.Shared.Infrastructure.Attributes;
 using FrontEASE.Shared.Infrastructure.Attributes.Validations.Generic;
 
@@ -9,6 +10,21 @@ namespace FrontEASE.Shared.Data.DTOs.Management.General
     /// </summary>
     public class UserPreferenceGeneralOptionsDto
     {
+        public UserPreferenceGeneralOptionsDto()
+        {
+            this.TaskGridColumns = [];
+        }
+
+        #region Navigation
+
+        /// <summary>
+        /// Selected visible columns in the task grid
+        /// </summary>
+        [Resource($"{nameof(UserPreferenceGeneralOptionTaskGridColumnDto)}.{nameof(TaskGridColumns)}")]
+        public IList<UserPreferenceGeneralOptionTaskGridColumnDto> TaskGridColumns { get; set; }
+
+        #endregion
+
         #region Data
 
         /// <summary>

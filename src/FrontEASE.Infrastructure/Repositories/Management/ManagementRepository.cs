@@ -22,7 +22,15 @@ namespace FrontEASE.Infrastructure.Repositories.Management
                     : preferencesQuery.Include(x => x.TokenOptions);
             }
             if (query.LoadTagOptions) { preferencesQuery = preferencesQuery.Include(x => x.TagOptions); }
-            if (query.LoadGeneralOptions) { preferencesQuery = preferencesQuery.Include(x => x.GeneralOptions); }
+
+            if (query.LoadGeneralOptions)
+            {
+                preferencesQuery = preferencesQuery.Include(x => x.GeneralOptions);
+                if (query.LoadTaskGridColumns)
+                {
+                    preferencesQuery = preferencesQuery.Include(x => x.GeneralOptions).ThenInclude(x => x.TaskGridColumns);
+                }
+            }
 
             if (query.WithNoTracking) { preferencesQuery = preferencesQuery.AsNoTracking(); }
             if (query.AsSplitQuery) { preferencesQuery = preferencesQuery.AsSplitQuery(); }

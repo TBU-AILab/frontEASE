@@ -21,7 +21,10 @@ else
     <Row Margin="Margin.Is2.FromTop.Is2.Is3.FromBottom">
         <Form>
             <Validations @ref="Validations" Mode="ValidationMode.Auto" Model="@PageContext.UserPreferences.GeneralOptions" ValidateOnLoad="false">
-                <GeneralPreferencesDataFormSection GeneralPreferencesModel="PageContext.UserPreferences.GeneralOptions" Operation="DataOperation.UPDATE" FullWidthFields="false" />
+
+                <GeneralPreferencesGeneralDataFormSection GeneralPreferencesModel="PageContext.UserPreferences.GeneralOptions" Operation="DataOperation.UPDATE" FullWidthFields="false" />
+                <GeneralPreferencesTaskDataFormSection GeneralPreferencesModel="PageContext.UserPreferences.GeneralOptions" Operation="DataOperation.UPDATE" FullWidthFields="false" />
+
                 <Fields>
                     <Field ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
                         <Button Clicked="@EditSettings" Class="btn button btn-sized full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">

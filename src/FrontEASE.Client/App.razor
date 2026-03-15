@@ -93,6 +93,8 @@ else
                 {
                     mapper.Map(options, ApplicationContext.UserPreferences);
                 }
+
+                await uiService.CallRequestRefreshAsync();
             }
         }
     }

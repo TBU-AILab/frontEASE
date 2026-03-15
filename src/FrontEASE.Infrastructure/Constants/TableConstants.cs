@@ -21,6 +21,7 @@
         public const string UserPreferenceTags = "UserPreferenceTags";
         public const string UserPreferenceTokenConnectorTypes = "UserPreferenceTokenConnectorTypes";
         public const string UserPreferenceGeneralOptions = "UserPreferenceGeneralOptions";
+        public const string UserPreferenceTaskDataGridColumns = "UserPreferenceTaskDataGridColumns";
 
         /* Data */
         public const string Tasks = "Tasks";
