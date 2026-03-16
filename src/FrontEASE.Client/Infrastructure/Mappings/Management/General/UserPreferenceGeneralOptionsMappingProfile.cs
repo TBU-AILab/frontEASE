@@ -12,7 +12,8 @@ namespace FrontEASE.Client.Infrastructure.Mappings.Management.General
 
         private void CreateMaps()
         {
-            CreateMap<UserPreferenceGeneralOptionsDto, UserPreferenceGeneralOptionsDto>();
+            CreateMap<UserPreferenceGeneralOptionsDto, UserPreferenceGeneralOptionsDto>()
+                .ForMember(x => x.TaskGridColumns, cd => cd.MapFrom(map => map.TaskGridColumns));
         }
     }
 }

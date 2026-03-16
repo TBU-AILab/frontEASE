@@ -27,7 +27,7 @@
 
     private TagDeleteModal deleteModal = new();
 
-    private bool IsUserTag => PageContext.UserPreferences.TagOptions.Any(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
+    private bool IsUserTag => PageContext.LoggedInUser.UserPreferences.TagOptions.Any(x => string.Equals(x.Tag, Tag.Tag, StringComparison.InvariantCultureIgnoreCase));
     private bool CanDelete => PageContext.LoggedInUser.Role == UserRole.OWNER || (IsUserTag && Tag.TaskCount == 0);
 
     private Task ShowDeleteModal() => deleteModal.ShowModal();

@@ -8,7 +8,6 @@ namespace FrontEASE.Client.Contexts.Specific
         public ManagementPageContext(ApplicationContext appContext)
         {
             LoggedInUser = appContext.LoggedInUser;
-            UserPreferences = appContext.UserPreferences;
 
             ConnectorTypes = [];
             ModuleTypes = [];

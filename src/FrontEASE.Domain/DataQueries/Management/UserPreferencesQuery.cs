@@ -6,5 +6,6 @@
         public bool LoadConnectorTypes { get; set; }
         public bool LoadTagOptions { get; set; }
         public bool LoadGeneralOptions { get; set; }
+        public bool LoadTaskGridColumns { get; set; }
     }
 }

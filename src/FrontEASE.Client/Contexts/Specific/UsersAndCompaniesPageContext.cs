@@ -8,7 +8,6 @@ namespace FrontEASE.Client.Contexts.Specific
         public UsersAndCompaniesPageContext(ApplicationContext appContext)
         {
             LoggedInUser = appContext.LoggedInUser;
-            UserPreferences = appContext.UserPreferences;
 
             Companies = [];
             Users = [];

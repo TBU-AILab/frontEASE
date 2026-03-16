@@ -9,5 +9,9 @@
         /* Tags */
         public const string User = "User";
         public const string All = "All";
+
+        /* General pref - subview */
+        public const string General = "General";
+        public const string Tasks = "Tasks";
     }
 }

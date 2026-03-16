@@ -1,4 +1,5 @@
 ﻿using FrontEASE.Domain.Entities.Base.Tracked;
+using FrontEASE.Domain.Entities.Management.General.Columns;
 using FrontEASE.Shared.Data.Enums.Users.Preferences.GeneralOptions;
 
 namespace FrontEASE.Domain.Entities.Management.General
@@ -8,11 +9,13 @@ namespace FrontEASE.Domain.Entities.Management.General
         public UserPreferenceGeneralOptions()
         {
             UserPreferences = null!;
+            TaskGridColumns = [];
         }
 
         #region Navigation
 
         public UserPreferences UserPreferences { get; set; }
+        public IList<UserPreferenceGeneralOptionTaskGridColumn> TaskGridColumns { get; set; }
 
         #endregion
 

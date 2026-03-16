@@ -14,9 +14,12 @@ namespace FrontEASE.Application.Infrastructure.Mappings.Management.General
         private void CreateMaps()
         {
             CreateMap<UserPreferenceGeneralOptions, UserPreferenceGeneralOptionsDto>()
+                .ForMember(x => x.TaskGridColumns, cd => cd.MapFrom(map => map.TaskGridColumns))
                 .ReverseMap();
 
             CreateMap<UserPreferenceGeneralOptions, UserPreferenceGeneralOptions>()
+                .ForMember(x => x.TaskGridColumns, cd => cd.MapFrom(map => map.TaskGridColumns))
+
                 .ForMember(x => x.ID, opt => opt.Ignore())
                 .ForMember(x => x.UserPreferences, opt => opt.Ignore());
         }

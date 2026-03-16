@@ -12,7 +12,6 @@ namespace FrontEASE.Client.Contexts.Specific
         public TasksPageContext(ApplicationContext appContext)
         {
             LoggedInUser = appContext.LoggedInUser;
-            UserPreferences = appContext.UserPreferences;
 
             ViewMetadata = new();
             Tasks = [];

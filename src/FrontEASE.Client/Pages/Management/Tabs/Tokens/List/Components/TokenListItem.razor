@@ -23,7 +23,7 @@
                     <Row Margin="Margin.Is2.FromTop" Class="text-break">
                         <Column TextAlignment="TextAlignment.Center">
                             <Span Class="font-large text-custom-primary fst-italic" TextOverflow="TextOverflow.Wrap" TextColor="TextColor.Muted">
-                                @switch (PageContext.UserPreferences.GeneralOptions.TokenVisibility)
+                                @switch (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TokenVisibility)
                                 {
                                     case TokenVisibility.VISIBLE:
                                         @Token.Token
@@ -42,7 +42,7 @@
             </Column>
             <Column ColumnSize="ColumnSize.Is2.OnWidescreen">
                 <Column Display="Display.None.InlineBlock.OnWidescreen" ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.End" Class="align-self-center">
-                    @if (PageContext.UserPreferences.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE)
+                    @if (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE)
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource(isTokenShown ? $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Hide}" : $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Show}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                             <Icon Class="action-icon action-icon-secondary" Name="@(isTokenShown? IconName.EyeSlash: IconName.Eye)" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => SwitchTokenVisibility())" />
@@ -56,7 +56,7 @@
                     </Tooltip>
                 </Column>
                 <Column Display="Display.None.OnWidescreen" ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Center" Class="align-self-center">
-                    @if (PageContext.UserPreferences.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE)
+                    @if (PageContext.LoggedInUser.UserPreferences.GeneralOptions.TokenVisibility == TokenVisibility.TRUNCATED_WITH_TOGGLE)
                     {
                         <Tooltip Multiline="true" Text="@(resourceHandler.GetResource(isTokenShown ? $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Hide}" : $"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Show}"))" Display="Display.InlineBlock" Padding="Padding.Is1.FromEnd" Placement="TooltipPlacement.Top">
                             <Icon Class="action-icon action-icon-secondary" Name="@(isTokenShown? IconName.EyeSlash: IconName.Eye)" IconSize="IconSize.Large" IconStyle="IconStyle.Solid" Clicked="@(() => SwitchTokenVisibility())" />

@@ -13,6 +13,7 @@ using FrontEASE.Application.Infrastructure.Mappings.Companies;
 using FrontEASE.Application.Infrastructure.Mappings.Management;
 using FrontEASE.Application.Infrastructure.Mappings.Management.Core;
 using FrontEASE.Application.Infrastructure.Mappings.Management.General;
+using FrontEASE.Application.Infrastructure.Mappings.Management.General.Columns;
 using FrontEASE.Application.Infrastructure.Mappings.Management.Tags;
 using FrontEASE.Application.Infrastructure.Mappings.Management.Tokens;
 using FrontEASE.Application.Infrastructure.Mappings.Management.Tokens.Connectors;
@@ -443,6 +444,7 @@ void SetupMappings()
         cfg.AddProfile(new UserPreferencesTagOptionMappingProfile());
         cfg.AddProfile(new UserPreferencesTokenOptionMappingProfile());
         cfg.AddProfile(new UserPreferencesGeneralOptionsMappingProfile());
+        cfg.AddProfile(new UserPreferenceGeneralOptionTaskGridColumnMappingProfile());
         cfg.AddProfile(new UserPreferencesTokenOptionConnectorMappingProfile());
         cfg.AddProfile(new GlobalPreferencesMappingProfile());
         cfg.AddProfile(new CorePackageMappingProfile());

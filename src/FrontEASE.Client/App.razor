@@ -88,11 +88,7 @@ else
                 }
 
                 await uiService.AssureResourcesInitialized();
-                var options = await managementApiService.LoadPreferences();
-                if (options is not null)
-                {
-                    mapper.Map(options, ApplicationContext.UserPreferences);
-                }
+                await uiService.CallRequestRefreshAsync();
             }
         }
     }

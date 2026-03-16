@@ -3,6 +3,7 @@ using FrontEASE.Domain.Entities.Companies;
 using FrontEASE.Domain.Entities.Jobs;
 using FrontEASE.Domain.Entities.Management;
 using FrontEASE.Domain.Entities.Management.General;
+using FrontEASE.Domain.Entities.Management.General.Columns;
 using FrontEASE.Domain.Entities.Management.Tags;
 using FrontEASE.Domain.Entities.Management.Tokens;
 using FrontEASE.Domain.Entities.Management.Tokens.Connectors;
@@ -26,6 +27,7 @@ using FrontEASE.Infrastructure.Data.Configuration.Jobs;
 using FrontEASE.Infrastructure.Data.Configuration.Management;
 using FrontEASE.Infrastructure.Data.Configuration.Management.Modules;
 using FrontEASE.Infrastructure.Data.Configuration.Management.Modules.Connectors;
+using FrontEASE.Infrastructure.Data.Configuration.Management.Modules.GeneralOptions;
 using FrontEASE.Infrastructure.Data.Configuration.Shared.Addresses;
 using FrontEASE.Infrastructure.Data.Configuration.Shared.CountryCodes;
 using FrontEASE.Infrastructure.Data.Configuration.Shared.Images;
@@ -68,6 +70,7 @@ namespace FrontEASE.Infrastructure.Data
         public DbSet<UserPreferenceTagOption> UserPreferenceTagOptions { get; set; }
         public DbSet<UserPreferenceTokenOptionConnectorType> UserPreferenceTokenOptionConnectorTypes { get; set; }
         public DbSet<UserPreferenceGeneralOptions> UserPreferenceGeneralOptions { get; set; }
+        public DbSet<UserPreferenceGeneralOptionTaskGridColumn> UserPreferenceGeneralOptionTaskGridColumns { get; set; }
 
         /* Tasks */
         public DbSet<Domain.Entities.Tasks.Task> Tasks { get; set; }
@@ -108,6 +111,7 @@ namespace FrontEASE.Infrastructure.Data
             builder.ApplyConfiguration(new UserPreferenceTokenOptionsConfiguration());
             builder.ApplyConfiguration(new UserPreferenceTagOptionsConfiguration());
             builder.ApplyConfiguration(new UserPreferenceGeneralOptionsConfiguration());
+            builder.ApplyConfiguration(new UserPreferenceGeneralOptionTaskGridColumnConfiguration());
             builder.ApplyConfiguration(new UserPreferenceTokenOptionConnectorTypeConfiguration());
 
             builder.ApplyConfiguration(new TaskConfiguration());

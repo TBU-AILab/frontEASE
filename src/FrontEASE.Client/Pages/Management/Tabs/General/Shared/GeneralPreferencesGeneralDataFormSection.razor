@@ -1,0 +1,77 @@
+﻿@inject IResourceHandler resourceHandler
+
+<Container Fluid Border="Border.Is1.Rounded" Shadow="Shadow.Small" Class="border-custom-light" Padding="Padding.Is3.FromBottom" Margin="Margin.Is5.FromBottom">
+    <Row>
+        <Column ColumnSize="ColumnSize.IsFull">
+            <Container Fluid>
+                <FormSectionHeader DisplayText="@(resourceHandler.GetResource($"{AttributeExtensions.GetResourceFieldValue<UserPreferencesDto>(nameof(UserPreferencesDto.GeneralOptions), PropertyDisplayResourceType.FIELD)}.{ManagementMetadataConstants.General}"))" />
+            </Container>
+        </Column>
+
+        <Divider Class="divider-section bg-custom-light" Shadow="Shadow.Small" />
+
+        <Column ColumnSize="ColumnSize.Is12" Padding="Padding.Is3.FromTop">
+            <Container Fluid>
+                <Row>
+                    <Fields>
+                        <Validation>
+                            <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
+                                <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))" RequiredIndicator>
+                                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.ColorScheme), PropertyDisplayResourceType.FIELD)))
+                                </FieldLabel>
+                                <Select @bind-Value="@GeneralPreferencesModel.ColorScheme" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.ColorScheme)))">
+                                    <ChildContent>
+                                        @foreach (var colorScheme in Enum.GetValues(typeof(ColorScheme)))
+                                        {
+                                            <SelectItem TValue="ColorScheme" Value="@((ColorScheme)colorScheme)">
+                                                @(resourceHandler.GetResource(((ColorScheme)colorScheme).GetEnumResourceValue()))
+                                            </SelectItem>
+                                        }
+                                    </ChildContent>
+                                    <Feedback>
+                                        <ValidationError Multiline="true" />
+                                    </Feedback>
+                                </Select>
+                            </Field>
+                        </Validation>
+
+                        <Validation>
+                            <Field ColumnSize="@(FullWidthFields ? ColumnSize.IsFull : ColumnSize.Is6.OnWidescreen)">
+                                <FieldLabel For="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility)))" RequiredIndicator>
+                                    @(resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<UserPreferenceGeneralOptionsDto>(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility), PropertyDisplayResourceType.FIELD)))
+                                </FieldLabel>
+                                <Select @bind-Value="@GeneralPreferencesModel.TokenVisibility" ElementId="@(GetElementIdByOperation(nameof(UserPreferenceGeneralOptionsDto.TokenVisibility)))">
+                                    <ChildContent>
+                                        @foreach (var tokenOption in Enum.GetValues(typeof(TokenVisibility)))
+                                        {
+                                            <SelectItem TValue="TokenVisibility" Value="@((TokenVisibility)tokenOption)">
+                                                @(resourceHandler.GetResource(((TokenVisibility)tokenOption).GetEnumResourceValue()))
+                                            </SelectItem>
+                                        }
+                                    </ChildContent>
+                                    <Feedback>
+                                        <ValidationError Multiline="true" />
+                                    </Feedback>
+                                </Select>
+                            </Field>
+                        </Validation>
+                    </Fields>
+                </Row>
+            </Container>
+        </Column>
+    </Row>
+</Container>
+
+@code {
+
+    [Parameter]
+    public UserPreferenceGeneralOptionsDto GeneralPreferencesModel { get; set; } = new();
+
+    [Parameter]
+    public DataOperation Operation { get; set; }
+
+    [Parameter]
+    public bool FullWidthFields { get; set; }
+
+    private string GetElementIdByOperation(string elementBase) => VisualisationHelper.GetElementIdByOperation<UserPreferenceGeneralOptionsDto>(elementBase, Operation, null);
+}

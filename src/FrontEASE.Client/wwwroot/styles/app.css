@@ -444,7 +444,7 @@ a, .btn-link {
     border: 1px solid white;
 }
 
-.b-is-autocomplete > .form-control{
+.b-is-autocomplete > .form-control {
     border: none !important;
 }
 
@@ -452,6 +452,46 @@ a, .btn-link {
 /* CUSTOM CLASSES - SHARED */
 .EasyMDEContainer {
     text-align: left;
+}
+
+.dropdown-full-width {
+    border: 0 !important;
+    border-radius: .25rem;
+}
+
+    .dropdown-full-width > button {
+        font-weight: 600;
+        width: 100%;
+        min-height: calc(1.5em + 0.94rem + calc(var(--bs-border-width) * 2));
+        height: auto;
+        white-space: normal;
+        word-break: break-word;
+        text-align: center;
+    }
+
+.dropdown-menu-full-width {
+    width: 100%;
+    min-width: 100%;
+}
+
+.dropdown-menu-item-full-width .form-check-label {
+    margin-left: 1.5rem;
+}
+
+.dropdown-full-width > .dropdown-menu-full-width.dropdown-menu-position-strategy-fixed {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+}
+
+.dropdown-menu-full-width .form-check-input {
+    margin-top: 0 !important;
+}
+
+.dropdown-menu-full-width .form-check-label {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 0;
 }
 
 .vertical-divider {
@@ -819,7 +859,7 @@ nav.navbar {
     z-index: 3;
 }
 
-.navbar-dropdown-menu{
+.navbar-dropdown-menu {
     border: 0 !important;
 }
 

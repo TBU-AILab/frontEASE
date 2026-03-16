@@ -94,14 +94,14 @@
         if (await Validations.ValidateAll())
         {
             mapper.Map(TokenModel, Token);
-            PageContext.UserPreferences.TokenOptions.Remove(Token);
-            PageContext.UserPreferences.TokenOptions.Insert(0, Token);
+            PageContext.LoggedInUser.UserPreferences.TokenOptions.Remove(Token);
+            PageContext.LoggedInUser.UserPreferences.TokenOptions.Insert(0, Token);
 
-            var editedPreferences = await managementApiService.UpdatePreferences(PageContext.UserPreferences);
+            var editedPreferences = await managementApiService.UpdatePreferences(PageContext.LoggedInUser.UserPreferences);
 
             if (editedPreferences is not null)
             {
-                mapper.Map(editedPreferences, PageContext.UserPreferences);
+                mapper.Map(editedPreferences, PageContext.LoggedInUser.UserPreferences);
                 var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")}: {string.Join(", ", TokenModel.ConnectorTypes.Select(x => x.ConnectorType))} ({TextHelper.TruncateString(Token.Token, TextConstants.TokenDisplayLength)})";
                 toastService.ShowSuccess(message);
 

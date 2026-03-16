@@ -17,6 +17,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Management.Modules
             builder.HasOne(e => e.UserPreferences)
                .WithOne(e => e.GeneralOptions)
                .HasForeignKey<UserPreferences>(e => e.GeneralOptionsID);
+
+            builder.HasMany(e => e.TaskGridColumns)
+                .WithOne(e => e.GeneralOptions);
         }
     }
 }
