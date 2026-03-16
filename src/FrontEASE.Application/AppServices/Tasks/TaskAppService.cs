@@ -131,8 +131,17 @@ namespace FrontEASE.Application.AppServices.Tasks
 
         public async Task<IList<TaskDto>> Duplicate(Guid id, TaskDuplicateActionRequestDto request, CancellationToken cancellationToken)
         {
+            var userMail = contextAccessor.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
+            var user = await userService.Load(userMail, cancellationToken);
+            var currentUserID = Guid.Parse(user!.Id);
+
             var duplicatedEntity = await taskService.Load(id, cancellationToken);
-            var duplicates = await taskService.Duplicate(duplicatedEntity, request.Name, request.Copies, cancellationToken);
+
+            var isOwner = duplicatedEntity.AuthorID == currentUserID;
+            var isSuperadmin = user?.UserRole?.RoleId == appSettings.AuthSettings?.Defaults?.Roles?.SuperadminGuid?.ToString();
+            var preserveLinkedEntities = isOwner || isSuperadmin;
+
+            var duplicates = await taskService.Duplicate(duplicatedEntity, request.Name, request.Copies, currentUserID, preserveLinkedEntities, cancellationToken);
             var duplicatesDto = mapper.Map<IList<TaskDto>>(duplicates);
             return duplicatesDto;
         }

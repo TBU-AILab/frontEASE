@@ -34,7 +34,7 @@
                 <Fields>
                     <FieldLabel For="@(GetElementIdByOperation(nameof(TaskDuplicateActionRequestDto.Copies)))" RequiredIndicator>
                         <Span>
-                            @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Copies), PropertyDisplayResourceType.FIELD))}")
+                            @($"{resourceHandler.GetResource(AttributeExtensions.GetResourceFieldValue<TaskDuplicateActionRequestDto>(nameof(TaskDuplicateActionRequestDto.Copies), PropertyDisplayResourceType.FIELD))}: ")
                         </Span>
                         <Span TextWeight="TextWeight.Bold">
                             @(CloneModel.Copies)
