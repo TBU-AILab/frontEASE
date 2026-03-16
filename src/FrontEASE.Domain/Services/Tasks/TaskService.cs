@@ -142,16 +142,23 @@ namespace FrontEASE.Domain.Services.Tasks
             return updated;
         }
 
-        public async Task<IList<Entities.Tasks.Task>> Duplicate(Entities.Tasks.Task task, string baseName, int copies, CancellationToken cancellationToken)
+        public async Task<IList<Entities.Tasks.Task>> Duplicate(Entities.Tasks.Task task, string baseName, int copies, Guid authorID, bool preserveLinkedEntities, CancellationToken cancellationToken)
         {
             var duplicates = new List<Entities.Tasks.Task>();
+            var connectedEntities = await SelectConnectedEntities(task, cancellationToken);
+
+            if (!preserveLinkedEntities)
+            {
+                var currentUser = await userRepository.Load(authorID, cancellationToken) ?? throw new NotFoundException();
+                connectedEntities = ([currentUser], [], connectedEntities.Tags);
+            }
+
             for (var i = 0; i < copies; i++)
             {
                 var newTask = new Entities.Tasks.Task();
                 mapper.Map(task, newTask);
-                newTask.AuthorID = task.AuthorID;
+                newTask.AuthorID = authorID;
 
-                var connectedEntities = await SelectConnectedEntities(task, cancellationToken);
                 UpdateConnectedEntities(newTask, connectedEntities);
                 CleanTaskRunData(newTask);
 
