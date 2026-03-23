@@ -1,0 +1,78 @@
+@inject IJSRuntime jsRuntime
+
+@implements IAsyncDisposable
+
+<div id="@_elementId" class="code-editor-container"></div>
+
+@code {
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public string Language { get; set; } = "json";
+
+    [Parameter]
+    public bool ReadOnly { get; set; }
+
+    private string _elementId = $"code-editor-{Guid.NewGuid():N}";
+    private bool _initialized;
+    private bool _disposed;
+    private string _lastSetValue = string.Empty;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await jsRuntime.InvokeVoidAsync("codeEditor.create", _elementId, Language, ReadOnly, Value);
+            _lastSetValue = Value;
+            _initialized = true;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!_initialized || _disposed) { return; }
+
+        if (Value != _lastSetValue)
+        {
+            await jsRuntime.InvokeVoidAsync("codeEditor.setValue", _elementId, Value);
+            _lastSetValue = Value;
+        }
+
+        await jsRuntime.InvokeVoidAsync("codeEditor.setReadOnly", _elementId, ReadOnly);
+    }
+
+    public async Task<string> GetValue()
+    {
+        if (_disposed) { return string.Empty; }
+        var value = await jsRuntime.InvokeAsync<string>("codeEditor.getValue", _elementId);
+        _lastSetValue = value;
+        if (ValueChanged.HasDelegate)
+        {
+            await ValueChanged.InvokeAsync(value);
+        }
+        return value;
+    }
+
+    public async Task SetValue(string value)
+    {
+        if (_disposed || !_initialized) { return; }
+        await jsRuntime.InvokeVoidAsync("codeEditor.setValue", _elementId, value);
+        _lastSetValue = value;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed) { return; }
+        _disposed = true;
+
+        try
+        {
+            await jsRuntime.InvokeVoidAsync("codeEditor.dispose", _elementId);
+        }
+        catch (JSDisconnectedException) { }
+    }
+}

@@ -8,5 +8,7 @@ namespace FrontEASE.Client.Services.ApiServices.Shared.Core
         Task<IList<ModuleImportBulkActionResultDto>> ImportTaskCoreModules(GlobalPreferenceCoreModuleDto modules);
         Task<bool> DeleteTaskCoreModule(string moduleName);
         Task<bool> UpdateCoreModels();
+        Task<string?> GetAvailableModels();
+        Task<bool> SaveAvailableModels(string modelsJson);
     }
 }

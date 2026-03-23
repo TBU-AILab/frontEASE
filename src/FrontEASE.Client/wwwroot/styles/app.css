@@ -1041,3 +1041,10 @@ nav.navbar {
     max-height: 50vh;
     overflow-y: auto !important;
 }
+
+/* CODE EDITOR (Ace) */
+.code-editor-container {
+    min-height: 400px;
+    border: 1px solid var(--b-theme-background-light);
+    border-radius: 4px;
+}

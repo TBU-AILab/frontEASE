@@ -66,6 +66,38 @@ namespace FrontEASE.Domain.Services.Core.Connector
             }
         }
 
+        public async Task<string> GetAvailableModels(CancellationToken cancellationToken)
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/available-models");
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsStringAsync(cancellationToken);
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new ApplicationException($"{nameof(GetAvailableModels)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+        public async Task<bool> SaveAvailableModels(string modelsJson, CancellationToken cancellationToken)
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/available-models");
+            var content = new StringContent(modelsJson, Encoding.UTF8, CoreConnectorConstants.CoreDataAPIFormat);
+
+            var response = await _httpClient.PutAsync(url, content, cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new ApplicationException($"{nameof(SaveAvailableModels)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
         public async Task<bool> DeleteModule(string shortName, CancellationToken cancellationToken)
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/delete/{shortName}");
