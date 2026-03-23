@@ -49,5 +49,31 @@ namespace FrontEASE.Client.Services.ApiServices.Shared.Core
             }
             return true;
         }
+
+        public async Task<string?> GetAvailableModels()
+        {
+            var url = $"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.AvailableModels}";
+            var response = await _client.GetAsync(url);
+            var expectedCodes = new List<HttpStatusCode>() { HttpStatusCode.OK };
+
+            if (!expectedCodes.Contains(response.StatusCode))
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return null;
+            }
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task<bool> SaveAvailableModels(string modelsJson)
+        {
+            var url = $"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.AvailableModels}";
+            var response = await _client.PutAsJsonAsync(url, modelsJson);
+            if (response.StatusCode != HttpStatusCode.NoContent)
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return false;
+            }
+            return true;
+        }
     }
 }

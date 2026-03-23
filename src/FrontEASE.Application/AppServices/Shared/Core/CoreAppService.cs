@@ -46,5 +46,9 @@ namespace FrontEASE.Application.AppServices.Shared.Core
         }
 
         public async Task UpdateModels(CancellationToken cancellationToken) => await coreService.UpdateCoreModels(cancellationToken);
+
+        public async Task<string> GetAvailableModels(CancellationToken cancellationToken) => await coreService.GetAvailableModels(cancellationToken);
+
+        public async Task SaveAvailableModels(string modelsJson, CancellationToken cancellationToken) => await coreService.SaveAvailableModels(modelsJson, cancellationToken);
     }
 }

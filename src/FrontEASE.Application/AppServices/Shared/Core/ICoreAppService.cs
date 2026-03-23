@@ -8,5 +8,7 @@ namespace FrontEASE.Application.AppServices.Shared.Core
         Task<IList<ModuleImportBulkActionResultDto>> ImportModules(GlobalPreferenceCoreModuleDto modulesContent, CancellationToken cancellationToken);
         Task DeleteModule(string shortName, CancellationToken cancellationToken);
         Task UpdateModels(CancellationToken cancellationToken);
+        Task<string> GetAvailableModels(CancellationToken cancellationToken);
+        Task SaveAvailableModels(string modelsJson, CancellationToken cancellationToken);
     }
 }

@@ -97,5 +97,53 @@ namespace FrontEASE.Server.Controllers.Admin
             }
             return result;
         }
+
+        /// <summary>
+        /// Gets the available models configuration
+        /// </summary>
+        /// <returns>Available models JSON content.</returns>
+        [HttpGet($"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.AvailableModels}")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> GetAvailableModels()
+        {
+            IActionResult result;
+            try
+            {
+                var response = await coreAppService.GetAvailableModels(CancellationToken.None);
+                result = GetHttpResult(HttpStatusCode.OK, response);
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Saves the available models configuration
+        /// </summary>
+        /// <param name="modelsJson">JSON string with the available models configuration.</param>
+        /// <returns>No content on success.</returns>
+        [HttpPut($"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.AvailableModels}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType(typeof(BadRequestResultDto), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> SaveAvailableModels([FromBody, Required] string modelsJson)
+        {
+            IActionResult result;
+            try
+            {
+                await coreAppService.SaveAvailableModels(modelsJson, CancellationToken.None);
+                result = GetHttpResult(HttpStatusCode.NoContent);
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
     }
 }
