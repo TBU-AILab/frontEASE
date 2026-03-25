@@ -75,6 +75,8 @@
 
         if (await TaskModalContext.Validations!.ValidateAll())
         {
+            await Console.Out.WriteLineAsync($"UPDATE (Start) - {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)}");
+
             var updatedInfo = await taskApiService.UpdateTask(TaskModalContext.Task.ID, TaskModalContext.Task);
             if (updatedInfo is not null && updatedInfo is TaskDto updated)
             {
@@ -106,6 +108,8 @@
                     if (!string.IsNullOrWhiteSpace(message)) { toastService.ShowError(message); }
                 }
             }
+
+            await Console.Out.WriteLineAsync($"UPDATE (Finish) - {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)}");
         }
 
         await uiService.CallRequestRefreshAsync();

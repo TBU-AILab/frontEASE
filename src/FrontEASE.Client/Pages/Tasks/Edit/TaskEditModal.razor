@@ -117,6 +117,8 @@
             if (token.IsCancellationRequested) { return; }
 
             await uiService.CallRequestRefreshAsync();
+
+            await Console.Out.WriteLineAsync($"OPTIONS REFRESH (Start) - {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)}");
             var updatedInfo = await taskApiService.RefreshTaskOptions(TaskModalContext.Task.ID, TaskModalContext.Task);
 
             if (updatedInfo is null || token.IsCancellationRequested) { return; }
@@ -135,6 +137,7 @@
                     }
                     break;
             }
+            await Console.Out.WriteLineAsync($"OPTIONS REFRESH (Finish) - {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)}");
         }
         catch (TaskCanceledException)
         {
@@ -170,14 +173,18 @@
             }
         }
         else
+        {
+            await Console.Out.WriteLineAsync($"LOAD (Start) - {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)}");
+
+            TaskModalContext.TaskInfo = TaskInfo;
+            var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
+            if (opened is not null)
             {
-                TaskModalContext.TaskInfo = TaskInfo;
-                var opened = await taskApiService.LoadTask(TaskInfo.ID, false);
-                if (opened is not null)
-                {
-                    mapper.Map(opened, TaskModalContext.Task);
-                }
+                mapper.Map(opened, TaskModalContext.Task);
             }
+
+            await Console.Out.WriteLineAsync($"LOAD (Finish) - {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)}");
+        }
 
         isTaskLoading = false;
         await uiService.CallRequestRefreshAsync();

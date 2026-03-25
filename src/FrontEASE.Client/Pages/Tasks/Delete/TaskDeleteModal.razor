@@ -92,6 +92,8 @@
     {
         deletingInProgress = true;
 
+        await Console.Out.WriteLineAsync($"DELETE (Start) - {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)}");
+
         var taskIDs = AffectedTasks.Select(t => t.ID).ToList();
         var deleteResult = await taskApiService.DeleteTasks(taskIDs);
 
@@ -107,6 +109,7 @@
             foreach (var task in toRemoveFromTasks)
             {
                 PageContext.Tasks.Remove(task);
+                await Console.Out.WriteLineAsync($"DELETE (Finish) - {DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture)}");
 
                 var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Delete}")}: {task.Name}";
                 toastService.ShowSuccess(message);
