@@ -24,5 +24,8 @@
         public const string ParameterTagFormat = "ParameterTagFormat";
 
         public const string CorePackageAlreadyPresent = "CorePackageAlreadyPresent";
+
+        public const string JsonEmpty = "JsonEmpty";
+        public const string JsonInvalid = "JsonInvalid";
     }
 }

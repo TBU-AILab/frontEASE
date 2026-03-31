@@ -6,6 +6,7 @@
 
         public const string Module = "module";
         public const string Models = "models";
+        public const string AvailableModels = "available-models";
 
         public const string NameParam = "{name}";
     }

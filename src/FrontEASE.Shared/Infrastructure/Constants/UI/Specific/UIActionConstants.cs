@@ -30,5 +30,7 @@
         public const string Hide = "Hide";
         public const string Show = "Show";
         public const string Share = "Share";
+        public const string Edit = "Edit";
+        public const string Preview = "Preview";
     }
 }

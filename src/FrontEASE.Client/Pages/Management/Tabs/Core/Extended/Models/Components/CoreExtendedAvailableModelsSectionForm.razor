@@ -1,0 +1,184 @@
+@inject IResourceHandler resourceHandler
+@inject ICoreApiService coreApiService
+@inject IUIService uiService
+@inject Blazored.Toast.Services.IToastService toastService
+
+@implements IDisposable
+@implements IAsyncDisposable
+
+@if (!isInitialized)
+{
+    <ContentLoadSpinner />
+}
+else
+{
+    <Column ColumnSize="ColumnSize.IsFull" Display="Display.Block" Margin="Margin.Is2.FromTop.Is4.FromBottom">
+        <Form Margin="Margin.Is4.FromTop" Class="text-form-size">
+            <Fields>
+                <Field ColumnSize="ColumnSize.Is12">
+                    <CodeEditor @ref="codeEditorRef"
+                                Value="@modelsJsonContent"
+                                Language="json"
+                                ReadOnly="@(saveInProgress || loadInProgress)" />
+                </Field>
+            </Fields>
+
+            @if (!string.IsNullOrWhiteSpace(validationError))
+            {
+                <Fields>
+                    <Field ColumnSize="ColumnSize.Is12">
+                        <Alert Color="Color.Danger" Visible>
+                            <AlertMessage>
+                                @validationError
+                            </AlertMessage>
+                        </Alert>
+                    </Field>
+                </Fields>
+            }
+
+            <Fields>
+                <Row>
+                    <Column ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.Is5.FromTop">
+                        <Button Color="Color.Primary" Clicked="@LoadModels" Class="btn button btn-sized full-width" Disabled="@(loadInProgress || saveInProgress)" TextWeight="TextWeight.Bold">
+                            @if (loadInProgress)
+                            {
+                                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                            }
+                            else
+                            {
+                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}"))
+                            }
+                        </Button>
+                    </Column>
+                    <Column ColumnSize="ColumnSize.Is3.OnWidescreen" Margin="Margin.IsAuto.FromStart.Is5.FromTop">
+                        <Button Class="btn button btn-sized full-width bg-custom-info text-custom-info" Clicked="@SaveModels" Disabled="@(saveInProgress || loadInProgress)" TextWeight="TextWeight.Bold">
+                            @if (saveInProgress)
+                            {
+                                <SpinnerButton DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" SmallControlSpinner="true" TextSize="TextSize.Medium" />
+                            }
+                            else
+                            {
+                                @(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))
+                            }
+                        </Button>
+                    </Column>
+                </Row>
+            </Fields>
+        </Form>
+    </Column>
+}
+
+@code {
+    private CodeEditor? codeEditorRef;
+    private string modelsJsonContent = string.Empty;
+    private string? validationError;
+
+    private bool isInitialized;
+    private bool loadInProgress;
+    private bool saveInProgress;
+    private bool isDisposed;
+
+    private async Task RefreshViewAsync()
+    {
+        if (isDisposed) { return; }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        uiService.RefreshRequested += RefreshViewAsync;
+        await LoadModels();
+        isInitialized = true;
+        await base.OnInitializedAsync();
+    }
+
+    private async Task LoadModels()
+    {
+        loadInProgress = true;
+        validationError = null;
+
+        var result = await coreApiService.GetAvailableModels();
+        if (result is not null)
+        {
+            modelsJsonContent = FormatJson(result);
+
+            if (codeEditorRef is not null)
+            {
+                await codeEditorRef.SetValue(modelsJsonContent);
+            }
+
+            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Load}")}";
+            toastService.ShowSuccess(message);
+        }
+
+        loadInProgress = false;
+    }
+
+    private async Task SaveModels()
+    {
+        saveInProgress = true;
+        validationError = null;
+
+        var currentContent = codeEditorRef is not null ? await codeEditorRef.GetValue() : modelsJsonContent;
+
+        if (!ValidateJson(currentContent))
+        {
+            saveInProgress = false;
+            return;
+        }
+
+        var result = await coreApiService.SaveAvailableModels(currentContent);
+        if (result)
+        {
+            var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")}";
+            toastService.ShowSuccess(message);
+        }
+
+        saveInProgress = false;
+    }
+
+    private bool ValidateJson(string json)
+    {
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            validationError = resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.JsonEmpty}");
+            return false;
+        }
+
+        try
+        {
+            System.Text.Json.JsonDocument.Parse(json);
+            return true;
+        }
+        catch (System.Text.Json.JsonException ex)
+        {
+            validationError = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.JsonInvalid}")}: {ex.Message}";
+            return false;
+        }
+    }
+
+    private static string FormatJson(string json)
+    {
+        try
+        {
+            var doc = System.Text.Json.JsonDocument.Parse(json);
+            return System.Text.Json.JsonSerializer.Serialize(doc, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+        }
+        catch
+        {
+            return json;
+        }
+    }
+
+    public void Dispose()
+    {
+        isDisposed = true;
+        uiService.RefreshRequested -= RefreshViewAsync;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
+    }
+}
