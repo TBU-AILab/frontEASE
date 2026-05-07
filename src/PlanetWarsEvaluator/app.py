@@ -1,0 +1,322 @@
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import uuid
+from pathlib import Path
+from typing import Any, Literal
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+
+
+MAX_TIMEOUT_SEC = int(os.getenv("EVALUATOR_MAX_TIMEOUT_SEC", "180"))
+MAX_CODE_CHARS = int(os.getenv("EVALUATOR_MAX_CODE_CHARS", "120000"))
+PLANETWARS_PYTHONPATH = os.getenv(
+    "PLANETWARS_PYTHONPATH",
+    "/opt/planet-wars-rts/app/src/main/python",
+)
+
+
+OpponentName = Literal[
+    "PureRandomAgent",
+    "CarefulRandomAgent",
+    "GreedyHeuristicAgent",
+]
+
+
+
+VideoOpponentName = Literal[
+    "PureRandomAgent",
+    "CarefulRandomAgent",
+    "GreedyHeuristicAgent",
+]
+
+
+class VideoRenderRequest(BaseModel):
+    agent_code: str = Field(..., min_length=1)
+    class_name: str = Field(default="MyAgent", min_length=1)
+
+    n_videos: int = Field(default=3, ge=1, le=50)
+    opponent: VideoOpponentName = "GreedyHeuristicAgent"
+
+    candidate_player: Literal["Player1", "Player2"] = "Player1"
+    partial_observability: bool = False
+
+    seed: int = 12345
+    timeout_sec: int = Field(default=180, ge=1, le=3600)
+
+    fps: int = Field(default=20, ge=1, le=60)
+    frame_stride: int = Field(default=2, ge=1, le=100)
+
+    game_params: dict[str, Any] = Field(
+        default_factory=lambda: {
+            "num_planets": 20,
+            "max_ticks": 2000,
+            "new_map_each_run": True,
+        }
+    )
+
+    keep_output_chars: int = Field(default=6000, ge=0, le=50000)
+
+
+class VideoRenderResponse(BaseModel):
+    ok: bool
+    report_id: str | None = None
+    report_dir: str | None = None
+    videos: list[dict[str, Any]] = Field(default_factory=list)
+    errors: list[str] = Field(default_factory=list)
+    stdout: str = ""
+    stderr: str = ""
+
+
+class CustomOpponent(BaseModel):
+    name: str = Field(..., min_length=1)
+    agent_code: str = Field(..., min_length=1)
+    class_name: str = Field(default="MyAgent", min_length=1)
+
+
+class EvaluationRequest(BaseModel):
+    agent_code: str = Field(..., min_length=1)
+    class_name: str = Field(default="MyAgent", min_length=1)
+    n_games: int = Field(default=30, ge=1, le=1000)
+    opponents: list[OpponentName] = Field(
+        default_factory=lambda: ["CarefulRandomAgent", "GreedyHeuristicAgent"]
+    )
+    custom_opponents: list[CustomOpponent] = Field(default_factory=list)
+
+    partial_observability: bool = False
+    play_both_sides: bool = True
+    seed: int = 12345
+    timeout_sec: int = Field(default=60, ge=1, le=3600)
+
+    game_params: dict[str, Any] = Field(
+        default_factory=lambda: {
+            "num_planets": 20,
+            "max_ticks": 2000,
+            "new_map_each_run": True,
+        }
+    )
+
+    keep_output_chars: int = Field(default=6000, ge=0, le=50000)
+
+
+class EvaluationResponse(BaseModel):
+    ok: bool
+    fitness: float | None = None
+    aggregate: dict[str, Any] | None = None
+    by_opponent: dict[str, Any] | None = None
+    config: dict[str, Any] | None = None
+    errors: list[str] = Field(default_factory=list)
+    stdout: str = ""
+    stderr: str = ""
+
+
+app = FastAPI(
+    title="PlanetWars Evaluator",
+    version="0.2.0",
+    description="Evaluation API for generated Planet Wars agents.",
+)
+
+
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+
+REPORTS_DIR = os.getenv("PLANETWARS_REPORTS_DIR", "/planetwars_reports")
+
+@app.post("/render_videos", response_model=VideoRenderResponse)
+def render_videos(request: VideoRenderRequest) -> VideoRenderResponse:
+    if len(request.agent_code) > MAX_CODE_CHARS:
+        raise HTTPException(
+            status_code=413,
+            detail=f"agent_code is too large. Max allowed: {MAX_CODE_CHARS} chars.",
+        )
+
+    timeout_sec = min(request.timeout_sec, MAX_TIMEOUT_SEC)
+    report_id = f"planetwars_{uuid.uuid4().hex}"
+    report_dir = Path(REPORTS_DIR) / report_id
+    report_dir.mkdir(parents=True, exist_ok=True)
+
+    with tempfile.TemporaryDirectory(prefix="planetwars_video_") as tmp:
+        tmp_path = Path(tmp)
+
+        candidate_file = tmp_path / "candidate_agent.py"
+        request_file = tmp_path / "video_request.json"
+        output_file = tmp_path / "video_result.json"
+
+        candidate_file.write_text(request.agent_code, encoding="utf-8")
+
+        runner_request = request.model_dump()
+        runner_request.pop("agent_code", None)
+
+        request_file.write_text(
+            json.dumps(runner_request, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = f"{PLANETWARS_PYTHONPATH}:/app:{tmp}"
+        env["PYTHONDONTWRITEBYTECODE"] = "1"
+
+        cmd = [
+            sys.executable,
+            "/app/video_runner.py",
+            str(candidate_file),
+            str(request_file),
+            str(output_file),
+            str(report_dir),
+        ]
+
+        try:
+            completed = subprocess.run(
+                cmd,
+                cwd=str(tmp_path),
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=timeout_sec,
+                check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            return VideoRenderResponse(
+                ok=False,
+                report_id=report_id,
+                report_dir=str(report_dir),
+                errors=[f"Video rendering timed out after {timeout_sec} seconds."],
+                stdout=(exc.stdout or "")[-request.keep_output_chars:],
+                stderr=(exc.stderr or "")[-request.keep_output_chars:],
+            )
+
+        stdout = (completed.stdout or "")[-request.keep_output_chars:]
+        stderr = (completed.stderr or "")[-request.keep_output_chars:]
+
+        if not output_file.exists():
+            return VideoRenderResponse(
+                ok=False,
+                report_id=report_id,
+                report_dir=str(report_dir),
+                errors=[
+                    "Video runner did not produce video_result.json.",
+                    f"Runner return code: {completed.returncode}",
+                ],
+                stdout=stdout,
+                stderr=stderr,
+            )
+
+        data = json.loads(output_file.read_text(encoding="utf-8"))
+
+        return VideoRenderResponse(
+            ok=bool(data.get("ok", False)),
+            report_id=report_id,
+            report_dir=str(report_dir),
+            videos=data.get("videos", []),
+            errors=data.get("errors", []),
+            stdout=stdout,
+            stderr=stderr,
+        )
+
+@app.post("/evaluate", response_model=EvaluationResponse)
+def evaluate(request: EvaluationRequest) -> EvaluationResponse:
+    total_code_chars = len(request.agent_code) + sum(
+        len(op.agent_code) for op in request.custom_opponents
+    )
+
+    if total_code_chars > MAX_CODE_CHARS:
+        raise HTTPException(
+            status_code=413,
+            detail=(
+                f"Total submitted code is too large. "
+                f"Max allowed: {MAX_CODE_CHARS} chars."
+            ),
+        )
+
+    timeout_sec = min(request.timeout_sec, MAX_TIMEOUT_SEC)
+
+    with tempfile.TemporaryDirectory(prefix="planetwars_eval_") as tmp:
+        tmp_path = Path(tmp)
+
+        candidate_file = tmp_path / "candidate_agent.py"
+        request_file = tmp_path / "request.json"
+        output_file = tmp_path / "result.json"
+
+        candidate_file.write_text(request.agent_code, encoding="utf-8")
+
+        runner_request = request.model_dump()
+        runner_request.pop("agent_code", None)
+
+        request_file.write_text(
+            json.dumps(runner_request, ensure_ascii=False),
+            encoding="utf-8",
+        )
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = f"{PLANETWARS_PYTHONPATH}:/app:{tmp}"
+        env["PYTHONDONTWRITEBYTECODE"] = "1"
+        env["PLANETWARS_EVAL_ID"] = str(uuid.uuid4())
+
+        cmd = [
+            sys.executable,
+            "/app/runner.py",
+            str(candidate_file),
+            str(request_file),
+            str(output_file),
+        ]
+
+        try:
+            completed = subprocess.run(
+                cmd,
+                cwd=str(tmp_path),
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=timeout_sec,
+                check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            return EvaluationResponse(
+                ok=False,
+                fitness=None,
+                errors=[f"Evaluation timed out after {timeout_sec} seconds."],
+                stdout=(exc.stdout or "")[-request.keep_output_chars :],
+                stderr=(exc.stderr or "")[-request.keep_output_chars :],
+            )
+
+        stdout = (completed.stdout or "")[-request.keep_output_chars :]
+        stderr = (completed.stderr or "")[-request.keep_output_chars :]
+
+        if not output_file.exists():
+            return EvaluationResponse(
+                ok=False,
+                fitness=None,
+                errors=[
+                    "Runner did not produce result.json.",
+                    f"Runner return code: {completed.returncode}",
+                ],
+                stdout=stdout,
+                stderr=stderr,
+            )
+
+        try:
+            data = json.loads(output_file.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            return EvaluationResponse(
+                ok=False,
+                fitness=None,
+                errors=[f"Could not parse result.json: {exc}"],
+                stdout=stdout,
+                stderr=stderr,
+            )
+
+        return EvaluationResponse(
+            ok=bool(data.get("ok", False)),
+            fitness=data.get("fitness"),
+            aggregate=data.get("aggregate"),
+            by_opponent=data.get("by_opponent"),
+            config=data.get("config"),
+            errors=data.get("errors", []),
+            stdout=stdout,
+            stderr=stderr,
+        )
