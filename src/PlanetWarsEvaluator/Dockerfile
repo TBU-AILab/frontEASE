@@ -30,7 +30,8 @@ COPY runner.py /app/runner.py
 COPY video_runner.py /app/video_runner.py
 
 RUN useradd --create-home --shell /usr/sbin/nologin evaluator \
-    && chown -R evaluator:evaluator /app
+    && mkdir -p /planetwars_reports \
+    && chown -R evaluator:evaluator /app /planetwars_reports
 
 USER evaluator
 

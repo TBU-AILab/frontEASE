@@ -50,14 +50,60 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./src/FoP_IMT.Core:/app
+      - planetwars_reports:/planetwars_reports
     ports:
       - "8086:8086"
     networks:
       - fop-imt-network
+    environment:
+      - PLANETWARS_EVALUATOR_URL=http://planetwars-evaluator:8090
+      - PLANETWARS_REPORTS_DIR=/planetwars_reports
+
+  planetwars-evaluator:
+    build:
+      context: ./src/PlanetWarsEvaluator
+      dockerfile: Dockerfile
+      args:
+        PLANETWARS_REPO: https://github.com/SimonLucas/planet-wars-rts.git
+        PLANETWARS_REF: main
+    ports:
+      - "8090:8090"
+    networks:
+      - fop-imt-network
+    environment:
+      - PLANETWARS_PYTHONPATH=/opt/planet-wars-rts/app/src/main/python
+      - PLANETWARS_REPORTS_DIR=/planetwars_reports
+      - EVALUATOR_MAX_TIMEOUT_SEC=1000
+      - EVALUATOR_MAX_CODE_CHARS=120000
+    volumes:
+      - planetwars_reports:/planetwars_reports:rw
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,size=256m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 256
+    mem_limit: 1g
+    cpus: "1.0"
+    init: true
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8090/health').read()",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
   images_data:
+  planetwars_reports:
 
 networks:
   fop-imt-network:
