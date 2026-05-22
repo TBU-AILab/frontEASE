@@ -1,0 +1,53 @@
+site_name: FrontEASE User Manual
+site_description: User documentation for FrontEASE, the frontend interface for the EASE framework.
+site_author: TBU A.I. Lab
+
+repo_name: TBU-AILab/frontEASE
+repo_url: https://github.com/TBU-AILab/frontEASE
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+
+  palette:
+    - scheme: default
+      primary: blue grey
+      accent: blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: blue grey
+      accent: blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.blocks.caption
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Getting started:
+      - Installation and first run: getting-started/installation.md
+      - Interface overview: getting-started/interface-overview.md
+  - User guide:
+      - Users and management: user-guide/users-and-management.md

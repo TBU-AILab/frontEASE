@@ -55,6 +55,18 @@ services:
     networks:
       - fop-imt-network
 
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile.docs
+    container_name: frontease-docs
+    working_dir: /docs
+    volumes:
+      - ./:/docs
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   images_data:
