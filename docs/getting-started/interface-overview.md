@@ -213,4 +213,4 @@ The following pages of this manual explain these steps in more detail.
 
 ## Next step
 
-Continue with the first practical tutorial: creating and running a simple task.
+Continue with [Users and management](../user-guide/users-and-management.md).

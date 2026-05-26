@@ -146,4 +146,4 @@ Depending on your local state, you may also need to remove old containers or vol
 
 ## Next step
 
-After the application starts successfully, continue with the [Interface overview](getting-started/interface-overview.md) and the first task tutorial.
+After the application starts successfully, continue with the [Interface overview](getting-started/interface-overview.md).

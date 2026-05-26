@@ -275,3 +275,7 @@ Configure tokens, tags, general settings, or core settings
 ```
 
 For normal experiment work, most users will spend more time in task-related pages. The users and management sections are mainly used when preparing or maintaining the FrontEASE instance.
+
+## Next step
+
+Lets create the [First task](../user-guide/first-text-task.md).
