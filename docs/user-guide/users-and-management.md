@@ -250,7 +250,7 @@ Core Packages tab.
 Only change core settings if you understand their effect on the running FrontEASE instance.
 
 !!! danger "Core settings"
-Incorrect core settings may affect application behavior. In a shared or production-like setup, coordinate changes with the person responsible for maintaining the FrontEASE instance.
+    Incorrect core settings may affect application behavior. In a shared or production-like setup, coordinate changes with the person responsible for maintaining the FrontEASE instance.
 
 ---
 

@@ -21,7 +21,7 @@ Final result
 ```
 
 !!! note "Demo task"
-This tutorial uses a creative writing task only as a simple demonstration. The same workflow can later be used for more technical tasks, such as algorithm generation, code generation, optimization, or evaluation-driven experiments.
+    This tutorial uses a creative writing task only as a simple demonstration. The same workflow can later be used for more technical tasks, such as algorithm generation, code generation, optimization, or evaluation-driven experiments.
 
 ---
 
@@ -96,7 +96,7 @@ Basic information for the robot-and-sandwich demo task.
 ///
 
 !!! tip
-Use a clear task name. It will make the task easier to find later in screenshots, lists, and result views.
+    Use a clear task name. It will make the task easier to find later in screenshots, lists, and result views.
 
 ---
 
@@ -251,7 +251,7 @@ Stopping condition module selected for the example task.
 ///
 
 !!! note "Module names"
-The names in your interface may differ from the names used in this manual. Select the available modules that correspond to text generation, evaluation, feedback, and stopping conditions.
+    The names in your interface may differ from the names used in this manual. Select the available modules that correspond to text generation, evaluation, feedback, and stopping conditions.
 
 ---
 
