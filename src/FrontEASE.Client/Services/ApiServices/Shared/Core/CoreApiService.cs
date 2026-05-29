@@ -38,6 +38,32 @@ namespace FrontEASE.Client.Services.ApiServices.Shared.Core
             return true;
         }
 
+        public async Task<string?> GetTaskCoreModuleContent(string moduleName)
+        {
+            var url = $"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Module}/{moduleName}";
+            var response = await _client.GetAsync(url);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return null;
+            }
+            var result = await response.Content.ReadFromJsonAsync<CoreModuleContentDto>();
+            return result?.Content;
+        }
+
+        public async Task<bool> UpdateTaskCoreModule(string moduleName, string content)
+        {
+            var url = $"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Module}/{moduleName}";
+            var payload = new CoreModuleContentDto { Content = content };
+            var response = await _client.PutAsJsonAsync(url, payload);
+            if (response.StatusCode != HttpStatusCode.NoContent)
+            {
+                await _errorHandlingService.HandleErrorResponse(response);
+                return false;
+            }
+            return true;
+        }
+
         public async Task<bool> UpdateCoreModels()
         {
             var url = $"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Models}";
