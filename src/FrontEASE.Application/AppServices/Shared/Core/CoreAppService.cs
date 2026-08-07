@@ -45,6 +45,17 @@ namespace FrontEASE.Application.AppServices.Shared.Core
             await typelistService.LoadModuleTypes(true, cancellationToken);
         }
 
+        public async Task<string> ReadModule(string shortName, CancellationToken cancellationToken)
+        {
+            return await coreService.ReadCoreModule(shortName, cancellationToken);
+        }
+
+        public async Task UpdateModule(string shortName, string content, CancellationToken cancellationToken)
+        {
+            await coreService.UpdateCoreModule(shortName, content, cancellationToken);
+            await typelistService.LoadModuleTypes(true, cancellationToken);
+        }
+
         public async Task UpdateModels(CancellationToken cancellationToken) => await coreService.UpdateCoreModels(cancellationToken);
 
         public async Task<string> GetAvailableModels(CancellationToken cancellationToken) => await coreService.GetAvailableModels(cancellationToken);

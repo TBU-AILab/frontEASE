@@ -147,6 +147,9 @@ namespace FrontEASE.Infrastructure.Data.Configuration.Shared.Resources.Defaults
 
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.JsonEmpty}", Value="JSON content cannot be empty."},
                 new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.JsonInvalid}", Value="Invalid JSON format"},
+
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ModuleContentNotEmpty}", Value="Module content cannot be empty." },
+                new Resource(){ CountryCodeID = LanguageCode.EN, ResourceCode = $"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ModuleContentPythonSyntax}", Value="Module content must contain at least one class or function definition." },
             ];
         }
 
