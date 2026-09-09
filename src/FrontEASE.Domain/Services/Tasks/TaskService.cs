@@ -142,6 +142,23 @@ namespace FrontEASE.Domain.Services.Tasks
             return updated;
         }
 
+        public async Task<IList<Entities.Tasks.Task>> BulkUpdate(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken)
+        {
+            await using var transaction = await taskRepository.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                await coreService.HandleTaskBulkInit(tasks, cancellationToken);
+                var updated = await taskRepository.UpdateRange(tasks, cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+                return updated;
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
+        }
+
         public async Task<IList<Entities.Tasks.Task>> Duplicate(Entities.Tasks.Task task, string baseName, int copies, Guid authorID, bool preserveLinkedEntities, CancellationToken cancellationToken)
         {
             var duplicates = new List<Entities.Tasks.Task>();

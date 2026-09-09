@@ -4,6 +4,7 @@ using FrontEASE.Client.Services.ModelManipulationServices.Tasks;
 using FrontEASE.Shared.Data.DTOs.Companies;
 using FrontEASE.Shared.Data.DTOs.Shared.Users;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
+using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Results;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.Results;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
@@ -147,6 +148,23 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
                     return task;
                 case HttpStatusCode.UnprocessableContent:
                     taskManipulationService.AssignTaskModules(updateTaskDto, PreservedModules);
+                    return await response.Content.ReadFromJsonAsync<TaskUnprocessableResultDto>();
+                default:
+                    await _errorHandlingService.HandleErrorResponse(response);
+                    return null;
+            }
+        }
+
+        public async Task<ITaskOperationResultDto?> BulkEditTasks(TaskBulkEditRequestDto request)
+        {
+            var url = $"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.BulkEdit}";
+            var response = await _client.PutAsJsonAsync(url, request);
+
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.OK:
+                    return await response.Content.ReadFromJsonAsync<TaskBulkEditResultDto>();
+                case HttpStatusCode.UnprocessableContent:
                     return await response.Content.ReadFromJsonAsync<TaskUnprocessableResultDto>();
                 default:
                     await _errorHandlingService.HandleErrorResponse(response);

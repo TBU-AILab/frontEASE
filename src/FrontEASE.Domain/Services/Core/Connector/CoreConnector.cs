@@ -220,6 +220,40 @@ namespace FrontEASE.Domain.Services.Core.Connector
             }
         }
 
+        public async Task HandleTaskBulkInit(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken)
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/batch/task");
+            var request = tasks.Select(task => new TaskBulkUpdateItemCoreDto
+            {
+                TaskID = task.ID,
+                TaskConfiguration = _mapper.Map<TaskConfigFullCoreDto>(task)
+            }).ToList();
+
+            var response = await _httpClient.PutAsJsonAsync(url, request, cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadFromJsonAsync<IList<TaskInfoCoreDto>>(_serializerOptions, cancellationToken);
+                foreach (var responseTask in responseData ?? [])
+                {
+                    var matchingTask = tasks.FirstOrDefault(task => task.ID == responseTask.ID);
+                    if (matchingTask is not null)
+                    {
+                        _mapper.Map(responseTask, matchingTask);
+                    }
+                }
+                return;
+            }
+
+            if (response.StatusCode == HttpStatusCode.UnprocessableContent)
+            {
+                var validationError = await response.Content.ReadFromJsonAsync<CoreValidationError>(_serializerOptions, cancellationToken);
+                throw new UnprocessableException(ParseValidationMessages(validationError!));
+            }
+
+            var failResult = await response.Content.ReadAsStringAsync(cancellationToken);
+            throw new ApplicationException($"{nameof(HandleTaskBulkInit)} FAILED - Exception: {failResult}");
+        }
+
         public async Task<bool> HandleTaskDelete(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken)
         {
             var taskIDs = tasks.Select(x => x.ID);
