@@ -11,6 +11,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
     {
         Task HandleTaskCreate(Entities.Tasks.Task task, CancellationToken cancellationToken);
         Task HandleTaskInit(Entities.Tasks.Task task, CancellationToken cancellationToken);
+        Task HandleTaskBulkInit(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken);
         Task HandleTaskDuplicate(IList<Entities.Tasks.Task> tasks, Guid origTaskID, string baseName, int copies, CancellationToken cancellationToken);
         Task<bool> HandleTaskDelete(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken);
         Task RefreshTaskOptions(Entities.Tasks.Task task, CancellationToken cancellationToken);
