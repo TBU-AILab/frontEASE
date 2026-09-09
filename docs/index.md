@@ -73,3 +73,14 @@ Developer-level topics, such as implementing new modules or changing the interna
 ## Next step
 
 Continue with [Installation and first run](getting-started/installation.md).
+
+## Manual map
+
+- New users: [Interface overview](getting-started/interface-overview.md) and [Create your first task](user-guide/first-text-task.md)
+- Experiment setup: [Tasks, modules, and iterations](concepts/tasks-and-modules.md) and [Task management](user-guide/task-management.md)
+- Batch workflows: [Edit multiple tasks](user-guide/bulk-edit.md)
+- Run review: [Results and downloads](user-guide/results-and-downloads.md)
+- Administration: [Users and management](user-guide/users-and-management.md)
+- Exact permissions: [Roles, states, and actions](reference/roles-states-actions.md)
+- Developers: [Architecture and APIs](reference/architecture-and-apis.md)
+- Local operators: [Troubleshooting](operations/troubleshooting.md)

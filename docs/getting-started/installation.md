@@ -47,10 +47,10 @@ PYTHON_BASE_URL="http://localhost:8086"
 ```
 
 !!! note "About SEED_DB"
-For the first run, keep `SEED_DB="true"` so that the database is initialized with seed data. For later runs, you may want to set it to `false` if you do not want the database to be recreated.
+    For the first run, keep `SEED_DB="true"` so that the database is initialized with seed data. Set it to `false` for later starts when you want to preserve the existing database.
 
 !!! warning "Changing database credentials"
-If you change `POSTGRES_USER` or `POSTGRES_PASSWORD`, make sure the corresponding connection strings in the application configuration are updated as well.
+    The Docker Compose configuration builds the server connection string from these values. If you run services outside Compose, update that environment's connection string too.
 
 ## Start the application
 
@@ -72,6 +72,12 @@ To see logs, use:
 
 ```bash
 docker compose logs
+```
+
+Follow the application services while diagnosing a request:
+
+```bash
+docker compose logs -f dotnet-server backend-core
 ```
 
 To stop the application, use:
@@ -142,8 +148,8 @@ SEED_DB="true"
 
 Then restart the containers.
 
-Depending on your local state, you may also need to remove old containers or volumes before reinitializing the database.
+Recreating the database volume destroys existing local data. Back up anything important before removing volumes.
 
 ## Next step
 
-After the application starts successfully, continue with the [Interface overview](getting-started/interface-overview.md).
+After the application starts successfully, continue with the [Interface overview](interface-overview.md).

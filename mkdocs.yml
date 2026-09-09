@@ -49,6 +49,16 @@ nav:
   - Getting started:
       - Installation and first run: getting-started/installation.md
       - Interface overview: getting-started/interface-overview.md
+  - Core concepts:
+      - Tasks, modules, and iterations: concepts/tasks-and-modules.md
   - User guide:
+      - Task management: user-guide/task-management.md
+      - Create your first task: user-guide/first-text-task.md
+      - Edit multiple tasks: user-guide/bulk-edit.md
+      - Results and downloads: user-guide/results-and-downloads.md
       - Users and management: user-guide/users-and-management.md
-      - First task: user-guide/first-text-task.md
+  - Reference:
+      - Roles, states, and actions: reference/roles-states-actions.md
+      - Architecture and APIs: reference/architecture-and-apis.md
+  - Operations:
+      - Troubleshooting: operations/troubleshooting.md

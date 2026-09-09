@@ -25,9 +25,9 @@ After successful login, the application opens the main interface.
 
 ---
 
-## Main dashboard
+## Main workspace
 
-The main dashboard is the starting point for working with FrontEASE. It provides access to existing tasks, task creation, task details, and other available sections of the application.
+After login, FrontEASE opens the Tasks workspace. It provides access to existing tasks, task creation, task details, and state-dependent actions.
 
 ![FrontEASE main dashboard](../assets/screenshots/main-dashboard.png)
 
@@ -35,7 +35,7 @@ The main dashboard is the starting point for working with FrontEASE. It provides
 Main dashboard after logging into FrontEASE.
 ///
 
-From the dashboard, users can usually:
+From this workspace, users can:
 
 - view existing tasks,
 - create a new task,
@@ -49,9 +49,7 @@ The dashboard is mainly intended as an entry point. Most detailed work is done i
 
 ## Navigation menu
 
-### TODO
-
-The navigation menu provides access to the main parts of the application. Depending on the current version and user permissions, some sections may differ.
+The fixed navigation bar provides the application's primary routes. On smaller screens, use the menu toggle to expand it.
 
 ![FrontEASE navigation menu](../assets/screenshots/navigation-menu.png)
 
@@ -59,15 +57,14 @@ The navigation menu provides access to the main parts of the application. Depend
 Navigation menu with access to the main sections of FrontEASE.
 ///
 
-Common navigation areas include:
+The available entries are:
 
-- task overview,
-- task detail,
-- module configuration,
-- generated messages,
-- generated solutions,
-- results and analysis outputs,
-- system or user-related sections.
+- **Tasks** — the experiment grid and all task workflows;
+- **Users** — user management for Admins and Owners, plus organization management for Owners;
+- **Management** — personal tokens, tags, display preferences, and role-gated core administration;
+- **Hangfire** — background-job dashboard for Owners;
+- **Swagger** — generated server API documentation for Owners;
+- the account menu — signed-in user details and logout.
 
 !!! tip
     If you are new to FrontEASE, start from the task list or dashboard and open an existing seeded example before creating your own task.
@@ -84,7 +81,7 @@ The task list shows available tasks in the system. A task represents one configu
 Task list with available task entries.
 ///
 
-A task entry usually contains information such as:
+A task entry can contain:
 
 - task name or identifier,
 - current task state,
@@ -92,7 +89,7 @@ A task entry usually contains information such as:
 - selected configuration,
 - available actions.
 
-Typical task states may include created, initialized, running, stopped, finished, or failed/interrupted states.
+The states are Created, Initialized, Running, Paused, Stopped, Finished, and Break. Available row and bulk actions change with state.
 
 The task list is useful for checking which experiments already exist and whether they are still running or completed.
 
@@ -108,7 +105,7 @@ The task overview page shows information about a selected task. This is usually 
 Task overview page showing information about a selected task.
 ///
 
-Depending on the task type and configuration, the overview page may include:
+The overview includes:
 
 - basic task information,
 - current state,
@@ -120,7 +117,7 @@ Depending on the task type and configuration, the overview page may include:
 - metadata,
 - available result files or analysis outputs.
 
-This view is important when checking what happened during an iterative EASE run.
+The left pane shows configuration, the center pane shows the chronological message history, and the right pane shows general information, charts, solutions, feedback, metadata, and downloads.
 
 ---
 
@@ -128,21 +125,11 @@ This view is important when checking what happened during an iterative EASE run.
 
 EASE tasks are configured through modules. Modules define what the task does, how solutions are generated, how they are evaluated, and when the run should stop.
 
-In normal use, you select available modules and fill in their parameters. Details about creating or implementing new modules are in the separate section #TODO
-
-<!---
+In normal use, select an available module and fill in the parameters defined by its package. See [Tasks, modules, and iterations](../concepts/tasks-and-modules.md) for the module roles and [Task management](../user-guide/task-management.md) for the complete editor workflow.
 
 ## Messages and solutions
 
-### TODO? Not implemented
-
-During an EASE run, the system may create messages, generated solutions, evaluation results, feedback, and metadata. These are usually shown in a task-specific view.
-
-![FrontEASE messages and solutions](../assets/screenshots/messages-and-solutions.png)
-
-/// caption
-Generated messages and solutions associated with a selected task.
-///
+During an EASE run, the overview displays system, user, and AI messages alongside evaluated solutions. AI cards identify the model where available; solution cards show fitness, feedback, metadata, and a download action.
 
 This section is useful for understanding the iterative process.
 
@@ -161,15 +148,7 @@ For algorithm-generation experiments, the solution is often executable code and 
 
 ## Results and analysis
 
-### TODO? Not implemented
-
-After a task is completed, FrontEASE may provide result summaries, downloadable files, visualizations, or analysis outputs.
-
-![FrontEASE results view](../assets/screenshots/results-view.png)
-
-/// caption
-Results or analysis view for a completed task.
-///
+When solutions exist, FrontEASE displays value-evolution and convergence charts. You can download a single solution archive or the complete set of task solution files.
 
 The available outputs depend on the task configuration and enabled analysis modules.
 
@@ -183,10 +162,7 @@ Typical outputs may include:
 - task metadata,
 - downloadable result packages.
 
-!!! tip
-    For longer experiments, results and analysis outputs are usually the best starting point. Use the detailed messages and solutions view when you need to inspect how the result was produced.
-
---->
+See [Results and downloads](../user-guide/results-and-downloads.md) for a guided tour.
 
 ## Typical user workflow
 
@@ -209,7 +185,7 @@ Inspect generated messages, solutions, feedback, and metadata
   ↓
 Open results and analysis outputs
 ```
-The following pages of this manual explain these steps in more detail.
+The following pages explain these steps in more detail, including single-task and bulk workflows.
 
 ## Next step
 

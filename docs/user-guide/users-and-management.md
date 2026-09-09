@@ -11,7 +11,7 @@ These sections are used to manage application users, organizational information,
 
 ## Users and organizations
 
-The **Users and organizations** section is available from the application navigation menu. It is intended for managing user accounts and, for users with sufficient permissions, company records.
+The **Users** section is available to Admins and Owners. It is intended for managing user accounts and, for Owners, organization records.
 
 ![Users page](../assets/screenshots/users-menu.png)
 
@@ -22,7 +22,7 @@ Users page with available configuration tabs.
 The page is divided into tabs:
 
 - **Users** — manage FrontEASE user accounts.
-- **Organizations** — manage organization records. This tab may be visible only to users with higher administrative permissions.
+- **Organizations** — manage organization records. This tab is visible only to Owners.
 
 ---
 
@@ -77,16 +77,13 @@ After the user is saved, the new account should appear in the user list.
 
 FrontEASE uses roles to control access to selected parts of the interface.
 
-In a typical setup, the most important distinction is between:
+The current roles are:
 
-- Users
-- Administrators
-- Owners
+- **User** — manages owned and shared tasks plus personal management settings;
+- **Admin** — can work across users' tasks, manage users, and administer core packages and modules;
+- **Owner** — has the broadest access, including organization management and Owner/Admin account management.
 
-Administrators can access user-management functionality. Owners may have access to additional system-wide options such as company management or core settings.
-
-!!! note
-    The exact names and available permissions of roles may depend on the current version and configuration of FrontEASE.
+See [Roles, states, and actions](../reference/roles-states-actions.md) for task-state rules.
 
 ---
 
@@ -113,7 +110,7 @@ The **Organizations** tab is used to manage company records.
 Organizations tab with available organization records.
 ///
 
-This section may be available only to users with owner permissions.
+This section is available only to Owners.
 
 An organization record can be used to group users or provide organizational information associated with the FrontEASE instance.
 
@@ -183,7 +180,7 @@ The **Core** tab is intended for administrators or owners.
 
 ## Tokens
 
-The **Tokens** tab is used to manage access tokens or token-related settings.
+The **Tokens** tab stores named credentials for connector modules.
 
 ![Tokens management](../assets/screenshots/tokens-management.png)
 
@@ -191,7 +188,10 @@ The **Tokens** tab is used to manage access tokens or token-related settings.
 Tokens management tab.
 ///
 
-Use this section when you need to add, update, or review token-related configuration used by FrontEASE or related services.
+Each entry has a name, token value, one or more compatible connector types, and an optional description. Task module forms reference the saved entry instead of requiring the token to be pasted into each task.
+
+!!! warning "Credential handling"
+    Treat saved tokens as secrets. Use descriptive names that do not reveal the token value, grant only the required provider scope, and remove credentials that are no longer needed.
 
 ---
 
@@ -205,7 +205,7 @@ The **Tags** tab is used to manage tags.
 Tags management tab.
 ///
 
-Tags can help organize or label items in the application. Depending on the current workflow, tags may be used for easier filtering, grouping, or identification.
+Tags organize tasks and are available in task creation and grid filtering. The page distinguishes the signed-in user's tags from the combined tags available to the instance.
 
 ---
 
@@ -219,15 +219,18 @@ The **General** tab contains general user or application preferences.
 General settings tab.
 ///
 
-Use this section for common configuration that does not belong to a specific task, user, organization, or token.
+Use this section to choose:
 
-The exact available options may change between versions.
+- light or dark color scheme;
+- saved-token visibility behavior;
+- System and User message display formats;
+- which task-grid columns are visible.
 
 ---
 
 ## Core settings
 
-The **Core** tab contains system-level settings and is intended for administrators or owners.
+The **Core** tab contains system-level settings and is available to Admins and Owners.
 
 ![Core packages](../assets/screenshots/core-management-packages.png)
 
@@ -246,6 +249,12 @@ Core Modules tab.
 /// caption
 Core Packages tab.
 ///
+
+The nested tabs are:
+
+- **Packages** — review or install Python package requirements by name and version;
+- **Modules** — review discovered modules, import `.py` or `.zip` module files, and remove modules;
+- **Extended** — inspect available connector models and update model configuration.
 
 Only change core settings if you understand their effect on the running FrontEASE instance.
 
@@ -278,4 +287,4 @@ For normal experiment work, most users will spend more time in task-related page
 
 ## Next step
 
-Lets create the [First task](../user-guide/first-text-task.md).
+Create the [first task](first-text-task.md), or return to the broader [task-management guide](task-management.md).
