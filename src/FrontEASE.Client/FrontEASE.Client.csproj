@@ -40,7 +40,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.12" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12" />
   </ItemGroup>
