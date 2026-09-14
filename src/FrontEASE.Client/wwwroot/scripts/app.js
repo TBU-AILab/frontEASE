@@ -12,7 +12,7 @@
 window.monacoEditors = {};
 
 window.monacoCreate = function (elementId, value, dotNetRef) {
-    require(['vs/editor/editor.main'], function () {
+    window.monacoLoader.load().then(function () {
         const container = document.getElementById(elementId);
         if (!container) return;
 
