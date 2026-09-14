@@ -51,6 +51,56 @@ namespace FrontEASE.Server.Controllers.Admin
         }
 
         /// <summary>
+        /// Gets the source code content of a core module
+        /// </summary>
+        /// <param name="name">Short name of the module.</param>
+        /// <returns>Module source code content.</returns>
+        [HttpGet($"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Module}/{CoreControllerConstants.NameParam}")]
+        [ProducesResponseType(typeof(CoreModuleContentDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> GetCoreModuleContent([FromRoute, Required] string name)
+        {
+            IActionResult result;
+            try
+            {
+                var content = await coreAppService.ReadModule(name, CancellationToken.None);
+                result = GetHttpResult(HttpStatusCode.OK, new CoreModuleContentDto { Content = content });
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Updates the source code content of a core module
+        /// </summary>
+        /// <param name="name">Short name of the module.</param>
+        /// <param name="moduleContent">New module source code content.</param>
+        /// <returns>No content.</returns>
+        [HttpPut($"{CoreControllerConstants.BaseUrl}/{CoreControllerConstants.Module}/{CoreControllerConstants.NameParam}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> UpdateCoreModule([FromRoute, Required] string name, [FromBody, Required] CoreModuleContentDto moduleContent)
+        {
+            IActionResult result;
+            try
+            {
+                ValidateModel();
+                await coreAppService.UpdateModule(name, moduleContent.Content, CancellationToken.None);
+                result = GetHttpResult(HttpStatusCode.NoContent);
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                result = GetHttpResult(response!.StatusCode, response);
+            }
+            return result;
+        }
+
+        /// <summary>
         /// Deletes the core module
         /// </summary>
         /// <param name="name">Short name of the deleted module.</param>

@@ -1,0 +1,55 @@
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<div id="@EditorId" style="height: @Height; border: 1px solid #333; border-radius: 4px;"></div>
+
+@code {
+    [Parameter]
+    public string Value { get; set; } = string.Empty;
+
+    [Parameter]
+    public EventCallback<string> ValueChanged { get; set; }
+
+    [Parameter]
+    public string Height { get; set; } = "460px";
+
+    private string EditorId { get; set; } = $"monaco-python-{Guid.NewGuid():N}";
+    private DotNetObjectReference<PythonCodeEditor>? dotNetRef;
+    private bool isInitialized = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            dotNetRef = DotNetObjectReference.Create(this);
+            await JSRuntime.InvokeVoidAsync("monacoCreate", EditorId, Value, dotNetRef);
+            isInitialized = true;
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnContentChanged(string newValue)
+    {
+        Value = newValue;
+        await ValueChanged.InvokeAsync(newValue);
+    }
+
+    public async Task SetValue(string value)
+    {
+        Value = value;
+        if (isInitialized)
+        {
+            await JSRuntime.InvokeVoidAsync("monacoSetValue", EditorId, value);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (isInitialized)
+        {
+            try { await JSRuntime.InvokeVoidAsync("monacoDispose", EditorId); }
+            catch { }
+        }
+        dotNetRef?.Dispose();
+    }
+}

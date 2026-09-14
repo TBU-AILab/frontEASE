@@ -17,6 +17,8 @@
     <link rel="stylesheet" href="styles/toast.css" />
 
     <link rel="icon" type="image/png" href="favicon.ico" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/editor/editor.main.css" />
 </head>
 
 <body>
@@ -29,6 +31,10 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.36.5/src-min-noconflict/ace.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs/loader.js"></script>
+    <script>
+        require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.0/min/vs' } });
+    </script>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="scripts/code-editor.js"></script>
     <script src="scripts/app.js"></script>

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FrontEASE.DataContracts.Converters.Tasks.Parameters;
 using FrontEASE.DataContracts.Models.Core.Errors;
+using FrontEASE.Shared.Data.DTOs.Management.Core.Modules;
 using FrontEASE.DataContracts.Models.Core.Packages;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
@@ -110,6 +111,34 @@ namespace FrontEASE.Domain.Services.Core.Connector
             {
                 var failResult = await response.Content.ReadAsStringAsync(cancellationToken);
                 throw new ApplicationException($"{nameof(DeleteModule)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+        public async Task<string> ReadModule(string shortName, CancellationToken cancellationToken)
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/read/{shortName}");
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<CoreModuleContentDto>(_serializerOptions, cancellationToken);
+                return result?.Content ?? string.Empty;
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new ApplicationException($"{nameof(ReadModule)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+        public async Task UpdateModule(string shortName, string content, CancellationToken cancellationToken)
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/update/{shortName}");
+            var payload = new { content };
+            var response = await _httpClient.PutAsJsonAsync(url, payload, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                var failResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new ApplicationException($"{nameof(UpdateModule)} - Call FAILED - Exception: {failResult}");
             }
         }
 
