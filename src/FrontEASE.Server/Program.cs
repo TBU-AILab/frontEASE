@@ -104,6 +104,7 @@ SetupJobs();
 SetupMvc();
 SetupAuth();
 SetupSwaggerGen();
+SetupCors();
 SetupMonitoring();
 
 /* Application */
@@ -304,21 +305,35 @@ void SetupArchitecture()
 }
 
 
-void SetupMonitoring()
+void SetupCors()
 {
-    if (settings?.SentrySettings?.IsEnabled == true)
+    builder.Services.AddCors(options =>
     {
-        builder.Services.AddCors(options =>
+        options.AddPolicy("AllowAll", builder =>
         {
-            options.AddPolicy("AllowAll", builder =>
+            builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .WithHeaders("Content-Type", "Authorization", "sentry-trace", "baggage");
+        });
+
+        if (settings?.SentrySettings?.IsEnabled == true)
+        {
+            options.AddPolicy("AllowSentryTrace", builder =>
             {
                 builder
                     .AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .WithHeaders("Content-Type", "Authorization", "sentry-trace", "baggage");
+                    .WithHeaders("sentry-trace", "baggage");
             });
-        });
+        }
+    });
+}
 
+void SetupMonitoring()
+{
+    if (settings?.SentrySettings?.IsEnabled == true)
+    {
         var sentrySettings = settings?.SentrySettings!;
         _ = builder.WebHost.UseSentry(o =>
         {
