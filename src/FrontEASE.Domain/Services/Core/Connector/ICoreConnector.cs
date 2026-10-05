@@ -11,6 +11,7 @@ namespace FrontEASE.Domain.Services.Core.Connector
     {
         Task HandleTaskCreate(Entities.Tasks.Task task, CancellationToken cancellationToken);
         Task HandleTaskInit(Entities.Tasks.Task task, CancellationToken cancellationToken);
+        Task HandleTaskBulkInit(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken);
         Task HandleTaskDuplicate(IList<Entities.Tasks.Task> tasks, Guid origTaskID, string baseName, int copies, CancellationToken cancellationToken);
         Task<bool> HandleTaskDelete(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken);
         Task RefreshTaskOptions(Entities.Tasks.Task task, CancellationToken cancellationToken);
@@ -20,6 +21,8 @@ namespace FrontEASE.Domain.Services.Core.Connector
         Task<FileStreamResult> DownloadTaskSolution(Guid taskID, Guid messageID, CancellationToken cancellationToken);
         Task ImportModule(Entities.Shared.Files.File moduleFile, CancellationToken cancellationToken);
         Task<bool> DeleteModule(string shortName, CancellationToken cancellationToken);
+        Task<string> ReadModule(string shortName, CancellationToken cancellationToken);
+        Task UpdateModule(string shortName, string content, CancellationToken cancellationToken);
         Task<bool> UpdateModels(CancellationToken cancellationToken);
         Task<string> GetAvailableModels(CancellationToken cancellationToken);
         Task<bool> SaveAvailableModels(string modelsJson, CancellationToken cancellationToken);

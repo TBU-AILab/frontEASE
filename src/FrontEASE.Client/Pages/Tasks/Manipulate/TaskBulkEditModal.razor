@@ -1,0 +1,320 @@
+@inject IMapper mapper
+@inject ITaskApiService taskApiService
+@inject IUIService uiService
+@inject Blazored.Toast.Services.IToastService toastService
+
+<Modal @ref="BulkEditModal"
+       @bind-Visible="isModalVisible"
+       Closing="OnModalClosing"
+       Class="modal-dialog-wide"
+       Border="Border.Rounded"
+       Centered>
+    @if (isModalVisible)
+    {
+        <ModalContent Shadow="Shadow.Small">
+            <GenericModalHeader DisplayText="@($"Edit {AffectedTasks.Count} selected tasks")" />
+
+            <ModalBody Padding="Padding.Is0" Class="bg-custom-primary text-custom-primary">
+                @if (isLoading)
+                {
+                    <ContentLoadSpinner />
+                }
+                else
+                {
+                    <Container Fluid Padding="Padding.Is3">
+                        <Alert Color="Color.Info" Visible>
+                            Enable only the changes you want to apply. Unselected settings remain different for each task.
+                            Added tests and other repeatable modules are merged by type and short name.
+                        </Alert>
+
+                        <FormSectionHeader DisplayText="General settings" />
+                        <Row Margin="Margin.Is2.FromTop.Is4.FromBottom">
+                            <Column ColumnSize="ColumnSize.Is4.OnWidescreen">
+                                <Check TValue="bool" @bind-Value="Fields.OptimizationGoal" Class="checkbox-medium">
+                                    Change optimization goal
+                                </Check>
+                            </Column>
+                            <Column ColumnSize="ColumnSize.Is8.OnWidescreen">
+                                @if (Fields.OptimizationGoal)
+                                {
+                                    <Select @bind-Value="TemplateTask.Config.OptimizationGoal">
+                                        @foreach (var goal in Enum.GetValues<OptimizationGoalType>())
+                                        {
+                                            <SelectItem TValue="OptimizationGoalType" Value="@goal">@goal</SelectItem>
+                                        }
+                                    </Select>
+                                }
+                            </Column>
+
+                            <Column ColumnSize="ColumnSize.Is4.OnWidescreen" Margin="Margin.Is2.FromTop">
+                                <Check TValue="bool" @bind-Value="Fields.MaxContextSize" Class="checkbox-medium">
+                                    Change maximum context size
+                                </Check>
+                            </Column>
+                            <Column ColumnSize="ColumnSize.Is8.OnWidescreen" Margin="Margin.Is2.FromTop">
+                                @if (Fields.MaxContextSize)
+                                {
+                                    <FieldLabel>Maximum context size: @MaxContextSizeDisplayValue</FieldLabel>
+                                    <Slider @bind-Value="TemplateTask.Config.MaxContextSize" Step="1" Min="-1" Max="50" />
+                                }
+                            </Column>
+
+                            <Column ColumnSize="ColumnSize.Is4.OnWidescreen" Margin="Margin.Is2.FromTop">
+                                <Check TValue="bool" @bind-Value="Fields.FeedbackFromSolution" Class="checkbox-medium">
+                                    Change solution feedback
+                                </Check>
+                            </Column>
+                            <Column ColumnSize="ColumnSize.Is8.OnWidescreen" Margin="Margin.Is2.FromTop">
+                                @if (Fields.FeedbackFromSolution)
+                                {
+                                    <Check TValue="bool" @bind-Value="TemplateTask.Config.FeedbackFromSolution" Class="checkbox-medium">
+                                        Send solution feedback to the model
+                                    </Check>
+                                }
+                            </Column>
+                        </Row>
+
+                        <FormSectionHeader DisplayText="Prompts" />
+                        <Row Margin="Margin.Is2.FromTop.Is4.FromBottom">
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Check TValue="bool" @bind-Value="Fields.SystemMessage" Class="checkbox-medium">
+                                    Change system message
+                                </Check>
+                                @if (Fields.SystemMessage)
+                                {
+                                    <Markdown @bind-Value="TemplateTask.Config.SystemMessage"
+                                              NativeSpellcheck="false"
+                                              SpellChecker="false"
+                                              UploadImage="false" />
+                                }
+                            </Column>
+                            <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
+                                <Check TValue="bool" @bind-Value="Fields.InitialMessage" Class="checkbox-medium">
+                                    Change initial message
+                                </Check>
+                                @if (Fields.InitialMessage)
+                                {
+                                    <Markdown @bind-Value="TemplateTask.Config.InitialMessage"
+                                              NativeSpellcheck="false"
+                                              SpellChecker="false"
+                                              UploadImage="false" />
+                                }
+                            </Column>
+                            <Column ColumnSize="ColumnSize.IsFull" Margin="Margin.Is3.FromTop">
+                                <Check TValue="bool" @bind-Value="Fields.RepeatedMessage" Class="checkbox-medium">
+                                    Change repeated-message configuration
+                                </Check>
+                                @if (Fields.RepeatedMessage)
+                                {
+                                    <Fields>
+                                        <TaskConfigRepeatedMessageDataFormSection TaskModalContext="ModalContext" />
+                                    </Fields>
+                                }
+                            </Column>
+                        </Row>
+
+                        <FormSectionHeader DisplayText="Primary modules" />
+                        <Row Margin="Margin.Is2.FromTop.Is4.FromBottom">
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Check TValue="bool" @bind-Value="Fields.Connector" Class="checkbox-medium">
+                                    Change LLM connector
+                                </Check>
+                                @if (Fields.Connector)
+                                {
+                                    <TaskModuleDataFormSection TaskModalContext="ModalContext"
+                                        TaskModuleContext="@(CreateSingleModuleContext(TemplateTask.Config.Connector, ModuleType.LLM_CONNECTOR, "Connector"))" />
+                                }
+                            </Column>
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Check TValue="bool" @bind-Value="Fields.Evaluator" Class="checkbox-medium">
+                                    Change evaluator
+                                </Check>
+                                @if (Fields.Evaluator)
+                                {
+                                    <TaskModuleDataFormSection TaskModalContext="ModalContext"
+                                        TaskModuleContext="@(CreateSingleModuleContext(TemplateTask.Config.Evaluator, ModuleType.EVALUATOR, "Evaluator"))" />
+                                }
+                            </Column>
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Check TValue="bool" @bind-Value="Fields.Solution" Class="checkbox-medium">
+                                    Change solution type
+                                </Check>
+                                @if (Fields.Solution)
+                                {
+                                    <TaskModuleDataFormSection TaskModalContext="ModalContext"
+                                        TaskModuleContext="@(CreateSingleModuleContext(TemplateTask.Config.Solution, ModuleType.SOLUTION, "Solution"))" />
+                                }
+                            </Column>
+                        </Row>
+
+                        <FormSectionHeader DisplayText="Add or update repeatable modules" />
+                        <Row Margin="Margin.Is2.FromTop">
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Check TValue="bool" @bind-Value="Fields.Tests" Class="checkbox-medium">Tests</Check>
+                                @if (Fields.Tests)
+                                {
+                                    <TaskModuleDataItemFormSection TaskModalContext="ModalContext"
+                                        TaskModuleContext="@(CreateCollectionModuleContext(ModuleType.TEST, "Tests"))"
+                                        Modules="TemplateTask.Config.Tests" />
+                                }
+                            </Column>
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Check TValue="bool" @bind-Value="Fields.StoppingConditions" Class="checkbox-medium">Stopping conditions</Check>
+                                @if (Fields.StoppingConditions)
+                                {
+                                    <TaskModuleDataItemFormSection TaskModalContext="ModalContext"
+                                        TaskModuleContext="@(CreateCollectionModuleContext(ModuleType.STOPPING_CONDITION, "Stopping conditions"))"
+                                        Modules="TemplateTask.Config.StoppingConditions" />
+                                }
+                            </Column>
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Check TValue="bool" @bind-Value="Fields.Analyses" Class="checkbox-medium">Analyses</Check>
+                                @if (Fields.Analyses)
+                                {
+                                    <TaskModuleDataItemFormSection TaskModalContext="ModalContext"
+                                        TaskModuleContext="@(CreateCollectionModuleContext(ModuleType.ANALYSIS, "Analyses"))"
+                                        Modules="TemplateTask.Config.Analyses" />
+                                }
+                            </Column>
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <Check TValue="bool" @bind-Value="Fields.Stats" Class="checkbox-medium">Statistics</Check>
+                                @if (Fields.Stats)
+                                {
+                                    <TaskModuleDataItemFormSection TaskModalContext="ModalContext"
+                                        TaskModuleContext="@(CreateCollectionModuleContext(ModuleType.STATISTIC, "Statistics"))"
+                                        Modules="TemplateTask.Config.Stats" />
+                                }
+                            </Column>
+                        </Row>
+                    </Container>
+                }
+            </ModalBody>
+
+            <ModalFooter Class="bg-custom-secondary border-custom-light">
+                <Button Clicked="Hide" Color="Color.Danger" Class="btn button btn-sized" Disabled="isSaving">
+                    Cancel
+                </Button>
+                <Button Clicked="Apply"
+                        Color="Color.Info"
+                        Class="btn button btn-sized"
+                        Disabled="@(isSaving || isLoading || !Fields.HasChanges())">
+                    @if (isSaving)
+                    {
+                        <SpinnerButton DisplayText="Applying changes" SmallControlSpinner="true" />
+                    }
+                    else
+                    {
+                        @($"Apply to {AffectedTasks.Count} tasks")
+                    }
+                </Button>
+            </ModalFooter>
+        </ModalContent>
+    }
+</Modal>
+
+@code {
+    [CascadingParameter]
+    public TasksPageContext PageContext { get; set; } = null!;
+
+    public IList<TaskInfoDto> AffectedTasks { get; set; } = [];
+
+    private Modal BulkEditModal = new();
+    private TaskDto TemplateTask = new();
+    private TaskBulkEditFieldsDto Fields = new();
+    private TaskModalContext ModalContext = new(new(), new(), new(), new(), DataOperation.UPDATE, new());
+
+    private bool isModalVisible;
+    private bool isLoading;
+    private bool isSaving;
+
+    private string MaxContextSizeDisplayValue =>
+        TemplateTask.Config.MaxContextSize < 0 ? double.PositiveInfinity.ToString() : TemplateTask.Config.MaxContextSize.ToString();
+
+    public async Task Show(IList<TaskInfoDto> affectedTasks)
+    {
+        AffectedTasks = affectedTasks.ToList();
+        Fields = new();
+        isLoading = true;
+        isModalVisible = true;
+        await BulkEditModal.Show();
+
+        var loaded = await taskApiService.LoadTask(AffectedTasks[0].ID, false);
+        if (loaded is null)
+        {
+            await Hide();
+            return;
+        }
+
+        TemplateTask = loaded;
+        TemplateTask.Config.Tests.Clear();
+        TemplateTask.Config.StoppingConditions.Clear();
+        TemplateTask.Config.Analyses.Clear();
+        TemplateTask.Config.Stats.Clear();
+
+        ModalContext = new(
+            TemplateTask,
+            AffectedTasks[0],
+            new(),
+            BulkEditModal,
+            DataOperation.UPDATE,
+            new(),
+            new EditContext(TemplateTask));
+
+        isLoading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private TaskModuleContext CreateSingleModuleContext(TaskModuleDto module, ModuleType type, string name) =>
+        new(module, TemplateTask.Config.AvailableModules.Where(option => option.PackageType == type).ToList(), name);
+
+    private TaskModuleContext CreateCollectionModuleContext(ModuleType type, string name) =>
+        new(new TaskModuleDto(), TemplateTask.Config.AvailableModules.Where(option => option.PackageType == type).ToList(), name);
+
+    private async Task Apply()
+    {
+        isSaving = true;
+        var template = mapper.Map<TaskConfigDto>(TemplateTask.Config);
+        template.AvailableModules.Clear();
+
+        var result = await taskApiService.BulkEditTasks(new TaskBulkEditRequestDto
+        {
+            TaskIDs = AffectedTasks.Select(task => task.ID).ToList(),
+            Template = template,
+            Fields = Fields
+        });
+
+        switch (result)
+        {
+            case TaskBulkEditResultDto success:
+                foreach (var updated in success.Tasks)
+                {
+                    var existing = PageContext.Tasks.FirstOrDefault(task => task.ID == updated.ID);
+                    if (existing is not null)
+                    {
+                        mapper.Map(updated, existing);
+                    }
+                }
+                toastService.ShowSuccess($"Updated {success.Tasks.Count} tasks.");
+                await BulkEditModal.Hide();
+                break;
+            case TaskUnprocessableResultDto invalid:
+                toastService.ShowError(string.Join(Environment.NewLine, invalid.Errors));
+                break;
+        }
+
+        isSaving = false;
+        await uiService.CallRequestRefreshAsync();
+    }
+
+    private Task Hide() => BulkEditModal.Hide();
+
+    private Task OnModalClosing(ModalClosingEventArgs args)
+    {
+        args.Cancel = args.CloseReason != CloseReason.UserClosing;
+        if (!args.Cancel)
+        {
+            isModalVisible = false;
+        }
+        return Task.CompletedTask;
+    }
+}

@@ -9,6 +9,17 @@
 @if (SelectedTasks.Count > 1 && isBulkActionEnabled)
 {
     <Column ColumnSize="ColumnSize.IsFull" TextAlignment="TextAlignment.Start">
+        @if (IsBulkEditEnabled)
+        {
+            <Button Color="Color.Info"
+                    Margin="Margin.Is2.FromEnd"
+                    Class="btn btn-sized button"
+                    Clicked="@(() => ShowBulkEditModal(SelectedTasks))">
+                <Icon Name="IconName.Pen" IconSize="IconSize.Default" IconStyle="IconStyle.Solid" />
+                <Text>Edit selected</Text>
+            </Button>
+        }
+
         @if (IsBulkRunEnabled)
         {
             <Button Color="Color.Success"
@@ -431,6 +442,7 @@
 <TaskCloneModal @ref="CloneModal" TaskInfo="TaskInfo" Operation="DataOperation.UPDATE" />
 <TaskOverviewModal @ref="OverviewModal" TaskInfo="TaskInfo" Operation="DataOperation.READ" />
 <TaskChangeStateModal @ref="ChangeStateModal" />
+<TaskBulkEditModal @ref="BulkEditModal" />
 
 @if ((TaskInfo?.Author?.Id == PageContext.LoggedInUser.Id || TaskInfo?.Author?.Id is null) || PageContext.LoggedInUser.Role == UserRole.OWNER)
 {
@@ -460,6 +472,7 @@
     private TaskDeleteModal DeleteModal = new();
     private TaskChangeStateModal ChangeStateModal = new();
     private TaskCloneModal CloneModal = new();
+    private TaskBulkEditModal BulkEditModal = new();
     private TaskInfoDto TaskInfo = new();
 
     private DataGrid<TaskInfoDto> TaskInfoGrid { get; set; } = new();
@@ -479,8 +492,9 @@
     private bool IsBulkRunEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => runnableTaskStates.Contains(task.State));
     private bool IsBulkPauseEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => pauseableTaskStates.Contains(task.State));
     private bool IsBulkStopEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => stoppableTaskStates.Contains(task.State));
+    private bool IsBulkEditEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => editableTaskStates.Contains(task.State));
     private bool isBulkDeleteEnabled => SelectedTasks.Count > 1 && SelectedTasks.All(task => deletableTaskStates.Contains(task.State) && ((task.Author?.Id is null || task.Author?.Id == PageContext.LoggedInUser.Id) || PageContext.LoggedInUser.Role == UserRole.OWNER));
-    private bool isBulkActionEnabled => isBulkDeleteEnabled || IsBulkPauseEnabled || IsBulkRunEnabled || IsBulkStopEnabled;
+    private bool isBulkActionEnabled => IsBulkEditEnabled || isBulkDeleteEnabled || IsBulkPauseEnabled || IsBulkRunEnabled || IsBulkStopEnabled;
 
     private async Task OnInfoClick(TaskInfoDto task, MouseEventArgs e)
     {
@@ -578,6 +592,13 @@
 
         ChangeStateModal.AffectedTasks = affectedTasks;
         await ChangeStateModal.ShowModal(state);
+    }
+
+    private async Task ShowBulkEditModal(IList<TaskInfoDto> affectedTasks)
+    {
+        PageContext.ViewMetadata.MiniOverviewTaskID = null;
+        PageContext.ViewMetadata.MiniErrorTaskID = null;
+        await BulkEditModal.Show(affectedTasks);
     }
 
     private bool OnTagsCustomFilter(object itemValue, object searchValue)

@@ -127,7 +127,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs
         /// Preset - system message (if available)
         /// </summary>
         [Resource($"{nameof(TaskConfigDto)}.{nameof(SystemMessage)}")]
-        [StringLengthValidation(0, 8192)]
+        [StringLengthValidation(0, 100000)]
         public string? SystemMessage { get; set; }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace FrontEASE.Shared.Data.DTOs.Tasks.Data.Configs
         /// </summary>
         [Resource($"{nameof(TaskConfigDto)}.{nameof(InitialMessage)}")]
         [RequiredValidation<TaskConfigDto>]
-        [StringLengthValidation(4, 8192)]
+        [StringLengthValidation(4, 100000)]
         public string InitialMessage { get; set; }
 
         /// <summary>

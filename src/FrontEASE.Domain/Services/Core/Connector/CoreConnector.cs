@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FrontEASE.DataContracts.Converters.Tasks.Parameters;
 using FrontEASE.DataContracts.Models.Core.Errors;
+using FrontEASE.Shared.Data.DTOs.Management.Core.Modules;
 using FrontEASE.DataContracts.Models.Core.Packages;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs;
 using FrontEASE.DataContracts.Models.Core.Tasks.Data.Configs.Modules;
@@ -113,6 +114,34 @@ namespace FrontEASE.Domain.Services.Core.Connector
             }
         }
 
+        public async Task<string> ReadModule(string shortName, CancellationToken cancellationToken)
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/read/{shortName}");
+            var response = await _httpClient.GetAsync(url, cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<CoreModuleContentDto>(_serializerOptions, cancellationToken);
+                return result?.Content ?? string.Empty;
+            }
+            else
+            {
+                var failResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new ApplicationException($"{nameof(ReadModule)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
+        public async Task UpdateModule(string shortName, string content, CancellationToken cancellationToken)
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/update/{shortName}");
+            var payload = new { content };
+            var response = await _httpClient.PutAsJsonAsync(url, payload, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                var failResult = await response.Content.ReadAsStringAsync(cancellationToken);
+                throw new ApplicationException($"{nameof(UpdateModule)} - Call FAILED - Exception: {failResult}");
+            }
+        }
+
         public async Task ImportModule(Entities.Shared.Files.File moduleFile, CancellationToken cancellationToken)
         {
             var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/system/import");
@@ -218,6 +247,40 @@ namespace FrontEASE.Domain.Services.Core.Connector
                     throw new ApplicationException($"{nameof(HandleTaskInit)} FAILED - Exception: {failResult}");
                 }
             }
+        }
+
+        public async Task HandleTaskBulkInit(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken)
+        {
+            var url = new Uri($"{_appSettings.IntegrationSettings!.PythonCore!.Server!.BaseUrl}/batch/task");
+            var request = tasks.Select(task => new TaskBulkUpdateItemCoreDto
+            {
+                TaskID = task.ID,
+                TaskConfiguration = _mapper.Map<TaskConfigFullCoreDto>(task)
+            }).ToList();
+
+            var response = await _httpClient.PutAsJsonAsync(url, request, cancellationToken);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadFromJsonAsync<IList<TaskInfoCoreDto>>(_serializerOptions, cancellationToken);
+                foreach (var responseTask in responseData ?? [])
+                {
+                    var matchingTask = tasks.FirstOrDefault(task => task.ID == responseTask.ID);
+                    if (matchingTask is not null)
+                    {
+                        _mapper.Map(responseTask, matchingTask);
+                    }
+                }
+                return;
+            }
+
+            if (response.StatusCode == HttpStatusCode.UnprocessableContent)
+            {
+                var validationError = await response.Content.ReadFromJsonAsync<CoreValidationError>(_serializerOptions, cancellationToken);
+                throw new UnprocessableException(ParseValidationMessages(validationError!));
+            }
+
+            var failResult = await response.Content.ReadAsStringAsync(cancellationToken);
+            throw new ApplicationException($"{nameof(HandleTaskBulkInit)} FAILED - Exception: {failResult}");
         }
 
         public async Task<bool> HandleTaskDelete(IList<Entities.Tasks.Task> tasks, CancellationToken cancellationToken)

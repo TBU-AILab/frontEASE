@@ -27,5 +27,8 @@
 
         public const string JsonEmpty = "JsonEmpty";
         public const string JsonInvalid = "JsonInvalid";
+
+        public const string ModuleContentNotEmpty = "ModuleContentNotEmpty";
+        public const string ModuleContentPythonSyntax = "ModuleContentPythonSyntax";
     }
 }

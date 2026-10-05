@@ -1,0 +1,155 @@
+@inject ICoreApiService coreApiService
+@inject IUIService uiService
+@inject IResourceHandler resourceHandler
+@inject Blazored.Toast.Services.IToastService toastService
+
+<Modal @ref="@EditModal" Class="modal-dialog-wide" Border="Border.Rounded" @onkeydown="@(async (e) => await HandleKeyDown(e))" Centered>
+    @if (isModalVisible)
+    {
+        <ModalContent Shadow="Shadow.Small" Class="bg-custom-primary">
+
+            <GenericModalHeader DisplayText="@($"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")} - {(!string.IsNullOrWhiteSpace(Module.LongName) ? Module.LongName : (Module.ShortName ?? resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.NotAvailable}")))}")" />
+
+            <ModalBody Margin="Margin.Is3.FromTop">
+
+                @if (isLoading)
+                {
+                    <ContentLoadSpinner />
+                }
+                else
+                {
+                    <Validations @ref="Validations" Mode="ValidationMode.Manual" ValidateOnLoad="false">
+
+                        <Row>
+                            <Column ColumnSize="ColumnSize.IsFull">
+                                <PythonCodeEditor @bind-Value="moduleContent" Height="520px" />
+                            </Column>
+                        </Row>
+
+                        <Validation Validator="@ValidateModuleContent">
+                            <Field ColumnSize="ColumnSize.IsFull" Class="input-validation-only">
+                                <MemoInput ReadOnly="true"
+                                           Placeholder=""
+                                           @bind-Value="@moduleContent">
+                                    <Feedback>
+                                        <ValidationError Multiline="true" />
+                                    </Feedback>
+                                </MemoInput>
+                            </Field>
+                        </Validation>
+
+                        <Row Margin="Margin.Is4.FromTop">
+                            <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is5.OnMobile">
+                                <Button Clicked="@SaveModule" Class="btn btn-sized button full-width bg-custom-info text-custom-info" Disabled="@updateInProgress" TextWeight="TextWeight.Bold">
+                                    @if (updateInProgress)
+                                    {
+                                        <SpinnerButton SmallControlSpinner="true" DisplayText="@(resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}"))" TextSize="TextSize.Medium" />
+                                    }
+                                    else
+                                    {
+                                        @resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Save}")
+                                    }
+                                </Button>
+                            </Column>
+                            <Column ColumnSize="ColumnSize.Is4.OnWidescreen.Is4.WithOffset.OnWidescreen.Is5.OnMobile.Is2.WithOffset.OnMobile">
+                                <Button Clicked="@HideModal" Class="btn btn-sized button full-width text-custom-primary" TextWeight="TextWeight.Bold" Border="Border.Is1.Rounded">
+                                    @resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Generic}.{UIValueConstants.No}")
+                                </Button>
+                            </Column>
+                        </Row>
+
+                    </Validations>
+                }
+            </ModalBody>
+
+        </ModalContent>
+    }
+</Modal>
+
+@code {
+    [Parameter]
+    public TaskModuleNoValidationDto Module { get; set; } = new();
+
+    private Modal EditModal = new();
+    private Validations Validations = new();
+
+    private string moduleContent = string.Empty;
+    private bool isModalVisible = false;
+    private bool isLoading = false;
+    private bool updateInProgress = false;
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (ShortcutKeyDictionary.GetEnumForm(e.Key))
+        {
+            case ShortcutKeys.ESCAPE:
+                await HideModal();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void ValidateModuleContent(ValidatorEventArgs args)
+    {
+        var content = Convert.ToString(args.Value) ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ModuleContentNotEmpty}");
+            return;
+        }
+
+        if (!content.Contains("class ") && !content.Contains("def "))
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = resourceHandler.GetResource($"{UIConstants.Data}.{UIConstants.Specific}.{UIStateConstants.Validation}.{UIValidationConstants.ModuleContentPythonSyntax}");
+            return;
+        }
+
+        args.Status = ValidationStatus.Success;
+    }
+
+    public async Task SaveModule()
+    {
+        updateInProgress = true;
+
+        if (await Validations.ValidateAll())
+        {
+            var updated = await coreApiService.UpdateTaskCoreModule(Module.ShortName, moduleContent);
+            if (updated)
+            {
+                var message = $"{resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Result}.{UIStateConstants.ActionSuccess}")} - {resourceHandler.GetResource($"{UIConstants.Base}.{UIConstants.Generic}.{UIActionConstants.Update}")}: {(!string.IsNullOrWhiteSpace(Module.LongName) ? Module.LongName : Module.ShortName)}";
+                toastService.ShowSuccess(message);
+                await uiService.CallRequestRefreshAsync();
+                await HideModal();
+            }
+        }
+
+        updateInProgress = false;
+    }
+
+    private Task HideModal()
+    {
+        isModalVisible = false;
+        return EditModal.Hide();
+    }
+
+    public async Task ShowModal()
+    {
+        isModalVisible = true;
+        isLoading = true;
+        moduleContent = string.Empty;
+        await EditModal.Show();
+
+        var content = await coreApiService.GetTaskCoreModuleContent(Module.ShortName);
+        if (content is not null)
+        {
+            moduleContent = content;
+        }
+
+        isLoading = false;
+        StateHasChanged();
+    }
+}

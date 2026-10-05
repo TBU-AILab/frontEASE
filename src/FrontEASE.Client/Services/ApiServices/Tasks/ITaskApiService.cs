@@ -23,6 +23,7 @@ namespace FrontEASE.Client.Services.ApiServices.Tasks
 
         #region Update
         Task<ITaskOperationResultDto?> UpdateTask(Guid taskID, TaskDto updateTaskDto);
+        Task<ITaskOperationResultDto?> BulkEditTasks(TaskBulkEditRequestDto request);
         Task<(IList<ApplicationUserDto> Members, IList<CompanyDto> MemberGroups)?> ShareTask(Guid taskID, TaskDto updateTaskDto);
         Task<bool> ChangeTaskStates(IList<Guid> taskIDs, TaskState state);
         #endregion

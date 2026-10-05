@@ -9,14 +9,20 @@ namespace FrontEASE.Server.Infrastructure.Swagger.Filters.Schema
         {
             if (context.Type.IsEnum)
             {
-                schema.Enum?.Clear();
+                if (schema.Enum is null)
+                {
+                    if (schema is OpenApiSchema concreteSchema) { concreteSchema.Enum = []; }
+                    else { return; }
+                }
+
+                schema.Enum!.Clear();
                 var enumNames = Enum.GetNames(context.Type).Distinct();
 
                 foreach (var enumName in enumNames)
                 {
-                    if (!schema.Enum!.Any(e => e.ToString() == enumName))
+                    if (!schema.Enum.Any(e => e.ToString() == enumName))
                     {
-                        schema.Enum?.Add(enumName);
+                        schema.Enum.Add(enumName);
                     }
                 }
             }

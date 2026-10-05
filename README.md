@@ -180,3 +180,13 @@ This work is licensed under a [Creative Commons Attribution 4.0 International Li
 ## Contact
 
 For inquiries, please contact [ease@utb.cz](mailto:ease@utb.cz).
+
+## Documentation
+
+The work-in-progress user and operator manual is maintained on the `docs` branch. With Docker running, preview it at `http://localhost:8000`:
+
+```sh
+docker compose up -d docs
+```
+
+The documentation source is in `docs/` and its navigation is configured in `mkdocs.yml`.

@@ -4,6 +4,7 @@ using FrontEASE.Domain.Infrastructure.Settings.App;
 using FrontEASE.Server.Infrastructure.Swagger.Attributes;
 using FrontEASE.Shared.Data.DTOs.Shared.Exceptions.Statuses;
 using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Requests;
+using FrontEASE.Shared.Data.DTOs.Tasks.Actions.Results;
 using FrontEASE.Shared.Data.DTOs.Tasks.Data;
 using FrontEASE.Shared.Data.DTOs.Tasks.UI;
 using FrontEASE.Shared.Data.Enums.Tasks;
@@ -234,6 +235,29 @@ namespace FrontEASE.Server.Controllers.User
                 result = GetHttpResult(response!.StatusCode, response);
             }
             return result;
+        }
+
+        /// <summary>
+        /// Applies explicitly selected configuration changes to multiple editable tasks.
+        /// </summary>
+        [HttpPut($"{TasksControllerConstants.BaseUrl}/{TasksControllerConstants.BulkEdit}")]
+        [ProducesResponseType(typeof(TaskBulkEditResultDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(UnprocessableResultDto), (int)HttpStatusCode.UnprocessableContent)]
+        [ProducesResponseType(typeof(UnauthorizedResultDto), (int)HttpStatusCode.Unauthorized)]
+        public async Task<IActionResult> BulkEditTasks(
+            [Required, FromBody] TaskBulkEditRequestDto request,
+            [ParameterSwaggerIgnore] CancellationToken cancellationToken)
+        {
+            try
+            {
+                var updatedTasks = await taskAppService.BulkEdit(request, cancellationToken);
+                return GetHttpResult(HttpStatusCode.OK, updatedTasks);
+            }
+            catch (Exception ex)
+            {
+                var response = ProcessApiException(ex);
+                return GetHttpResult(response!.StatusCode, response);
+            }
         }
 
 
